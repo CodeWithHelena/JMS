@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modern Dashboard - Responsive</title>
+
+    <!-- Bootstrap (optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* === Color variables (light + dark) === */
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --header-height: 70px;
+
+            /* Light theme */
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --body-bg: #f5f5f5;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --hover-bg: rgba(204, 85, 0, 0.1);
+            --active-bg: rgba(204, 85, 0, 0.15);
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+
+            /* Dark Mode Variables */
+            --dark-sidebar-bg: #1e1e2d;
+            --dark-header-bg: #1e1e2d;
+            --dark-body-bg: #151521;
+            --dark-text-color: #ffffff;
+            --dark-text-light: #a2a3b7;
+            --dark-border-color: #2d2d3d;
+            --dark-hover-bg: rgba(204, 85, 0, 0.2);
+            --dark-active-bg: rgba(204, 85, 0, 0.25);
+            --dark-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode {
+            --sidebar-bg: var(--dark-sidebar-bg);
+            --header-bg: var(--dark-header-bg);
+            --body-bg: var(--dark-body-bg);
+            --text-color: var(--dark-text-color);
+            --text-light: var(--dark-text-light);
+            --border-color: var(--dark-border-color);
+            --hover-bg: var(--dark-hover-bg);
+            --active-bg: var(--dark-active-bg);
+            --shadow: var(--dark-shadow);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--body-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        /* Layout root */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ===========================
+       SIDEBAR
+       =========================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 1002;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            /* FIXED: Remove horizontal scrolling */
+            overflow-x: hidden;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar-logo {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+            height: var(--header-height);
+        }
+
+        .sidebar-logo img {
+            max-width: 140px;
+            height: auto
+        }
+
+        .sidebar.collapsed .logo-full {
+            display: none
+        }
+
+        .sidebar.collapsed .logo-collapsed {
+            display: block
+        }
+
+        .logo-collapsed {
+            display: none
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            /* FIXED: Ensure no horizontal overflow */
+            overflow: hidden;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            /* FIXED: Ensure no horizontal overflow */
+            width: 100%;
+        }
+
+        /* FIXED: Dropdown li now expands properly */
+        .sidebar-nav li {
+            margin-bottom: 6px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .sidebar-nav li.dropdown-open {
+            margin-bottom: 12px;
+            /* Extra space when dropdown is open */
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            white-space: nowrap;
+            /* FIXED: Ensure no horizontal overflow */
+            width: 100%;
+        }
+
+        .sidebar-nav a i {
+            width: 24px;
+            text-align: center;
+            font-size: 18px
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--hover-bg)
+        }
+
+        .sidebar-nav a.active {
+            background: var(--active-bg);
+            color: var(--text-color);
+            font-weight: 600
+        }
+
+        .sidebar.collapsed .sidebar-nav span {
+            display: none
+        }
+
+        .sidebar.collapsed .sidebar-nav a {
+            justify-content: center;
+            padding: 10px 0
+        }
+
+        /* FIXED: Dropdown icon visible in collapsed sidebar */
+        .sidebar.collapsed .dropdown-toggle {
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .sidebar.collapsed .dropdown-toggle .title {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .dropdown-toggle .title i {
+            margin: 0;
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border-color)
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            background: transparent
+        }
+
+        .sidebar.collapsed .sidebar-footer span {
+            display: none
+        }
+
+        .sidebar.collapsed .logout-btn {
+            justify-content: center;
+            padding: 10px 0
+        }
+
+        /* FIXED: Dropdown styles - now properly pushes content */
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
+            width: 100%;
+            cursor: pointer;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: var(--text-color);
+            background: transparent;
+            border: none;
+            font: inherit;
+            text-align: left;
+        }
+
+        .dropdown-toggle .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .dropdown-toggle::after {
+            content: "";
+            display: inline-block;
+            margin-left: 8px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid currentColor;
+            transform-origin: center;
+            transition: var(--transition);
+            margin-right: 8px;
+        }
+
+        .dropdown-toggle.active::after {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .28s ease;
+            padding-left: 0;
+            margin: 0;
+            width: 100%;
+            /* FIXED: Dark mode dropdown background */
+            background: var(--sidebar-bg);
+        }
+
+        .dropdown-menu.show {
+            max-height: 400px;
+        }
+
+        /* FIXED: Dropdown items take full sidebar width and proper dark mode colors */
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 0;
+            text-decoration: none;
+            color: var(--text-color);
+            width: 100%;
+            margin-left: 0;
+            padding-left: 46px;
+            /* Align with parent icon */
+            /* FIXED: Ensure proper colors in dark mode */
+            background: var(--sidebar-bg);
+        }
+
+        .dropdown-menu a i {
+            width: 24px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--hover-bg)
+        }
+
+        /* When sidebar collapsed hide caret and collapse its menu */
+        .sidebar.collapsed .dropdown-toggle::after {
+            display: none
+        }
+
+        .sidebar.collapsed .dropdown-menu {
+            display: block;
+            max-height: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden
+        }
+
+        /* ===========================
+       HEADER
+       =========================== */
+        .header {
+            background: var(--header-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--header-height);
+            position: sticky;
+            top: 0;
+            z-index: 1003;
+            width: 100%;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .toggle-sidebar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--body-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toggle-sidebar:hover {
+            background: var(--hover-bg)
+        }
+
+        .toggle-sidebar i {
+            transition: var(--transition)
+        }
+
+        .hamburger {
+            width: 22px;
+            height: 16px;
+            display: inline-block;
+            position: relative
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            left: 0;
+            right: 0;
+            background: currentColor;
+            transition: var(--transition)
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0;
+            width: 100%
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 7px;
+            width: 60%
+        }
+
+        .hamburger span:nth-child(3) {
+            bottom: 0;
+            width: 100%
+        }
+
+        .toggle-sidebar.open .hamburger span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg)
+        }
+
+        .toggle-sidebar.open .hamburger span:nth-child(2) {
+            opacity: 0
+        }
+
+        .toggle-sidebar.open .hamburger span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg)
+        }
+
+        .header-logo {
+            display: none;
+            align-items: center;
+            justify-content: center
+        }
+
+        .header-logo img {
+            height: 40px
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--body-bg);
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .header-icon:hover {
+            background: var(--hover-bg)
+        }
+
+        /* FIXED: Ensure 3-dot menu is visible on mobile */
+        .more-menu {
+            display: none;
+            /* Hidden by default, shown on mobile */
+        }
+
+        /* FIXED: Notification badge in more menu positioned correctly */
+        .notification-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .notification-menu-item .text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-badge {
+            background: #cc5500;
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        /* SEARCH WRAP */
+        .search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center
+        }
+
+        .search-input {
+            width: 0;
+            opacity: 0;
+            padding: 0;
+            border: none;
+            border-radius: 20px;
+            height: 40px;
+            transition: var(--transition);
+            position: relative;
+            background: var(--body-bg);
+            padding-left: 14px;
+            padding-right: 36px;
+        }
+
+        .search-input.show {
+            width: 250px;
+            opacity: 1;
+            padding: 10px 36px 10px 14px
+        }
+
+        .search-close {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            transition: var(--transition)
+        }
+
+        .search-input.show+.search-close {
+            opacity: 1
+        }
+
+        .user-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4caf50;
+            border: 2px solid var(--header-bg)
+        }
+
+        /* ===========================
+       MAIN CONTENT WRAPPER & CONTENT
+       =========================== */
+        .main-content-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed~.main-content-wrapper {
+            margin-left: var(--sidebar-collapsed-width);
+            width: calc(100% - var(--sidebar-collapsed-width));
+        }
+
+        .main-content {
+            padding: 20px
+        }
+
+        .dashboard-title {
+            margin-bottom: 20px
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px
+        }
+
+        .card {
+            background: var(--sidebar-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow)
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px
+        }
+
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4169E1
+        }
+
+        /* ===========================
+       MORE MENU & NOTIFICATION BOX STYLES
+       =========================== */
+        .floating-dropdown {
+            position: absolute;
+            top: calc(var(--header-height) + 8px);
+            right: 16px;
+            width: 220px;
+            background: var(--sidebar-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 6px 0;
+            z-index: 1200;
+            transform-origin: top right;
+            transform: translateY(-6px) scale(.96);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .floating-dropdown.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .floating-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            text-decoration: none;
+            color: var(--text-color);
+            /* FIXED: Ensure proper colors in dark mode */
+            background: var(--sidebar-bg);
+        }
+
+        .floating-dropdown a:hover {
+            background: var(--hover-bg);
+            border-radius: 6px
+        }
+
+        /* Notification box */
+        .notification-box {
+            position: absolute;
+            top: calc(var(--header-height) + 8px);
+            right: 16px;
+            width: 320px;
+            background: var(--sidebar-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            z-index: 1200;
+            border: 1px solid var(--border-color);
+            transform-origin: top right;
+            transform: translateY(-6px) scale(.98);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .notification-box.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible
+        }
+
+        .notification-box .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-color)
+        }
+
+        .notification-box .notif-header strong {
+            font-size: 14px
+        }
+
+        .notification-box .notif-header small {
+            color: #d9534f;
+            cursor: pointer
+        }
+
+        .notification-box .notif-body {
+            max-height: 290px;
+            overflow-y: auto;
+            padding: 10px
+        }
+
+        .notification-box .notif-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 6px;
+            border-bottom: 1px solid var(--border-color)
+        }
+
+        .notification-box .notif-item .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--body-bg)
+        }
+
+        .notification-box .notif-item .text {
+            flex: 1
+        }
+
+        .notification-box .notif-item .text small {
+            display: block;
+            color: var(--text-light);
+            margin-top: 6px
+        }
+
+        .notification-box .notif-footer {
+            text-align: center;
+            padding: 8px;
+            border-top: 1px solid var(--border-color)
+        }
+
+        /* IMPROVED: Modern Search Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+        }
+
+        .modal-overlay.show {
+            display: flex
+        }
+
+        .search-modal {
+            width: min(500px, 90%);
+            background: var(--sidebar-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .search-modal header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-modal header strong {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .search-modal .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .search-modal .close-btn:hover {
+            background: var(--hover-bg);
+            color: var(--text-color);
+        }
+
+        /* IMPROVED: Modern search input without borders */
+        .search-modal input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--body-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-modal input:focus {
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .search-modal input::placeholder {
+            color: var(--text-light);
+        }
+
+        .search-modal .search-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .search-modal .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .search-modal .btn-primary {
+            background: #4169E1;
+            color: white;
+        }
+
+        .search-modal .btn-primary:hover {
+            background: #3151c7;
+            transform: translateY(-1px);
+        }
+
+        .search-modal .btn-secondary {
+            background: var(--body-bg);
+            color: var(--text-color);
+        }
+
+        .search-modal .btn-secondary:hover {
+            background: var(--hover-bg);
+        }
+
+        /* ===========================
+       RESPONSIVE RULES
+       =========================== */
+
+        /* FIXED: Logo only disappears from sidebar at 768px, not 991px */
+        /* At <=991px the sidebar should be minimized by default and header logo shown centered */
+        @media (max-width: 991px) {
+            .sidebar {
+                /* FIXED: Remove top spacing at 991px */
+                top: 0;
+                height: 100%;
+            }
+
+            /* FIXED: Keep sidebar logo visible at 991px */
+            .sidebar-logo {
+                display: flex;
+            }
+
+            .sidebar .logo-collapsed {
+                display: none
+            }
+
+            .header-logo {
+                display: none;
+                /* Hide header logo at 991px */
+            }
+
+            .sidebar.collapsed~.main-content-wrapper {
+                margin-left: var(--sidebar-collapsed-width);
+                width: calc(100% - var(--sidebar-collapsed-width));
+            }
+        }
+
+        /* FIXED: 3-dot menu now properly shows on mobile */
+        /* <=768 mobile: sidebar as overlay below header, three-dot menu shown and big icons hidden */
+        @media (max-width: 768px) {
+            .sidebar {
+                top: var(--header-height);
+                height: calc(100% - var(--header-height));
+                left: -100%;
+                width: var(--sidebar-width);
+                transition: left .25s ease;
+            }
+
+            .sidebar.show {
+                left: 0;
+                width: 100%
+            }
+
+            .sidebar.collapsed {
+                width: var(--sidebar-width)
+            }
+
+            .main-content-wrapper {
+                margin-left: 0;
+                width: 100%
+            }
+
+            .sidebar.collapsed~.main-content-wrapper {
+                margin-left: 0;
+                width: 100%
+            }
+
+            /* FIXED: Hide sidebar logo and show header logo at 768px */
+            .sidebar-logo {
+                display: none;
+            }
+
+            .header-logo {
+                display: flex;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            /* FIXED: Properly hide user icon, search, notification on mobile; show only 3-dot more-menu */
+            .header-icon:not(.more-menu) {
+                display: none !important;
+            }
+
+            .more-menu {
+                display: flex !important;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: repeat(2, 1fr)
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr
+            }
+
+            .search-input.show {
+                width: calc(100vw - 120px)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="#" alt="Logo" class="logo-full">
+                <img src="#" alt="Logo small" class="logo-collapsed">
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-eye"></i> <span>View Submission</span></a></li>
+                    <li><a href="#"><i class="fas fa-plus-circle"></i> <span>Create Submission</span></a></li>
+
+                    <li id="documentDropdownLi">
+                        <!-- FIXED: Dropdown now properly pushes content -->
+                        <button class="dropdown-toggle" id="documentDropdown">
+                            <span class="title"><i class="fas fa-folder"></i><span>Document</span></span>
+                        </button>
+                        <div class="dropdown-menu" id="documentMenu">
+                            <a href="#"><i class="fas fa-eye"></i> <span>View Document</span></a>
+                            <a href="#"><i class="fas fa-edit"></i> <span>Update Document</span></a>
+                            <a href="#"><i class="fas fa-trash"></i> <span>Delete Document</span></a>
+                        </div>
+                    </li>
+
+                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    <li><a href="#" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeLabel">Theme</span></a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-btn" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+            </div>
+        </aside>
+
+        <!-- Main wrapper -->
+        <div class="main-content-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="toggle-sidebar" id="toggleSidebar" title="Toggle sidebar">
+                        <i class="fas fa-arrow-left" id="toggleIcon" style="display:inline-block"></i>
+                        <div class="hamburger" id="hamburger" style="display:none">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+
+                    <div class="header-logo" id="headerLogo">
+                        <img src="#" alt="Header Logo">
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="search-wrap">
+                        <input type="text" class="search-input" id="searchBox" placeholder="Search...">
+                        <span class="search-close" id="closeSearch"><i class="fas fa-times"></i></span>
+                    </div>
+
+                    <div class="header-icon" id="searchIcon">
+                        <i class="fas fa-search"></i>
+                    </div>
+
+                    <div class="header-icon" id="notificationIcon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notifCount">3</span>
+                    </div>
+
+                    <!-- User icon visible on large screens only -->
+                    <div class="header-icon user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                        <span class="user-status"></span>
+
+                        <!-- User menu for large screens -->
+                        <div class="floating-dropdown user-dropdown" id="userDropdown">
+                            <a href="#" id="userProfileLarge"><i class="fas fa-user"></i> My Profile</a>
+                            <a href="#" id="userSettingsLarge"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#" id="userLogoutLarge"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+
+                    <!-- FIXED: Three-dot more menu now properly shows on small screens -->
+                    <div class="header-icon more-menu" id="moreMenu">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <div class="floating-dropdown" id="moreDropdown">
+                            <a href="#" id="moreSearch"><i class="fas fa-search"></i> Search</a>
+                            <a href="#" id="moreProfile"><i class="fas fa-user"></i> My Profile</a>
+                            <!-- FIXED: Notification item with badge positioned correctly -->
+                            <a href="#" id="moreNotification" class="notification-menu-item">
+                                <span class="text">
+                                    <i class="fas fa-bell"></i> Notifications
+                                </span>
+                                <span class="notification-badge">3</span>
+                            </a>
+                            <a href="#" id="moreSettings"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#" id="moreLogout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Notification box (shared) -->
+            <div class="notification-box" id="notificationBox" aria-hidden="true">
+                <div class="notif-header">
+                    <strong>Notifications</strong>
+                    <small id="clearAllNotif">CLEAR ALL</small>
+                </div>
+                <div class="notif-body" id="notifBody">
+                    <div class="notif-item">
+                        <div class="avatar"><i class="fas fa-user"></i></div>
+                        <div class="text">
+                            <div>New user registered — John Doe</div>
+                            <small>4 mins ago</small>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="avatar"><i class="fas fa-user"></i></div>
+                        <div class="text">
+                            <div>Submission #234 approved</div>
+                            <small>22 mins ago</small>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="avatar"><i class="fas fa-user"></i></div>
+                        <div class="text">
+                            <div>System scheduled maintenance</div>
+                            <small>1 hour ago</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notif-footer">
+                    <a href="#" id="viewAllNotifications">View all Notifications</a>
+                </div>
+            </div>
+
+            <!-- IMPROVED: Modern Search modal -->
+            <div class="modal-overlay" id="searchModalOverlay" aria-hidden="true">
+                <div class="search-modal" role="dialog" aria-modal="true" aria-label="Search">
+                    <header>
+                        <strong>Search</strong>
+                        <button id="closeSearchModal" class="close-btn" aria-label="Close search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </header>
+                    <div>
+                        <input id="modalSearchInput" placeholder="What are you looking for?" />
+                        <div class="search-actions">
+                            <button id="cancelSearchBtn" class="btn btn-secondary">Cancel</button>
+                            <button id="doSearchBtn" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <main class="main-content">
+                <h1 class="dashboard-title">Dashboard</h1>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-title">Total Users</div>
+                        <div class="card-value">1,254</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Revenue</div>
+                        <div class="card-value">$42,580</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">New Orders</div>
+                        <div class="card-value">324</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Pending Tasks</div>
+                        <div class="card-value">18</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script>
+        // Elements
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const hamburger = document.getElementById('hamburger');
+
+        const documentDropdownBtn = document.getElementById('documentDropdown');
+        const documentDropdownLi = document.getElementById('documentDropdownLi');
+        const documentMenu = document.getElementById('documentMenu');
+
+        const searchIcon = document.getElementById('searchIcon');
+        const searchInput = document.getElementById('searchBox');
+        const closeSearch = document.getElementById('closeSearch');
+
+        const moreMenu = document.getElementById('moreMenu');
+        const moreDropdown = document.getElementById('moreDropdown');
+
+        const userAvatar = document.getElementById('userAvatar');
+        const userDropdown = document.getElementById('userDropdown');
+
+        const notificationIcon = document.getElementById('notificationIcon');
+        const notificationBox = document.getElementById('notificationBox');
+
+        const searchModalOverlay = document.getElementById('searchModalOverlay');
+        const closeSearchModal = document.getElementById('closeSearchModal');
+        const cancelSearchBtn = document.getElementById('cancelSearchBtn');
+        const moreSearch = document.getElementById('moreSearch');
+
+        const moreNotification = document.getElementById('moreNotification');
+        const moreProfile = document.getElementById('moreProfile');
+        const moreSettings = document.getElementById('moreSettings');
+        const moreLogout = document.getElementById('moreLogout');
+
+        const userProfileLarge = document.getElementById('userProfileLarge');
+        const userSettingsLarge = document.getElementById('userSettingsLarge');
+        const userLogoutLarge = document.getElementById('userLogoutLarge');
+
+        const themeToggle = document.getElementById('themeToggle');
+        const themeLabel = document.getElementById('themeLabel');
+
+        // utils
+        function isMobile() { return window.innerWidth <= 768 }
+        function isTabletRange() { return window.innerWidth <= 991 && window.innerWidth > 768 }
+        function isLarge() { return window.innerWidth >= 992 }
+
+        // Initialize layout state
+        function initLayoutState() {
+            sidebar.classList.remove('show');
+            toggleSidebar.classList.remove('open');
+
+            if (isLarge()) {
+                sidebar.classList.remove('collapsed');
+                toggleIcon.style.display = 'inline-block';
+                toggleIcon.className = 'fas fa-arrow-left';
+                hamburger.style.display = 'none';
+                document.querySelector('.header-logo').style.display = 'none';
+
+                // Show user icon on large screens, hide 3-dot
+                userAvatar.style.display = 'flex';
+                moreMenu.style.display = 'none';
+            } else if (isTabletRange()) {
+                sidebar.classList.add('collapsed');
+                toggleIcon.style.display = 'inline-block';
+                toggleIcon.className = 'fas fa-arrow-right';
+                hamburger.style.display = 'none';
+                document.querySelector('.header-logo').style.display = 'none'; // Hide header logo at 991px
+
+                // Show user icon on tablet, hide 3-dot
+                userAvatar.style.display = 'flex';
+                moreMenu.style.display = 'none';
+            } else {
+                // mobile
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.remove('show');
+                toggleIcon.style.display = 'none';
+                hamburger.style.display = 'block';
+                document.querySelector('.header-logo').style.display = 'flex'; // Show header logo at 768px
+
+                // Hide user icon on mobile, show 3-dot menu
+                userAvatar.style.display = 'none';
+                moreMenu.style.display = 'flex';
+            }
+        }
+
+        initLayoutState();
+        window.addEventListener('resize', initLayoutState);
+
+        // Toggle sidebar behavior
+        toggleSidebar.addEventListener('click', function (e) {
+            if (isMobile()) {
+                const open = toggleSidebar.classList.toggle('open');
+                if (open) {
+                    sidebar.classList.add('show');
+                } else {
+                    sidebar.classList.remove('show');
+                }
+                return;
+            }
+
+            const collapsed = sidebar.classList.contains('collapsed');
+            if (collapsed) {
+                sidebar.classList.remove('collapsed');
+                toggleIcon.className = 'fas fa-arrow-left';
+            } else {
+                sidebar.classList.add('collapsed');
+                toggleIcon.className = 'fas fa-arrow-right';
+            }
+        });
+
+        // FIXED: Dropdown now properly manages li height and pushes content
+        documentDropdownBtn.addEventListener('click', function (e) {
+            const open = this.classList.toggle('active');
+            documentMenu.classList.toggle('show', open);
+
+            // FIXED: Add/remove class to parent li to manage spacing
+            if (open) {
+                documentDropdownLi.classList.add('dropdown-open');
+            } else {
+                documentDropdownLi.classList.remove('dropdown-open');
+            }
+            e.stopPropagation();
+        });
+
+        // Search: open via search icon (desktop)
+        searchIcon.addEventListener('click', function () {
+            if (!searchInput.classList.contains('show')) {
+                searchInput.classList.add('show');
+                setTimeout(() => searchInput.focus(), 50);
+            }
+        });
+        closeSearch.addEventListener('click', function () {
+            searchInput.classList.remove('show');
+        });
+
+        // User avatar (large screens) opens user menu
+        userAvatar.addEventListener('click', function (e) {
+            if (isMobile()) return;
+
+            const shown = userDropdown.classList.contains('show');
+            hideMoreDropdown();
+            hideNotificationBox();
+
+            if (shown) {
+                userDropdown.classList.remove('show');
+            } else {
+                userDropdown.classList.add('show');
+            }
+            e.stopPropagation();
+        });
+
+        // Click handlers for user menu items (large)
+        userProfileLarge.addEventListener('click', function (e) {
+            userDropdown.classList.remove('show');
+            alert('Open My Profile (large screen)');
+            e.preventDefault();
+        });
+        userSettingsLarge.addEventListener('click', function (e) {
+            userDropdown.classList.remove('show');
+            alert('Open Settings (large screen)');
+            e.preventDefault();
+        });
+        userLogoutLarge.addEventListener('click', function (e) {
+            userDropdown.classList.remove('show');
+            alert('Perform logout (large screen)');
+            e.preventDefault();
+        });
+
+        // More-menu (three dot) behavior — appears only on small screens
+        moreMenu.addEventListener('click', function (e) {
+            const show = moreDropdown.classList.contains('show');
+            userDropdown.classList.remove('show');
+            hideNotificationBox();
+
+            if (show) {
+                hideMoreDropdown();
+            } else {
+                showMoreDropdown();
+            }
+            e.stopPropagation();
+        });
+
+        function showMoreDropdown() {
+            moreDropdown.classList.add('show');
+        }
+        function hideMoreDropdown() {
+            moreDropdown.classList.remove('show');
+        }
+
+        // More menu items with proper functionality
+        moreSearch.addEventListener('click', function (e) {
+            hideMoreDropdown();
+            openSearchModal();
+            e.preventDefault();
+        });
+        moreProfile.addEventListener('click', function (e) {
+            hideMoreDropdown();
+            alert('Open My Profile (small)');
+            e.preventDefault();
+        });
+        // FIXED: Notification in more menu now opens notification box
+        moreNotification.addEventListener('click', function (e) {
+            hideMoreDropdown();
+            showNotificationBox();
+            e.preventDefault();
+        });
+        moreSettings.addEventListener('click', function (e) {
+            hideMoreDropdown();
+            alert('Open Settings (small)');
+            e.preventDefault();
+        });
+        moreLogout.addEventListener('click', function (e) {
+            hideMoreDropdown();
+            alert('Logout (small)');
+            e.preventDefault();
+        });
+
+        // Notifications - works on both large screen (bell icon) and small screen (more menu)
+        notificationIcon.addEventListener('click', function (e) {
+            hideMoreDropdown();
+            userDropdown.classList.remove('show');
+            toggleNotificationBox();
+            e.stopPropagation();
+        });
+
+        function toggleNotificationBox() {
+            const show = notificationBox.classList.contains('show');
+            if (show) {
+                hideNotificationBox();
+            } else {
+                showNotificationBox();
+            }
+        }
+        function showNotificationBox() {
+            notificationBox.classList.add('show');
+        }
+        function hideNotificationBox() {
+            notificationBox.classList.remove('show');
+        }
+
+        // Notification clear all
+        document.getElementById('clearAllNotif').addEventListener('click', function () {
+            document.getElementById('notifBody').innerHTML = '<div style="padding:12px;color:var(--text-light)">No notifications</div>';
+            // Also update badge counts
+            document.getElementById('notifCount').textContent = '0';
+            document.querySelector('#moreNotification .notification-badge').textContent = '0';
+        });
+
+        // View all notifications
+        document.getElementById('viewAllNotifications').addEventListener('click', function (e) {
+            hideNotificationBox();
+            alert('Open all notifications page (placeholder)');
+            e.preventDefault();
+        });
+
+        // Search modal functionality
+        function openSearchModal() {
+            searchModalOverlay.classList.add('show');
+            searchModalOverlay.setAttribute('aria-hidden', 'false');
+            document.getElementById('modalSearchInput').focus();
+        }
+        function closeSearchModalFunc() {
+            searchModalOverlay.classList.remove('show');
+            searchModalOverlay.setAttribute('aria-hidden', 'true');
+        }
+        closeSearchModal.addEventListener('click', function () { closeSearchModalFunc(); });
+        cancelSearchBtn.addEventListener('click', function () { closeSearchModalFunc(); });
+        searchModalOverlay.addEventListener('click', function (e) {
+            if (e.target === searchModalOverlay) closeSearchModalFunc();
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!userAvatar.contains(e.target)) {
+                userDropdown.classList.remove('show');
+            }
+            if (!moreMenu.contains(e.target)) {
+                hideMoreDropdown();
+            }
+            if (!notificationBox.contains(e.target) && !notificationIcon.contains(e.target)) {
+                hideNotificationBox();
+            }
+            if (!documentDropdownBtn.contains(e.target) && !documentMenu.contains(e.target)) {
+                documentDropdownBtn.classList.remove('active');
+                documentMenu.classList.remove('show');
+                documentDropdownLi.classList.remove('dropdown-open');
+            }
+        });
+
+        // Sidebar links close overlay on mobile
+        document.querySelectorAll('.sidebar-nav a').forEach(a => {
+            a.addEventListener('click', function () {
+                if (isMobile()) {
+                    sidebar.classList.remove('show');
+                    toggleSidebar.classList.remove('open');
+                }
+            });
+        });
+
+        // Theme toggle
+        themeToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.body.classList.toggle('dark-mode');
+            const icon = this.querySelector('i');
+            const label = this.querySelector('span') || themeLabel;
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon'); icon.classList.add('fa-sun');
+                if (label) label.textContent = 'Light Mode';
+            } else {
+                icon.classList.remove('fa-sun'); icon.classList.add('fa-moon');
+                if (label) label.textContent = 'Dark Mode';
+            }
+        });
+
+        // Accessibility: ESC to close overlays
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                if (searchInput.classList.contains('show')) searchInput.classList.remove('show');
+                hideMoreDropdown();
+                userDropdown.classList.remove('show');
+                hideNotificationBox();
+                closeSearchModalFunc();
+                sidebar.classList.remove('show');
+                toggleSidebar.classList.remove('open');
+            }
+        });
+
+        // Initialize any state depending on screen on load
+        initLayoutState();
+    </script>
+</body>
+
+</html>

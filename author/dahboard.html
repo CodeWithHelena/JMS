@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Dashboard</title>
+    <!-- Bootstrap CSS (for future use) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Color Variables */
+            --primary-color: #4169E1;
+            /* Royal Blue */
+            --secondary-color: #CC5500;
+            /* Burnt Orange */
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --body-bg: #f5f5f5;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --hover-bg: rgba(204, 85, 0, 0.1);
+            --active-bg: rgba(204, 85, 0, 0.15);
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+
+            /* Dark Mode Variables */
+            --dark-sidebar-bg: #1e1e2d;
+            --dark-header-bg: #1e1e2d;
+            --dark-body-bg: #151521;
+            --dark-text-color: #ffffff;
+            --dark-text-light: #a2a3b7;
+            --dark-border-color: #2d2d3d;
+            --dark-hover-bg: rgba(204, 85, 0, 0.2);
+            --dark-active-bg: rgba(204, 85, 0, 0.25);
+            --dark-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --sidebar-bg: var(--dark-sidebar-bg);
+            --header-bg: var(--dark-header-bg);
+            --body-bg: var(--dark-body-bg);
+            --text-color: var(--dark-text-color);
+            --text-light: var(--dark-text-light);
+            --border-color: var(--dark-border-color);
+            --hover-bg: var(--dark-hover-bg);
+            --active-bg: var(--dark-active-bg);
+            --shadow: var(--dark-shadow);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 1000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-logo {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+            height: 70px;
+        }
+
+        .sidebar-logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .sidebar-logo .logo-collapsed {
+            display: none;
+        }
+
+        .sidebar.collapsed .logo-full {
+            display: none;
+        }
+
+        .sidebar.collapsed .logo-collapsed {
+            display: block;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+            overflow: hidden;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .sidebar-nav a.active {
+            background-color: var(--active-bg);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .sidebar-nav span {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-nav a {
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+        .sidebar.collapsed .sidebar-nav i {
+            margin-right: 0;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .sidebar.collapsed .logout-btn span {
+            display: none;
+        }
+
+        .sidebar.collapsed .logout-btn {
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+        /* Dropdown */
+        .dropdown-toggle {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dropdown-toggle i:last-child {
+            transition: var(--transition);
+        }
+
+        .dropdown-toggle.active i:last-child {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            max-height: 200px;
+        }
+
+        .dropdown-menu a {
+            padding-left: 50px;
+        }
+
+        .sidebar.collapsed .dropdown-menu a {
+            padding-left: 20px;
+        }
+
+        /* Header & Main content wrapper */
+        .main-content-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            transition: var(--transition);
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--header-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            width: 100%;
+            margin-left: 0;
+            /* transition: var(--transition); */
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-sidebar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--body-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 15px;
+        }
+
+        .toggle-sidebar:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .toggle-sidebar i {
+            transition: var(--transition);
+        }
+
+        .toggle-sidebar.active i {
+            transform: rotate(180deg);
+        }
+
+        .header-logo {
+            display: none;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--body-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-left: 10px;
+            position: relative;
+        }
+
+        .header-icon:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box {
+            width: 0;
+            opacity: 0;
+            padding: 0 40px 0 15px;
+            border: none;
+            background-color: var(--body-bg);
+            border-radius: 20px;
+            transition: var(--transition);
+            position: absolute;
+            right: 50px;
+            height: 40px;
+        }
+
+        .search-box.show {
+            width: 250px;
+            opacity: 1;
+            padding: 10px 40px 10px 15px;
+        }
+
+        .close-search {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .search-box.show+.close-search {
+            opacity: 1;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar {
+            position: relative;
+        }
+
+        .user-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            border: 2px solid var(--header-bg);
+        }
+
+        .more-menu {
+            display: none;
+            position: relative;
+        }
+
+        .more-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 180px;
+            background-color: var(--sidebar-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 10px 0;
+            z-index: 1001;
+            transform: translateY(-10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .more-dropdown.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .more-dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .more-dropdown a:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .more-dropdown i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .more-dropdown .notification-badge {
+            position: static;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            /* margin-left: 260px; */
+            transition: var(--transition);
+            /* width: calc(100% - 260px); */
+        }
+
+        .dashboard-title {
+            margin-bottom: 20px;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--sidebar-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Adjustments for collapsed sidebar */
+        /* .sidebar.collapsed~.header,
+        .sidebar.collapsed~.main-content {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        } */
+
+        /* When sidebar is collapsed, adjust the wrapper */
+        .sidebar.collapsed ~ .main-content-wrapper {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar-nav span {
+                display: none;
+            }
+
+            .sidebar-nav a {
+                justify-content: center;
+                padding: 12px 0;
+            }
+
+            .sidebar-nav i {
+                margin-right: 0;
+            }
+
+            .sidebar.collapsed {
+                width: 260px;
+            }
+
+            .sidebar.collapsed .sidebar-nav span {
+                display: inline;
+            }
+
+            .sidebar.collapsed .sidebar-nav a {
+                justify-content: flex-start;
+                padding: 12px 20px;
+            }
+
+            .sidebar.collapsed .sidebar-nav i {
+                margin-right: 12px;
+            }
+
+            .sidebar.collapsed .logout-btn span {
+                display: inline;
+            }
+
+            .sidebar.collapsed .logout-btn {
+                justify-content: flex-start;
+                padding: 12px 20px;
+            }
+
+            /* .header,
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            } */
+
+            /* .sidebar.collapsed~.header,
+            .sidebar.collapsed~.main-content {
+                margin-left: 260px;
+                width: calc(100% - 260px);
+            } */
+        }
+
+        @media (max-width: 768px) {
+            .main-content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+            .dashboard-container {
+                position: relative;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+                transition: left 0.3s ease;
+                z-index: 1002;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .header-logo {
+                display: block;
+            }
+
+            .header-right .header-icon:not(.more-menu) {
+                display: none;
+            }
+
+            .more-menu {
+                display: flex;
+            }
+
+            .toggle-sidebar {
+                margin-right: 0;
+            }
+
+            .toggle-sidebar i {
+                transform: rotate(0deg);
+            }
+
+            .toggle-sidebar.active i {
+                transform: rotate(90deg);
+            }
+
+            .search-box.show {
+                width: calc(100vw - 100px);
+            }
+
+            .header,
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box.show {
+                width: calc(100vw - 120px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="#" alt="Logo" class="logo-full">
+                <img src="#" alt="Logo" class="logo-collapsed">
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-eye"></i> <span>View Submission</span></a></li>
+                    <li><a href="#"><i class="fas fa-plus-circle"></i> <span>Create Submission</span></a></li>
+                    <li>
+                        <div class="dropdown-toggle" id="documentDropdown">
+                            <a><i class="fas fa-folder"></i> <span>Document</span> <i class="fas fa-chevron-down"></i></a>
+                        </div>
+                        <div class="dropdown-menu" id="documentMenu">
+                            <a href="#"><i class="fas fa-eye"></i> <span>View Document</span></a>
+                            <a href="#"><i class="fas fa-edit"></i> <span>Update Document</span></a>
+                            <a href="#"><i class="fas fa-trash"></i> <span>Delete Document</span></a>
+                        </div>
+                    </li>
+                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    <li><a href="#" id="themeToggle"><i class="fas fa-moon"></i> <span>Theme</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="toggle-sidebar" id="toggleSidebar">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="header-logo">
+                        <img src="#" alt="Logo">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="search-container">
+                        <input type="text" class="search-box" id="searchBox" placeholder="Search...">
+                        <span class="close-search" id="closeSearch"><i class="fas fa-times"></i></span>
+                    </div>
+                    <div class="header-icon" id="searchIcon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="header-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="header-icon user-avatar">
+                        <i class="fas fa-user"></i>
+                        <span class="user-status"></span>
+                    </div>
+                    <div class="header-icon more-menu" id="moreMenu">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <div class="more-dropdown" id="moreDropdown">
+                            <a href="#"><i class="fas fa-search"></i> Search</a>
+                            <a href="#"><i class="fas fa-user"></i> My Profile</a>
+                            <a href="#"><i class="fas fa-bell"></i> Notifications <span class="notification-badge">3</span></a>
+                            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <h1 class="dashboard-title">Dashboard</h1>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-title">Total Users</div>
+                        <div class="card-value">1,254</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Revenue</div>
+                        <div class="card-value">$42,580</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">New Orders</div>
+                        <div class="card-value">324</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Pending Tasks</div>
+                        <div class="card-value">18</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const documentDropdown = document.getElementById('documentDropdown');
+        const documentMenu = document.getElementById('documentMenu');
+        const searchIcon = document.getElementById('searchIcon');
+        const searchBox = document.getElementById('searchBox');
+        const closeSearch = document.getElementById('closeSearch');
+        const moreMenu = document.getElementById('moreMenu');
+        const moreDropdown = document.getElementById('moreDropdown');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Toggle Sidebar
+        toggleSidebar.addEventListener('click', function () {
+            sidebar.classList.toggle('collapsed');
+            this.classList.toggle('active');
+
+            // Change arrow direction
+            const icon = this.querySelector('i');
+            if (sidebar.classList.contains('collapsed')) {
+                icon.classList.remove('fa-arrow-left');
+                icon.classList.add('fa-arrow-right');
+            } else {
+                icon.classList.remove('fa-arrow-right');
+                icon.classList.add('fa-arrow-left');
+            }
+
+            // For mobile - show/hide sidebar
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show');
+                this.classList.toggle('active');
+            }
+        });
+
+        // Document Management Dropdown
+        documentDropdown.addEventListener('click', function () {
+            documentMenu.classList.toggle('show');
+            this.classList.toggle('active');
+        });
+
+        // Search Functionality
+        searchIcon.addEventListener('click', function () {
+            if (window.innerWidth <= 768) {
+                // Show search modal on mobile
+                alert('Search modal would open here on mobile');
+            } else {
+                searchBox.classList.toggle('show');
+                if (searchBox.classList.contains('show')) {
+                    searchBox.focus();
+                }
+            }
+        });
+
+        closeSearch.addEventListener('click', function () {
+            searchBox.classList.remove('show');
+        });
+
+        // More Menu Dropdown
+        moreMenu.addEventListener('click', function () {
+            moreDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            if (!moreMenu.contains(event.target)) {
+                moreDropdown.classList.remove('show');
+            }
+        });
+
+        // Theme Toggle
+        themeToggle.addEventListener('click', function () {
+            document.body.classList.toggle('dark-mode');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                this.querySelector('span').textContent = 'Light Mode';
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                this.querySelector('span').textContent = 'Dark Mode';
+            }
+        });
+
+        // Responsive behavior
+        function handleResize() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('collapsed');
+                toggleSidebar.classList.remove('active');
+                const icon = toggleSidebar.querySelector('i');
+                icon.classList.remove('fa-arrow-right');
+                icon.classList.add('fa-arrow-left');
+            } else if (window.innerWidth <= 991) {
+                sidebar.classList.add('collapsed');
+                toggleSidebar.classList.add('active');
+                const icon = toggleSidebar.querySelector('i');
+                icon.classList.remove('fa-arrow-left');
+                icon.classList.add('fa-arrow-right');
+            } else {
+                sidebar.classList.remove('collapsed');
+                toggleSidebar.classList.remove('active');
+                const icon = toggleSidebar.querySelector('i');
+                icon.classList.remove('fa-arrow-right');
+                icon.classList.add('fa-arrow-left');
+            }
+        }
+
+        // Initial call
+        handleResize();
+
+        // Listen for window resize
+        window.addEventListener('resize', handleResize);
+    </script>
+</body>
+
+</html>

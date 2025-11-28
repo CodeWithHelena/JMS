@@ -1,0 +1,161 @@
+/* assets/css/style.css */
+/* Global variables + body + layout + main content (not header/sidebar details) */
+
+:root {
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 70px;
+    --header-height: 70px;
+    
+    --sidebar-bg: #ffffff;
+    --header-bg: #ffffff;
+    --body-bg: #f5f5f5;
+    --text-color: #333333;
+    --text-light: #666666;
+    --border-color: #e0e0e0;
+    --hover-bg: rgba(204, 85, 0, 0.1);
+    --active-bg: rgba(204, 85, 0, 0.15);
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    --brand: #cc5500;
+}
+
+/* Dark-mode variables switch when body.dark-mode is present */
+body.dark-mode {
+    --sidebar-bg: #1e1e2d;
+    --header-bg: #1e1e2d;
+    --body-bg: #151521;
+    --text-color: #ffffff;
+    --text-light: #a2a3b7;
+    --border-color: #2d2d3d;
+    --hover-bg: rgba(204, 85, 0, 0.2);
+    --active-bg: rgba(204, 85, 0, 0.25);
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--body-bg);
+    color: var(--text-color);
+    overflow-x: hidden;
+    transition: var(--transition);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+p{
+    margin: 0;
+    color: var(--text-light);
+}
+
+/* Layout root */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* The main content wrapper sits to the right of the sidebar */
+.main-content-wrapper {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    transition: var(--transition);
+}
+
+.sidebar.collapsed~.main-content-wrapper {
+    margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+}
+
+/* main content */
+.main-content {
+    padding: 20px;
+}
+
+.page-title {
+    margin-bottom: 20px;
+}
+
+.page-title h1{
+    font-size: 2rem;
+}
+
+.page-title p {
+    color: var(--brand);
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: var(--sidebar-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.card-title {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 10px;
+}
+
+.card-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4169E1;
+}
+
+/* responsive helpers */
+@media (max-width: 991px) {
+    .sidebar.collapsed~.main-content-wrapper {
+        margin-left: var(--sidebar-collapsed-width);
+        width: calc(100% - var(--sidebar-collapsed-width));
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ---------- Add / Update (main wrapper fallback) ---------- */
+
+/* Fallback: allow JS to toggle .sidebar-collapsed on .main-content-wrapper */
+.main-content-wrapper.sidebar-collapsed {
+    margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+    transition: var(--transition);
+}
+
+/* ---------------------------------------------------------------- */

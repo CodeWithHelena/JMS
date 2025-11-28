@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modern Dashboard - Responsive</title>
+
+    <!-- Bootstrap (optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --header-height: 70px;
+            --body-bg: #f5f5f5;
+            --sidebar-bg: #fff;
+            --header-bg: #fff;
+            --text-color: #333;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.25s ease;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--body-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* Layout root */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ===========================
+       SIDEBAR
+       =========================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 1002;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        /* When collapsed: use collapsed width */
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        /* For mobile overlay state we'll add .show on sidebar */
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar-logo {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #e6e6e6;
+            height: var(--header-height);
+        }
+
+        .sidebar-logo img {
+            max-width: 140px;
+            height: auto
+        }
+
+        /* hide collapsed logo */
+        .sidebar.collapsed .logo-full {
+            display: none
+        }
+
+        .sidebar.collapsed .logo-collapsed {
+            display: block
+        }
+
+        .logo-collapsed {
+            display: none
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow: hidden
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 6px
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .sidebar-nav a i {
+            width: 24px;
+            text-align: center;
+            font-size: 18px
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(0, 0, 0, 0.03)
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(204, 85, 0, 0.12);
+            color: #cc5500;
+            font-weight: 600
+        }
+
+        /* hide text when collapsed */
+        .sidebar.collapsed .sidebar-nav span {
+            display: none
+        }
+
+        .sidebar.collapsed .sidebar-nav a {
+            justify-content: center;
+            padding: 10px 0
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid #e6e6e6
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color)
+        }
+
+        /* Dropdown toggle markup: we use ::after for caret */
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
+            width: 100%;
+            cursor: pointer;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: var(--text-color);
+            background: transparent;
+            border: none;
+            font: inherit;
+        }
+
+        /* caret using ::after */
+        .dropdown-toggle .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .dropdown-toggle::after {
+            content: "";
+            display: inline-block;
+            margin-left: 8px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid currentColor;
+            transform-origin: center;
+            transition: var(--transition);
+            margin-right: 8px;
+        }
+
+        .dropdown-toggle.active::after {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .25s ease;
+            padding-left: 8px;
+        }
+
+        .dropdown-menu.show {
+            max-height: 400px
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-color)
+        }
+
+        .sidebar.collapsed .dropdown-toggle::after {
+            display: none
+        }
+
+        /* hide caret when collapsed (icons only) */
+
+        /* ===========================
+       HEADER
+       =========================== */
+        .header {
+            background: var(--header-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--header-height);
+            position: sticky;
+            top: 0;
+            z-index: 1003;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        /* Toggle container - will contain either arrow or hamburger */
+        .toggle-sidebar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--body-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toggle-sidebar:hover {
+            background: rgba(0, 0, 0, 0.04)
+        }
+
+        .toggle-sidebar i {
+            transition: var(--transition)
+        }
+
+        /* hamburger markup */
+        .hamburger {
+            width: 22px;
+            height: 16px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            left: 0;
+            right: 0;
+            background: currentColor;
+            transition: var(--transition);
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0;
+            width: 100%
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 7px;
+            width: 60%
+        }
+
+        /* middle line shorter */
+        .hamburger span:nth-child(3) {
+            bottom: 0;
+            width: 100%
+        }
+
+        /* open state to X */
+        .toggle-sidebar.open .hamburger span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg)
+        }
+
+        .toggle-sidebar.open .hamburger span:nth-child(2) {
+            opacity: 0
+        }
+
+        .toggle-sidebar.open .hamburger span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg)
+        }
+
+        /* header logo (default hidden because sidebar shows logo) */
+        .header-logo {
+            display: none;
+            align-items: center;
+            justify-content: center
+        }
+
+        .header-logo img {
+            height: 40px
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--body-bg);
+            position: relative;
+            cursor: pointer
+        }
+
+        .header-icon:hover {
+            background: rgba(0, 0, 0, 0.04)
+        }
+
+        /* SEARCH WRAP */
+        .search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center
+        }
+
+        .search-input {
+            width: 0;
+            opacity: 0;
+            padding: 0;
+            border: none;
+            border-radius: 20px;
+            height: 40px;
+            transition: var(--transition);
+            position: relative;
+            background: var(--body-bg);
+            padding-left: 14px;
+            padding-right: 36px;
+        }
+
+        .search-input.show {
+            width: 250px;
+            opacity: 1;
+            padding: 10px 36px 10px 14px
+        }
+
+        .search-close {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            transition: var(--transition)
+        }
+
+        .search-input.show+.search-close {
+            opacity: 1
+        }
+
+        /* notification badge & user status */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #cc5500;
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px
+        }
+
+        .user-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4caf50;
+            border: 2px solid var(--header-bg)
+        }
+
+        /* ===========================
+       MAIN CONTENT WRAPPER & CONTENT
+       =========================== */
+        .main-content-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* when sidebar collapsed */
+        .sidebar.collapsed~.main-content-wrapper {
+            margin-left: var(--sidebar-collapsed-width);
+            width: calc(100% - var(--sidebar-collapsed-width));
+        }
+
+        /* content inside wrapper */
+        .main-content {
+            padding: 20px;
+        }
+
+        .dashboard-title {
+            margin-bottom: 20px
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow)
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px
+        }
+
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4169E1
+        }
+
+        /* ===========================
+       RESPONSIVE RULES
+       =========================== */
+
+        /* At 991px and below we want the sidebar minimized by default and header logo visible centered.
+       Sidebar should start below the header so header remains visible.
+    */
+        @media (max-width: 991px) {
+            .sidebar {
+                top: var(--header-height);
+                /* sidebar starts after header */
+                height: calc(100% - var(--header-height));
+            }
+
+            /* sidebar logo hidden since header shows logo */
+            .sidebar-logo {
+                display: none
+            }
+
+            .sidebar .logo-collapsed {
+                display: none
+            }
+
+            /* header logo becomes visible and centered */
+            .header-logo {
+                display: flex;
+                margin: 0 auto
+            }
+
+            /* center header contents: we keep left/right but make logo centered */
+            .header {
+                justify-content: space-between
+            }
+
+            /* still spaced; logo is centered via margin auto */
+            /* default state: collapsed (icons only) — we'll ensure via JS on resize */
+            /* ensure main-content-wrapper offsets to collapsed width (JS will toggle class on sidebar to set state) */
+            .sidebar.collapsed~.main-content-wrapper {
+                margin-left: var(--sidebar-collapsed-width);
+                width: calc(100% - var(--sidebar-collapsed-width));
+            }
+        }
+
+        /* At mobile: 768 and below, sidebar becomes an overlay that can take full width (open state) */
+        @media (max-width: 768px) {
+            .sidebar {
+                top: var(--header-height);
+                height: calc(100% - var(--header-height));
+                left: -100%;
+                width: var(--sidebar-width);
+                transition: left .25s ease;
+            }
+
+            .sidebar.show {
+                left: 0;
+                width: 100%;
+            }
+
+            /* when shown it becomes full width overlay (below header) */
+            .sidebar.collapsed {
+                width: var(--sidebar-width)
+            }
+
+            /* collapsed doesn't apply on mobile */
+            /* main area uses full width under header */
+            .main-content-wrapper {
+                margin-left: 0;
+                width: 100%
+            }
+
+            .sidebar.collapsed~.main-content-wrapper {
+                margin-left: 0;
+                width: 100%
+            }
+
+            .dashboard-cards {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .header-logo {
+                display: flex;
+                margin: 0 auto
+            }
+
+            /* Show hamburger instead of arrow by JS toggling classes */
+            .sidebar-logo {
+                display: none
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr
+            }
+
+            .search-input.show {
+                width: calc(100vw - 120px)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="#" alt="Logo" class="logo-full">
+                <img src="#" alt="Logo small" class="logo-collapsed">
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-eye"></i> <span>View Submission</span></a></li>
+                    <li><a href="#"><i class="fas fa-plus-circle"></i> <span>Create Submission</span></a></li>
+
+                    <li>
+                        <!-- dropdown-toggle uses ::after caret; we removed chevron icon from markup -->
+                        <button class="dropdown-toggle" id="documentDropdown">
+                            <span class="title"><i class="fas fa-folder"></i><span>Document</span></span>
+                        </button>
+                        <div class="dropdown-menu" id="documentMenu">
+                            <a href="#"><i class="fas fa-eye"></i> <span>View Document</span></a>
+                            <a href="#"><i class="fas fa-edit"></i> <span>Update Document</span></a>
+                            <a href="#"><i class="fas fa-trash"></i> <span>Delete Document</span></a>
+                        </div>
+                    </li>
+
+                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    <li><a href="#" id="themeToggle"><i class="fas fa-moon"></i> <span>Theme</span></a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+            </div>
+        </aside>
+
+        <!-- Main wrapper -->
+        <div class="main-content-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="toggle-sidebar" id="toggleSidebar" title="Toggle sidebar">
+                        <!-- By default we put an arrow icon for large screens, JS will swap to hamburger on small screens -->
+                        <i class="fas fa-arrow-left" id="toggleIcon"></i>
+
+                        <!-- hamburger markup (hidden except when JS toggles) -->
+                        <div class="hamburger" id="hamburger" style="display:none">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+
+                    <div class="header-logo" id="headerLogo">
+                        <img src="#" alt="Header Logo">
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="search-wrap">
+                        <input type="text" class="search-input" id="searchBox" placeholder="Search...">
+                        <span class="search-close" id="closeSearch"><i class="fas fa-times"></i></span>
+                    </div>
+
+                    <div class="header-icon" id="searchIcon">
+                        <i class="fas fa-search"></i>
+                    </div>
+
+                    <div class="header-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+
+                    <div class="header-icon user-avatar">
+                        <i class="fas fa-user"></i>
+                        <span class="user-status"></span>
+                    </div>
+
+                    <div class="header-icon more-menu" id="moreMenu">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <div class="more-dropdown" id="moreDropdown" style="display:none">
+                            <a href="#"><i class="fas fa-search"></i> Search</a>
+                            <a href="#"><i class="fas fa-user"></i> My Profile</a>
+                            <a href="#"><i class="fas fa-bell"></i> Notifications <span class="notification-badge">3</span></a>
+                            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main content -->
+            <main class="main-content">
+                <h1 class="dashboard-title">Dashboard</h1>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-title">Total Users</div>
+                        <div class="card-value">1,254</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Revenue</div>
+                        <div class="card-value">$42,580</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">New Orders</div>
+                        <div class="card-value">324</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Pending Tasks</div>
+                        <div class="card-value">18</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script>
+        // Elements
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const hamburger = document.getElementById('hamburger');
+        const documentDropdown = document.getElementById('documentDropdown');
+        const documentMenu = document.getElementById('documentMenu');
+        const searchIcon = document.getElementById('searchIcon');
+        const searchInput = document.getElementById('searchBox');
+        const closeSearch = document.getElementById('closeSearch');
+        const moreMenu = document.getElementById('moreMenu');
+        const moreDropdown = document.getElementById('moreDropdown');
+        const headerLogo = document.getElementById('headerLogo');
+
+        // Helper: detect sizes
+        function isMobile() { return window.innerWidth <= 768 }
+        function isTabletRange() { return window.innerWidth <= 991 && window.innerWidth > 768 }
+        function isLarge() { return window.innerWidth >= 992 }
+
+        // Initialize visual state depending on width
+        function initLayoutState() {
+            // Remove transient classes
+            sidebar.classList.remove('show');
+            toggleSidebar.classList.remove('open');
+            // Setup default: large -> expanded, tablet-range -> collapsed, mobile -> hidden
+            if (isLarge()) {
+                sidebar.classList.remove('collapsed');
+                // arrow-left icon
+                toggleIcon.style.display = 'inline-block';
+                toggleIcon.className = 'fas fa-arrow-left';
+                hamburger.style.display = 'none';
+                // ensure header logo hidden because sidebar shows logo
+                headerLogo.style.display = 'none';
+            } else if (isTabletRange()) {
+                // minimized by default (icons only)
+                sidebar.classList.add('collapsed');
+                toggleIcon.style.display = 'inline-block';
+                toggleIcon.className = 'fas fa-arrow-right'; // arrow-right to indicate show
+                hamburger.style.display = 'none';
+                // show header logo centered
+                headerLogo.style.display = 'flex';
+            } else {
+                // mobile
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.remove('show');
+                // show hamburger instead of arrow
+                toggleIcon.style.display = 'none';
+                hamburger.style.display = 'block';
+                toggleSidebar.classList.remove('active');
+                headerLogo.style.display = 'flex';
+            }
+            applyMainOffset();
+        }
+
+        // Apply margin offsets are handled in CSS via sibling selectors; this function
+        // toggles CSS classes when toggling to ensure UI state.
+        function applyMainOffset() {
+            // Nothing needed here because CSS sibling selectors do the job; left keep for future logic
+        }
+
+        // Toggle for arrow (desktop/tablet)
+        toggleSidebar.addEventListener('click', function (e) {
+            if (isMobile()) {
+                // Mobile: toggle overlay show/hide & animate hamburger
+                const open = toggleSidebar.classList.toggle('open');
+                if (open) {
+                    sidebar.classList.add('show');
+                } else {
+                    sidebar.classList.remove('show');
+                }
+                return;
+            }
+
+            // Desktop/tablet: use collapsed state
+            // If currently collapsed -> expand; else collapse
+            const collapsed = sidebar.classList.contains('collapsed');
+            if (collapsed) {
+                // expand
+                sidebar.classList.remove('collapsed');
+                // show arrow-left to indicate can collapse
+                toggleIcon.className = 'fas fa-arrow-left';
+            } else {
+                // collapse
+                sidebar.classList.add('collapsed');
+                toggleIcon.className = 'fas fa-arrow-right';
+            }
+        });
+
+        // Handle hamburger click (also inside same toggle element) - but we made clicking toggleSidebar handle this
+        // We also need to sync .open class with .show on sidebar for animations:
+        // The event listener above already toggles .open and .show for mobile.
+
+        // Document dropdown toggle
+        documentDropdown.addEventListener('click', function (e) {
+            const open = this.classList.toggle('active');
+            documentMenu.classList.toggle('show', open);
+        });
+
+        // Search logic:
+        // Clicking searchIcon opens the search box (only if not open). The X inside search box closes it.
+        searchIcon.addEventListener('click', function () {
+            if (!searchInput.classList.contains('show')) {
+                searchInput.classList.add('show');
+                setTimeout(() => searchInput.focus(), 50);
+            } else {
+                // do nothing (per your request: clicking search icon while open should not close)
+            }
+        });
+        closeSearch.addEventListener('click', function () {
+            searchInput.classList.remove('show');
+        });
+
+        // More menu toggle (click to open close)
+        moreMenu.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const shown = moreDropdown.style.display === 'block';
+            moreDropdown.style.display = shown ? 'none' : 'block';
+        });
+        document.addEventListener('click', function (e) {
+            if (!moreMenu.contains(e.target)) {
+                moreDropdown.style.display = 'none';
+            }
+        });
+
+        // Window resize behaviors to ensure correct default on breakpoints
+        window.addEventListener('resize', function () {
+            initLayoutState();
+        });
+
+        // Initial setup on load
+        initLayoutState();
+
+        // Optional: allow ESC to close overlay or search
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                // close mobile sidebar
+                if (sidebar.classList.contains('show')) sidebar.classList.remove('show');
+                // close search
+                if (searchInput.classList.contains('show')) searchInput.classList.remove('show');
+            }
+        });
+
+        // Accessibility / click outside dropdown to close
+        document.addEventListener('click', function (e) {
+            if (!documentDropdown.contains(e.target) && !documentMenu.contains(e.target)) {
+                documentDropdown.classList.remove('active');
+                documentMenu.classList.remove('show');
+            }
+        });
+
+        // Ensure clicking any sidebar link on mobile closes the overlay
+        document.querySelectorAll('.sidebar-nav a').forEach(a => {
+            a.addEventListener('click', function () {
+                if (isMobile()) {
+                    sidebar.classList.remove('show');
+                    toggleSidebar.classList.remove('open');
+                }
+            });
+        });
+
+        // End script
+    </script>
+</body>
+
+</html>

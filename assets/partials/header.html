@@ -1,0 +1,117 @@
+<!-- partials/header.html -->
+<header class="header" id="header">
+    <div class="header-left">
+        <div class="toggle-sidebar" id="toggleSidebar" title="Toggle sidebar">
+            <i class="fas fa-arrow-left" id="toggleIcon" style="display:inline-block"></i>
+            <div class="hamburger" id="hamburger" style="display:none">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <div class="header-logo" id="headerLogo">
+            <img src="../assets/img/logo.jpg" alt="Header Logo">
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="search-wrap">
+            <input type="text" class="search-input" id="searchBox" placeholder="Search...">
+            <span class="search-close" id="closeSearch"><i class="fas fa-times"></i></span>
+        </div>
+
+        <div class="header-icon" id="searchIcon">
+            <i class="fas fa-search"></i>
+        </div>
+
+        <div class="header-icon" id="notificationIcon">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notifCount">3</span>
+        </div>
+
+        <!-- User icon visible on large screens only -->
+        <div class="header-icon user-avatar" id="userAvatar">
+            <i class="fas fa-user"></i>
+            <span class="user-status"></span>
+
+            <!-- User menu for large screens -->
+            <div class="floating-dropdown user-dropdown" id="userDropdown">
+                <a href="#" id="userProfileLarge"><i class="fas fa-user"></i> My Profile</a>
+                <a href="#" id="userSettingsLarge"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" id="userLogoutLarge"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+
+        <!-- Three-dot more menu for small screens -->
+        <div class="header-icon more-menu" id="moreMenu">
+            <i class="fas fa-ellipsis-v"></i>
+            <div class="floating-dropdown" id="moreDropdown">
+                <a href="#" id="moreSearch"><i class="fas fa-search"></i> Search</a>
+                <a href="#" id="moreProfile"><i class="fas fa-user"></i> My Profile</a>
+
+                <a href="#" id="moreNotification" class="notification-menu-item">
+                    <span class="text"><i class="fas fa-bell"></i> Notifications</span>
+                    <span class="notification-badge">3</span>
+                </a>
+
+                <a href="#" id="moreSettings"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" id="moreLogout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Notification box (shared) -->
+<div class="notification-box" id="notificationBox" aria-hidden="true">
+    <div class="notif-header">
+        <strong>Notifications</strong>
+        <small id="clearAllNotif">CLEAR ALL</small>
+    </div>
+    <div class="notif-body" id="notifBody">
+        <div class="notif-item">
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <div class="text">
+                <div>New user registered — John Doe</div>
+                <small>4 mins ago</small>
+            </div>
+        </div>
+
+        <div class="notif-item">
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <div class="text">
+                <div>Submission #234 approved</div>
+                <small>22 mins ago</small>
+            </div>
+        </div>
+
+        <div class="notif-item">
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <div class="text">
+                <div>System scheduled maintenance</div>
+                <small>1 hour ago</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="notif-footer">
+        <a href="#" id="viewAllNotifications">View all Notifications</a>
+    </div>
+</div>
+
+<!-- Search modal -->
+<div class="modal-overlay" id="searchModalOverlay" aria-hidden="true">
+    <div class="search-modal" role="dialog" aria-modal="true" aria-label="Search">
+        <header>
+            <strong>Search</strong>
+            <button id="closeSearchModal" class="close-btn" aria-label="Close search">
+                <i class="fas fa-times"></i>
+            </button>
+        </header>
+        <div>
+            <input id="modalSearchInput" placeholder="What are you looking for?" />
+            <div class="search-actions">
+                <button id="cancelSearchBtn" class="btn btn-secondary">Cancel</button>
+                <button id="doSearchBtn" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </div>
+</div>

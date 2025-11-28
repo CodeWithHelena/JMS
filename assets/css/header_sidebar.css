@@ -1,0 +1,893 @@
+/* assets/css/header-sidebar.css */
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+    z-index: 1002;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.show {
+    left: 0;
+}
+
+.sidebar-logo {
+    padding: 18px;
+    padding-left: 0;
+    padding-right: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+    height: var(--header-height);
+}
+
+.sidebar-logo img {
+    max-width: 140px;
+    height: auto;
+}
+
+.logo-collapsed {
+    display: none;
+}
+
+/* nav */
+.sidebar-nav {
+    flex: 1;
+    padding: 12px 0;
+    overflow: hidden;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar-nav li {
+    margin-bottom: 6px;
+    position: relative;
+    transition: var(--transition);
+}
+
+.sidebar-nav li.dropdown-open {
+    margin-bottom: 12px;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: var(--transition);
+    white-space: nowrap;
+    width: 100%;
+}
+
+.sidebar-nav a i {
+    width: 24px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.sidebar-nav a:hover {
+    background: var(--hover-bg);
+}
+
+.sidebar-nav a.active {
+    background: var(--active-bg);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Collapsed: hide label text only (keep icons visible) */
+.sidebar.collapsed .sidebar-nav a span,
+.sidebar.collapsed .sidebar-nav button span {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-nav .title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar.collapsed .sidebar-nav a {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+/* footer */
+.sidebar-footer {
+    padding: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    background: transparent;
+}
+
+.sidebar.collapsed .sidebar-footer span {
+    display: none;
+}
+
+.sidebar.collapsed .logout-btn {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+/* Dropdown toggle (in sidebar) */
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+    cursor: pointer;
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: var(--text-color);
+    background: transparent;
+    border: none;
+    font: inherit;
+    text-align: left;
+}
+
+.dropdown-toggle .title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.dropdown-toggle::after {
+    content: "";
+    display: inline-block;
+    margin-left: 8px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid currentColor;
+    transform-origin: center;
+    transition: var(--transition);
+    margin-right: 8px;
+}
+
+.dropdown-toggle.active::after {
+    transform: rotate(180deg);
+}
+
+/* dropdown menu */
+.dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .28s ease;
+    padding-left: 0;
+    margin: 0;
+    width: 100%;
+    background: var(--sidebar-bg);
+}
+
+.dropdown-menu.show {
+    max-height: 400px;
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 0;
+    text-decoration: none;
+    color: var(--text-color);
+    width: 100%;
+    margin-left: 0;
+    padding-left: 46px;
+    background: var(--sidebar-bg);
+}
+
+.dropdown-menu a i {
+    width: 24px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.dropdown-menu a:hover {
+    background: var(--hover-bg);
+}
+
+/* When sidebar collapsed hide caret and collapse its menu */
+.sidebar.collapsed .dropdown-toggle::after {
+    display: none;
+}
+
+.sidebar.collapsed .dropdown-menu {
+    display: block;
+    max-height: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    background: var(--header-bg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 1003;
+    width: 100%;
+    transition: var(--transition);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toggle-sidebar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--body-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.toggle-sidebar:hover {
+    background: var(--hover-bg);
+}
+
+.toggle-sidebar i {
+    transition: var(--transition);
+}
+
+.hamburger {
+    width: 22px;
+    height: 16px;
+    display: inline-block;
+    position: relative;
+}
+
+.hamburger span {
+    display: block;
+    position: absolute;
+    height: 2px;
+    left: 0;
+    right: 0;
+    background: currentColor;
+    transition: var(--transition)
+}
+
+.hamburger span:nth-child(1) {
+    top: 0;
+    width: 100%
+}
+
+.hamburger span:nth-child(2) {
+    top: 7px;
+    width: 60%
+}
+
+.hamburger span:nth-child(3) {
+    bottom: 0;
+    width: 100%
+}
+
+.toggle-sidebar.open .hamburger span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg)
+}
+
+.toggle-sidebar.open .hamburger span:nth-child(2) {
+    opacity: 0
+}
+
+.toggle-sidebar.open .hamburger span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg)
+}
+
+.header-logo {
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-logo img {
+    height: 40px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--body-bg);
+    position: relative;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.header-icon:hover {
+    background: var(--hover-bg);
+}
+
+/* show/hide 3-dot menu on mobile */
+.more-menu {
+    display: none;
+}
+
+/* notification / more menu */
+.notification-menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.notification-menu-item .text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-badge {
+    background: #cc5500;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+/* floating dropdown */
+.floating-dropdown {
+    position: absolute;
+    top: calc(var(--header-height) + 8px);
+    right: 16px;
+    width: 220px;
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 6px 0;
+    z-index: 1200;
+    transform-origin: top right;
+    transform: translateY(-6px) scale(.96);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.floating-dropdown.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.floating-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: var(--text-color);
+    background: var(--sidebar-bg);
+}
+
+.floating-dropdown a:hover {
+    background: var(--hover-bg);
+    border-radius: 6px;
+}
+
+/* Notification box */
+.notification-box {
+    position: absolute;
+    top: calc(var(--header-height) + 8px);
+    right: 16px;
+    width: 320px;
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    z-index: 1200;
+    border: 1px solid var(--border-color);
+    transform-origin: top right;
+    transform: translateY(-6px) scale(.98);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.notification-box.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.notification-box .notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-box .notif-header strong {
+    font-size: 14px;
+}
+
+.notification-box .notif-header small {
+    color: #d9534f;
+    cursor: pointer;
+}
+
+.notification-box .notif-body {
+    max-height: 290px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.notification-box .notif-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-box .notif-item .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--body-bg);
+}
+
+.notification-box .notif-item .text {
+    flex: 1;
+}
+
+.notification-box .notif-item .text small {
+    display: block;
+    color: var(--text-light);
+    margin-top: 6px;
+}
+
+.notification-box .notif-footer {
+    text-align: center;
+    padding: 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Search modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1500;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.search-modal {
+    width: min(500px, 90%);
+    background: var(--sidebar-bg);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+
+.search-modal header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-modal header strong {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.search-modal .close-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.search-modal .close-btn:hover {
+    background: var(--hover-bg);
+    color: var(--text-color);
+}
+
+.search-modal input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: none;
+    background: var(--body-bg);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* Responsive visibility */
+@media (max-width: 991px) {
+    .sidebar {
+        top: 0;
+        height: 100%;
+    }
+
+    .sidebar-logo {
+        display: flex;
+    }
+
+    .header-logo {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        top: var(--header-height);
+        height: calc(100% - var(--header-height));
+        left: -100%;
+        width: var(--sidebar-width);
+        transition: left .25s ease;
+    }
+
+    .sidebar.show {
+        left: 0;
+        width: 100%;
+    }
+
+    .sidebar.collapsed {
+        width: var(--sidebar-width);
+    }
+
+    .main-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar-logo {
+        display: none;
+    }
+
+    .header-logo {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .header-icon:not(.more-menu) {
+        display: none !important;
+    }
+
+    .more-menu {
+        display: flex !important;
+    }
+}
+
+
+/* ------------------ Search & Modal styling (fixes requested) ------------------ */
+
+/* Desktop header search: hidden by default, smooth reveal when .show added */
+.search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 0;
+    opacity: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    height: 40px;
+    transition: var(--transition);
+    position: relative;
+    /* light background tied to brand but subtle */
+    background: rgba(204, 85, 0, 0.06);
+    padding-left: 14px;
+    padding-right: 36px;
+    color: var(--text-color);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+}
+
+/* visible state */
+.search-input.show {
+    width: 250px;
+    opacity: 1;
+    padding: 10px 36px 10px 14px;
+}
+
+/* Remove default focus outline and add subtle focus shadow */
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* X button inside the header search */
+.search-close {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0;
+    transition: var(--transition);
+    color: var(--text-light);
+}
+
+.search-input.show+.search-close {
+    opacity: 1;
+}
+
+/* Make the header icon's inner icon centered and make search icon visually respond when active */
+.header-icon i {
+    display: block;
+}
+
+#searchIcon.search-active {
+    background: var(--brand);
+    color: #ffffff;
+}
+
+#searchIcon.search-active i {
+    color: #ffffff;
+}
+
+/* Notification badge: nudge up slightly on large screens */
+.header-icon .notification-badge {
+    position: absolute;
+    top: 4px;
+    /* moved upward a little */
+    right: 6px;
+    transform: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+}
+
+/* Ensure the bell icon remains centered inside its header-icon parent */
+.header-icon#notificationIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- floating dropdown (more menu) small-screen: keep badge beside the "Notifications" text --- */
+/* By default the notification item inside the floating dropdown uses .notification-menu-item */
+.floating-dropdown .notification-menu-item {
+    display: flex;
+    align-items: center;
+    /* default behavior on large: space-between (keeps badge to right),
+     but on small screens we'll keep the badge next to the text */
+    justify-content: space-between;
+}
+
+/* On small screens (where the 3-dot more menu is shown) place the badge right next to the label */
+@media (max-width: 768px) {
+    .floating-dropdown .notification-menu-item {
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .floating-dropdown .notification-menu-item .notification-badge {
+        position: static;
+        margin-left: 4px;
+        top: auto;
+        right: auto;
+    }
+
+    /* Make dropdown width comfortable on mobile so the badge sits close to the text */
+    .floating-dropdown {
+        width: 260px;
+    }
+}
+
+/* ------------------ Search Modal Button styling ------------------ */
+
+/* Modal overlay & card (kept consistent with design) */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1500;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.search-modal {
+    width: min(500px, 90%);
+    background: var(--sidebar-bg);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+
+.search-modal header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Modal input - remove default outlines and give subtle background */
+.search-modal input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    background: rgba(204, 85, 0, 0.04);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Buttons in modal: primary uses brand color, secondary is subtle */
+.search-modal .btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+.search-modal .btn-primary {
+    background: var(--brand);
+    color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.search-modal .btn-primary:hover {
+    filter: brightness(.95);
+    transform: translateY(-1px);
+}
+
+.search-modal .btn-secondary {
+    background: var(--body-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.search-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* ---------------------------------------------------------------- */
+
+
+/* ---- Logo swap rules ---- */
+
+/* default state: show full logo, hide small logo */
+.sidebar-logo .logo-full {
+    display: block;
+}
+
+.sidebar-logo .logo-collapsed {
+    display: none;
+}
+
+/* when sidebar has .collapsed, show small, hide full */
+.sidebar.collapsed .sidebar-logo .logo-full {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-logo .logo-collapsed {
+    display: block;
+}
+
+/* sizing and smooth transition */
+.sidebar-logo img {
+    max-width: 140px;
+    height: auto;
+    transition: width .18s ease, opacity .18s ease;
+}
+
+/* optional: smaller size when collapsed so it fits the compact sidebar */
+.sidebar.collapsed .sidebar-logo img.logo-collapsed {
+    max-width: 36px;
+    /* tweak this to suit your small logo */
+}
+
+/* defensive: stronger specificity if other rules override it */
+.sidebar.collapsed .sidebar-logo .logo-collapsed,
+.sidebar-logo .logo-full {
+    /* avoid layout shifting */
+    vertical-align: middle;
+    display: inline-block;
+}

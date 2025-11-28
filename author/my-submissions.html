@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Submission</title>
+
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div> <!-- sidebar.html will inject <aside id="sidebar"> -->
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div> <!-- header.html will inject header + notification, modal -->
+
+            <main class="main-content">
+                <div class="container page-title">
+                    <h1>My Submissions</h1>
+                    <p>View all manuscripts you’ve submitted</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+
+    <!-- page-specific scripts (optional) -->
+    <script src="/assets/js/page.js"></script>
+</body>
+
+</html>
