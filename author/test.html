@@ -20,6 +20,7 @@
             --muted: #6b7280;
             /* grey text */
             --light-accent: #fff3e8;
+            --light-accent2: #fffcfa;
             /* light background for status/button */
             --success: #10b981;
             --danger: #ef4444;
@@ -64,7 +65,7 @@
             background: linear-gradient(180deg, var(--card-bg), var(--card-bg));
             border: 1px solid var(--card-border);
             border-radius: var(--card-radius);
-            padding: 1rem;
+            
             position: relative;
             box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
             display: flex;
@@ -73,26 +74,14 @@
         }
 
         .card-header-row {
+            margin-top: 2.1rem;
             display: flex;
             align-items: center;
             gap: .75rem;
             margin-bottom: .5rem;
         }
 
-        .sidebar-logo {
-            width: 56px;
-            height: 56px;
-            border-radius: 8px;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .sidebar-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block
-        }
+        
 
         .card-title {
             font-weight: 700;
@@ -108,35 +97,46 @@
             margin-top: .15rem;
         }
 
+        .card-bottom{
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+        }
+
         /* Edit button (pill) */
         .btn-edit {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            background: transparent;
+            top: 0;
+            right: 0;
+            background: var(--light-accent2); 
             border: none;
+            border-top-right-radius: var(--card-radius);
             color: var(--primary);
             display: inline-flex;
             align-items: center;
             gap: .45rem;
             padding: .35rem .6rem;
             font-weight: 600;
-            border-radius: 999px;
             box-shadow: 0 4px 10px rgba(255, 122, 24, 0.08);
             transition: all .15s ease;
         }
 
         .btn-edit:hover {
-            transform: translateY(-2px);
             background: rgba(255, 122, 24, 0.06);
         }
 
         .meta-row {
-            display: flex;
+            margin-bottom: 7.2rem;
+            /* display: flex;
             gap: 1rem;
             align-items: center;
             margin: .45rem 0 1rem 0;
-            flex-wrap: wrap
+            flex-wrap: wrap */
+        }
+        .card-header-row,
+        .meta-row,
+        .card-actions{
+            padding: 0 1rem;
         }
 
         .meta {
@@ -146,10 +146,10 @@
 
         .status-badge {
             display: inline-block;
-            padding: .28rem .5rem;
+            padding: .28rem 1rem;
             font-weight: 700;
             font-size: .78rem;
-            border-radius: 999px;
+            border-radius: 4px;
             background: var(--light-accent);
             color: var(--primary);
             box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.02);
@@ -158,36 +158,53 @@
         .card-actions {
             margin-top: auto;
             display: flex;
+            justify-content: space-between;
             gap: .6rem;
         }
 
         .btn-download {
-            border-radius: 10px;
+            width: 50%;
+            border-radius: 5px;
             border: 1px solid rgba(16, 24, 40, 0.06);
-            padding: .45rem .8rem;
+            padding:0 1.2rem;
             background: transparent;
-            font-weight: 600;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            text-wrap: no-wrap;
+            text-decoration: none;
             display: inline-flex;
             gap: .6rem;
             align-items: center;
+            transition: all .15s ease;
+        }
+
+        .btn-download:hover{
+            background: var(--primary);
+            color: #fff;
         }
 
         .btn-timeline {
-            border-radius: 10px;
+            width: 50%;
+            border-radius: 5px;
             padding: .45rem .8rem;
             background: transparent;
-            border: 1px solid rgba(16, 24, 40, 0.09);
+            border: 1px solid rgb(16, 24, 40);
             display: inline-flex;
             gap: .6rem;
             align-items: center;
-            font-weight: 600;
+            font-size: 14px;
+            text-wrap: no-wrap;
+            text-align: center;
         }
 
         /* subtle small text under card */
         .submitted-text {
             font-size: .82rem;
-            color: var(--muted);
+            text-align: right;
+            color: #fff;
             margin-top: .6rem;
+            background: var(--muted);
+            padding: 1rem ;
         }
 
         /* Make small tweaks for better stacking on narrow cards */
@@ -276,7 +293,6 @@
         </button>
 
         <div class="card-header-row">
-          <div class="sidebar-logo"><img src="${item.logo}" alt="logo"></div>
           <div style="flex:1; min-width:0">
             <h3 class="card-title">${escapeHtml(item.title)}</h3>
             <div class="card-sub">Journal: ${escapeHtml(item.journal)}</div>
@@ -285,21 +301,25 @@
 
         <div class="meta-row">
           <div class="meta"><strong>ISSN:</strong> ${escapeHtml(item.issn)}</div>
-          <div class="meta"><strong>Authors:</strong> ${escapeHtml(item.authors)}</div>
+          <div class="meta my-2"><strong>Authors:</strong> ${escapeHtml(item.authors)}</div>
           <div class="ms-auto"><span class="status-badge">${escapeHtml(item.status)}</span></div>
         </div>
 
-        <div class="card-actions">
-          <a class="btn-download" href="${item.downloadUrl}" title="Download">
-            <i class="fa fa-download"></i> <span>Download</span>
-          </a>
+        <div class="card-bottom">
+            <div class="card-actions mt-3">
+            <a class="btn-download" href="${item.downloadUrl}" title="Download">
+                <i class="fa fa-download"></i> <span>Download</span>
+            </a>
 
-          <button class="btn-timeline" onclick="viewTimeline('${item.id}')">
-            <i class="fa fa-eye"></i> <span>View Timeline</span>
-          </button>
+            <button class="btn-timeline" onclick="viewTimeline('${item.id}')">
+                <i class="fa fa-eye"></i> <span>View Timeline</span>
+            </button>
+            </div>
+
+            <div class="submitted-text">Submitted on ${escapeHtml(item.dateSubmitted)}</div>
         </div>
 
-        <div class="submitted-text">Submitted on ${escapeHtml(item.dateSubmitted)}</div>
+        
       `;
             return card;
         }

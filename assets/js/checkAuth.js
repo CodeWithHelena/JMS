@@ -1,8 +1,9 @@
 
-
 const BASE_URL = "https://jms.247laboratory.net";
 export const token = localStorage.getItem("token");
 
+
+/*
 function redirectToLogin() {
   window.location.href = "/signin.html"; // Redirect to your login page
 }
@@ -62,3 +63,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 verifyToken(); // Call the function to verify the token when the script runs
+
+*/
