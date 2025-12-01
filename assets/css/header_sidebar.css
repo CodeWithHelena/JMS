@@ -94,7 +94,7 @@
 
 .sidebar-nav a.active {
     background: var(--active-bg);
-    color: var(--text-color);
+    color: var(--secondary-color);
     font-weight: 600;
 }
 

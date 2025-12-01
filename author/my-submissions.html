@@ -23,8 +23,7 @@
             --bg: #f7fafc;
             --card-bg: #ffffff;
             --primary: #ff7a18;
-            /* accent (used for edit & primary accents) */
-            --muted: #6b7280;
+            
             /* grey text */
             --light-accent: #fff3e8;
             --light-accent2: #fffcfa;
@@ -62,7 +61,7 @@
         }
 
         .manuscript-card {
-            background: linear-gradient(180deg, var(--card-bg), var(--card-bg));
+            background: var(--bg-white);
             border: 1px solid var(--card-border);
             border-radius: var(--card-radius);
             
@@ -201,7 +200,8 @@
             text-align: right;
             color: #fff;
             margin-top: .6rem;
-            background: var(--muted);
+            background: var(--hover-bg);
+            color: var(--text-color);
             padding: 1rem ;
         }
 

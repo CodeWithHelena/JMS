@@ -8,6 +8,8 @@
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -39,34 +41,7 @@
             background-color: var(--bg);
         }
 
-        /* Loading Screen */
-        .loading-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 400px;
-            flex-direction: column;
-            gap: 1rem;
-        }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
 
         /* Manuscript Header Card */
         .manuscript-header-card {
@@ -76,6 +51,7 @@
             padding: 2rem;
             margin-bottom: 2rem;
             border-left: 4px solid var(--primary);
+            position: relative;
         }
 
         .manuscript-header-card h1 {
@@ -124,11 +100,37 @@
             color: var(--primary);
         }
 
+        /* Back Button */
+        .back-button-wrap{
+            width: 20%;
+        }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
         /* timeline container */
         .timeline-wrap {
-           
+            /* max-width: 780px; */
             margin: 0 auto;
-            
+            /* padding: 0 1rem; */
         }
 
         /* vertical line */
@@ -244,6 +246,7 @@
         }
 
         .status-badge {
+            width: fit-content;
             display: inline-block;
             padding: 0.28rem 1rem;
             font-weight: 700;
@@ -297,7 +300,18 @@
             transform: translateY(-2px);
         }
 
-       
+        /* Page title styling */
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
 
         /* No data message */
         .no-data {
@@ -334,6 +348,11 @@
         .edit-btn:hover {
             background: #e56c0e;
             transform: translateY(-2px);
+        }
+
+        /* Timeline loading container */
+        .timeline-loading {
+            margin-top: 2rem;
         }
 
         /* small responsive tweak */
@@ -379,16 +398,54 @@
             <div id="header-placeholder"></div>
 
             <main class="main-content">
-                <div class="container page-title">
-                    <h1>Submission Timeline</h1>
-                    <p>Track the progress of your manuscript</p>
+                <div class="d-flex justify-content-between">
+                    <div class="container page-title">
+                        <h1>Submission Timeline</h1>
+                        <p>Track the progress of your manuscript</p>
+                    </div>
+                    <div class="back-button-wrap">
+                        <a href="/author/my-submissions.html" class="back-button">
+                            <i class="fas fa-arrow-left"></i>Go Back
+                        </a>
+                    </div>
                 </div>
 
                 <div class="timeline-wrap">
-                    <!-- Loading Screen -->
-                    <div id="loadingScreen" class="loading-screen">
-                        <div class="spinner"></div>
-                        <p>Loading timeline data...</p>
+                    <!-- Manuscript Header Card (with skeleton loading including icons) -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Title skeleton -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+
+                        <!-- Status badge skeleton -->
+                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
+
+                        <!-- Metadata with icon skeletons -->
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Edit button skeleton with icon -->
+                        <div class="header-actions">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 38px; width: 120px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Loading Screen -->
+                    <div id="timelineLoading" class="timeline-loading">
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading timeline events...</p>
+                        </div>
                     </div>
 
                     <!-- Error Screen -->
@@ -399,11 +456,6 @@
                         <button class="retry-btn" onclick="loadTimeline()">
                             <i class="fas fa-redo"></i> Try Again
                         </button>
-                    </div>
-
-                    <!-- Manuscript Header Card -->
-                    <div id="manuscriptHeader" class="manuscript-header-card" style="display: none;">
-                        <!-- Manuscript details will be injected here -->
                     </div>
 
                     <!-- Timeline Container -->
@@ -434,20 +486,22 @@
     <script>
         // Reusable Loading Functions
         const LoadingScreen = {
-            show: function (elementId = 'loadingScreen') {
-                document.getElementById(elementId).style.display = 'flex';
-                this.hideOthers();
-            },
-
-            hide: function (elementId = 'loadingScreen') {
-                document.getElementById(elementId).style.display = 'none';
-            },
-
-            hideOthers: function () {
-                document.getElementById('errorScreen').style.display = 'none';
-                document.getElementById('manuscriptHeader').style.display = 'none';
+            showTimelineLoading: function () {
+                document.getElementById('timelineLoading').style.display = 'block';
                 document.getElementById('timelineContainer').style.display = 'none';
                 document.getElementById('noDataMessage').style.display = 'none';
+            },
+
+            hideTimelineLoading: function () {
+                document.getElementById('timelineLoading').style.display = 'none';
+            },
+
+            showHeaderLoading: function () {
+                // Header already shows skeleton by default
+            },
+
+            hideHeaderLoading: function () {
+                // Skeleton will be replaced with real data
             }
         };
 
@@ -455,8 +509,7 @@
             show: function (message, elementId = 'errorScreen') {
                 document.getElementById('errorMessage').textContent = message;
                 document.getElementById(elementId).style.display = 'block';
-                LoadingScreen.hide();
-                document.getElementById('manuscriptHeader').style.display = 'none';
+                LoadingScreen.hideTimelineLoading();
                 document.getElementById('timelineContainer').style.display = 'none';
                 document.getElementById('noDataMessage').style.display = 'none';
             },
@@ -536,7 +589,10 @@
             }
 
             async loadTimeline() {
-                LoadingScreen.show();
+                // Show timeline loading immediately
+                LoadingScreen.showTimelineLoading();
+
+                // Manuscript header already shows skeleton loading by default (with icons)
 
                 try {
                     // First, get the submission data
@@ -559,12 +615,17 @@
 
                     this.submission = submissionData.submission;
 
+                    // Render manuscript header immediately with real data
+                    this.renderManuscriptHeader();
+
                     // Then, get the timeline history
                     await this.loadTimelineHistory();
 
                 } catch (error) {
                     console.error('Error loading timeline data:', error);
                     ErrorScreen.show('Failed to load timeline data. Please try again.');
+                    // Still show manuscript header even if timeline fails
+                    this.renderManuscriptHeader();
                 }
             }
 
@@ -591,16 +652,12 @@
                         history = this.submission.history || [];
                     }
 
-                    // Render manuscript header first
-                    this.renderManuscriptHeader();
-
                     // Then render timeline with user details
                     await this.renderTimeline(history);
 
                 } catch (error) {
                     console.error('Error loading timeline history:', error);
                     // Fallback to using history from submission data
-                    this.renderManuscriptHeader();
                     await this.renderTimeline(this.submission.history || []);
                 }
             }
@@ -633,8 +690,6 @@
                         </button>
                     </div>
                 `;
-
-                manuscriptHeader.style.display = 'block';
             }
 
             async renderTimeline(history) {
@@ -644,7 +699,7 @@
                 if (!history || history.length === 0) {
                     noDataMessage.style.display = 'block';
                     timelineContainer.style.display = 'none';
-                    LoadingScreen.hide();
+                    LoadingScreen.hideTimelineLoading();
                     return;
                 }
 
@@ -666,7 +721,7 @@
                 timelineContainer.style.display = 'block';
                 noDataMessage.style.display = 'none';
 
-                LoadingScreen.hide();
+                LoadingScreen.hideTimelineLoading();
             }
 
             async createTimelineItem(item, index, totalItems) {
