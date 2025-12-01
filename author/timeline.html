@@ -14,225 +14,409 @@
 
     <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
-</head>
-<style>
-    :root {
-        /* color variables - change here */
-        --bg: #f7fafc;
-        --card-bg: #ffffff;
-        --primary: #ff7a18;
-        /* accent (used for edit & primary accents) */
-        --muted: #6b7280;
-        /* grey text */
-        --light-accent: #fff3e8;
-        --light-accent2: #fffcfa;
-        /* light background for status/button */
-        --success: #10b981;
-        --danger: #ef4444;
-        --card-radius: 12px;
-        --gap: 1rem;
-        --card-border: rgba(16, 24, 40, 0.06);
-        --max-width: 1200px;
-    }
 
-    .manuscripts-wrapper {
-        max-width: var(--max-width);
-        margin: 0 auto;
-    }
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-    /* Grid: 3 columns desktop, 2 for <=991px, 1 for <=640px */
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--gap);
-    }
-
-    @media (max-width: 991px) {
-        .cards-grid {
-            grid-template-columns: repeat(2, 1fr);
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --accent: #4f46e5;
+            --primary: #ff7a18;
+            --muted: #6b7280;
+            --line-color: #e6e9f2;
+            --dot-color: var(--primary);
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+            --radius: 12px;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
         }
-    }
 
-    @media (max-width: 640px) {
-        .cards-grid {
-            grid-template-columns: 1fr;
+        body {
+            background-color: var(--bg);
         }
-    }
 
-    .manuscript-card {
-        background: linear-gradient(180deg, var(--card-bg), var(--card-bg));
-        border: 1px solid var(--card-border);
-        border-radius: var(--card-radius);
-
-        position: relative;
-        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
-        display: flex;
-        flex-direction: column;
-        min-height: 220px;
-    }
-
-    .card-header-row {
-        margin-top: 2.1rem;
-        display: flex;
-        align-items: center;
-        gap: .75rem;
-        margin-bottom: .5rem;
-    }
-
-
-
-    .card-title {
-        font-weight: 700;
-        font-size: 1rem;
-        line-height: 1.1;
-        margin: 0;
-        color: #081029;
-    }
-
-    .card-sub {
-        font-size: .82rem;
-        color: var(--muted);
-        margin-top: .15rem;
-    }
-
-    .card-bottom {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-    }
-
-    /* Edit button (pill) */
-    .btn-edit {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: var(--light-accent2);
-        border: none;
-        border-top-right-radius: var(--card-radius);
-        color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        gap: .45rem;
-        padding: .35rem .6rem;
-        font-weight: 600;
-        box-shadow: 0 4px 10px rgba(255, 122, 24, 0.08);
-        transition: all .15s ease;
-    }
-
-    .btn-edit:hover {
-        background: rgba(255, 122, 24, 0.06);
-    }
-
-    .meta-row {
-        margin-bottom: 7.2rem;
-        /* display: flex;
-            gap: 1rem;
+        /* Loading Screen */
+        .loading-screen {
+            display: flex;
+            justify-content: center;
             align-items: center;
-            margin: .45rem 0 1rem 0;
-            flex-wrap: wrap */
-    }
-
-    .card-header-row,
-    .meta-row,
-    .card-actions {
-        padding: 0 1rem;
-    }
-
-    .meta {
-        font-size: .82rem;
-        color: var(--muted)
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: .28rem 1rem;
-        font-weight: 700;
-        font-size: .78rem;
-        border-radius: 4px;
-        background: var(--light-accent);
-        color: var(--primary);
-        box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.02);
-    }
-
-    .card-actions {
-        margin-top: auto;
-        display: flex;
-        justify-content: space-between;
-        gap: .6rem;
-    }
-
-    .btn-download {
-        width: 50%;
-        border-radius: 5px;
-        border: 1px solid rgba(16, 24, 40, 0.06);
-        padding: 0 1.2rem;
-        background: transparent;
-        border: 1px solid var(--primary);
-        color: var(--primary);
-        text-decoration: none;
-        display: inline-flex;
-        gap: .6rem;
-        align-items: center;
-        transition: all .15s ease;
-    }
-
-    .btn-download:hover {
-        background: var(--primary);
-        color: #fff;
-    }
-
-    .btn-timeline {
-        width: 50%;
-        border-radius: 5px;
-        padding: .45rem .8rem;
-        background: transparent;
-        border: 1px solid rgb(16, 24, 40);
-        display: inline-flex;
-        gap: .6rem;
-        align-items: center;
-        font-size: 14px;
-        text-align: center;
-    }
-
-    /* subtle small text under card */
-    .submitted-text {
-        font-size: .82rem;
-        text-align: right;
-        color: #fff;
-        margin-top: .6rem;
-        background: var(--muted);
-        padding: 1rem;
-    }
-
-    /* Make small tweaks for better stacking on narrow cards */
-    @media (max-width:420px) {
-        .card-header-row {
-            gap: .5rem
-        }
-
-        .card-actions {
+            height: 400px;
             flex-direction: column;
-            align-items: stretch
+            gap: 1rem;
         }
 
-        .btn-download,
-        .btn-timeline {
-            width: 100%
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-    }
-</style>
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Manuscript Header Card */
+        .manuscript-header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .manuscript-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .header-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            background: rgba(255, 122, 24, 0.1);
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+        }
+
+        /* timeline container */
+        .timeline-wrap {
+           
+            margin: 0 auto;
+            
+        }
+
+        /* vertical line */
+        .timeline {
+            position: relative;
+            padding-left: 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--line-color);
+            border-radius: 4px;
+        }
+
+        /* each timeline item */
+        .timeline-item {
+            position: relative;
+            margin: 28px 0;
+            display: block;
+            padding-top: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .timeline-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .timeline-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .timeline-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .timeline-item:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .timeline-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        .timeline-item:nth-child(7) {
+            animation-delay: 0.7s;
+        }
+
+        .timeline-item:nth-child(8) {
+            animation-delay: 0.8s;
+        }
+
+        .timeline-item:nth-child(9) {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* the dot - unified color */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 6px rgba(255, 122, 24, 0.1);
+            transform: translateX(-50%);
+            transition: background .25s, transform .25s, box-shadow .25s;
+            z-index: 2;
+        }
+
+        /* the card itself */
+        .card {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+            will-change: transform;
+            position: relative;
+            min-height: 78px;
+            margin-left: 56px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.28rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            background: rgba(255, 122, 24, 0.1);
+            color: var(--primary);
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .updated-by {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .updated-by strong {
+            color: #374151;
+        }
+
+        /* Error screen */
+        .error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .retry-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+       
+
+        /* No data message */
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Edit button */
+        .edit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .edit-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        /* small responsive tweak */
+        @media (max-width:520px) {
+            .timeline::before {
+                left: 28px;
+            }
+
+            .timeline-item::before {
+                left: 28px;
+            }
+
+            .card {
+                margin-left: 48px;
+                padding: 14px;
+            }
+
+            .timeline-wrap {
+                padding: 0 0.5rem;
+            }
+
+            .manuscript-header-card {
+                padding: 1.5rem;
+            }
+
+            .manuscript-header-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
 
 <body>
     <div class="dashboard-container">
         <!-- placeholders for partials -->
-        <div id="sidebar-placeholder"></div> <!-- sidebar.html will inject <aside id="sidebar"> -->
+        <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
-            <div id="header-placeholder"></div> <!-- header.html will inject header + notification, modal -->
+            <div id="header-placeholder"></div>
 
             <main class="main-content">
                 <div class="container page-title">
                     <h1>Submission Timeline</h1>
                     <p>Track the progress of your manuscript</p>
+                </div>
+
+                <div class="timeline-wrap">
+                    <!-- Loading Screen -->
+                    <div id="loadingScreen" class="loading-screen">
+                        <div class="spinner"></div>
+                        <p>Loading timeline data...</p>
+                    </div>
+
+                    <!-- Error Screen -->
+                    <div id="errorScreen" class="error-screen" style="display: none;">
+                        <i class="fas fa-exclamation-triangle fa-3x" style="color: var(--danger); margin-bottom: 1rem;"></i>
+                        <h3>Failed to load timeline</h3>
+                        <p id="errorMessage">An error occurred while loading the timeline.</p>
+                        <button class="retry-btn" onclick="loadTimeline()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+
+                    <!-- Manuscript Header Card -->
+                    <div id="manuscriptHeader" class="manuscript-header-card" style="display: none;">
+                        <!-- Manuscript details will be injected here -->
+                    </div>
+
+                    <!-- Timeline Container -->
+                    <div class="timeline" id="timelineContainer" style="display: none;">
+                        <!-- Timeline items will be injected here -->
+                    </div>
+
+                    <!-- No Data Message -->
+                    <div id="noDataMessage" class="no-data" style="display: none;">
+                        <i class="fas fa-history"></i>
+                        <h3>No Timeline Events</h3>
+                        <p>No timeline events found for this submission.</p>
+                    </div>
                 </div>
             </main>
         </div>
@@ -241,8 +425,334 @@
     <!-- layout.js loads partials and wires header+sidebar behaviors -->
     <script src="/assets/js/layout.js"></script>
 
-    <!-- page-specific scripts (optional) -->
-    <script src="/assets/js/page.js"></script>
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        // Reusable Loading Functions
+        const LoadingScreen = {
+            show: function (elementId = 'loadingScreen') {
+                document.getElementById(elementId).style.display = 'flex';
+                this.hideOthers();
+            },
+
+            hide: function (elementId = 'loadingScreen') {
+                document.getElementById(elementId).style.display = 'none';
+            },
+
+            hideOthers: function () {
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('manuscriptHeader').style.display = 'none';
+                document.getElementById('timelineContainer').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'none';
+            }
+        };
+
+        const ErrorScreen = {
+            show: function (message, elementId = 'errorScreen') {
+                document.getElementById('errorMessage').textContent = message;
+                document.getElementById(elementId).style.display = 'block';
+                LoadingScreen.hide();
+                document.getElementById('manuscriptHeader').style.display = 'none';
+                document.getElementById('timelineContainer').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'none';
+            },
+
+            hide: function (elementId = 'errorScreen') {
+                document.getElementById(elementId).style.display = 'none';
+            }
+        };
+
+        // Timeline Manager Class
+        class TimelineManager {
+            constructor() {
+                this.BASE_URL = 'https://fp.247laboratory.net/';
+                this.token = localStorage.getItem('token') || null;
+                this.submissionId = this.getSubmissionIdFromURL();
+                this.submission = null;
+                this.userCache = {}; // Cache for user data
+
+                if (!this.token) {
+                    ErrorScreen.show('Authentication required. Please login.');
+                    return;
+                }
+
+                if (!this.submissionId) {
+                    ErrorScreen.show('No submission ID provided in URL');
+                    return;
+                }
+
+                this.initializeToastr();
+                this.loadTimeline();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 5000,
+                    extendedTimeOut: 2000
+                };
+            }
+
+            getSubmissionIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
+            }
+
+            async getUserDetails(userId) {
+                if (!userId) return null;
+
+                // Check cache first
+                if (this.userCache[userId]) {
+                    return this.userCache[userId];
+                }
+
+                try {
+                    const response = await fetch(`${this.BASE_URL}/api/v1/user/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.user) {
+                            // Cache the user data
+                            this.userCache[userId] = data.user;
+                            return data.user;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                }
+
+                return null;
+            }
+
+            async loadTimeline() {
+                LoadingScreen.show();
+
+                try {
+                    // First, get the submission data
+                    const submissionResponse = await fetch(`${this.BASE_URL}/api/v1/submissions/${this.submissionId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!submissionResponse.ok) {
+                        throw new Error(`Failed to fetch submission: ${submissionResponse.status}`);
+                    }
+
+                    const submissionData = await submissionResponse.json();
+
+                    if (!submissionData.success || !submissionData.submission) {
+                        throw new Error(submissionData.message || 'Failed to load submission data');
+                    }
+
+                    this.submission = submissionData.submission;
+
+                    // Then, get the timeline history
+                    await this.loadTimelineHistory();
+
+                } catch (error) {
+                    console.error('Error loading timeline data:', error);
+                    ErrorScreen.show('Failed to load timeline data. Please try again.');
+                }
+            }
+
+            async loadTimelineHistory() {
+                try {
+                    const historyResponse = await fetch(`${this.BASE_URL}/api/v1/submissions/${this.submissionId}/history`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!historyResponse.ok) {
+                        throw new Error(`Failed to fetch history: ${historyResponse.status}`);
+                    }
+
+                    const historyData = await historyResponse.json();
+
+                    let history = [];
+                    if (historyData.success && historyData.submission) {
+                        history = historyData.submission.history || [];
+                    } else {
+                        // Fallback to history from submission data
+                        history = this.submission.history || [];
+                    }
+
+                    // Render manuscript header first
+                    this.renderManuscriptHeader();
+
+                    // Then render timeline with user details
+                    await this.renderTimeline(history);
+
+                } catch (error) {
+                    console.error('Error loading timeline history:', error);
+                    // Fallback to using history from submission data
+                    this.renderManuscriptHeader();
+                    await this.renderTimeline(this.submission.history || []);
+                }
+            }
+
+            renderManuscriptHeader() {
+                const manuscriptHeader = document.getElementById('manuscriptHeader');
+
+                if (!this.submission) return;
+
+                const formattedDate = this.formatDate(this.submission.createdAt);
+                const statusDisplay = this.capitalizeFirstLetter(this.submission.status);
+                const journalName = this.submission.journalId?.title || 'Unknown Journal';
+
+                manuscriptHeader.innerHTML = `
+                    <h1>${this.escapeHtml(this.submission.title)}</h1>
+                    <span class="header-status-badge">Current Status: ${statusDisplay}</span>
+                    <div class="header-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-book-open"></i>
+                            <span>Journal: ${this.escapeHtml(journalName)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="far fa-calendar"></i>
+                            <span>Submitted On: ${formattedDate}</span>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="edit-btn" onclick="window.location.href='/author/edit-submission.html?id=${this.submissionId}'">
+                            <i class="fas fa-edit"></i> Edit Submission
+                        </button>
+                    </div>
+                `;
+
+                manuscriptHeader.style.display = 'block';
+            }
+
+            async renderTimeline(history) {
+                const timelineContainer = document.getElementById('timelineContainer');
+                const noDataMessage = document.getElementById('noDataMessage');
+
+                if (!history || history.length === 0) {
+                    noDataMessage.style.display = 'block';
+                    timelineContainer.style.display = 'none';
+                    LoadingScreen.hide();
+                    return;
+                }
+
+                // Sort history by date (oldest first for timeline)
+                const sortedHistory = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                // Create document fragment for better performance
+                const fragment = document.createDocumentFragment();
+
+                // Process each timeline item
+                for (let i = 0; i < sortedHistory.length; i++) {
+                    const item = sortedHistory[i];
+                    const timelineItem = await this.createTimelineItem(item, i, sortedHistory.length);
+                    fragment.appendChild(timelineItem);
+                }
+
+                timelineContainer.innerHTML = '';
+                timelineContainer.appendChild(fragment);
+                timelineContainer.style.display = 'block';
+                noDataMessage.style.display = 'none';
+
+                LoadingScreen.hide();
+            }
+
+            async createTimelineItem(item, index, totalItems) {
+                const timelineItem = document.createElement('div');
+
+                timelineItem.className = 'timeline-item';
+
+                // Format date
+                const formattedDate = this.formatDate(item.date || item.createdAt);
+
+                // Capitalize status for display
+                const statusDisplay = this.capitalizeFirstLetter(item.status);
+
+                // Get user details if available
+                let updatedByText = '';
+                if (item.by) {
+                    const user = await this.getUserDetails(item.by);
+                    if (user) {
+                        const userName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'System User';
+                        updatedByText = `<div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(userName)}</strong></div>`;
+                    } else {
+                        updatedByText = `<div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: System</strong></div>`;
+                    }
+                }
+
+                timelineItem.innerHTML = `
+                    <div class="card">
+                        <span class="status-badge">${statusDisplay}</span>
+                        <p class="timeline-comment">${this.escapeHtml(item.comment || 'No comment provided.')}</p>
+                        <p class="timeline-date">
+                            <i class="far fa-clock"></i> ${formattedDate}
+                        </p>
+                        ${updatedByText}
+                    </div>
+                `;
+
+                return timelineItem;
+            }
+
+            formatDate(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                } catch (error) {
+                    console.error('Error formatting date:', error);
+                    return dateString;
+                }
+            }
+
+            capitalizeFirstLetter(string) {
+                if (!string) return '';
+                return string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ');
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize timeline manager when DOM is loaded
+        let timelineManager;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            timelineManager = new TimelineManager();
+        });
+
+        // Global function for retry button
+        function loadTimeline() {
+            if (timelineManager) {
+                timelineManager.loadTimeline();
+            }
+        }
+    </script>
 </body>
 
 </html>
