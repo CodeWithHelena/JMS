@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="journalSelectContainer" class="journal-select">
+        <div class="selected">
+            <span class="selected-text">Select Journal</span>
+            <i class="fa fa-caret-down"></i>
+        </div>
+    
+        <div id="journalDropdown" class="journal-dropdown">
+            <div class="search-box">
+                <input id="searchJournal" type="text" placeholder="Search journal...">
+                <button id="clearJournalSearch">×</button>
+            </div>
+        </div>
+    
+        <!-- Hidden input to store selected ID -->
+        <input type="hidden" id="selectedJournal">
+    </div>
+
+    <script type="module" src="test.js"></script>
+
+</body>
+</html>

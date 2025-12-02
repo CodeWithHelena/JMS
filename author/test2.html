@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JournalFlow | Sign Up</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         * {
             margin: 0;
@@ -482,6 +483,28 @@
                     <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
                 </div>
                 <div class="error-message" id="lastNameError">Please enter a valid last name (minimum 2 characters)</div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Select a journal to submit</label>
+                <div class="custom-select" id="journalSelect">
+                    <div class="select-header">
+                        <span class="select-placeholder">Select journal</span>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                    <div class="select-dropdown">
+                        <div class="select-search-container">
+                            <input type="text" placeholder="Search journals..." id="journalSearch">
+                            <button type="button" class="search-clear">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="select-options" id="journalOptions">
+                            <!-- Options will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Hidden input stores selected journal id (or fallback name) -->
+                <input type="hidden" id="selectedJournal" name="journalId">
             </div>
 
             <!-- Custom Gender Select -->

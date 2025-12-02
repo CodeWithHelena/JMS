@@ -67,60 +67,200 @@ p{
     color: var(--text-light);
 }
 
-                /* Loading Screen */
-                .loading-screen {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 400px;
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-        
-                .spinner {
-                    width: 40px;
-                    height: 40px;
-                    border: 4px solid #f3f3f3;
-                    border-top: 4px solid var(--primary);
-                    border-radius: 50%;
-                    animation: spin 1s linear infinite;
-                }
-        
-                @keyframes spin {
-                    0% {
-                        transform: rotate(0deg);
-                    }
-        
-                    100% {
-                        transform: rotate(360deg);
-                    }
-                }
-        
-                /* Skeleton Loading */
-                .skeleton {
-                    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                    background-size: 200% 100%;
-                    animation: loading 1.5s infinite;
-                    border-radius: 4px;
-                }
-        
-                .skeleton-icon {
-                    background: linear-gradient(90deg, #e0e0e0 25%, #d0d0d0 50%, #e0e0e0 75%);
-                    background-size: 200% 100%;
-                    animation: loading 1.5s infinite;
-                    border-radius: 50%;
-                    opacity: 0.7;
-                }
-        
-                @keyframes loading {
-                    0% {
-                        background-position: 200% 0;
-                    }
-        
-                    100% {
-                        background-position: -200% 0;
-                    }
-                }
+/* Loading Screen */
+.loading-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.skeleton-icon {
+    background: linear-gradient(90deg, #e0e0e0 25%, #d0d0d0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+
+/* Custom Journal Select Dropdown & Filter */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.select-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--sidebar-bg);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.select-header:hover {
+    border-color: var(--primary-color);
+}
+
+.select-header.open {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.2);
+}
+
+.select-placeholder {
+    color: var(--text-light);
+}
+
+.select-arrow {
+    transition: var(--transition);
+    color: var(--text-light);
+}
+
+.select-arrow.open {
+    transform: rotate(180deg);
+}
+
+.select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    margin-top: 5px;
+    overflow: hidden;
+    display: none;
+}
+
+/* Updated search box styling */
+.select-search-container {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    background-color: var(--body-bg);
+    border-radius: 6px;
+    margin: 8px;
+}
+
+.select-search-container input {
+    width: 100%;
+    padding: 8px 35px 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    outline: none;
+}
+
+.select-search-container .search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-light);
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.select-options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.select-option {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.select-option:hover {
+    background-color: var(--hover-bg);
+}
+
+.select-option.selected {
+    background-color: var(--active-bg);
+    color: var(--text-color);
+}
+
+
+/* Toastr customizations */
+ .toast-success {
+     background-color: #28a745 !important;
+     color: white !important;
+ }
+
+ .toast-error {
+     background-color: #dc3545 !important;
+     color: white !important;
+ }
+
+ .toast-info {
+     background-color: #17a2b8 !important;
+     color: white !important;
+ }
+
+ .toast-warning {
+     background-color: #ffc107 !important;
+     color: #212529 !important;
+ }
+
+ /* Ensure toastr is visible on top of everything */
+ .toast-container {
+     z-index: 99999 !important;
+ }
+
+ .toast {
+     opacity: 1 !important;
+     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+ }
 
 
 

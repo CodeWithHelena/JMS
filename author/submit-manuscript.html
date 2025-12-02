@@ -119,111 +119,7 @@
             border-color: var(--primary-color);
         }
 
-        .custom-select {
-            position: relative;
-            width: 100%;
-        }
-
-        .select-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: var(--sidebar-bg);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .select-header:hover {
-            border-color: var(--primary-color);
-        }
-
-        .select-header.open {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.2);
-        }
-
-        .select-placeholder {
-            color: var(--text-light);
-        }
-
-        .select-arrow {
-            transition: var(--transition);
-            color: var(--text-light);
-        }
-
-        .select-arrow.open {
-            transform: rotate(180deg);
-        }
-
-        .select-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--sidebar-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            z-index: 1000;
-            margin-top: 5px;
-            overflow: hidden;
-            display: none;
-        }
-
-        /* Updated search box styling */
-        .select-search-container {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-            position: relative;
-            background-color: var(--body-bg);
-            border-radius: 6px;
-            margin: 8px;
-        }
-
-        .select-search-container input {
-            width: 100%;
-            padding: 8px 35px 8px 12px;
-            border-radius: 6px;
-            border: none;
-            background-color: var(--body-bg);
-            color: var(--text-color);
-            outline: none;
-        }
-
-        .select-search-container .search-clear {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: var(--text-light);
-            background: none;
-            border: none;
-            padding: 0;
-        }
-
-        .select-options {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .select-option {
-            padding: 12px 15px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .select-option:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .select-option.selected {
-            background-color: var(--active-bg);
-            color: var(--text-color);
-        }
+        
 
         /* Authors Section - Updated with working functionality */
         .author-row {
@@ -505,7 +401,7 @@
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="/assets/js/layout.js"></script>
-    <script src="js/submit-manuscript.js"></script>
+    <script type="module" src="js/submit-manuscript2.js"></script>
 </body>
 
 </html>
