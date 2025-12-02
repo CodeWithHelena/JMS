@@ -94,7 +94,7 @@ function getRoleClass(role) {
         case 'reviewer':
             return 'role-reviewer';
         case 'admin':
-            return 'role-admin';
+            return 'role-editor'; // Fallback to editor style if admin users exist
         default:
             return 'role-editor';
     }
@@ -235,14 +235,15 @@ function renderUsersStats(total, page, limit) {
 let roleSelectInstance = null;
 let statusSelectInstance = null;
 
+// Initialize custom selects
 function initializeCustomSelects() {
-    // Role options
+    // Role options - REMOVED ADMIN
     const roleOptions = [
         { value: '', label: 'All Roles' },
         { value: 'author', label: 'Author' },
         { value: 'editor', label: 'Editor' },
-        { value: 'reviewer', label: 'Reviewer' },
-        { value: 'admin', label: 'Admin' }
+        { value: 'reviewer', label: 'Reviewer' }
+        // Removed: { value: 'admin', label: 'Admin' }
     ];
     
     // Status options

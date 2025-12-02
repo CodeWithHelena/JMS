@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details | JournalFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap CSS (for utilities only) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/modal.css">
+    
+    <style>
+        :root {
+            --primary-color: rgba(204, 85, 0, 0.12);
+            --secondary-color: #cc5500;
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --header-height: 70px;
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --bg-white: #ffffff;
+            --body-bg: #f5f5f5;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --hover-bg: rgba(204, 85, 0, 0.12);
+            --active-bg: rgba(204, 85, 0, 0.15);
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --brand: #cc5500;
+            --muted: #6b7280;
+
+            /* Role Colors */
+            --role-editor: #3b82f6;
+            --role-editor-bg: rgba(59, 130, 246, 0.1);
+            --role-author: #10b981;
+            --role-author-bg: rgba(16, 185, 129, 0.1);
+            --role-reviewer: #f59e0b;
+            --role-reviewer-bg: rgba(245, 158, 11, 0.1);
+            --role-admin: #8b5cf6;
+            --role-admin-bg: rgba(139, 92, 246, 0.1);
+
+            /* Status Colors */
+            --status-active: #059669;
+            --status-active-bg: rgba(5, 150, 105, 0.1);
+            --status-inactive: #dc2626;
+            --status-inactive-bg: rgba(220, 38, 38, 0.1);
+            --status-pending: #d97706;
+            --status-pending-bg: rgba(217, 119, 6, 0.1);
+
+            /* Toggle Colors */
+            --toggle-on: #10b981;
+            --toggle-off: #d1d5db;
+            --toggle-bg: #f3f4f6;
+
+            --card-bg-primary: rgba(204, 85, 0, 0.08);
+            --card-bg-secondary: rgba(59, 130, 246, 0.08);
+            --card-bg-tertiary: rgba(16, 185, 129, 0.08);
+            --card-bg-quaternary: rgba(139, 92, 246, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .user-details-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            color: var(--brand);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            padding: 10px 16px;
+            border-radius: 6px;
+            transition: var(--transition);
+            background-color: var(--primary-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .back-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .back-btn i {
+            margin-right: 8px;
+        }
+
+        .user-details-card {
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-header {
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary-color), rgba(204, 85, 0, 0.08));
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .user-email {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .user-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-editor {
+            background-color: var(--role-editor-bg);
+            color: var(--role-editor);
+        }
+
+        .role-author {
+            background-color: var(--role-author-bg);
+            color: var(--role-author);
+        }
+
+        .role-reviewer {
+            background-color: var(--role-reviewer-bg);
+            color: var(--role-reviewer);
+        }
+
+        .role-admin {
+            background-color: var(--role-admin-bg);
+            color: var(--role-admin);
+        }
+
+        .user-status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background-color: var(--status-active-bg);
+            color: var(--status-active);
+        }
+
+        .status-inactive {
+            background-color: var(--status-inactive-bg);
+            color: var(--status-inactive);
+        }
+
+        .status-pending {
+            background-color: var(--status-pending-bg);
+            color: var(--status-pending);
+        }
+
+        .user-body {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 12px;
+            color: var(--brand);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-item {
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .detail-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .detail-item {
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: var(--transition);
+    }
+
+    /* Alternating background colors for detail items */
+    .details-grid .detail-item:nth-child(4n+1) {
+        background-color: var(--card-bg-primary);
+    }
+    
+    .details-grid .detail-item:nth-child(4n+2) {
+        background-color: var(--card-bg-secondary);
+    }
+    
+    .details-grid .detail-item:nth-child(4n+3) {
+        background-color: var(--card-bg-tertiary);
+    }
+    
+    .details-grid .detail-item:nth-child(4n+4) {
+        background-color: var(--card-bg-quaternary);
+    }
+
+    .detail-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+
+    /* Action buttons for email and phone */
+    .detail-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .action-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .email-action {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--role-editor);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .email-action:hover {
+        background-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .phone-action {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--role-author);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .phone-action:hover {
+        background-color: rgba(16, 185, 129, 0.2);
+    }
+
+        /* Toggle Switch */
+        .toggle-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--body-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .toggle-info {
+            flex: 1;
+        }
+
+        .toggle-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .toggle-description {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--toggle-off);
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked+.toggle-slider {
+            background-color: var(--toggle-on);
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .toggle-status {
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 15px;
+            min-width: 60px;
+        }
+
+        .toggle-on {
+            color: var(--toggle-on);
+        }
+
+        .toggle-off {
+            color: var(--muted);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .edit-btn {
+            background-color: var(--brand);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #b34900;
+        }
+
+        .delete-btn {
+            background-color: #fee;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .delete-btn:hover {
+            background-color: #fecaca;
+        }
+
+        .back-list-btn {
+            background-color: var(--primary-color);
+            color: var(--brand);
+            border: 1px solid var(--border-color);
+        }
+
+        .back-list-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 100px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-color);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error State */
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+        }
+
+        .error-state i {
+            font-size: 48px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .error-state h3 {
+            font-size: 20px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .error-state p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .user-header {
+                padding: 20px;
+                flex-direction: column;
+            }
+
+            .user-name {
+                font-size: 24px;
+            }
+
+            .user-body {
+                padding: 20px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toggle-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .user-details-container {
+                padding: 0 15px;
+            }
+
+            .user-badges {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-role,
+            .user-status {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="user-details-container">
+        <a href="users.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Users
+        </a>
+
+        <div id="userDetails">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Edit User Modal -->
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="edit-user-modal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="header-left">
+                    <h2>
+                        <i class="fas fa-user-edit"></i>
+                        Edit User
+                    </h2>
+                    <p>Update user information</p>
+                </div>
+                <button class="modal-close" id="modalClose" type="button">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+    
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editFirstName" class="form-label">
+                                First Name <span>*</span>
+                            </label>
+                            <input type="text" id="editFirstName" name="firstName" class="form-input" required>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="editLastName" class="form-label">
+                                Last Name <span>*</span>
+                            </label>
+                            <input type="text" id="editLastName" name="lastName" class="form-input" required>
+                        </div>
+                    </div>
+    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editEmail" class="form-label">
+                                Email Address <span>*</span>
+                            </label>
+                            <input type="email" id="editEmail" name="email" class="form-input" disabled>
+                            <div class="form-help">
+                                <i class="fas fa-lock"></i> Email cannot be changed
+                            </div>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="editGender" class="form-label">
+                                Gender <span>*</span>
+                            </label>
+                            <select id="editGender" name="gender" class="form-input" disabled>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="form-help">
+                                <i class="fas fa-lock"></i> Gender cannot be changed
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editPhone" class="form-label">
+                                Phone Number <span>*</span>
+                            </label>
+                            <input type="tel" id="editPhone" name="phone" class="form-input" required>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="editAddress" class="form-label">
+                                Address
+                            </label>
+                            <input type="text" id="editAddress" name="address" class="form-input" placeholder="Enter address">
+                        </div>
+                    </div>
+    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editRole" class="form-label">
+                                Role <span>*</span>
+                            </label>
+                            <select id="editRole" name="role" class="form-input" required>
+                                <option value="">Select Role</option>
+                                <option value="author">Author</option>
+                                <option value="editor">Editor</option>
+                                <option value="reviewer">Reviewer</option>
+                            </select>
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="editStatus" class="form-label">
+                                Verification Status
+                            </label>
+                            <div class="toggle-section">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="editIsVerified" name="isVerified">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">
+                                    <span class="toggle-text">User is verified</span>
+                                    <span class="toggle-help">Toggle to verify/unverify user account</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn" id="editCancelBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="submit-btn" id="editSubmitBtn">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (for utilities only) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- User Details Script -->
+    <script src="./js/user-details.js"></script>
+    <script src="./js/edit-user.js"></script>
+</body>
+
+</html>

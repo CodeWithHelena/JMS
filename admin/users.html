@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users Management | JournalFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         :root {
             --primary-color: rgba(204, 85, 0, 0.12);
@@ -29,38 +32,30 @@
             --brand: #cc5500;
             --muted: #6b7280;
 
-            /* Role Colors */
-            --role-editor: #3b82f6;
-            --role-editor-bg: rgba(59, 130, 246, 0.1);
-            --role-author: #10b981;
-            --role-author-bg: rgba(16, 185, 129, 0.1);
-            --role-reviewer: #f59e0b;
-            --role-reviewer-bg: rgba(245, 158, 11, 0.1);
-            --role-admin: #8b5cf6;
-            --role-admin-bg: rgba(139, 92, 246, 0.1);
+            
+    /* Role Colors - PRIMARY COLORS */
+    --role-editor: #2563eb;      /* Blue */
+    --role-editor-bg: rgba(37, 99, 235, 0.12);
+    --role-author: #059669;      /* Emerald */
+    --role-author-bg: rgba(5, 150, 105, 0.12);
+    --role-reviewer: #ea580c;    /* Orange */
+    --role-reviewer-bg: rgba(234, 88, 12, 0.12);
+    --role-admin: #7c3aed;       /* Violet */
+    --role-admin-bg: rgba(124, 58, 237, 0.12);
+    
+    /* Status Colors - SECONDARY/ACCENT COLORS */
+    --status-active: #16a34a;        /* Green (different shade) */
+    --status-active-bg: rgba(22, 163, 74, 0.15);
+    --status-inactive: #dc2626;      /* Red */
+    --status-inactive-bg: rgba(220, 38, 38, 0.15);
+    --status-pending: #ca8a04;       /* Gold */
+    --status-pending-bg: rgba(202, 138, 4, 0.15);
 
-            /* Status Colors */
-            --status-active: #10b981;
-            --status-active-bg: rgba(16, 185, 129, 0.1);
-            --status-inactive: #ef4444;
-            --status-inactive-bg: rgba(239, 68, 68, 0.1);
-            --status-pending: #f59e0b;
-            --status-pending-bg: rgba(245, 158, 11, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+        .placeholder{
+            background: none !important;
         }
-
-        body {
-            background-color: var(--body-bg);
-            color: var(--text-color);
-            min-height: 100vh;
-        }
-
         .users-container {
             max-width: 1400px;
             margin: 40px auto;
@@ -881,6 +876,12 @@
             </div>
         </div>
     </div>
+
+    
+    <!-- jQuery (required for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Import utility functions for custom select -->
     <script type="module" src="./js/users.js"></script>
