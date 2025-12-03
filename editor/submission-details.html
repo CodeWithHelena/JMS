@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Submission Details</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+</head>
+<style>
+    :root {
+    --bg: #f4f7fb;
+    --card-bg: #ffffff;
+    --accent: #4f46e5;
+    --primary: #ff7a18;
+    --primary-light: rgba(255, 122, 24, 0.1);
+    --primary-dark: #e56c0e;
+    --muted: #6b7280;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    --radius: 12px;
+    --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+    --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+}
+
+.submission-details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Back Button */
+.back-button-wrap {
+    margin-bottom: 1.5rem;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--light);
+    color: #374151;
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.back-button:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+}
+
+/* Manuscript Header Card */
+.manuscript-header-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--primary);
+    position: relative;
+    min-height: 180px;
+}
+
+.manuscript-header-card h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.header-status-badge {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 20px;
+    background: var(--primary-light);
+    color: var(--primary);
+    margin-bottom: 1rem;
+    text-transform: capitalize;
+}
+
+.header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.meta-item i {
+    color: var(--primary);
+}
+
+/* Content Sections */
+.content-section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title i {
+    color: var(--primary);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.count-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Authors Section */
+.authors-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.author-item {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    min-width: 200px;
+    flex: 1;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.author-email {
+    color: var(--muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Reviewers Section */
+.reviewers-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.reviewer-card {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    min-width: 250px;
+    flex: 1;
+    position: relative;
+}
+
+.reviewer-card .reviewer-name {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.reviewer-card .reviewer-email {
+    color: var(--muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.remove-reviewer-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: var(--danger);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+}
+
+.remove-reviewer-btn:hover {
+    background: #dc2626;
+}
+
+.no-reviewers {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    width: 100%;
+}
+
+.no-reviewers i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+/* Assign Reviewers Section */
+.assign-reviewers-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px dashed var(--border);
+}
+
+.selected-reviewers-preview {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.preview-header h4 {
+    margin: 0;
+    color: #111827;
+}
+
+.selected-reviewers-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.selected-reviewer-tag {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.remove-selected-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+}
+
+.remove-selected-btn:hover {
+    color: #dc2626;
+}
+
+.reviewer-select-container {
+    margin-bottom: 1.5rem;
+}
+
+.reviewer-select-container label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #111827;
+}
+
+.reviewer-search-wrapper {
+    position: relative;
+}
+
+.select-hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.select-hint i.fa-info-circle {
+    color: var(--info);
+}
+
+/* Custom Select Styles */
+.custom-search-select {
+    position: relative;
+    width: 100%;
+}
+
+.custom-search-select .select-header {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-search-select .select-header:hover {
+    border-color: var(--primary);
+}
+
+.custom-search-select .select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    z-index: 1000;
+    display: none;
+    margin-top: 0.25rem;
+}
+
+.custom-search-select .select-dropdown.active {
+    display: block;
+}
+
+.search-input-wrapper {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.clear-search {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: none;
+}
+
+.clear-search.visible {
+    display: block;
+}
+
+.select-options-list {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.select-option-item {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.select-option-item:hover {
+    background: var(--light);
+}
+
+.option-text {
+    flex: 1;
+}
+
+.option-name {
+    font-weight: 500;
+    color: #111827;
+    display: block;
+}
+
+.option-email {
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.add-icon {
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.no-results {
+    padding: 1rem;
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: var(--light);
+    color: var(--muted);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+/* Timeline Section */
+.timeline-actions {
+    margin-bottom: 1.5rem;
+}
+
+.recent-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.timeline-event {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.event-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.event-date {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.event-comment {
+    margin: 0.5rem 0 0 0;
+    color: #111827;
+}
+
+/* Loading and Error States */
+.loading-screen {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+}
+
+.loading-screen .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-screen {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+}
+
+.error-screen i {
+    color: var(--danger);
+    margin-bottom: 1rem;
+}
+
+.error-screen h3 {
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.retry-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.retry-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.skeleton-icon {
+    background: #f0f0f0;
+    border-radius: 50%;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .submission-details-container {
+        padding: 0 0.5rem;
+    }
+    
+    .manuscript-header-card {
+        padding: 1.5rem;
+    }
+    
+    .manuscript-header-card h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header-meta {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .content-section {
+        padding: 1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .author-item, .reviewer-card {
+        min-width: 100%;
+    }
+}
+</style>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <!-- Back Button -->
+                <div class="back-button-wrap">
+                    <a href="editor-submissions.html" class="back-button">
+                        <i class="fas fa-arrow-left"></i>Back to Submissions
+                    </a>
+                </div>
+
+                <div class="submission-details-container">
+                    <!-- Manuscript Header Card -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Skeleton Loading -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Screen -->
+                    <div id="loadingScreen" class="loading-screen">
+                        <div class="spinner"></div>
+                        <p>Loading submission details...</p>
+                    </div>
+
+                    <!-- Error Screen -->
+                    <div id="errorScreen" class="error-screen" style="display: none;">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                        <h3>Failed to load submission</h3>
+                        <p id="errorMessage">An error occurred while loading the submission.</p>
+                        <button class="retry-btn" onclick="submissionDetails.initialize()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+
+                    <!-- Content (hidden until loaded) -->
+                    <div id="contentContainer" style="display: none;">
+                        <!-- Authors Section -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-users"></i> Authors
+                            </h2>
+                            <div id="authorsList" class="authors-list">
+                                <!-- Authors will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Current Reviewers Section -->
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-user-check"></i> Assigned Reviewers
+                                </h2>
+                                <span id="reviewersCount" class="count-badge">0</span>
+                            </div>
+
+                            <div id="currentReviewers" class="reviewers-container">
+                                <!-- Reviewers will be populated here -->
+                                <div class="no-reviewers">
+                                    <i class="fas fa-user-slash"></i>
+                                    <p>No reviewers assigned yet</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assign Reviewers Section -->
+                        <div class="content-section assign-reviewers-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-user-plus"></i> Assign Reviewers
+                            </h2>
+
+                            <!-- Selected Reviewers Preview -->
+                            <div id="selectedReviewersPreview" class="selected-reviewers-preview" style="display: none;">
+                                <div class="preview-header">
+                                    <h4>Selected Reviewers</h4>
+                                    <span id="selectedCount" class="count-badge">0</span>
+                                </div>
+                                <div id="selectedReviewersList" class="selected-reviewers-list">
+                                    <!-- Selected reviewers will appear here -->
+                                </div>
+                            </div>
+
+                            <!-- Reviewer Search Select -->
+                            <div class="reviewer-select-container">
+                                <label for="reviewerSearch">Search for reviewers:</label>
+                                <div id="reviewerSearchContainer" class="reviewer-search-wrapper">
+                                    <!-- Custom select will be injected here -->
+                                </div>
+                                <div class="select-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    Search by name or email, then click the <i class="fas fa-plus"></i> icon to add
+                                </div>
+                            </div>
+
+                            <!-- Assign Button -->
+                            <div class="action-buttons">
+                                <button id="assignReviewersBtn" class="btn-primary" disabled>
+                                    <i class="fas fa-user-check"></i> Assign Selected Reviewers
+                                </button>
+                                <button id="clearSelectionBtn" class="btn-secondary">
+                                    <i class="fas fa-times"></i> Clear Selection
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Section (Optional) -->
+                        <div class="content-section timeline-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-history"></i> Timeline
+                            </h2>
+                            <div class="timeline-actions">
+                                <button id="viewTimelineBtn" class="btn-secondary">
+                                    <i class="fas fa-external-link-alt"></i> View Full Timeline
+                                </button>
+                            </div>
+                            <div id="recentTimeline" class="recent-timeline">
+                                <!-- Recent timeline events will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Utility functions -->
+    <script src="../assets/js/utility.js"></script>
+    <!-- Submission Details JS -->
+    <script type="module" src="js/submission-details.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editor - Submissions</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <!-- Submission CSS -->
+    <link rel="stylesheet" href="/assets/css/submission.css">
+</head>
+<style>
+    .card-header-row {
+        position: relative;
+    }
+
+    .card-header-row .status-badge{
+        position: absolute;
+        top: -34px;
+        right: 0;
+        border-top-right-radius: var(--card-radius);
+    }
+
+    .meta-row{
+        margin-bottom: 3rem;
+    }
+
+
+</style>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="container page-title">
+                    <h1>Assigned Submissions</h1>
+                    <p>Manage submissions assigned to you for review</p>
+
+                    <!-- Filter Controls -->
+                    <div class="filter-controls mt-3">
+                        <div class="filter-group">
+                            <label for="statusFilter">Filter by Status:</label>
+                            <select id="statusFilter" class="filter-select">
+                                <option value="all">All Submissions</option>
+                                <option value="submitted">Submitted</option>
+                                <option value="under_review">Under Review</option>
+                                <option value="reviewed">Reviewed</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="sortBy">Sort by:</label>
+                            <select id="sortBy" class="filter-select">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="title">Title A-Z</option>
+                            </select>
+                        </div>
+                        <button id="applyFilters" class="btn-primary">Apply Filters</button>
+                        <button id="clearFilters" class="btn-secondary">Clear Filters</button>
+                    </div>
+                </div>
+
+                <div class="manuscripts-wrapper">
+                    <!-- Summary Stats -->
+                    <!-- <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalSubmissions">0</h3>
+                                <p>Total Submissions</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="assignedReviewers">0</h3>
+                                <p>With Reviewers</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="pendingReview">0</h3>
+                                <p>Pending Review</p>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- Grid container where cards will be injected -->
+                    <div id="cardsGrid" class="cards-grid"></div>
+
+                    <!-- Pagination will be inserted here -->
+                    <div id="pagination"></div>
+
+                    <!-- Template for fallback if JS disabled -->
+                    <noscript>
+                        <div class="alert alert-warning">JavaScript is required to load submissions. Please enable JS.</div>
+                    </noscript>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (required for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- page-specific scripts -->
+    <script src="/assets/js/page.js"></script>
+    <script type="module" src="js/editor-submissions.js"></script>
+</body>
+
+</html>

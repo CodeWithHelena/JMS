@@ -1,8 +1,5 @@
 // API Configuration
 const API_BASE_URL = 'https://fp.247laboratory.net/';
-const API_ENDPOINTS = {
-    USER: 'api/v1/user'
-};
 
 // Get token from localStorage
 function getAuthToken() {
@@ -32,7 +29,7 @@ async function fetchUserDetails(userId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.USER}/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}api/v1/user/${userId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -58,31 +55,23 @@ async function fetchUserDetails(userId) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching user details:', error);
         throw error;
     }
 }
 
 // Extract user data from API response
 function extractUserData(response) {
-    // Handle different response structures
     if (response._id) {
-        // Case 1: Direct user object
         return response;
     } else if (response.data && response.data._id) {
-        // Case 2: { data: { ...user... } }
         return response.data;
     } else if (response.user && response.user._id) {
-        // Case 3: { user: { ...user... } }
         return response.user;
     } else if (response.success && response.data && response.data._id) {
-        // Case 4: { success: true, data: { ...user... } }
         return response.data;
     } else if (response.success && response.user && response.user._id) {
-        // Case 5: { success: true, user: { ...user... } }
         return response.user;
     } else {
-        // Try to find any object with _id in the response
         for (const key in response) {
             if (response[key] && typeof response[key] === 'object' && response[key]._id) {
                 return response[key];
@@ -112,14 +101,12 @@ function formatDate(dateString) {
 // Format phone number
 function formatPhoneNumber(phone) {
     if (!phone) return 'N/A';
-    // Remove any non-digit characters
     const cleaned = phone.replace(/\D/g, '');
     
-    // Format based on length
-    if (cleaned.length === 10) {
-        return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-    } else if (cleaned.length > 10) {
-        return `+${cleaned.slice(0, cleaned.length - 10)} (${cleaned.slice(cleaned.length - 10, cleaned.length - 7)}) ${cleaned.slice(cleaned.length - 7, cleaned.length - 4)}-${cleaned.slice(cleaned.length - 4)}`;
+    if (cleaned.length === 11) {
+        return cleaned.replace(/^(\d{4})(\d{3})(\d{4})$/, '$1 $2 $3');
+    } else if (cleaned.length > 11) {
+        return `+${cleaned.slice(0, cleaned.length - 11)} (${cleaned.slice(cleaned.length - 11, cleaned.length - 8)}) ${cleaned.slice(cleaned.length - 8, cleaned.length - 5)} ${cleaned.slice(cleaned.length - 5)}`;
     }
     return phone;
 }
@@ -144,45 +131,73 @@ function getRoleClass(role) {
 // Get status class
 function getStatusClass(user) {
     if (user.isDeleted) return 'status-inactive';
-    if (!user.isVerified) return 'status-pending';
-    return user.isActive ? 'status-active' : 'status-inactive';
+    
+    // For reviewers pending verification
+    if (user.role && user.role.toLowerCase() === 'reviewer' && user.isVerified === false) {
+        return 'status-pending';
+    }
+    
+    // For all users based on active status
+    return user.isActive !== false ? 'status-active' : 'status-inactive';
 }
 
 // Get status text
 function getStatusText(user) {
     if (user.isDeleted) return 'Deleted';
-    if (!user.isVerified) return 'Pending Verification';
-    return user.isActive ? 'Active' : 'Inactive';
+    
+    // For reviewers pending verification
+    if (user.role && user.role.toLowerCase() === 'reviewer' && user.isVerified === false) {
+        return 'Pending Verification';
+    }
+    
+    // For all users based on active status
+    return user.isActive !== false ? 'Active' : 'Inactive';
+}
+
+// Get verification status text
+function getVerificationText(user) {
+    if (user.isDeleted) return 'Deleted';
+    
+    if (user.role && user.role.toLowerCase() === 'reviewer') {
+        return user.isVerified === true ? 'Verified' : 'Pending Verification';
+    }
+    
+    return user.isVerified === true ? 'Verified' : 'Not Required';
+}
+
+// Get verification class
+function getVerificationClass(user) {
+    if (user.isDeleted) return 'status-inactive';
+    
+    if (user.role && user.role.toLowerCase() === 'reviewer') {
+        return user.isVerified === true ? 'status-active' : 'status-pending';
+    }
+    
+    return user.isVerified === true ? 'status-active' : 'status-pending';
 }
 
 // Get gender text
 function getGenderText(gender) {
     if (!gender) return 'Not specified';
+    if (gender.toLowerCase() === 'not_provided') return 'Not provided';
     return gender.charAt(0).toUpperCase() + gender.slice(1);
 }
 
-
-// Toggle verification status
-// Toggle verification status
-async function toggleVerification(userId, currentStatus, user) {
+// Toggle user active/inactive status
+async function toggleUserActive(userId, currentActiveStatus, user) {
     const token = getAuthToken();
     
     if (!token) {
-        Swal.fire({
-            title: 'Authentication Required',
-            text: 'Please login to perform this action',
-            icon: 'warning',
-            confirmButtonColor: '#cc5500'
-        });
+        showToastError('Authentication required. Please login.');
         return false;
     }
 
     try {
-        const newStatus = !currentStatus;
+        const newStatus = !currentActiveStatus;
         
         // Show loading
         Swal.fire({
-            title: 'Updating Verification Status...',
+            title: newStatus ? 'Activating User...' : 'Deactivating User...',
             text: 'Please wait',
             allowOutsideClick: false,
             showConfirmButton: false,
@@ -191,20 +206,28 @@ async function toggleVerification(userId, currentStatus, user) {
             }
         });
 
-        // TODO: Replace with actual API endpoint for updating verification
-        // For now, simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Use toggle endpoint for ALL users (activation/deactivation)
+        const response = await fetch(`${API_BASE_URL}api/v1/user/${userId}/toggle`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const responseData = await response.json();
         
-        // Simulate success - Update user object
-        user.isVerified = newStatus;
+        if (!response.ok) {
+            throw new Error(responseData.message || 'Failed to update user status');
+        }
         
         // Close loading
         Swal.close();
         
         // Show success message
-        await Swal.fire({
+        Swal.fire({
             title: 'Success!',
-            text: `User verification ${newStatus ? 'enabled' : 'disabled'} successfully`,
+            text: `User ${newStatus ? 'activated' : 'deactivated'} successfully`,
             icon: 'success',
             confirmButtonColor: '#cc5500',
             timer: 2000,
@@ -212,80 +235,18 @@ async function toggleVerification(userId, currentStatus, user) {
             showConfirmButton: false
         });
         
-        // Update UI automatically without asking
-        updateVerificationUI(user);
+        // Update user object
+        user.isActive = newStatus;
+        
+        // Update UI
+        updateUserStatusUI(user);
         
         return newStatus;
     } catch (error) {
         Swal.close();
-        console.error('Error toggling verification:', error);
-        Swal.fire({
-            title: 'Error',
-            text: 'Failed to update verification status',
-            icon: 'error',
-            confirmButtonColor: '#cc5500'
-        });
-        return currentStatus;
+        showToastError(error.message || 'Failed to update user status');
+        return currentActiveStatus;
     }
-}
-
-// Update verification UI without refreshing page
-function updateVerificationUI(user) {
-    const isVerified = user.isVerified === true;
-    const currentStatus = getStatusText(user);
-    const currentStatusClass = getStatusClass(user);
-    
-    console.log('Updating UI for verification:', { isVerified, currentStatus, currentStatusClass });
-    
-    // Update verification toggle
-    const verificationToggle = document.getElementById('verificationToggle');
-    if (verificationToggle) {
-        verificationToggle.checked = isVerified;
-        console.log('Toggle updated:', verificationToggle.checked);
-    }
-    
-    // Update toggle status text
-    const toggleStatusText = document.getElementById('toggleStatusText');
-    if (toggleStatusText) {
-        toggleStatusText.textContent = isVerified ? 'Verified' : 'Pending';
-        toggleStatusText.className = `toggle-status ${isVerified ? 'toggle-on' : 'toggle-off'}`;
-        console.log('Toggle text updated:', toggleStatusText.textContent);
-    }
-    
-    // Update all verification status badges
-    const verificationBadges = document.querySelectorAll('.detail-item:nth-child(3) .user-status');
-    verificationBadges.forEach((badge, index) => {
-        badge.textContent = isVerified ? 'Verified' : 'Pending Verification';
-        badge.className = `user-status ${isVerified ? 'status-active' : 'status-pending'}`;
-        console.log(`Verification badge ${index} updated`);
-    });
-    
-    // Update account status badge in header
-    const headerStatusBadge = document.querySelector('.user-badges .user-status');
-    if (headerStatusBadge) {
-        headerStatusBadge.textContent = currentStatus;
-        headerStatusBadge.className = `user-status ${currentStatusClass}`;
-        console.log('Header badge updated:', headerStatusBadge.textContent);
-    }
-    
-    // Update account status in details grid
-    const accountStatusBadges = document.querySelectorAll('.details-grid .detail-item:nth-child(1) .user-status');
-    accountStatusBadges.forEach((badge, index) => {
-        badge.textContent = currentStatus;
-        badge.className = `user-status ${currentStatusClass}`;
-        console.log(`Account status badge ${index} updated`);
-    });
-    
-    // Update toggle description
-    const toggleDescription = document.querySelector('.toggle-description');
-    if (toggleDescription) {
-        toggleDescription.textContent = isVerified ? 
-            'This user account is verified and can access all features.' :
-            'This user account is pending verification. Enable to grant full access.';
-        console.log('Toggle description updated');
-    }
-    
-    console.log('UI update complete');
 }
 
 // Delete user
@@ -307,12 +268,7 @@ async function deleteUser(userId, userName) {
         const token = getAuthToken();
         
         if (!token) {
-            Swal.fire({
-                title: 'Authentication Required',
-                text: 'Please login to perform this action',
-                icon: 'warning',
-                confirmButtonColor: '#cc5500'
-            });
+            showToastError('Authentication required. Please login.');
             return false;
         }
 
@@ -348,28 +304,93 @@ async function deleteUser(userId, userName) {
             return true;
         } catch (error) {
             Swal.close();
-            console.error('Error deleting user:', error);
-            Swal.fire({
-                title: 'Error',
-                text: 'Failed to delete user',
-                icon: 'error',
-                confirmButtonColor: '#cc5500'
-            });
+            showToastError(error.message || 'Failed to delete user');
             return false;
         }
     }
     return false;
 }
 
-// Render user details
+// Update user status UI (for activation/deactivation)
+function updateUserStatusUI(user) {
+    const isActive = user.isActive !== false;
+    const isVerified = user.isVerified === true;
+    
+    // Update toggle
+    const verificationToggle = document.getElementById('verificationToggle');
+    if (verificationToggle) {
+        verificationToggle.checked = isActive;
+    }
+    
+    // Update toggle status text
+    const toggleStatusText = document.getElementById('toggleStatusText');
+    if (toggleStatusText) {
+        toggleStatusText.textContent = isActive ? 'Active' : 'Inactive';
+        toggleStatusText.className = `toggle-status ${isActive ? 'toggle-on' : 'toggle-off'}`;
+    }
+    
+    // Update account status badges
+    const accountStatusBadges = document.querySelectorAll('.details-grid .detail-item:nth-child(1) .user-status');
+    accountStatusBadges.forEach((badge) => {
+        badge.textContent = isActive ? 'Active' : 'Inactive';
+        badge.className = `user-status ${isActive ? 'status-active' : 'status-inactive'}`;
+    });
+    
+    // Update verification status badges
+    const verificationBadges = document.querySelectorAll('.details-grid .detail-item:nth-child(3) .user-status');
+    verificationBadges.forEach((badge) => {
+        if (user.role === 'reviewer') {
+            badge.textContent = isVerified ? 'Verified' : 'Pending Verification';
+            badge.className = `user-status ${isVerified ? 'status-active' : 'status-pending'}`;
+        } else {
+            badge.textContent = isVerified ? 'Verified' : 'Not Required';
+            badge.className = `user-status ${isVerified ? 'status-active' : 'status-pending'}`;
+        }
+    });
+    
+    // Update account status badge in header
+    const headerStatusBadge = document.querySelector('.user-badges .user-status');
+    if (headerStatusBadge) {
+        if (user.role === 'reviewer' && !isVerified) {
+            headerStatusBadge.textContent = 'Pending Verification';
+            headerStatusBadge.className = 'user-status status-pending';
+        } else {
+            headerStatusBadge.textContent = isActive ? 'Active' : 'Inactive';
+            headerStatusBadge.className = `user-status ${isActive ? 'status-active' : 'status-inactive'}`;
+        }
+    }
+    
+    // Update toggle description
+    const toggleDescription = document.querySelector('.toggle-description');
+    if (toggleDescription) {
+        toggleDescription.textContent = isActive ? 
+            'This user account is active and can access the system.' :
+            'This user account is inactive and cannot access the system.';
+    }
+}
+
+// Show toastr error
+function showToastError(message) {
+    if (typeof toastr === 'undefined') return;
+    toastr.clear();
+    toastr.error(message, 'Error');
+}
+
+// Show toastr success
+function showToastSuccess(message) {
+    if (typeof toastr === 'undefined') return;
+    toastr.success(message, 'Success');
+}
+
 // Render user details
 function renderUserDetails(user) {
     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unnamed User';
     const formattedPhone = formatPhoneNumber(user.phone);
     const currentStatus = getStatusText(user);
     const currentStatusClass = getStatusClass(user);
-    
-    // Determine if user is verified (for toggle)
+    const verificationStatus = getVerificationText(user);
+    const verificationClass = getVerificationClass(user);
+    const isActive = user.isActive !== false;
     const isVerified = user.isVerified === true;
     
     return `
@@ -433,6 +454,13 @@ function renderUserDetails(user) {
                         </div>
                         ` : ''}
                         
+                        ${user.affiliation ? `
+                        <div class="detail-item">
+                            <div class="detail-label">Affiliation</div>
+                            <div class="detail-value">${user.affiliation}</div>
+                        </div>
+                        ` : ''}
+                        
                         <div class="detail-item">
                             <div class="detail-label">User ID</div>
                             <div class="detail-value">
@@ -471,8 +499,8 @@ function renderUserDetails(user) {
                         <div class="detail-item">
                             <div class="detail-label">Verification Status</div>
                             <div class="detail-value">
-                                <span class="user-status ${isVerified ? 'status-active' : 'status-pending'}">
-                                    ${isVerified ? 'Verified' : 'Pending Verification'}
+                                <span class="user-status ${verificationClass}">
+                                    ${verificationStatus}
                                 </span>
                             </div>
                         </div>
@@ -489,24 +517,24 @@ function renderUserDetails(user) {
                     </div>
                 </div>
                 
-                <!-- Verification Toggle -->
+                <!-- Activation/Deactivation Toggle -->
                 ${!user.isDeleted ? `
                 <div class="toggle-section">
                     <div class="toggle-info">
-                        <div class="toggle-title">Toggle Verification</div>
+                        <div class="toggle-title">Account Status</div>
                         <div class="toggle-description">
-                            ${isVerified ? 
-                                'This user account is verified and can access all features.' :
-                                'This user account is pending verification. Enable to grant full access.'}
+                            ${isActive ? 
+                                'This user account is active and can access the system.' :
+                                'This user account is inactive and cannot access the system.'}
                         </div>
                     </div>
                     <div style="display: flex; align-items: center;">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="verificationToggle" ${isVerified ? 'checked' : ''}>
+                            <input type="checkbox" id="verificationToggle" ${isActive ? 'checked' : ''}>
                             <span class="toggle-slider"></span>
                         </label>
-                        <span class="toggle-status ${isVerified ? 'toggle-on' : 'toggle-off'}" id="toggleStatusText">
-                            ${isVerified ? 'Verified' : 'Pending'}
+                        <span class="toggle-status ${isActive ? 'toggle-on' : 'toggle-off'}" id="toggleStatusText">
+                            ${isActive ? 'Active' : 'Inactive'}
                         </span>
                     </div>
                 </div>
@@ -555,6 +583,41 @@ function showErrorState(message) {
     `;
 }
 
+// Set up event listeners
+function setupEventListeners(user) {
+    window.currentUser = user;
+    
+    // Activation/Deactivation toggle
+    const verificationToggle = document.getElementById('verificationToggle');
+    if (verificationToggle) {
+        const isActive = user.isActive !== false;
+        verificationToggle.checked = isActive;
+        
+        verificationToggle.addEventListener('change', async (e) => {
+            const newStatus = e.target.checked;
+            
+            if (newStatus !== isActive) {
+                const result = await toggleUserActive(user._id, isActive, user);
+                if (result !== isActive) {
+                    user.isActive = result;
+                } else {
+                    // Revert toggle if operation failed
+                    verificationToggle.checked = isActive;
+                }
+            }
+        });
+    }
+    
+    // Delete button
+    const deleteBtn = document.getElementById('deleteUserBtn');
+    if (deleteBtn) {
+        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'this user';
+        deleteBtn.addEventListener('click', () => {
+            deleteUser(user._id, fullName);
+        });
+    }
+}
+
 // Main initialization
 document.addEventListener('DOMContentLoaded', async function() {
     const userDetails = document.getElementById('userDetails');
@@ -584,43 +647,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupEventListeners(userData);
         
     } catch (error) {
-        console.error('Error loading user details:', error);
         showErrorState(error.message || 'Failed to load user details. Please try again.');
     }
 });
-
-
-// Set up event listeners
-function setupEventListeners(user) {
-    // Store user object globally for updates
-    window.currentUser = user;
-    
-    // Verification toggle
-    const verificationToggle = document.getElementById('verificationToggle');
-    if (verificationToggle) {
-        verificationToggle.addEventListener('change', async (e) => {
-            const newStatus = e.target.checked;
-            console.log('Toggle changed to:', newStatus, 'Current user status:', user.isVerified);
-            
-            // Only proceed if status actually changed
-            if (newStatus !== user.isVerified) {
-                const result = await toggleVerification(user._id, user.isVerified, user);
-                if (result !== user.isVerified) {
-                    user.isVerified = result;
-                } else {
-                    // Revert toggle if operation failed
-                    verificationToggle.checked = user.isVerified;
-                }
-            }
-        });
-    }
-    
-    // Delete button
-    const deleteBtn = document.getElementById('deleteUserBtn');
-    if (deleteBtn) {
-        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'this user';
-        deleteBtn.addEventListener('click', () => {
-            deleteUser(user._id, fullName);
-        });
-    }
-}

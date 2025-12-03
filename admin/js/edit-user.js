@@ -36,15 +36,6 @@ function showToastError(message) {
     toastr.error(message, 'Error');
 }
 
-// Show toastr success
-function showToastSuccess(message) {
-    if (typeof toastr === 'undefined') {
-        alert(`Success: ${message}`);
-        return;
-    }
-    toastr.success(message, 'Success');
-}
-
 // Show auto-hide success SweetAlert
 function showSuccessAlert() {
     return Swal.fire({
@@ -65,15 +56,12 @@ function getCurrentUserData() {
     const userDetails = document.querySelector('.user-details-card');
     if (!userDetails) return null;
     
-    // Extract data from the page
     const nameElement = document.querySelector('.user-name');
     const emailElement = document.querySelector('.user-email');
     const roleBadge = document.querySelector('.user-role');
-    const statusBadge = document.querySelector('.user-status');
     
-    // Extract data from detail items
     const detailItems = document.querySelectorAll('.detail-item');
-    let gender = '', phone = '', address = '', isVerified = false;
+    let gender = '', phone = '', address = '', affiliation = '', isVerified = false;
     
     detailItems.forEach(item => {
         const label = item.querySelector('.detail-label')?.textContent.toLowerCase();
@@ -84,6 +72,7 @@ function getCurrentUserData() {
         if (label.includes('gender')) gender = value.toLowerCase();
         if (label.includes('phone')) phone = value;
         if (label.includes('address')) address = value;
+        if (label.includes('affiliation')) affiliation = value;
         if (label.includes('verification')) isVerified = value.toLowerCase().includes('verified');
     });
     
@@ -98,6 +87,7 @@ function getCurrentUserData() {
         gender: gender,
         phone: phone.replace(/\D/g, ''),
         address: address,
+        affiliation: affiliation,
         role: roleBadge?.textContent.toLowerCase() || '',
         isVerified: isVerified || (window.currentUser?.isVerified === true)
     };
@@ -107,34 +97,51 @@ function getCurrentUserData() {
 function populateEditForm(userData) {
     if (!userData) return;
     
-    console.log('Populating form with:', userData);
-    
-    // Basic info
     document.getElementById('editFirstName').value = userData.firstName || '';
     document.getElementById('editLastName').value = userData.lastName || '';
     document.getElementById('editEmail').value = userData.email || '';
     
-    // Format phone number
     const phoneInput = document.getElementById('editPhone');
     if (phoneInput && userData.phone) {
         phoneInput.value = userData.phone;
     }
     
     document.getElementById('editAddress').value = userData.address || '';
+    document.getElementById('editAffiliation').value = userData.affiliation || '';
     
-    // Gender select
     const genderSelect = document.getElementById('editGender');
     if (genderSelect && userData.gender) {
         genderSelect.value = userData.gender.toLowerCase();
+        
+        // Disable gender if it's already set (not "Not_Provided")
+        if (userData.gender.toLowerCase() !== 'not_provided' && 
+            userData.gender.toLowerCase() !== 'not specified' &&
+            userData.gender.toLowerCase() !== '') {
+            genderSelect.disabled = true;
+            const genderHelp = document.getElementById('editGenderHelp');
+            if (genderHelp) {
+                genderHelp.innerHTML = '<i class="fas fa-lock"></i> Gender cannot be changed';
+            }
+        } else {
+            genderSelect.disabled = false;
+            const genderHelp = document.getElementById('editGenderHelp');
+            if (genderHelp) {
+                genderHelp.innerHTML = '<i class="fas fa-info-circle"></i> Select gender';
+            }
+        }
     }
     
-    // Role select
     const roleSelect = document.getElementById('editRole');
     if (roleSelect && userData.role) {
         roleSelect.value = userData.role.toLowerCase();
+        // Disable role select - role cannot be changed
+        roleSelect.disabled = true;
+        const roleHelp = document.getElementById('editRoleHelp');
+        if (roleHelp) {
+            roleHelp.innerHTML = '<i class="fas fa-lock"></i> Role cannot be changed';
+        }
     }
     
-    // Verification toggle
     const verificationToggle = document.getElementById('editIsVerified');
     if (verificationToggle) {
         verificationToggle.checked = userData.isVerified === true;
@@ -144,39 +151,26 @@ function populateEditForm(userData) {
 // Show modal
 function showEditModal() {
     const modal = document.getElementById('editUserModal');
-    if (!modal) {
-        console.error('Modal element not found');
-        return;
-    }
+    if (!modal) return;
     
-    // Get current user data
     const userData = getCurrentUserData();
     if (!userData || !userData._id) {
         showToastError('Unable to load user data');
         return;
     }
     
-    console.log('Showing modal for user:', userData);
-    
-    // Store user ID in form
     const form = document.getElementById('editUserForm');
     if (form) {
         form.dataset.userId = userData._id;
     }
     
-    // Populate form
     populateEditForm(userData);
     
-    // Show modal
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
     
-    // Focus on first editable field
     setTimeout(() => {
-        const firstNameField = document.getElementById('editFirstName');
-        if (firstNameField) {
-            firstNameField.focus();
-        }
+        document.getElementById('editFirstName')?.focus();
     }, 100);
 }
 
@@ -188,20 +182,25 @@ function hideEditModal() {
     modal.classList.remove('active');
     document.body.style.overflow = '';
     
-    // Reset form
     const form = document.getElementById('editUserForm');
     if (form) {
         form.reset();
         delete form.dataset.userId;
     }
+    
+    // Re-enable gender and role for next time
+    const genderSelect = document.getElementById('editGender');
+    if (genderSelect) genderSelect.disabled = false;
+    
+    const roleSelect = document.getElementById('editRole');
+    if (roleSelect) roleSelect.disabled = false;
 }
 
-// Update user via API
+// Update user via API using PATCH method
 async function updateUser(userId, formData) {
     const token = getAuthToken();
     if (!token) throw new Error('Authentication required');
     
-    // Clean phone number
     const cleanPhone = formData.phone.replace(/\D/g, '');
     
     const requestData = {
@@ -209,6 +208,8 @@ async function updateUser(userId, formData) {
         lastName: formData.lastName?.trim() || '',
         phone: cleanPhone || '',
         address: formData.address?.trim() || '',
+        affiliation: formData.affiliation?.trim() || '',
+        gender: formData.gender || '',
         role: formData.role || '',
         isVerified: formData.isVerified === true || formData.isVerified === 'true'
     };
@@ -220,11 +221,9 @@ async function updateUser(userId, formData) {
         }
     });
     
-    console.log('Updating user with data:', requestData);
-    
     try {
         const response = await fetch(`${API_BASE_URL}api/v1/user/${userId}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -241,7 +240,6 @@ async function updateUser(userId, formData) {
         
         return responseData;
     } catch (error) {
-        console.error('Update error:', error);
         throw error;
     }
 }
@@ -266,12 +264,10 @@ function updateEditSubmitButton(isLoading) {
 function formatPhoneInput(input) {
     let value = input.value.replace(/\D/g, '');
     
-    // Limit to 11 digits for Nigerian numbers
     if (value.length > 11) {
         value = value.substring(0, 11);
     }
     
-    // Format for display
     if (value.length >= 4) {
         value = value.replace(/^(\d{4})(\d{0,7})/, '$1 $2');
         if (value.length >= 8) {
@@ -282,31 +278,59 @@ function formatPhoneInput(input) {
     input.value = value;
 }
 
+// Validate address (minimum 15 characters)
+function validateAddress(address) {
+    if (!address || address.trim().length < 15) {
+        return 'Address must be at least 15 characters';
+    }
+    return '';
+}
+
+// Validate affiliation (if provided)
+function validateAffiliation(affiliation) {
+    if (affiliation && affiliation.trim().length > 0 && affiliation.trim().length < 5) {
+        return 'Affiliation must be at least 5 characters if provided';
+    }
+    return '';
+}
+
+// Validate gender
+function validateGender(gender) {
+    if (!gender) {
+        return 'Please select a gender';
+    }
+    return '';
+}
+
 // Main initialization
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Edit user modal script loaded');
-    
-    // Initialize toastr
     initializeToastr();
     
-    // DOM Elements
     const editModal = document.getElementById('editUserModal');
+    if (!editModal) return;
+    
     const modalOverlay = document.getElementById('modalOverlay');
     const modalClose = document.getElementById('modalClose');
     const editCancelBtn = document.getElementById('editCancelBtn');
     const editForm = document.getElementById('editUserForm');
     
-    if (!editModal) {
-        console.error('Edit modal element not found');
-        return;
-    }
-    
     // Open modal when Edit button is clicked
     document.addEventListener('click', function(e) {
-        const editButton = e.target.closest('.edit-btn');
-        if (editButton) {
+        let editButton = e.target;
+        
+        if (e.target.classList.contains('fa-edit')) {
+            editButton = e.target.closest('.edit-btn');
+        }
+        else if (e.target.textContent.includes('Edit')) {
+            editButton = e.target.closest('.edit-btn');
+        }
+        else if (e.target.classList.contains('edit-btn')) {
+            editButton = e.target;
+        }
+        
+        if (editButton && editButton.classList.contains('edit-btn')) {
             e.preventDefault();
-            console.log('Edit button clicked');
+            e.stopPropagation();
             showEditModal();
         }
     });
@@ -359,10 +383,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         editPhone.addEventListener('blur', function(e) {
-            // Ensure minimum length on blur
             const value = e.target.value.replace(/\D/g, '');
             if (value.length < 11 && value.length > 0) {
                 showToastError('Phone number must be 11 digits');
+                e.target.focus();
+            }
+        });
+    }
+    
+    // Address validation on blur
+    const editAddress = document.getElementById('editAddress');
+    if (editAddress) {
+        editAddress.addEventListener('blur', function(e) {
+            const address = e.target.value.trim();
+            const error = validateAddress(address);
+            if (error) {
+                showToastError(error);
+                e.target.focus();
+            }
+        });
+    }
+    
+    // Affiliation validation on blur
+    const editAffiliation = document.getElementById('editAffiliation');
+    if (editAffiliation) {
+        editAffiliation.addEventListener('blur', function(e) {
+            const affiliation = e.target.value.trim();
+            const error = validateAffiliation(affiliation);
+            if (error) {
+                showToastError(error);
                 e.target.focus();
             }
         });
@@ -379,19 +428,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Get form values
             const formData = {
                 firstName: document.getElementById('editFirstName').value.trim(),
                 lastName: document.getElementById('editLastName').value.trim(),
                 phone: document.getElementById('editPhone').value,
                 address: document.getElementById('editAddress').value.trim(),
+                affiliation: document.getElementById('editAffiliation').value.trim(),
+                gender: document.getElementById('editGender').value,
                 role: document.getElementById('editRole').value,
                 isVerified: document.getElementById('editIsVerified').checked
             };
             
-            console.log('Form data:', formData);
-            
-            // Basic validation
+            // Validation
             if (!formData.firstName) {
                 showToastError('First name is required');
                 document.getElementById('editFirstName').focus();
@@ -417,38 +465,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            if (!formData.role) {
-                showToastError('Please select a role');
-                document.getElementById('editRole').focus();
+            // Address validation
+            const addressError = validateAddress(formData.address);
+            if (addressError) {
+                showToastError(addressError);
+                document.getElementById('editAddress').focus();
                 return;
+            }
+            
+            // Affiliation validation
+            const affiliationError = validateAffiliation(formData.affiliation);
+            if (affiliationError) {
+                showToastError(affiliationError);
+                document.getElementById('editAffiliation').focus();
+                return;
+            }
+            
+            // Gender validation (only if not disabled)
+            const genderSelect = document.getElementById('editGender');
+            if (!genderSelect.disabled) {
+                const genderError = validateGender(formData.gender);
+                if (genderError) {
+                    showToastError(genderError);
+                    document.getElementById('editGender').focus();
+                    return;
+                }
             }
             
             updateEditSubmitButton(true);
             
             try {
-                const result = await updateUser(userId, formData);
-                console.log('Update result:', result);
+                await updateUser(userId, formData);
                 
-                // Show success alert
                 await showSuccessAlert();
                 
-                // Hide modal
                 hideEditModal();
                 
-                // Reload page to show updated data
                 setTimeout(() => {
                     window.location.reload();
                 }, 500);
                 
             } catch (error) {
-                console.error('Update error:', error);
                 showToastError(error.message || 'Failed to update user');
                 updateEditSubmitButton(false);
             }
         });
     }
     
-    // Close modal when clicking outside (on the modal itself, not overlay)
+    // Close modal when clicking outside
     editModal.addEventListener('click', function(e) {
         if (e.target === editModal) {
             hideEditModal();

@@ -639,14 +639,10 @@
                             <label for="editGender" class="form-label">
                                 Gender <span>*</span>
                             </label>
-                            <select id="editGender" name="gender" class="form-input" disabled>
-                                <option value="">Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </select>
-                            <div class="form-help">
-                                <i class="fas fa-lock"></i> Gender cannot be changed
+                            <div id="editGenderContainer"></div>
+                            <input type="hidden" id="editGender" name="gender">
+                            <div class="form-help" id="editGenderHelp">
+                                <i class="fas fa-info-circle"></i> Select gender
                             </div>
                         </div>
                     </div>
@@ -672,29 +668,39 @@
                             <label for="editRole" class="form-label">
                                 Role <span>*</span>
                             </label>
-                            <select id="editRole" name="role" class="form-input" required>
+                            <select id="editRole" name="role" class="form-input" disabled>
                                 <option value="">Select Role</option>
                                 <option value="author">Author</option>
                                 <option value="editor">Editor</option>
                                 <option value="reviewer">Reviewer</option>
                             </select>
+                            <div class="form-help" id="editRoleHelp">
+                                <i class="fas fa-lock"></i> Role cannot be changed
+                            </div>
                         </div>
     
                         <div class="form-group">
-                            <label for="editStatus" class="form-label">
-                                Verification Status
+                            <label for="editAffiliation" class="form-label">
+                                Affiliation
                             </label>
-                            <div class="toggle-section">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="editIsVerified" name="isVerified">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">
-                                    <span class="toggle-text">User is verified</span>
-                                    <span class="toggle-help">Toggle to verify/unverify user account</span>
-                                </span>
+                            <input type="text" id="editAffiliation" name="affiliation" class="form-input" placeholder="e.g., University of Lagos">
+                            <div class="form-help" id="editAffiliationHelp">
+                                <i class="fas fa-info-circle"></i> Institution or organization
                             </div>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="editRole" class="form-label">
+                                Role <span>*</span>
+                            </label>
+                            <div id="editRoleContainer"></div>
+                            <input type="hidden" id="editRole" name="role">
+                            <div class="form-help" id="editRoleHelp">
+                                <i class="fas fa-lock"></i> Role cannot be changed
+                            </div>
+                        </div>
+
                     </div>
     
                     <div class="modal-actions">
