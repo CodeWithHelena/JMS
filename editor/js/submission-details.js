@@ -1,14 +1,15 @@
 // submission-details.js
+import { BASE_URL, getAuthToken2 } from '../../assets/js/utility.js';
+
 class SubmissionDetailsManager {
     constructor() {
-        this.BASE_URL = 'https://fp.247laboratory.net/api/v1';
         this.submissionId = this.getSubmissionIdFromURL();
         this.submission = null;
         this.selectedReviewers = [];
         this.reviewerSelect = null;
         this.journalId = null;
-        this.allReviewers = []; // All available reviewers from API
-        this.userCache = new Map(); // Cache for user details
+        this.allReviewers = [];
+        this.userCache = new Map();
         
         if (!this.submissionId) {
             this.showError('No submission ID provided');
@@ -43,32 +44,24 @@ class SubmissionDetailsManager {
         return urlParams.get('id');
     }
 
-    getAuthToken() {
-        return localStorage.getItem('editor_tkn') || localStorage.getItem('token');
-    }
-
     async initialize() {
         this.showLoading();
         
         try {
-            // Load submission data
             await this.loadSubmissionData();
             
             // Get journal ID from submission
-            this.journalId = this.submission.journalId;
+            this.journalId = this.submission.journalId?._id;
             
             if (this.journalId) {
-                // Load available reviewers for this journal
                 await this.loadAvailableReviewers();
-                
-                // Initialize reviewer select component
-                await this.initializeReviewerSelect();
+                this.initializeReviewerSelect();
+            } else {
+                console.error('No journal ID found in submission data');
             }
             
-            // Load timeline data
-            await this.loadTimelineData();
+            await this.loadLatestTimelineEvent();
             
-            // Hide loading, show content
             this.hideLoading();
             this.showContent();
             
@@ -80,8 +73,12 @@ class SubmissionDetailsManager {
 
     async loadSubmissionData() {
         try {
-            const token = this.getAuthToken();
-            const response = await fetch(`${this.BASE_URL}/submissions/${this.submissionId}`, {
+            const token = getAuthToken2();
+            if (!token) {
+                throw new Error('Authentication token not found');
+            }
+            
+            const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -99,25 +96,23 @@ class SubmissionDetailsManager {
                 throw new Error(data.message || 'Failed to load submission data');
             }
             
-            this.submission = data.submission || data.data;
+            this.submission = data.submission;
             
-            // Get submitter details if we have a user ID
-            if (this.submission.createdBy && typeof this.submission.createdBy === 'string') {
-                const submitterId = this.submission.createdBy;
-                const submitter = await this.getUserDetails(submitterId);
-                this.submission.createdBy = {
-                    _id: submitterId,
-                    name: submitter ? `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim() : 'Unknown User',
-                    email: submitter?.email || 'N/A'
-                };
+            // Get submitter details from history array
+            const submittedEvent = this.submission.history?.find(event => event.status === 'submitted');
+            if (submittedEvent?.by) {
+                const submitter = await this.getUserDetails(submittedEvent.by);
+                if (submitter) {
+                    this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
+                    this.submission.submitterEmail = submitter.email;
+                }
             }
             
             // Get reviewer details for assigned reviewers
             if (this.submission.assignedReviewers && this.submission.assignedReviewers.length > 0) {
-                await this.enrichReviewerDetails();
+                await this.enrichAssignedReviewers();
             }
             
-            // Render the data
             this.renderManuscriptHeader();
             this.renderAuthors();
             this.renderCurrentReviewers();
@@ -129,14 +124,15 @@ class SubmissionDetailsManager {
     }
 
     async getUserDetails(userId) {
-        // Check cache first
         if (this.userCache.has(userId)) {
             return this.userCache.get(userId);
         }
         
         try {
-            const token = this.getAuthToken();
-            const response = await fetch(`${this.BASE_URL}/user/${userId}`, {
+            const token = getAuthToken2();
+            if (!token) return null;
+            
+            const response = await fetch(`${BASE_URL}/user/${userId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -156,7 +152,7 @@ class SubmissionDetailsManager {
                 return null;
             }
             
-            const user = data.user || data.data;
+            const user = data.user;
             this.userCache.set(userId, user);
             return user;
             
@@ -166,31 +162,28 @@ class SubmissionDetailsManager {
         }
     }
 
-    async enrichReviewerDetails() {
-        const reviewers = this.submission.assignedReviewers;
+    async enrichAssignedReviewers() {
+        const assignedReviewers = this.submission.assignedReviewers || [];
         const enrichedReviewers = [];
         
-        for (const reviewer of reviewers) {
-            let reviewerId = reviewer._id || reviewer;
+        for (const assignment of assignedReviewers) {
+            const reviewerId = assignment.reviewerId;
             
-            if (typeof reviewerId === 'string') {
+            if (reviewerId) {
                 const user = await this.getUserDetails(reviewerId);
                 if (user) {
                     enrichedReviewers.push({
-                        _id: user._id,
+                        ...assignment,
                         name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
                         email: user.email
                     });
                 } else {
                     enrichedReviewers.push({
-                        _id: reviewerId,
+                        ...assignment,
                         name: 'Unknown Reviewer',
                         email: 'N/A'
                     });
                 }
-            } else {
-                // Reviewer already has details
-                enrichedReviewers.push(reviewer);
             }
         }
         
@@ -199,8 +192,13 @@ class SubmissionDetailsManager {
 
     async loadAvailableReviewers() {
         try {
-            const token = this.getAuthToken();
-            const response = await fetch(`${this.BASE_URL}/editor/journal-reviewers?journalId=${this.journalId}`, {
+            const token = getAuthToken2();
+            if (!token || !this.journalId) {
+                console.warn('Missing token or journalId for loading reviewers');
+                return;
+            }
+            
+            const response = await fetch(`${BASE_URL}/editor/journal-reviewers?journalId=${this.journalId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -209,31 +207,37 @@ class SubmissionDetailsManager {
             });
             
             if (!response.ok) {
-                throw new Error(`Failed to fetch reviewers: ${response.status}`);
+                console.warn(`Failed to fetch reviewers: ${response.status}`);
+                this.allReviewers = [];
+                return;
             }
             
             const data = await response.json();
             
             if (!data.success) {
-                throw new Error(data.message || 'Failed to load reviewers');
+                console.warn(`Failed to load reviewers:`, data.message);
+                this.allReviewers = [];
+                return;
             }
             
-            // Process reviewers - we need to get user details for each
+            // Process reviewers - get user details for each
             const reviewerIds = data.reviewers || [];
             this.allReviewers = [];
             
-            for (const reviewerId of reviewerIds) {
+            const reviewerPromises = reviewerIds.map(async (reviewerId) => {
                 const user = await this.getUserDetails(reviewerId);
                 if (user) {
-                    this.allReviewers.push({
+                    return {
                         id: user._id,
                         name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
                         email: user.email
-                    });
+                    };
                 }
-            }
+                return null;
+            });
             
-            console.log('Loaded reviewers:', this.allReviewers);
+            const reviewers = await Promise.all(reviewerPromises);
+            this.allReviewers = reviewers.filter(reviewer => reviewer !== null);
             
         } catch (error) {
             console.error('Error loading available reviewers:', error);
@@ -241,24 +245,11 @@ class SubmissionDetailsManager {
         }
     }
 
-    async initializeReviewerSelect() {
+    initializeReviewerSelect() {
         const container = document.getElementById('reviewerSearchContainer');
         if (!container) return;
         
-        // Clear container
-        container.innerHTML = '';
-        
-        if (this.allReviewers.length === 0) {
-            container.innerHTML = `
-                <div class="no-reviewers-available">
-                    <i class="fas fa-info-circle"></i>
-                    <span>No reviewers available for this journal</span>
-                </div>
-            `;
-            return;
-        }
-        
-        // Create custom search select
+        // Create the custom search select
         this.createCustomSearchSelect(container);
     }
 
@@ -296,6 +287,7 @@ class SubmissionDetailsManager {
         const clearSearchBtn = selectElement.querySelector('.clear-search');
         const optionsList = selectElement.querySelector('.select-options-list');
         const selectedValueSpan = selectElement.querySelector('.selected-value');
+        const placeholderSpan = selectElement.querySelector('.placeholder');
         
         // Filter reviewers based on search
         const filterReviewers = (searchTerm) => {
@@ -317,7 +309,6 @@ class SubmissionDetailsManager {
         
         // Select a reviewer
         const selectReviewer = (reviewer) => {
-            // Check if already selected
             const isSelected = this.selectedReviewers.some(r => r.id === reviewer.id);
             if (!isSelected) {
                 this.selectedReviewers.push(reviewer);
@@ -328,9 +319,11 @@ class SubmissionDetailsManager {
                 if (this.selectedReviewers.length === 1) {
                     selectedValueSpan.textContent = reviewer.name;
                     selectedValueSpan.style.display = 'inline';
+                    placeholderSpan.style.display = 'none';
                 } else {
                     selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`;
                     selectedValueSpan.style.display = 'inline';
+                    placeholderSpan.style.display = 'none';
                 }
             }
             
@@ -367,7 +360,6 @@ class SubmissionDetailsManager {
         
         clearSearchBtn.addEventListener('click', clearSearch);
         
-        // Prevent form submission when pressing Enter in search
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -386,18 +378,20 @@ class SubmissionDetailsManager {
             }
         });
         
-        // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!selectElement.contains(e.target)) {
                 dropdown.classList.remove('active');
                 header.classList.remove('active');
             }
         });
+        
+        // Initial render
+        filterReviewers('');
     }
 
     renderReviewerOptions(reviewers) {
         if (reviewers.length === 0) {
-            return '<div class="no-results">No reviewers found</div>';
+            return '<div class="no-results">No reviewers available for this journal</div>';
         }
 
         return reviewers.map(reviewer => `
@@ -413,10 +407,12 @@ class SubmissionDetailsManager {
         `).join('');
     }
 
-    async loadTimelineData() {
+    async loadLatestTimelineEvent() {
         try {
-            const token = this.getAuthToken();
-            const response = await fetch(`${this.BASE_URL}/submissions/${this.submissionId}/history`, {
+            const token = getAuthToken2();
+            if (!token) return;
+            
+            const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -425,22 +421,65 @@ class SubmissionDetailsManager {
             });
             
             if (!response.ok) {
-                throw new Error(`Failed to fetch timeline: ${response.status}`);
+                console.warn(`Failed to fetch timeline: ${response.status}`);
+                this.renderTimeline([]);
+                return;
             }
             
             const data = await response.json();
             
             if (!data.success) {
-                throw new Error(data.message || 'Failed to load timeline');
+                console.warn(`Failed to load timeline:`, data.message);
+                this.renderTimeline([]);
+                return;
             }
             
-            const timelineData = data.submission || data.data || data;
-            this.renderTimeline(timelineData.history || []);
+            const timelineData = data.submission || data;
+            const history = timelineData.history || [];
+            
+            // Get the latest event (first in the array based on the API response)
+            const latestEvent = history.length > 0 ? history[0] : null;
+            
+            if (latestEvent) {
+                await this.renderLatestTimelineEvent(latestEvent);
+            } else {
+                this.renderTimeline([]);
+            }
             
         } catch (error) {
             console.error('Error loading timeline data:', error);
             this.renderTimeline([]);
         }
+    }
+
+    async renderLatestTimelineEvent(event) {
+        const timelineContainer = document.getElementById('recentTimeline');
+        if (!timelineContainer) return;
+        
+        let updatedBy = 'System';
+        if (event.by) {
+            const user = await this.getUserDetails(event.by);
+            if (user) {
+                updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+            }
+        }
+        
+        timelineContainer.innerHTML = `
+            <div class="timeline-item">
+                <div class="card">
+                    <span class="status-badge" style="${this.getStatusStyle(event.status)}">
+                        ${this.formatStatus(event.status)}
+                    </span>
+                    <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
+                    <p class="timeline-date">
+                        <i class="far fa-clock"></i> ${this.formatDate(event.date)}
+                    </p>
+                    <div class="updated-by">
+                        <strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     renderManuscriptHeader() {
@@ -449,8 +488,9 @@ class SubmissionDetailsManager {
         
         const formattedDate = this.formatDate(this.submission.createdAt);
         const statusDisplay = this.formatStatus(this.submission.status);
-        const journalName = this.submission.journalId?.title || this.submission.journalName || 'Unknown Journal';
-        const submittedBy = this.submission.createdBy?.name || this.submission.createdBy?.email || 'Unknown';
+        const journalName = this.submission.journalId?.title || 'Unknown Journal';
+        const journalISSN = this.submission.journalId?.issn || 'N/A';
+        const submittedByName = this.submission.submitterName || 'Unknown';
         
         header.innerHTML = `
             <h1>${this.escapeHtml(this.submission.title)}</h1>
@@ -461,8 +501,12 @@ class SubmissionDetailsManager {
                     <span>Journal: ${this.escapeHtml(journalName)}</span>
                 </div>
                 <div class="meta-item">
+                    <i class="fas fa-hashtag"></i>
+                    <span>ISSN: ${journalISSN}</span>
+                </div>
+                <div class="meta-item">
                     <i class="fas fa-user"></i>
-                    <span>Submitted by: ${this.escapeHtml(submittedBy)}</span>
+                    <span>Submitted by: ${this.escapeHtml(submittedByName)}</span>
                 </div>
                 <div class="meta-item">
                     <i class="far fa-calendar"></i>
@@ -520,21 +564,23 @@ class SubmissionDetailsManager {
                     ${this.escapeHtml(reviewer.email)}
                 </div>
                 <div class="reviewer-status">
-                    <span class="status-indicator"></span>
-                    Awaiting review
+                    <span class="status-indicator ${reviewer.hasReviewed ? 'completed' : 'pending'}"></span>
+                    ${reviewer.hasReviewed ? 'Review completed' : 'Awaiting review'}
                 </div>
             </div>
         `).join('');
         
         // Add "View Progress" button if there are reviewers
-        const viewProgressBtn = document.createElement('div');
-        viewProgressBtn.className = 'view-progress-container';
-        viewProgressBtn.innerHTML = `
-            <button class="btn-view-progress" onclick="window.location.href='reviewer-progress.html?journalId=${this.journalId}'">
-                <i class="fas fa-chart-line"></i> View Progress
-            </button>
-        `;
-        reviewersContainer.appendChild(viewProgressBtn);
+        if (reviewers.length > 0 && this.journalId) {
+            const viewProgressBtn = document.createElement('div');
+            viewProgressBtn.className = 'view-progress-container';
+            viewProgressBtn.innerHTML = `
+                <button class="btn-view-progress" onclick="window.location.href='reviewer-progress.html?journalId=${this.journalId}'">
+                    <i class="fas fa-chart-line"></i> View Progress
+                </button>
+            `;
+            reviewersContainer.appendChild(viewProgressBtn);
+        }
     }
 
     renderSelectedReviewers() {
@@ -565,19 +611,24 @@ class SubmissionDetailsManager {
         this.renderSelectedReviewers();
         this.updateAssignButton();
         
-        // Update the selected value display
+        // Update the selected value display in the select
         const selectElement = document.querySelector('.custom-search-select');
         if (selectElement) {
             const selectedValueSpan = selectElement.querySelector('.selected-value');
+            const placeholderSpan = selectElement.querySelector('.placeholder');
+            
             if (this.selectedReviewers.length === 0) {
                 selectedValueSpan.textContent = '';
                 selectedValueSpan.style.display = 'none';
+                placeholderSpan.style.display = 'inline';
             } else if (this.selectedReviewers.length === 1) {
                 selectedValueSpan.textContent = this.selectedReviewers[0].name;
                 selectedValueSpan.style.display = 'inline';
+                placeholderSpan.style.display = 'none';
             } else {
                 selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`;
                 selectedValueSpan.style.display = 'inline';
+                placeholderSpan.style.display = 'none';
             }
         }
     }
@@ -593,7 +644,12 @@ class SubmissionDetailsManager {
         if (this.selectedReviewers.length === 0) return;
         
         try {
-            const token = this.getAuthToken();
+            const token = getAuthToken2();
+            if (!token) {
+                toastr.error('Authentication required. Please login again.', 'Error');
+                return;
+            }
+            
             const reviewerIds = this.selectedReviewers.map(r => r.id);
             
             const requestBody = {
@@ -601,13 +657,12 @@ class SubmissionDetailsManager {
                 reviewerIds: reviewerIds
             };
             
-            // Show loading state
             const assignBtn = document.getElementById('assignReviewersBtn');
             const originalText = assignBtn.innerHTML;
             assignBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
             assignBtn.disabled = true;
             
-            const response = await fetch(`${this.BASE_URL}/editor/assign-reviewers`, {
+            const response = await fetch(`${BASE_URL}/editor/assign-reviewers`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -618,8 +673,13 @@ class SubmissionDetailsManager {
             });
             
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Failed to assign reviewers: ${response.status}`);
+                const errorText = await response.text();
+                let errorMessage = `Failed to assign reviewers: ${response.status}`;
+                try {
+                    const errorData = JSON.parse(errorText);
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {}
+                throw new Error(errorMessage);
             }
             
             const data = await response.json();
@@ -628,29 +688,17 @@ class SubmissionDetailsManager {
                 throw new Error(data.message || 'Failed to assign reviewers');
             }
             
-            // Update local state
-            const newReviewers = this.selectedReviewers.map(reviewer => ({
-                _id: reviewer.id,
-                name: reviewer.name,
-                email: reviewer.email
-            }));
-            
-            this.submission.assignedReviewers = [
-                ...(this.submission.assignedReviewers || []),
-                ...newReviewers
-            ];
-            
-            // Update UI
-            this.renderCurrentReviewers();
-            this.clearSelection();
-            
             toastr.success(`Successfully assigned ${this.selectedReviewers.length} reviewer(s)`, 'Success');
+            
+            setTimeout(async () => {
+                await this.loadSubmissionData();
+                this.clearSelection();
+            }, 1000);
             
         } catch (error) {
             console.error('Error assigning reviewers:', error);
             toastr.error(error.message || 'Failed to assign reviewers', 'Error');
         } finally {
-            // Reset button state
             const assignBtn = document.getElementById('assignReviewersBtn');
             if (assignBtn) {
                 assignBtn.innerHTML = '<i class="fas fa-user-check"></i> Assign Selected Reviewers';
@@ -664,77 +712,25 @@ class SubmissionDetailsManager {
         this.renderSelectedReviewers();
         this.updateAssignButton();
         
-        // Clear the search select
         const selectElement = document.querySelector('.custom-search-select');
         if (selectElement) {
             const selectedValueSpan = selectElement.querySelector('.selected-value');
+            const placeholderSpan = selectElement.querySelector('.placeholder');
+            const searchInput = selectElement.querySelector('.search-input');
+            const optionsList = selectElement.querySelector('.select-options-list');
+            
             selectedValueSpan.textContent = '';
             selectedValueSpan.style.display = 'none';
+            placeholderSpan.style.display = 'inline';
             
-            const searchInput = selectElement.querySelector('.search-input');
             if (searchInput) {
                 searchInput.value = '';
             }
             
-            const optionsList = selectElement.querySelector('.select-options-list');
             if (optionsList) {
                 optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
             }
         }
-    }
-
-    async renderTimeline(history) {
-        const timelineContainer = document.getElementById('recentTimeline');
-        if (!timelineContainer) return;
-        
-        if (!history || history.length === 0) {
-            timelineContainer.innerHTML = `
-                <div class="no-timeline">
-                    <i class="fas fa-history"></i>
-                    <p>No timeline events found</p>
-                </div>
-            `;
-            return;
-        }
-        
-        // Sort by date (newest first for display)
-        const sortedHistory = [...history].sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        // Take only the most recent 3 events for preview
-        const recentEvents = sortedHistory.slice(0, 3);
-        
-        // Create timeline items
-        let timelineHTML = '';
-        
-        for (const event of recentEvents) {
-            // Get user details for "by" field
-            let updatedBy = 'System';
-            if (event.by) {
-                const user = await this.getUserDetails(event.by);
-                if (user) {
-                    updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
-                }
-            }
-            
-            timelineHTML += `
-                <div class="timeline-item">
-                    <div class="card">
-                        <span class="status-badge" style="${this.getStatusStyle(event.status)}">
-                            ${this.formatStatus(event.status)}
-                        </span>
-                        <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
-                        <p class="timeline-date">
-                            <i class="far fa-clock"></i> ${this.formatDate(event.date)}
-                        </p>
-                        <div class="updated-by">
-                            <strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        timelineContainer.innerHTML = timelineHTML;
     }
 
     viewTimeline() {

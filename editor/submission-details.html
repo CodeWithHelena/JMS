@@ -829,6 +829,194 @@
     align-items: center;
     gap: 0.5rem;
 }
+
+/* Status indicator for reviewers */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-indicator.pending {
+    background-color: var(--warning);
+}
+
+.status-indicator.completed {
+    background-color: var(--success);
+}
+
+.reviewer-status {
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+/* Error message for no journal */
+.error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.error-message i {
+    color: #dc2626;
+}
+
+/* Ensure the select dropdown always shows */
+.custom-search-select {
+    position: relative;
+    width: 100%;
+}
+
+.custom-search-select .select-header {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 46px;
+}
+
+.custom-search-select .select-header:hover {
+    border-color: var(--primary);
+}
+
+.custom-search-select .select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    z-index: 1000;
+    display: none;
+    margin-top: 0.25rem;
+}
+
+.custom-search-select .select-dropdown.active {
+    display: block;
+}
+
+/* Make sure placeholder and selected value work together */
+.custom-search-select .placeholder {
+    color: var(--muted);
+}
+
+.custom-search-select .selected-value {
+    font-weight: 500;
+    color: #111827;
+    display: none;
+}
+
+/* Animation for timeline items */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timeline-item {
+    position: relative;
+    margin: 28px 0;
+    display: block;
+    padding-top: 2px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Timeline card styling */
+.timeline-item .card {
+    background: var(--card-bg);
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+    will-change: transform;
+    position: relative;
+    min-height: 78px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.timeline-item .card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+
+/* Add this to your CSS section */
+.view-progress-container {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+
+.btn-view-progress {
+    background: var(--info);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-view-progress:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-indicator.pending {
+    background-color: var(--warning);
+}
+
+.status-indicator.completed {
+    background-color: var(--success);
+}
+
+.reviewer-status {
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+}
 </style>
 
 <body>
