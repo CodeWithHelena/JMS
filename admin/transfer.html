@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Add New Editor</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -92,6 +92,17 @@
         margin-right: 8px;
     }
 
+    .header-text h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 8px;
+    }
+
+    .header-text p {
+        color: var(--text-light);
+        font-size: 16px;
+    }
 
     /* Form Container */
     .form-container {
@@ -381,9 +392,12 @@
         .back-btn {
             margin-bottom: 15px;
         }
+
+        .header-text h1 {
+            font-size: 24px;
+        }
     }
 </style>
-
 <body>
     <div class="dashboard-container">
         <!-- placeholders for partials -->
@@ -392,31 +406,41 @@
             <div id="header-placeholder"></div> <!-- header.html will inject header + notification, modal -->
 
             <main class="main-content">
-                <div class="container page-title d-flex justify-content-between align-items-center mb-0">
-                    <div>
+                <div class="container page-title">
+                    <h1>Add New Editor</h1>
+                    <p>Create a new editor account for the system</p>
+                </div>
+                <div class="create-user-header">
+                    <a href="users.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Users
+                    </a>
+                    <div class="header-text">
                         <h1>Add New Editor</h1>
                         <p>Create a new editor account for the system</p>
                     </div>
-                    <div>
+                </div>
+                <div class="create-user-container">
+                    <!-- Header -->
+                    <div class="create-user-header">
                         <a href="users.html" class="back-btn">
                             <i class="fas fa-arrow-left"></i> Back to Users
                         </a>
+                        <div class="header-text">
+                            <h1>Add New Editor</h1>
+                            <p>Create a new editor account for the system</p>
+                        </div>
                     </div>
-                </div>
-                <div class="create-user-header">
-                    
-                </div>
-                <div class="create-user-container">
+                
                     <!-- Form Container -->
                     <div class="form-container">
                         <div class="form-title">
                             <i class="fas fa-user-plus"></i> Editor Information
                         </div>
-
+                
                         <p class="form-subtitle">
                             Fill in the details below to create a new editor account. The editor will receive login credentials via email.
                         </p>
-
+                
                         <!-- User Form -->
                         <form id="createUserForm">
                             <div class="form-row">
@@ -429,7 +453,7 @@
                                         <i class="fas fa-info-circle"></i> Editor's first name
                                     </div>
                                 </div>
-
+                
                                 <div class="form-group">
                                     <label for="lastName" class="form-label">
                                         Last Name <span>*</span>
@@ -440,7 +464,7 @@
                                     </div>
                                 </div>
                             </div>
-
+                
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="email" class="form-label">
@@ -451,7 +475,7 @@
                                         <i class="fas fa-info-circle"></i> A valid email address is required
                                     </div>
                                 </div>
-
+                
                                 <div class="form-group">
                                     <label for="phone" class="form-label">
                                         Phone Number <span>*</span>
@@ -462,10 +486,10 @@
                                     </div>
                                 </div>
                             </div>
-
+                
                             <!-- Hidden role field (always editor) -->
                             <input type="hidden" name="role" value="editor">
-
+                
                             <!-- Form Actions -->
                             <div class="form-actions">
                                 <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
@@ -475,14 +499,14 @@
                             </div>
                         </form>
                     </div>
-
+                
                     <!-- Loading State (Hidden by default) -->
                     <div id="loadingState" class="form-container" style="display: none;">
                         <div class="loading">
                             <div class="loading-spinner"></div>
                         </div>
                     </div>
-
+                
                     <!-- Success State (Hidden by default) -->
                     <div id="successState" class="success-state" style="display: none;">
                         <i class="fas fa-check-circle"></i>
@@ -513,7 +537,7 @@
 
     <!-- layout.js loads partials and wires header+sidebar behaviors -->
     <script src="/assets/js/layout.js"></script>
-
+    
     <!-- page-specific scripts (optional) -->
     <script src="/assets/js/page.js"></script>
     <script src="./js/create-user.js"></script>
