@@ -1,7 +1,7 @@
 // API Configuration
 
 export const BASE_URL = 'https://fp.247laboratory.net/api/v1';
-//export const token = localStorage.getItem('editor_tkn');
+export const token = localStorage.getItem('token');
 
 const API_BASE_URL = 'https://fp.247laboratory.net/';
 const API_ENDPOINTS = {

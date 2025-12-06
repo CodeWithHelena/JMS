@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reviews</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <!-- Submission CSS -->
+    <link rel="stylesheet" href="/assets/css/submission.css">
+</head>
+<style>
+    .card-header-row {
+        position: relative;
+    }
+
+    .card-header-row .status-badge {
+        position: absolute;
+        top: -34px;
+        right: 0;
+        border-top-right-radius: var(--card-radius);
+    }
+
+    .meta-row {
+        margin-bottom: 3rem;
+    }
+</style>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="container page-title">
+                    <h1>Assigned Reviews</h1>
+                    <p>View all reviews assigned to you</p>
+
+                    <!-- Filter Controls -->
+                    <div class="filter-controls mt-3">
+                        <div class="filter-group">
+                            <label for="statusFilter">Filter by Status:</label>
+                            <select id="statusFilter" class="filter-select">
+                                <option value="all">All Reviews</option>
+                                <option value="pending">Pending</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="declined">Declined</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="sortBy">Sort by:</label>
+                            <select id="sortBy" class="filter-select">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="title">Title A-Z</option>
+                            </select>
+                        </div>
+                        <button id="applyFilters" class="btn-primary">Apply Filters</button>
+                        <button id="clearFilters" class="btn-secondary">Clear Filters</button>
+                    </div>
+                </div>
+
+                <div class="manuscripts-wrapper">
+                    <!-- Grid container where cards will be injected -->
+                    <div id="cardsGrid" class="cards-grid"></div>
+
+                    <!-- Pagination will be inserted here -->
+                    <div id="pagination"></div>
+
+                    <!-- Template for fallback if JS disabled -->
+                    <noscript>
+                        <div class="alert alert-warning">JavaScript is required to load reviews. Please enable JS.</div>
+                    </noscript>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (required for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Import utility functions -->
+    <script type="module">
+        import { BASE_URL, token } from '../../assets/js/utility.js';
+
+        class ReviewsManager {
+            constructor() {
+                this.currentPage = 1;
+                this.limit = 6; // Cards per page
+                this.totalItems = 0;
+                this.totalPages = 0;
+                this.allReviews = []; // Store all reviews
+                this.filteredReviews = [];
+                this.currentFilters = {
+                    status: 'all',
+                    sortBy: 'newest'
+                };
+
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Initialize
+                    this.initialize();
+
+                    // Add event listeners for filters
+                    document.getElementById('applyFilters')?.addEventListener('click', () => this.applyFilters());
+                    document.getElementById('clearFilters')?.addEventListener('click', () => this.clearFilters());
+                    document.getElementById('statusFilter')?.addEventListener('change', (e) => {
+                        this.currentFilters.status = e.target.value;
+                    });
+                    document.getElementById('sortBy')?.addEventListener('change', (e) => {
+                        this.currentFilters.sortBy = e.target.value;
+                    });
+                });
+            }
+
+            async initialize() {
+                this.showLoading();
+
+                try {
+                    // Fetch assigned reviews
+                    const reviews = await this.fetchAssignedReviews();
+
+                    this.allReviews = reviews;
+                    this.totalItems = reviews.length;
+                    this.totalPages = Math.ceil(this.totalItems / this.limit);
+
+                    this.applyFilters(); // This will trigger render
+
+                } catch (error) {
+                    console.error('Error initializing:', error);
+                    this.showError('Failed to load reviews. Please try again.');
+                }
+            }
+
+            async fetchAssignedReviews() {
+                try {
+                    const response = await fetch(`${BASE_URL}/reviews/assigned`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch reviews: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to fetch reviews');
+                    }
+
+                    return data.reviews || [];
+
+                } catch (error) {
+                    console.error('Error fetching assigned reviews:', error);
+                    throw error;
+                }
+            }
+
+            // Apply filters and sorting
+            applyFilters() {
+                let filtered = [...this.allReviews];
+
+                // Apply status filter
+                if (this.currentFilters.status !== 'all') {
+                    filtered = filtered.filter(review => review.invitationStatus === this.currentFilters.status);
+                }
+
+                // Apply sorting
+                switch (this.currentFilters.sortBy) {
+                    case 'oldest':
+                        filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                        break;
+                    case 'title':
+                        filtered.sort((a, b) => a.submissionId?.title?.localeCompare(b.submissionId?.title || ''));
+                        break;
+                    case 'newest':
+                    default:
+                        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                        break;
+                }
+
+                this.filteredReviews = filtered;
+                this.totalItems = filtered.length;
+                this.totalPages = Math.ceil(this.totalItems / this.limit);
+
+                // Reset to page 1 when filtering
+                this.currentPage = 1;
+
+                this.renderReviews();
+                this.renderPagination();
+            }
+
+            // Clear all filters
+            clearFilters() {
+                this.currentFilters = {
+                    status: 'all',
+                    sortBy: 'newest'
+                };
+
+                // Reset select elements
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('sortBy').value = 'newest';
+
+                this.applyFilters();
+            }
+
+            // Render reviews in the grid
+            renderReviews() {
+                const cardsGrid = document.getElementById('cardsGrid');
+
+                // Calculate which reviews to show based on current page
+                const startIndex = (this.currentPage - 1) * this.limit;
+                const endIndex = startIndex + this.limit;
+                const reviewsToShow = this.filteredReviews.slice(startIndex, endIndex);
+
+                if (reviewsToShow.length === 0) {
+                    cardsGrid.innerHTML = `
+                        <div class="alert alert-info" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                            <i class="fas fa-search fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <h3>No reviews found</h3>
+                            <p>${this.allReviews.length === 0 ? 'No reviews assigned to you yet.' : 'No reviews match your current filters.'}</p>
+                            ${this.allReviews.length > 0 ? `
+                                <button class="retry-btn" onclick="reviewsManager.clearFilters()" 
+                                    style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; margin-top: 1rem;">
+                                    Clear Filters
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                reviewsToShow.forEach(review => {
+                    fragment.appendChild(this.createCardMarkup(review));
+                });
+
+                cardsGrid.innerHTML = '';
+                cardsGrid.appendChild(fragment);
+            }
+
+            // Create individual card markup for review - EXACTLY like editor-submissions.html
+            createCardMarkup(review) {
+                const card = document.createElement('article');
+                card.className = 'manuscript-card review-card';
+
+                const submission = review.submissionId || {};
+                const authors = submission.authors || [];
+
+                // Truncate long titles
+                const truncatedTitle = this.truncateText(submission.title, 60);
+
+                // Determine status color
+                const statusColor = this.getStatusColor(review.invitationStatus);
+                const statusText = this.formatStatus(review.invitationStatus);
+
+                // Format authors
+                const authorsText = this.formatAuthors(authors);
+
+                card.innerHTML = `
+                    <div class="card-header-row">
+                        <div style="flex:1; min-width:0">
+                            <h3 class="card-title" title="${this.escapeHtml(submission.title)}">
+                                ${this.escapeHtml(truncatedTitle)}
+                            </h3>
+                            <div class="card-sub">
+                                <strong>Submission Status:</strong> 
+                                <span>${this.formatStatus(submission.status || 'unknown')}</span>
+                            </div>
+                        </div>
+                        <div class="status-badge" style="background-color: ${statusColor}">
+                            ${statusText}
+                        </div>
+                    </div>
+
+                    <div class="meta-row">
+                        <div>
+                            <div class="meta"><strong>Authors:</strong> ${authorsText}</div>
+                            <div class="meta"><strong>Review ID:</strong> ${review._id.substring(0, 8)}...</div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button class="btn-view" onclick="reviewsManager.viewReviewDetails('${review._id}')">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom">
+                        <div class="submitted-text">
+                            Assigned: ${this.formatDate(review.createdAt)}
+                        </div>
+                    </div>
+                `;
+
+                return card;
+            }
+
+            // Get status color
+            getStatusColor(status) {
+                const colors = {
+                    'pending': '#f59e0b',  // Amber
+                    'accepted': '#3b82f6',  // Blue
+                    'declined': '#ef4444',  // Red
+                    'completed': '#10b981'  // Emerald
+                };
+                return colors[status] || '#6b7280'; // Gray for unknown
+            }
+
+            // Format authors
+            formatAuthors(authors) {
+                if (!authors || !Array.isArray(authors)) return 'N/A';
+                return authors.map(author => this.escapeHtml(author.name)).join(', ');
+            }
+
+            // Format status for display
+            formatStatus(status) {
+                const statusMap = {
+                    'pending': 'Pending',
+                    'accepted': 'Accepted',
+                    'declined': 'Declined',
+                    'completed': 'Completed',
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected'
+                };
+                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
+            }
+
+            // View review details
+            viewReviewDetails(reviewId) {
+                window.location.href = `review-details.html?id=${reviewId}`;
+            }
+
+            // Helper to truncate text with ellipsis
+            truncateText(text, maxLength) {
+                if (!text) return '';
+                if (text.length <= maxLength) return text;
+                return text.substring(0, maxLength) + '...';
+            }
+
+            // Render pagination
+            renderPagination() {
+                const paginationContainer = document.getElementById('pagination');
+
+                if (this.totalPages <= 1) {
+                    paginationContainer.style.display = 'none';
+                    return;
+                }
+
+                let paginationHTML = `
+                    <div class="pagination-info">
+                        Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} 
+                        of ${this.totalItems} reviews
+                    </div>
+                    <div class="pagination-controls">
+                `;
+
+                // Previous button
+                paginationHTML += `
+                    <button class="pagination-btn" ${this.currentPage === 1 ? 'disabled' : ''} 
+                        onclick="reviewsManager.changePage(${this.currentPage - 1})">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                `;
+
+                // Page numbers
+                for (let i = 1; i <= this.totalPages; i++) {
+                    if (i === 1 || i === this.totalPages || (i >= this.currentPage - 2 && i <= this.currentPage + 2)) {
+                        paginationHTML += `
+                            <button class="pagination-btn ${i === this.currentPage ? 'active' : ''}" 
+                                onclick="reviewsManager.changePage(${i})">
+                                ${i}
+                            </button>
+                        `;
+                    } else if (i === this.currentPage - 3 || i === this.currentPage + 3) {
+                        paginationHTML += `<span class="pagination-dots">...</span>`;
+                    }
+                }
+
+                // Next button
+                paginationHTML += `
+                    <button class="pagination-btn" ${this.currentPage === this.totalPages ? 'disabled' : ''} 
+                        onclick="reviewsManager.changePage(${this.currentPage + 1})">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+
+                paginationHTML += '</div>';
+                paginationContainer.innerHTML = paginationHTML;
+                paginationContainer.style.display = 'flex';
+            }
+
+            // Change page (without scroll to top)
+            changePage(page) {
+                this.currentPage = page;
+                this.renderReviews();
+                this.renderPagination();
+            }
+
+            // Show loading state
+            showLoading() {
+                const cardsGrid = document.getElementById('cardsGrid');
+                cardsGrid.innerHTML = `
+                    <div class="loading-screen" style="grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; height: 300px; flex-direction: column; gap: 1rem;">
+                        <div class="spinner" style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <p>Loading reviews...</p>
+                    </div>
+                `;
+            }
+
+            // Show error state
+            showError(message) {
+                const cardsGrid = document.getElementById('cardsGrid');
+                cardsGrid.innerHTML = `
+                    <div class="error-screen" style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--muted);">
+                        <i class="fas fa-exclamation-triangle fa-2x" style="margin-bottom: 1rem; color: var(--danger);"></i>
+                        <h3>Failed to load reviews</h3>
+                        <p>${message}</p>
+                        <button class="retry-btn" onclick="reviewsManager.initialize()" 
+                            style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; margin-top: 1rem;">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Utility function to format date
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+
+            // Utility function to escape HTML
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize reviews manager
+        let reviewsManager = new ReviewsManager();
+
+        // Make it available globally
+        window.reviewsManager = reviewsManager;
+    </script>
+</body>
+
+</html>

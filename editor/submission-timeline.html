@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Submission Timeline</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --accent: #4f46e5;
+            --primary: #ff7a18;
+            --muted: #6b7280;
+            --line-color: #e6e9f2;
+            --dot-color: var(--primary);
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+            --radius: 12px;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        body {
+            background-color: var(--bg);
+        }
+
+        /* Manuscript Header Card */
+        .manuscript-header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .manuscript-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .header-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            background: rgba(255, 122, 24, 0.1);
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+        }
+
+        /* Back Button */
+        .back-button-wrap {
+            width: 20%;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
+        /* timeline container */
+        .timeline-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* vertical line */
+        .timeline {
+            position: relative;
+            padding-left: 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--line-color);
+            border-radius: 4px;
+        }
+
+        /* each timeline item */
+        .timeline-item {
+            position: relative;
+            margin: 28px 0;
+            display: block;
+            padding-top: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .timeline-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .timeline-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .timeline-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .timeline-item:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .timeline-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        .timeline-item:nth-child(7) {
+            animation-delay: 0.7s;
+        }
+
+        .timeline-item:nth-child(8) {
+            animation-delay: 0.8s;
+        }
+
+        .timeline-item:nth-child(9) {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* the dot - unified color */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 6px rgba(255, 122, 24, 0.1);
+            transform: translateX(-50%);
+            transition: background .25s, transform .25s, box-shadow .25s;
+            z-index: 2;
+        }
+
+        /* the card itself */
+        .card {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+            will-change: transform;
+            position: relative;
+            min-height: 78px;
+            margin-left: 56px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .status-badge {
+            width: fit-content;
+            display: inline-block;
+            padding: 0.28rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+
+        .timeline-comment {
+            margin: 0.5rem 0;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .updated-by {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .updated-by strong {
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Error screen */
+        .error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .retry-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        /* Page title styling */
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        /* No data message */
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Timeline loading container */
+        .timeline-loading {
+            margin-top: 2rem;
+        }
+
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* small responsive tweak */
+        @media (max-width:520px) {
+            .timeline::before {
+                left: 28px;
+            }
+
+            .timeline-item::before {
+                left: 28px;
+            }
+
+            .card {
+                margin-left: 48px;
+                padding: 14px;
+            }
+
+            .timeline-wrap {
+                padding: 0 0.5rem;
+            }
+
+            .manuscript-header-card {
+                padding: 1.5rem;
+            }
+
+            .manuscript-header-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .back-button-wrap {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="d-flex justify-content-between">
+                    <div class="container page-title">
+                        <h1>Submission Timeline</h1>
+                        <p>Track the progress of this submission</p>
+                    </div>
+                    <div class="back-button-wrap">
+                        <a href="javascript:history.back()" class="back-button">
+                            <i class="fas fa-arrow-left"></i> Go Back
+                        </a>
+                    </div>
+                </div>
+
+                <div class="timeline-wrap">
+                    <!-- Manuscript Header Card (with skeleton loading including icons) -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Title skeleton -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+
+                        <!-- Status badge skeleton -->
+                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
+
+                        <!-- Metadata with icon skeletons -->
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Loading Screen -->
+                    <div id="timelineLoading" class="timeline-loading">
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading timeline events...</p>
+                        </div>
+                    </div>
+
+                    <!-- Error Screen -->
+                    <div id="errorScreen" class="error-screen" style="display: none;">
+                        <i class="fas fa-exclamation-triangle fa-3x" style="color: var(--danger); margin-bottom: 1rem;"></i>
+                        <h3>Failed to load timeline</h3>
+                        <p id="errorMessage">An error occurred while loading the timeline.</p>
+                        <button class="retry-btn" onclick="timelineManager.loadTimeline()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+
+                    <!-- Timeline Container -->
+                    <div class="timeline" id="timelineContainer" style="display: none;">
+                        <!-- Timeline items will be injected here -->
+                    </div>
+
+                    <!-- No Data Message -->
+                    <div id="noDataMessage" class="no-data" style="display: none;">
+                        <i class="fas fa-history"></i>
+                        <h3>No Timeline Events</h3>
+                        <p>No timeline events found for this submission.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        // Constants
+        const BASE_URL = 'https://fp.247laboratory.net/api/v1';
+        const getAuthToken2 = () => localStorage.getItem('editor_tkn') || localStorage.getItem('token');
+
+        // Loading Functions
+        const LoadingScreen = {
+            showTimelineLoading: function () {
+                document.getElementById('timelineLoading').style.display = 'block';
+                document.getElementById('timelineContainer').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'none';
+            },
+
+            hideTimelineLoading: function () {
+                document.getElementById('timelineLoading').style.display = 'none';
+            },
+
+            showHeaderLoading: function () {
+                // Header already shows skeleton by default
+            },
+
+            hideHeaderLoading: function () {
+                // Skeleton will be replaced with real data
+            }
+        };
+
+        const ErrorScreen = {
+            show: function (message, elementId = 'errorScreen') {
+                document.getElementById('errorMessage').textContent = message;
+                document.getElementById(elementId).style.display = 'block';
+                LoadingScreen.hideTimelineLoading();
+                document.getElementById('timelineContainer').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'none';
+            },
+
+            hide: function (elementId = 'errorScreen') {
+                document.getElementById(elementId).style.display = 'none';
+            }
+        };
+
+        // Timeline Manager Class
+        class TimelineManager {
+            constructor() {
+                this.token = getAuthToken2();
+                this.submissionId = this.getSubmissionIdFromURL();
+                this.submission = null;
+                this.userCache = new Map(); // Cache for user data
+
+                if (!this.token) {
+                    ErrorScreen.show('Authentication required. Please login.');
+                    return;
+                }
+
+                if (!this.submissionId) {
+                    ErrorScreen.show('No submission ID provided in URL');
+                    return;
+                }
+
+                this.initializeToastr();
+                this.loadTimeline();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 5000,
+                    extendedTimeOut: 2000
+                };
+            }
+
+            getSubmissionIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
+            }
+
+            async getUserDetails(userId) {
+                if (!userId) return null;
+
+                // Check cache first
+                if (this.userCache.has(userId)) {
+                    return this.userCache.get(userId);
+                }
+
+                try {
+                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.user) {
+                            // Cache the user data
+                            this.userCache.set(userId, data.user);
+                            return data.user;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                }
+
+                return null;
+            }
+
+            async loadTimeline() {
+                // Show timeline loading immediately
+                LoadingScreen.showTimelineLoading();
+
+                // Manuscript header already shows skeleton loading by default
+
+                try {
+                    // Get the submission history data
+                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch timeline: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success || !data.submission) {
+                        throw new Error(data.message || 'Failed to load timeline data');
+                    }
+
+                    this.submission = data.submission;
+
+                    // Render manuscript header immediately with real data
+                    this.renderManuscriptHeader();
+
+                    // Then render timeline with user details
+                    await this.renderTimeline(this.submission.history || []);
+
+                } catch (error) {
+                    console.error('Error loading timeline data:', error);
+                    ErrorScreen.show('Failed to load timeline data. Please try again.');
+                    // Still show manuscript header even if timeline fails
+                    this.renderManuscriptHeader();
+                }
+            }
+
+            renderManuscriptHeader() {
+                const manuscriptHeader = document.getElementById('manuscriptHeader');
+
+                if (!this.submission) return;
+
+                const formattedDate = this.formatDate(this.submission.createdAt);
+                const statusDisplay = this.formatStatus(this.submission.currentStatus || this.submission.status);
+
+                manuscriptHeader.innerHTML = `
+                    <h1>${this.escapeHtml(this.submission.title)}</h1>
+                    <span class="header-status-badge">Current Status: ${statusDisplay}</span>
+                    <div class="header-meta">
+                        <div class="meta-item">
+                            <i class="far fa-calendar"></i>
+                            <span>Submitted On: ${formattedDate}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-history"></i>
+                            <span>Last Updated: ${this.formatDate(this.submission.updatedAt)}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            async renderTimeline(history) {
+                const timelineContainer = document.getElementById('timelineContainer');
+                const noDataMessage = document.getElementById('noDataMessage');
+
+                if (!history || history.length === 0) {
+                    noDataMessage.style.display = 'block';
+                    timelineContainer.style.display = 'none';
+                    LoadingScreen.hideTimelineLoading();
+                    return;
+                }
+
+                // Sort history by date (oldest first for timeline)
+                const sortedHistory = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                // Create document fragment for better performance
+                const fragment = document.createDocumentFragment();
+
+                // Process each timeline item
+                for (let i = 0; i < sortedHistory.length; i++) {
+                    const item = sortedHistory[i];
+                    const timelineItem = await this.createTimelineItem(item, i, sortedHistory.length);
+                    fragment.appendChild(timelineItem);
+                }
+
+                timelineContainer.innerHTML = '';
+                timelineContainer.appendChild(fragment);
+                timelineContainer.style.display = 'block';
+                noDataMessage.style.display = 'none';
+
+                LoadingScreen.hideTimelineLoading();
+            }
+
+            async createTimelineItem(item, index, totalItems) {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+
+                // Format date
+                const formattedDate = this.formatDate(item.date || item.createdAt);
+
+                // Format status for display
+                const statusDisplay = this.formatStatus(item.status);
+
+                // Get status color
+                const statusColor = this.getStatusColor(item.status);
+
+                // Get user details if available
+                let updatedByText = '';
+                if (item.by) {
+                    const user = await this.getUserDetails(item.by);
+                    if (user) {
+                        const userName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'System User';
+                        updatedByText = `<div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(userName)}</strong></div>`;
+                    } else {
+                        updatedByText = `<div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: System</strong></div>`;
+                    }
+                }
+
+                timelineItem.innerHTML = `
+                    <div class="card">
+                        <span class="status-badge" style="${statusColor}">
+                            ${statusDisplay}
+                        </span>
+                        <p class="timeline-comment">${this.escapeHtml(item.comment || 'No comment provided.')}</p>
+                        <p class="timeline-date">
+                            <i class="far fa-clock"></i> ${formattedDate}
+                        </p>
+                        ${updatedByText}
+                    </div>
+                `;
+
+                return timelineItem;
+            }
+
+            getStatusColor(status) {
+                const colors = {
+                    'submitted': 'background-color: var(--info); color: white;',
+                    'under_review': 'background-color: var(--warning); color: white;',
+                    'reviewed': 'background-color: var(--primary); color: white;',
+                    'accepted': 'background-color: var(--success); color: white;',
+                    'rejected': 'background-color: var(--danger); color: white;'
+                };
+                return colors[status] || 'background-color: var(--muted); color: white;';
+            }
+
+            formatStatus(status) {
+                const statusMap = {
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected'
+                };
+                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+            }
+
+            formatDate(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                } catch (error) {
+                    console.error('Error formatting date:', error);
+                    return dateString;
+                }
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize timeline manager when DOM is loaded
+        let timelineManager;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            timelineManager = new TimelineManager();
+        });
+    </script>
+</body>
+
+</html>

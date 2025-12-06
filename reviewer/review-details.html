@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Review Details</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Review Details CSS -->
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --accent: #4f46e5;
+            --primary: #ff7a18;
+            --primary-light: rgba(255, 122, 24, 0.1);
+            --primary-dark: #e56c0e;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --radius: 12px;
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+        }
+
+        .review-details-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Back Button */
+        .back-button-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            color: #374151;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
+        /* Manuscript Header Card */
+        .manuscript-header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .manuscript-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .header-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .count-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Authors Section */
+        .authors-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .author-item {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .author-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .author-email {
+            color: var(--muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Manuscript File Section */
+        .file-info-card {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .file-text h3 {
+            margin: 0 0 0.25rem 0;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .file-text p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .btn-view-document {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-view-document:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Abstract Section */
+        .abstract-content {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        /* Decision Buttons Section */
+        .decision-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px dashed var(--border);
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .decision-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .decision-status-badge.accepted {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .decision-status-badge.declined {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .decision-status-badge.pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .decision-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .btn-accept,
+        .btn-decline {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+
+        .btn-accept {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-accept:hover:not(:disabled) {
+            background: #0da271;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-decline {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-decline:hover:not(:disabled) {
+            background: #dc2626;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-accept:disabled,
+        .btn-decline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Review Form Section */
+        .review-form-section {
+            display: none;
+            /* Hidden by default, shown when accepted */
+        }
+
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label.required::after {
+            content: "*";
+            color: var(--danger);
+            margin-left: 0.25rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Recommendation Select */
+        .recommendation-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .recommendation-option {
+            position: relative;
+        }
+
+        .recommendation-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .recommendation-option label {
+            display: block;
+            padding: 1rem;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .recommendation-option input[type="radio"]:checked+label {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .recommendation-option label:hover {
+            border-color: var(--primary);
+        }
+
+        /* Score Input */
+        .score-input-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .score-slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .score-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .score-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.25rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-submit-review {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-submit-review:hover:not(:disabled) {
+            background: #0da271;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-submit-review:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: var(--light);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            margin-top: 2rem;
+        }
+
+        .timeline-actions {
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 28px 0;
+            display: block;
+            padding-top: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 6px rgba(255, 122, 24, 0.1);
+            z-index: 2;
+        }
+
+        .timeline-item .card {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+            will-change: transform;
+            position: relative;
+            min-height: 78px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .timeline-item .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .timeline-item .status-badge {
+            width: fit-content;
+            display: inline-block;
+            padding: 0.28rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+
+        .timeline-comment {
+            margin: 0.5rem 0;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .updated-by {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .updated-by strong {
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Review Submitted Message */
+        .review-submitted-message {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid var(--success);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-submitted-message i {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+
+        .review-submitted-message h3 {
+            color: #065f46;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-submitted-message p {
+            color: #047857;
+            margin-bottom: 0;
+        }
+
+        /* Loading and Error States */
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .error-screen i {
+            color: var(--danger);
+            margin-bottom: 1rem;
+        }
+
+        .error-screen h3 {
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .retry-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-icon {
+            background: #f0f0f0;
+            border-radius: 50%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .review-details-container {
+                padding: 0 0.5rem;
+            }
+
+            .manuscript-header-card {
+                padding: 1.5rem;
+            }
+
+            .manuscript-header-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .content-section {
+                padding: 1rem;
+            }
+
+            .decision-buttons {
+                flex-direction: column;
+            }
+
+            .btn-accept,
+            .btn-decline {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .author-item {
+                min-width: 100%;
+            }
+
+            .file-info-card {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .btn-view-document {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .recommendation-select {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-submit-review,
+            .btn-reset {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <!-- Back Button -->
+                <div class="back-button-wrap">
+                    <a href="reviews.html" class="back-button">
+                        <i class="fas fa-arrow-left"></i>Back to Reviews
+                    </a>
+                </div>
+
+                <div class="review-details-container">
+                    <!-- Manuscript Header Card -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Skeleton Loading -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Screen -->
+                    <div id="loadingScreen" class="loading-screen">
+                        <div class="spinner"></div>
+                        <p>Loading review details...</p>
+                    </div>
+
+                    <!-- Error Screen -->
+                    <div id="errorScreen" class="error-screen" style="display: none;">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                        <h3>Failed to load review</h3>
+                        <p id="errorMessage">An error occurred while loading the review.</p>
+                        <button class="retry-btn" onclick="window.location.reload()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+
+                    <!-- Content (hidden until loaded) -->
+                    <div id="contentContainer" style="display: none;">
+                        <!-- Manuscript File Section -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-file-alt"></i> Manuscript Document
+                            </h2>
+                            <div id="fileInfoCard" class="file-info-card">
+                                <div class="file-details">
+                                    <div class="file-icon">
+                                        <i class="fas fa-file-word"></i>
+                                    </div>
+                                    <div class="file-text">
+                                        <h3 id="fileName">Loading...</h3>
+                                        <p id="fileSize">Original file: loading...</p>
+                                    </div>
+                                </div>
+                                <a id="viewDocumentLink" class="btn-view-document" href="#" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i> View Document
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Abstract Section -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-align-left"></i> Abstract
+                            </h2>
+                            <div id="abstractContent" class="abstract-content">
+                                <!-- Abstract will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Authors Section -->
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-users"></i> Authors
+                                </h2>
+                                <span id="authorsCount" class="count-badge">0</span>
+                            </div>
+                            <div id="authorsList" class="authors-list">
+                                <!-- Authors will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Decision Section -->
+                        <div class="content-section decision-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-clipboard-check"></i> Review Invitation
+                            </h2>
+
+                            <!-- Decision Status Badge -->
+                            <div id="decisionStatusBadge" class="decision-status-badge pending">
+                                <i class="fas fa-clock"></i>
+                                <span>Pending Your Response</span>
+                            </div>
+
+                            <!-- Decision Buttons -->
+                            <div id="decisionButtons" class="decision-buttons">
+                                <button id="acceptBtn" class="btn-accept">
+                                    <i class="fas fa-check-circle"></i> Accept Review
+                                </button>
+                                <button id="declineBtn" class="btn-decline">
+                                    <i class="fas fa-times-circle"></i> Decline Review
+                                </button>
+                            </div>
+
+                            <div id="decisionMessage" class="form-hint" style="margin-top: 1rem; text-align: center;">
+                                <!-- Decision messages will appear here -->
+                            </div>
+                        </div>
+
+                        <!-- Review Submitted Message (shown when manuscript is no longer under_review) -->
+                        <div id="reviewSubmittedMessage" class="review-submitted-message" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Review Submitted Successfully</h3>
+                            <p>Thank you for completing your review. The editor has been notified.</p>
+                        </div>
+
+                        <!-- Review Form Section (shown only when invitationStatus is 'accepted' AND manuscript status is 'under_review') -->
+                        <div id="reviewFormSection" class="content-section review-form-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-edit"></i> Submit Your Review
+                            </h2>
+
+                            <form id="reviewForm" class="review-form">
+                                <!-- Comments to Editor -->
+                                <div class="form-group">
+                                    <label for="commentsToEditor" class="required">
+                                        <i class="fas fa-comment-dots"></i> Confidential Comments to Editor
+                                    </label>
+                                    <textarea id="commentsToEditor" name="commentsToEditor" class="form-control" placeholder="Provide confidential feedback for the editor only..." required></textarea>
+                                    <div class="form-hint">
+                                        These comments will only be visible to the editor, not the authors.
+                                    </div>
+                                </div>
+
+                                <!-- Comments to Author -->
+                                <div class="form-group">
+                                    <label for="commentsToAuthor" class="required">
+                                        <i class="fas fa-comments"></i> Comments to Author
+                                    </label>
+                                    <textarea id="commentsToAuthor" name="commentsToAuthor" class="form-control" placeholder="Provide constructive feedback for the authors..." required></textarea>
+                                    <div class="form-hint">
+                                        These comments will be shared with the manuscript authors.
+                                    </div>
+                                </div>
+
+                                <!-- Recommendation -->
+                                <div class="form-group">
+                                    <label class="required">
+                                        <i class="fas fa-star"></i> Recommendation
+                                    </label>
+                                    <div class="recommendation-select">
+                                        <div class="recommendation-option">
+                                            <input type="radio" id="accept" name="recommendation" value="accept">
+                                            <label for="accept">Accept</label>
+                                        </div>
+                                        <div class="recommendation-option">
+                                            <input type="radio" id="minor_revision" name="recommendation" value="minor_revision">
+                                            <label for="minor_revision">Minor Revision</label>
+                                        </div>
+                                        <div class="recommendation-option">
+                                            <input type="radio" id="major_revision" name="recommendation" value="major_revision">
+                                            <label for="major_revision">Major Revision</label>
+                                        </div>
+                                        <div class="recommendation-option">
+                                            <input type="radio" id="reject" name="recommendation" value="reject">
+                                            <label for="reject">Reject</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-hint">
+                                        Select your recommendation for this manuscript.
+                                    </div>
+                                </div>
+
+                                <!-- Score -->
+                                <div class="form-group">
+                                    <label for="score" class="required">
+                                        <i class="fas fa-chart-line"></i> Overall Score
+                                    </label>
+                                    <div class="score-input-container">
+                                        <input type="range" id="score" name="score" min="0" max="100" value="50" class="score-slider">
+                                        <div id="scoreDisplay" class="score-display">50</div>
+                                    </div>
+                                    <div class="score-labels">
+                                        <span>Poor (0)</span>
+                                        <span>Excellent (100)</span>
+                                    </div>
+                                    <div class="form-hint">
+                                        Rate the overall quality of the manuscript.
+                                    </div>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="form-actions">
+                                    <button type="button" id="resetFormBtn" class="btn-reset">
+                                        <i class="fas fa-redo"></i> Reset Form
+                                    </button>
+                                    <button type="submit" id="submitReviewBtn" class="btn-submit-review">
+                                        <i class="fas fa-paper-plane"></i> Submit Review
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Timeline Section -->
+                        <div class="content-section timeline-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-history"></i> Manuscript Timeline
+                            </h2>
+                            <div class="timeline-actions">
+                                <button id="viewTimelineBtn" class="btn-secondary">
+                                    <i class="fas fa-external-link-alt"></i> View Full Timeline
+                                </button>
+                            </div>
+                            <div id="recentTimeline" class="recent-timeline">
+                                <!-- Most recent timeline event will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Review Details JavaScript (self-contained) -->
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class ReviewDetailsManager {
+            constructor() {
+                this.reviewId = this.getReviewIdFromURL();
+                this.review = null;
+                this.userCache = new Map();
+
+                if (!this.reviewId) {
+                    this.showError('No review ID provided');
+                    return;
+                }
+
+                this.initializeToastr();
+                this.bindEvents();
+                this.initialize();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            bindEvents() {
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Decision buttons
+                    document.getElementById('acceptBtn')?.addEventListener('click', () => this.respondToInvitation('accept'));
+                    document.getElementById('declineBtn')?.addEventListener('click', () => this.respondToInvitation('decline'));
+
+                    // Review form
+                    document.getElementById('score')?.addEventListener('input', (e) => {
+                        document.getElementById('scoreDisplay').textContent = e.target.value;
+                    });
+
+                    document.getElementById('resetFormBtn')?.addEventListener('click', () => this.resetForm());
+
+                    const reviewForm = document.getElementById('reviewForm');
+                    if (reviewForm) {
+                        reviewForm.addEventListener('submit', (e) => {
+                            e.preventDefault();
+                            this.submitReview();
+                        });
+                    }
+
+                    // View Full Timeline button
+                    document.getElementById('viewTimelineBtn')?.addEventListener('click', () => {
+                        window.location.href = `review-timeline.html?id=${this.review?.manuscript?._id || this.reviewId}`;
+                    });
+                });
+            }
+
+            getReviewIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
+            }
+
+            async initialize() {
+                this.showLoading();
+
+                try {
+                    await this.loadReviewData();
+                    await this.loadLatestTimelineEvent();
+
+                    this.hideLoading();
+                    this.showContent();
+
+                } catch (error) {
+                    console.error('Error initializing:', error);
+                    this.showError('Failed to load review details. Please try again.');
+                }
+            }
+
+            async loadReviewData() {
+                try {
+                    if (!token) {
+                        throw new Error('Authentication token not found');
+                    }
+
+                    const response = await fetch(`${BASE_URL}/reviews/${this.reviewId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch review: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load review data');
+                    }
+
+                    this.review = data.review;
+                    console.log('Review data loaded:', this.review);
+
+                    this.renderManuscriptHeader();
+                    this.renderFileInfo();
+                    this.renderAbstract();
+                    this.renderAuthors();
+                    this.updateDecisionSection();
+                    this.updateReviewFormVisibility();
+
+                } catch (error) {
+                    console.error('Error loading review data:', error);
+                    throw error;
+                }
+            }
+
+            async loadLatestTimelineEvent() {
+                try {
+                    if (!token || !this.review?.manuscript?.history) return;
+
+                    const history = this.review.manuscript.history || [];
+
+                    // Get the most recent event (last in array)
+                    const latestEvent = history.length > 0 ? history[history.length - 1] : null;
+
+                    if (latestEvent) {
+                        await this.renderLatestTimelineEvent(latestEvent);
+                    } else {
+                        this.renderTimeline([]);
+                    }
+
+                } catch (error) {
+                    console.error('Error loading timeline data:', error);
+                    this.renderTimeline([]);
+                }
+            }
+
+            async renderLatestTimelineEvent(event) {
+                const timelineContainer = document.getElementById('recentTimeline');
+                if (!timelineContainer) return;
+
+                let updatedBy = 'System';
+                if (event.by) {
+                    const user = await this.getUserDetails(event.by);
+                    if (user) {
+                        updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+                    }
+                }
+
+                timelineContainer.innerHTML = `
+                    <div class="timeline-item">
+                        <div class="card">
+                            <span class="status-badge" style="${this.getStatusStyle(event.status)}">
+                                ${this.formatStatus(event.status)}
+                            </span>
+                            <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
+                            <p class="timeline-date">
+                                <i class="far fa-clock"></i> ${this.formatDate(event.date)}
+                            </p>
+                            <div class="updated-by">
+                                <strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            updateReviewFormVisibility() {
+                const reviewFormSection = document.getElementById('reviewFormSection');
+                const reviewSubmittedMessage = document.getElementById('reviewSubmittedMessage');
+                const decisionSection = document.querySelector('.decision-section');
+
+                if (!this.review) return;
+
+                const invitationStatus = this.review.invitationStatus;
+                const manuscriptStatus = this.review.manuscript?.status;
+
+                console.log('Form visibility check:', {
+                    invitationStatus,
+                    manuscriptStatus,
+                    showForm: invitationStatus === 'accepted' && manuscriptStatus === 'under_review'
+                });
+
+                // Hide both initially
+                reviewFormSection.style.display = 'none';
+                reviewSubmittedMessage.style.display = 'none';
+
+                // Show form only when: invitation is accepted AND manuscript is still under review
+                if (invitationStatus === 'accepted' && manuscriptStatus === 'under_review') {
+                    reviewFormSection.style.display = 'block';
+                    decisionSection.style.display = 'none'; // Hide decision section when form is shown
+                }
+                // Show submitted message when manuscript is no longer under review (review already submitted)
+                else if (invitationStatus === 'accepted' && manuscriptStatus !== 'under_review') {
+                    reviewSubmittedMessage.style.display = 'block';
+                    decisionSection.style.display = 'none';
+                }
+                // Show decision section for all other cases
+                else {
+                    decisionSection.style.display = 'block';
+                }
+            }
+
+            renderManuscriptHeader() {
+                const header = document.getElementById('manuscriptHeader');
+                if (!header || !this.review) return;
+
+                const manuscript = this.review.manuscript;
+                const formattedDate = this.formatDate(manuscript.createdAt);
+                const statusDisplay = this.formatStatus(manuscript.status);
+                const journalName = manuscript.journal?.title || 'Unknown Journal';
+                const journalISSN = manuscript.journal?.issn || 'N/A';
+
+                header.innerHTML = `
+                    <h1>${this.escapeHtml(manuscript.title)}</h1>
+                    <span class="header-status-badge" style="${this.getStatusStyle(manuscript.status)}">
+                        ${statusDisplay}
+                    </span>
+                    <div class="header-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-book-open"></i>
+                            <span>Journal: ${this.escapeHtml(journalName)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-hashtag"></i>
+                            <span>ISSN: ${journalISSN}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="far fa-calendar"></i>
+                            <span>Submitted on: ${formattedDate}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderFileInfo() {
+                const fileInfoCard = document.getElementById('fileInfoCard');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+                const viewDocumentLink = document.getElementById('viewDocumentLink');
+
+                if (!this.review?.manuscript?.file) return;
+
+                const file = this.review.manuscript.file;
+                const fileUrl = `${BASE_URL}${file.url}`;
+                const originalName = file.originalName || 'Unknown file';
+
+                fileName.textContent = originalName;
+                fileSize.textContent = `Original file: ${originalName}`;
+                viewDocumentLink.href = fileUrl;
+            }
+
+            renderAbstract() {
+                const abstractContent = document.getElementById('abstractContent');
+                if (!abstractContent || !this.review) return;
+
+                const abstract = this.review.manuscript.abstract || 'No abstract provided.';
+                abstractContent.innerHTML = `<p>${this.escapeHtml(abstract)}</p>`;
+            }
+
+            renderAuthors() {
+                const authorsList = document.getElementById('authorsList');
+                const authorsCount = document.getElementById('authorsCount');
+                if (!authorsList || !this.review) return;
+
+                const authors = this.review.manuscript.authors || [];
+                authorsCount.textContent = authors.length;
+
+                if (authors.length === 0) {
+                    authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
+                    return;
+                }
+
+                authorsList.innerHTML = authors.map(author => `
+                    <div class="author-item">
+                        <div class="author-name">${this.escapeHtml(author.name)}</div>
+                        <div class="author-email">
+                            <i class="fas fa-envelope"></i>
+                            ${this.escapeHtml(author.email)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateDecisionSection() {
+                const decisionStatusBadge = document.getElementById('decisionStatusBadge');
+                const decisionButtons = document.getElementById('decisionButtons');
+                const decisionMessage = document.getElementById('decisionMessage');
+
+                if (!this.review) return;
+
+                const invitationStatus = this.review.invitationStatus;
+
+                // Update status badge
+                decisionStatusBadge.className = `decision-status-badge ${invitationStatus}`;
+                const statusIcon = invitationStatus === 'accepted' ? 'fa-check-circle' :
+                    invitationStatus === 'declined' ? 'fa-times-circle' : 'fa-clock';
+                const statusText = invitationStatus === 'accepted' ? 'Review Accepted' :
+                    invitationStatus === 'declined' ? 'Review Declined' : 'Pending Your Response';
+
+                decisionStatusBadge.innerHTML = `
+                    <i class="fas ${statusIcon}"></i>
+                    <span>${statusText}</span>
+                `;
+
+                // Update decision buttons and message
+                if (invitationStatus === 'pending') {
+                    decisionButtons.style.display = 'flex';
+                    decisionMessage.innerHTML = 'Please accept or decline this review invitation.';
+                } else {
+                    decisionButtons.style.display = 'none';
+                    if (invitationStatus === 'accepted') {
+                        decisionMessage.innerHTML = `
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                            You have accepted this review invitation.
+                        `;
+                    } else if (invitationStatus === 'declined') {
+                        decisionMessage.innerHTML = `
+                            <i class="fas fa-times-circle" style="color: var(--danger);"></i>
+                            You have declined this review invitation.
+                        `;
+                    }
+                }
+
+                // Disable buttons if decision already made
+                const acceptBtn = document.getElementById('acceptBtn');
+                const declineBtn = document.getElementById('declineBtn');
+                if (invitationStatus !== 'pending') {
+                    acceptBtn.disabled = true;
+                    declineBtn.disabled = true;
+                }
+            }
+
+            async respondToInvitation(decision) {
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        return;
+                    }
+
+                    const requestBody = {
+                        reviewId: this.reviewId,
+                        decision: decision
+                    };
+
+                    console.log('Responding to invitation:', requestBody);
+
+                    // Show loading state
+                    const acceptBtn = document.getElementById('acceptBtn');
+                    const declineBtn = document.getElementById('declineBtn');
+                    const originalAcceptText = acceptBtn.innerHTML;
+                    const originalDeclineText = declineBtn.innerHTML;
+
+                    if (decision === 'accept') {
+                        acceptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Accepting...';
+                    } else {
+                        declineBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Declining...';
+                    }
+
+                    acceptBtn.disabled = true;
+                    declineBtn.disabled = true;
+
+                    const response = await fetch(`${BASE_URL}/reviews/respond`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Respond error:', errorText);
+                        let errorMessage = `Failed to ${decision} review: ${response.status}`;
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) {
+                            // Not JSON response
+                        }
+                        throw new Error(errorMessage);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || `Failed to ${decision} review`);
+                    }
+
+                    // Success
+                    toastr.success(`Successfully ${decision}ed the review invitation`, 'Success');
+
+                    // Update local state and refresh data
+                    this.review.invitationStatus = decision;
+
+                    // Reload data to get updated manuscript status
+                    await this.loadReviewData();
+
+                    // Update UI sections
+                    this.updateDecisionSection();
+                    this.updateReviewFormVisibility();
+
+                } catch (error) {
+                    console.error('Error responding to invitation:', error);
+                    toastr.error(error.message || 'Failed to respond to invitation', 'Error');
+
+                    // Reset button states
+                    const acceptBtn = document.getElementById('acceptBtn');
+                    const declineBtn = document.getElementById('declineBtn');
+                    acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> Accept Review';
+                    declineBtn.innerHTML = '<i class="fas fa-times-circle"></i> Decline Review';
+
+                    // Only re-enable if still pending
+                    if (this.review?.invitationStatus === 'pending') {
+                        acceptBtn.disabled = false;
+                        declineBtn.disabled = false;
+                    }
+                }
+            }
+
+            async submitReview() {
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        return;
+                    }
+
+                    // Get form data
+                    const formData = {
+                        reviewId: this.reviewId,
+                        commentsToEditor: document.getElementById('commentsToEditor').value.trim(),
+                        commentsToAuthor: document.getElementById('commentsToAuthor').value.trim(),
+                        recommendation: document.querySelector('input[name="recommendation"]:checked')?.value,
+                        score: parseInt(document.getElementById('score').value)
+                    };
+
+                    // Validate form
+                    if (!formData.commentsToEditor) {
+                        toastr.error('Please provide comments to the editor', 'Validation Error');
+                        return;
+                    }
+
+                    if (!formData.commentsToAuthor) {
+                        toastr.error('Please provide comments to the author', 'Validation Error');
+                        return;
+                    }
+
+                    if (!formData.recommendation) {
+                        toastr.error('Please select a recommendation', 'Validation Error');
+                        return;
+                    }
+
+                    console.log('Submitting review:', formData);
+
+                    // Show loading state
+                    const submitBtn = document.getElementById('submitReviewBtn');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                    submitBtn.disabled = true;
+
+                    const response = await fetch(`${BASE_URL}/reviews/submit`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Submit review error:', errorText);
+                        let errorMessage = `Failed to submit review: ${response.status}`;
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) {
+                            // Not JSON response
+                        }
+                        throw new Error(errorMessage);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to submit review');
+                    }
+
+                    // Success - show SweetAlert
+                    Swal.fire({
+                        title: 'Review Submitted Successfully!',
+                        text: 'Thank you for your review. The editor has been notified.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#10b981',
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(async () => {
+                        // Reload data to update UI (hide form, show submitted message)
+                        await this.loadReviewData();
+                    });
+
+                } catch (error) {
+                    console.error('Error submitting review:', error);
+                    toastr.error(error.message || 'Failed to submit review', 'Error');
+                } finally {
+                    // Reset button state
+                    const submitBtn = document.getElementById('submitReviewBtn');
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Review';
+                    submitBtn.disabled = false;
+                }
+            }
+
+            resetForm() {
+                const form = document.getElementById('reviewForm');
+                if (form) {
+                    form.reset();
+                    document.getElementById('scoreDisplay').textContent = '50';
+                    document.getElementById('score').value = '50';
+                }
+            }
+
+            async getUserDetails(userId) {
+                if (this.userCache.has(userId)) {
+                    return this.userCache.get(userId);
+                }
+
+                try {
+                    if (!token) return null;
+
+                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch user ${userId}: ${response.status}`);
+                        return null;
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        console.warn(`Failed to fetch user ${userId}:`, data.message);
+                        return null;
+                    }
+
+                    const user = data.user;
+                    this.userCache.set(userId, user);
+                    return user;
+
+                } catch (error) {
+                    console.error(`Error fetching user ${userId}:`, error);
+                    return null;
+                }
+            }
+
+            getStatusStyle(status) {
+                const colors = {
+                    'submitted': 'background-color: #3b82f6; color: white;',
+                    'under_review': 'background-color: #f59e0b; color: white;',
+                    'reviewed': 'background-color: #8b5cf6; color: white;',
+                    'accepted': 'background-color: #10b981; color: white;',
+                    'rejected': 'background-color: #ef4444; color: white;'
+                };
+                return colors[status] || 'background-color: #6b7280; color: white;';
+            }
+
+            formatStatus(status) {
+                const statusMap = {
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected'
+                };
+                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+            }
+
+            formatDate(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                } catch (error) {
+                    console.error('Error formatting date:', error);
+                    return dateString;
+                }
+            }
+
+            showLoading() {
+                document.getElementById('loadingScreen').style.display = 'block';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('contentContainer').style.display = 'none';
+            }
+
+            hideLoading() {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
+
+            showContent() {
+                document.getElementById('contentContainer').style.display = 'block';
+            }
+
+            showError(message) {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('errorScreen').style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize review details manager
+        let reviewDetails = new ReviewDetailsManager();
+    </script>
+</body>
+
+</html>
