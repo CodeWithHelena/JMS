@@ -10,33 +10,500 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
-
     <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
-    <!-- Submission CSS -->
-    <link rel="stylesheet" href="/assets/css/submission.css">
+    <!-- Custom Select CSS -->
+    <link rel="stylesheet" href="/assets/css/custom-select.css">
+
+    <style>
+        /* Main Container */
+        .container.page-title {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .page-title h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: var(--font-size-lg);
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .btn-primary {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--btn-secondary-bg);
+            color: var(--btn-secondary-text);
+            border: 1px solid var(--btn-secondary-border);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+        }
+
+        .btn-secondary:hover {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+        }
+
+        /* Submissions Container */
+        .manuscripts-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Submission Card - Redesigned */
+        .submission-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-normal);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submission-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary);
+        }
+
+        /* Card Header with Background Color */
+        .card-header {
+            background: linear-gradient(135deg, var(--light) 0%, rgba(var(--primary-rgb), 0.05) 100%);
+            padding: 1.5rem;
+            position: relative;
+            border-bottom: 2px solid var(--border);
+            min-height: 100px;
+        }
+
+        .card-title {
+            margin-right: 100px; /* Space for status badge */
+        }
+
+        .card-title h3 {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .card-sub {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-sub i {
+            color: var(--primary);
+        }
+
+        /* Status Badge - Fixed top right */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 2;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Card Content */
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .card-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: var(--font-size-base);
+            color: var(--text-primary);
+        }
+
+        .authors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .author {
+            background: var(--light);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Reviewers Section */
+        .reviewers-section {
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .reviewers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .reviewers-header strong {
+            color: var(--text-primary);
+        }
+
+        .not-assigned {
+            color: var(--danger);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .reviewers-list {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+        }
+
+        .assign-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            transition: var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .assign-link:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        /* Card Footer with Background Color */
+        .card-footer {
+            background: var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            position: relative;
+        }
+
+        .submitted-date {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .submitted-date i {
+            color: var(--primary);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-view {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-view:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Pagination - Always show if there are submissions */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-info {
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+            margin-right: 1rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            background: var(--light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-dots {
+            color: var(--text-muted);
+            padding: 0 0.5rem;
+        }
+
+        /* Loading State */
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            grid-column: 1 / -1;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .retry-btn {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .retry-btn:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Error State */
+        .error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .error-screen i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--danger);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container.page-title,
+            .manuscripts-wrapper {
+                padding: 0 0.5rem;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .card-title {
+                margin-right: 0;
+            }
+
+            .status-badge {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-top: 0.5rem;
+                align-self: flex-start;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .submitted-date {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
-<style>
-    .card-header-row {
-        position: relative;
-    }
-
-    .card-header-row .status-badge{
-        position: absolute;
-        top: -34px;
-        right: 0;
-        border-top-right-radius: var(--card-radius);
-    }
-
-    .meta-row{
-        margin-bottom: 3rem;
-    }
-
-
-</style>
 
 <body>
     <div class="dashboard-container">
@@ -51,72 +518,85 @@
                     <p>Manage submissions assigned to you for review</p>
 
                     <!-- Filter Controls -->
-                    <div class="filter-controls mt-3">
+                    <div class="filter-controls">
                         <div class="filter-group">
-                            <label for="statusFilter">Filter by Status:</label>
-                            <select id="statusFilter" class="filter-select">
-                                <option value="all">All Submissions</option>
-                                <option value="submitted">Submitted</option>
-                                <option value="under_review">Under Review</option>
-                                <option value="reviewed">Reviewed</option>
-                                <option value="accepted">Accepted</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
+                            <label class="filter-label">Filter by Journal</label>
+                            <div class="custom-select with-search" id="journalFilter">
+                                <input type="hidden" name="journalId" id="selectedJournalId" value="all">
+                                <div class="select-header">
+                                    <span class="selected-text placeholder">All Journals</span>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <div class="select-dropdown">
+                                    <div class="select-search">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" class="select-search-input" placeholder="Search journals...">
+                                        <button type="button" class="clear-search-btn">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="select-options" id="journalOptions">
+                                        <!-- Options will be populated here -->
+                                    </div>
+                                    <div class="select-loading">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading journals...
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="filter-group">
-                            <label for="sortBy">Sort by:</label>
-                            <select id="sortBy" class="filter-select">
-                                <option value="newest">Newest First</option>
-                                <option value="oldest">Oldest First</option>
-                                <option value="title">Title A-Z</option>
-                            </select>
+                            <label class="filter-label">Filter by Status</label>
+                            <div class="custom-select" id="statusFilter">
+                                <input type="hidden" name="status" id="selectedStatus" value="all">
+                                <div class="select-header">
+                                    <span class="selected-text placeholder">All Statuses</span>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <div class="select-dropdown">
+                                    <div class="select-options">
+                                        <div class="select-option" data-value="all">All Statuses</div>
+                                        <div class="select-option" data-value="submitted">Submitted</div>
+                                        <div class="select-option" data-value="under_review">Under Review</div>
+                                        <div class="select-option" data-value="reviewed">Reviewed</div>
+                                        <div class="select-option" data-value="accepted">Accepted</div>
+                                        <div class="select-option" data-value="rejected">Rejected</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button id="applyFilters" class="btn-primary">Apply Filters</button>
-                        <button id="clearFilters" class="btn-secondary">Clear Filters</button>
+
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <button id="applyFilters" class="btn-primary">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                            <button id="clearFilters" class="btn-secondary">
+                                <i class="fas fa-times"></i> Clear Filters
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="manuscripts-wrapper">
-                    <!-- Summary Stats -->
-                    <!-- <div class="summary-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-inbox"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 id="totalSubmissions">0</h3>
-                                <p>Total Submissions</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-user-check"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 id="assignedReviewers">0</h3>
-                                <p>With Reviewers</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 id="pendingReview">0</h3>
-                                <p>Pending Review</p>
-                            </div>
-                        </div>
-                    </div> -->
-
                     <!-- Grid container where cards will be injected -->
-                    <div id="cardsGrid" class="cards-grid"></div>
+                    <div id="cardsGrid" class="cards-grid">
+                        <!-- Loading state initially -->
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading submissions...</p>
+                        </div>
+                    </div>
 
                     <!-- Pagination will be inserted here -->
-                    <div id="pagination"></div>
+                    <div id="pagination" class="pagination" style="display: none;"></div>
 
                     <!-- Template for fallback if JS disabled -->
                     <noscript>
-                        <div class="alert alert-warning">JavaScript is required to load submissions. Please enable JS.</div>
+                        <div class="no-results">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>JavaScript Required</h3>
+                            <p>JavaScript is required to load submissions. Please enable JS.</p>
+                        </div>
                     </noscript>
                 </div>
             </main>
@@ -130,9 +610,996 @@
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <!-- page-specific scripts -->
-    <script src="/assets/js/page.js"></script>
-    <script type="module" src="js/editor-submissions.js"></script>
+    <!-- Editor Submissions JavaScript -->
+    <script type="module">
+        import { BASE_URL, getAuthToken2 } from '../../assets/js/utility.js';
+
+        class EditorSubmissionsManager {
+            constructor() {
+                this.currentPage = 1;
+                this.limit = 6; // Cards per page
+                this.totalItems = 0;
+                this.totalPages = 0;
+                this.allSubmissions = []; // Store all submissions from all journals
+                this.filteredSubmissions = [];
+                this.editorJournals = [];
+                this.currentFilters = {
+                    journalId: 'all',
+                    status: 'all'
+                };
+                
+                this.userCache = new Map(); // Cache for user details (reviewers)
+                this.journalSelect = null;
+                this.statusSelect = null;
+                
+                this.init();
+            }
+
+            async init() {
+                this.initializeToastr();
+                this.bindEvents();
+                await this.loadData();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000,
+                    preventDuplicates: true
+                };
+            }
+
+            bindEvents() {
+                // Apply filters button
+                document.getElementById('applyFilters')?.addEventListener('click', () => {
+                    this.applyFilters();
+                });
+
+                // Clear filters button
+                document.getElementById('clearFilters')?.addEventListener('click', () => {
+                    this.clearFilters();
+                });
+
+                // Window resize for dropdown positioning
+                window.addEventListener('resize', () => {
+                    if (this.journalSelect && this.journalSelect.isOpen) {
+                        this.journalSelect.positionDropdown();
+                    }
+                    if (this.statusSelect && this.statusSelect.isOpen) {
+                        this.statusSelect.positionDropdown();
+                    }
+                });
+            }
+
+            async loadData() {
+                try {
+                    // Step 1: Get all journals for this editor
+                    await this.loadEditorJournals();
+                    
+                    // Step 2: Initialize custom selects after journals are loaded
+                    await this.initializeCustomSelects();
+                    
+                    // Step 3: Get submissions from all journals
+                    await this.loadAllSubmissions();
+                    
+                    // Step 4: Apply initial filters and render
+                    this.applyFilters();
+                    
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    this.showError('Failed to load submissions. Please try again.');
+                }
+            }
+
+            async loadEditorJournals() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login.');
+                        return;
+                    }
+
+                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load journals');
+                    }
+
+                    this.editorJournals = data.journals || [];
+                    
+                    if (this.editorJournals.length === 0) {
+                        this.showNoJournalsMessage();
+                        return;
+                    }
+
+                } catch (error) {
+                    console.error('Error loading editor journals:', error);
+                    throw error;
+                }
+            }
+
+            async initializeCustomSelects() {
+                // Initialize journal select
+                const journalSelectEl = document.getElementById('journalFilter');
+                if (journalSelectEl) {
+                    this.journalSelect = new CustomSelect(journalSelectEl, true);
+                    
+                    // Add "All Journals" option first
+                    const allJournalsOption = {
+                        id: 'all',
+                        title: 'All Journals',
+                        issn: ''
+                    };
+                    
+                    const journalOptions = [
+                        allJournalsOption,
+                        ...this.editorJournals.map(journal => ({
+                            id: journal._id,
+                            title: journal.title,
+                            issn: journal.issn || ''
+                        }))
+                    ];
+                    
+                    this.journalSelect.setOptions(journalOptions);
+                    
+                    // Listen for journal selection changes
+                    const journalHiddenInput = document.getElementById('selectedJournalId');
+                    if (journalHiddenInput) {
+                        const observer = new MutationObserver(() => {
+                            this.currentFilters.journalId = journalHiddenInput.value;
+                        });
+                        observer.observe(journalHiddenInput, { attributes: true, attributeFilter: ['value'] });
+                    }
+                }
+
+                // Initialize status select
+                const statusSelectEl = document.getElementById('statusFilter');
+                if (statusSelectEl) {
+                    this.statusSelect = new CustomSelect(statusSelectEl, false);
+                    
+                    // Listen for status selection changes
+                    const statusHiddenInput = document.getElementById('selectedStatus');
+                    if (statusHiddenInput) {
+                        const observer = new MutationObserver(() => {
+                            this.currentFilters.status = statusHiddenInput.value;
+                        });
+                        observer.observe(statusHiddenInput, { attributes: true, attributeFilter: ['value'] });
+                    }
+                }
+            }
+
+            async loadAllSubmissions() {
+                if (this.editorJournals.length === 0) {
+                    this.allSubmissions = [];
+                    return;
+                }
+
+                try {
+                    // Fetch submissions for all journals in parallel
+                    const submissionPromises = this.editorJournals.map(journal => 
+                        this.fetchSubmissionsForJournal(journal._id)
+                    );
+
+                    const results = await Promise.allSettled(submissionPromises);
+                    
+                    // Combine all submissions
+                    let allSubmissions = [];
+                    
+                    results.forEach((result, index) => {
+                        if (result.status === 'fulfilled') {
+                            const submissions = result.value;
+                            // Add journal info to each submission
+                            const journal = this.editorJournals[index];
+                            submissions.forEach(sub => {
+                                sub.journalInfo = {
+                                    _id: journal._id,
+                                    title: journal.title,
+                                    issn: journal.issn
+                                };
+                            });
+                            allSubmissions.push(...submissions);
+                        } else {
+                            console.warn(`Failed to fetch submissions for journal ${this.editorJournals[index].title}:`, result.reason);
+                        }
+                    });
+
+                    // Now enrich submissions with reviewer details
+                    this.allSubmissions = await this.enrichSubmissionsWithReviewers(allSubmissions);
+
+                    // Sort by creation date (newest first)
+                    this.allSubmissions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                } catch (error) {
+                    console.error('Error loading all submissions:', error);
+                    throw error;
+                }
+            }
+
+            async fetchSubmissionsForJournal(journalId) {
+                try {
+                    const token = getAuthToken2();
+                    const response = await fetch(
+                        `${BASE_URL}/editor/submissions?journalId=${journalId}&page=1&limit=100`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch submissions for journal ${journalId}: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to fetch submissions');
+                    }
+
+                    return data.submissions || [];
+
+                } catch (error) {
+                    console.error(`Error fetching submissions for journal ${journalId}:`, error);
+                    return [];
+                }
+            }
+
+            async enrichSubmissionsWithReviewers(submissions) {
+                if (!submissions || submissions.length === 0) return [];
+
+                // Collect all unique reviewer IDs from all submissions
+                const allReviewerIds = new Set();
+                submissions.forEach(submission => {
+                    if (submission.assignedReviewers && Array.isArray(submission.assignedReviewers)) {
+                        submission.assignedReviewers.forEach(reviewerId => {
+                            if (reviewerId) allReviewerIds.add(reviewerId);
+                        });
+                    }
+                });
+
+                // Fetch reviewer details for all unique IDs
+                const reviewerPromises = Array.from(allReviewerIds).map(reviewerId => 
+                    this.fetchUserDetails(reviewerId)
+                );
+
+                const reviewerResults = await Promise.allSettled(reviewerPromises);
+                
+                // Create a map of reviewerId -> reviewer details
+                const reviewerMap = new Map();
+                reviewerResults.forEach((result, index) => {
+                    if (result.status === 'fulfilled' && result.value) {
+                        const reviewerId = Array.from(allReviewerIds)[index];
+                        reviewerMap.set(reviewerId, result.value);
+                    }
+                });
+
+                // Enrich each submission with reviewer details
+                return submissions.map(submission => {
+                    const enrichedSubmission = { ...submission };
+                    
+                    if (enrichedSubmission.assignedReviewers && Array.isArray(enrichedSubmission.assignedReviewers)) {
+                        enrichedSubmission.enrichedReviewers = enrichedSubmission.assignedReviewers
+                            .map(reviewerId => {
+                                const reviewer = reviewerMap.get(reviewerId);
+                                return reviewer ? {
+                                    _id: reviewerId,
+                                    name: reviewer.fullName || reviewer.name || reviewer.email || 'Unknown Reviewer'
+                                } : null;
+                            })
+                            .filter(reviewer => reviewer !== null);
+                    } else {
+                        enrichedSubmission.enrichedReviewers = [];
+                    }
+
+                    return enrichedSubmission;
+                });
+            }
+
+            async fetchUserDetails(userId) {
+                // Check cache first
+                if (this.userCache.has(userId)) {
+                    return this.userCache.get(userId);
+                }
+
+                try {
+                    const token = getAuthToken2();
+                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch user ${userId}: ${response.status}`);
+                        return null;
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        console.warn(`Failed to fetch user ${userId}:`, data.message);
+                        return null;
+                    }
+
+                    const user = data.user || data.data;
+                    
+                    // Cache the result
+                    if (user) {
+                        this.userCache.set(userId, user);
+                    }
+
+                    return user;
+
+                } catch (error) {
+                    console.error(`Error fetching user ${userId}:`, error);
+                    return null;
+                }
+            }
+
+            // Apply filters
+            applyFilters() {
+                let filtered = [...this.allSubmissions];
+
+                // Apply journal filter
+                if (this.currentFilters.journalId && this.currentFilters.journalId !== 'all') {
+                    filtered = filtered.filter(sub => sub.journalId === this.currentFilters.journalId);
+                }
+
+                // Apply status filter
+                if (this.currentFilters.status && this.currentFilters.status !== 'all') {
+                    filtered = filtered.filter(sub => sub.status === this.currentFilters.status);
+                }
+
+                this.filteredSubmissions = filtered;
+                this.totalItems = filtered.length;
+                this.totalPages = Math.ceil(this.totalItems / this.limit);
+                
+                // Reset to page 1 when filtering
+                this.currentPage = 1;
+                
+                this.renderSubmissions();
+                this.renderPagination();
+            }
+
+            // Clear all filters
+            clearFilters() {
+                // Reset custom selects
+                if (this.journalSelect) {
+                    this.journalSelect.select({ id: 'all', title: 'All Journals' });
+                }
+                if (this.statusSelect) {
+                    this.statusSelect.select({ id: 'all', title: 'All Statuses' });
+                }
+                
+                // Reset filters
+                this.currentFilters = {
+                    journalId: 'all',
+                    status: 'all'
+                };
+                
+                // Apply filters (which will reset to show all)
+                this.applyFilters();
+            }
+
+            // Render submissions in the grid
+            renderSubmissions() {
+                const cardsGrid = document.getElementById('cardsGrid');
+                
+                if (this.filteredSubmissions.length === 0) {
+                    cardsGrid.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No Submissions Found</h3>
+                            <p>${this.allSubmissions.length === 0 ? 'No submissions in your journals yet.' : 'No submissions match your current filters.'}</p>
+                            ${this.allSubmissions.length > 0 ? `
+                                <button class="retry-btn" id="clearFiltersBtn2">
+                                    <i class="fas fa-filter"></i> Clear Filters
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    // Add event listener to clear filters button
+                    const clearFiltersBtn2 = document.getElementById('clearFiltersBtn2');
+                    if (clearFiltersBtn2) {
+                        clearFiltersBtn2.addEventListener('click', () => {
+                            this.clearFilters();
+                        });
+                    }
+                    
+                    return;
+                }
+
+                // Calculate which submissions to show based on current page
+                const startIndex = (this.currentPage - 1) * this.limit;
+                const endIndex = startIndex + this.limit;
+                const submissionsToShow = this.filteredSubmissions.slice(startIndex, endIndex);
+
+                const fragment = document.createDocumentFragment();
+                submissionsToShow.forEach(submission => {
+                    fragment.appendChild(this.createCardMarkup(submission));
+                });
+                
+                cardsGrid.innerHTML = '';
+                cardsGrid.appendChild(fragment);
+            }
+
+            // Create individual card markup
+            createCardMarkup(submission) {
+                const card = document.createElement('article');
+                card.className = 'submission-card';
+                
+                // Truncate long titles
+                const truncatedTitle = this.truncateText(submission.title, 60);
+                const truncatedJournal = this.truncateText(submission.journalInfo?.title || 'Unknown Journal', 40);
+                
+                // Get status color and text
+                const statusColor = this.getStatusColor(submission.status);
+                const statusText = this.formatStatus(submission.status);
+                
+                // Format authors
+                const authors = submission.authors || [];
+                const hasAuthors = authors.length > 0;
+                
+                // Format reviewers
+                const reviewers = submission.enrichedReviewers || [];
+                const hasReviewers = reviewers.length > 0;
+                
+                // Check if we should show "Assign reviewer" link
+                const shouldShowAssignLink = submission.status === 'submitted';
+                
+                // Format submission date
+                const submissionDate = this.formatDate(submission.createdAt);
+                
+                card.innerHTML = `
+                    <!-- Card Header with Background Color -->
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3 title="${this.escapeHtml(submission.title)}">
+                                ${this.escapeHtml(truncatedTitle)}
+                            </h3>
+                            <div class="card-sub">
+                                <i class="fas fa-book"></i>
+                                <span title="${this.escapeHtml(submission.journalInfo?.title || 'Unknown Journal')}">
+                                    ${this.escapeHtml(truncatedJournal)}
+                                </span>
+                                ${submission.journalInfo?.issn ? `
+                                    <span style="margin-left: 0.5rem; color: var(--text-light); font-size: var(--font-size-xs);">
+                                        ISSN: ${this.escapeHtml(submission.journalInfo.issn)}
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="status-badge" style="${statusColor}">
+                            ${statusText}
+                        </div>
+                    </div>
+                    
+                    <!-- Card Content -->
+                    <div class="card-content">
+                        <!-- Authors -->
+                        <div class="meta-item">
+                            <div class="meta-label">Authors</div>
+                            <div class="meta-value">
+                                ${hasAuthors 
+                                    ? `<div class="authors">
+                                        ${authors.map(author => `
+                                            <span class="author">${this.escapeHtml(author.name)}</span>
+                                        `).join('')}
+                                       </div>`
+                                    : 'No authors listed'
+                                }
+                            </div>
+                        </div>
+                        
+                        <!-- Submitted By -->
+                        <div class="meta-item">
+                            <div class="meta-label">Submitted By</div>
+                            <div class="meta-value">
+                                ${this.escapeHtml(submission.createdBy?.name || submission.createdBy?.email || 'N/A')}
+                            </div>
+                        </div>
+                        
+                        <!-- Reviewers Section -->
+                        <div class="reviewers-section">
+                            <div class="reviewers-header">
+                                <strong>Assigned Reviewers</strong>
+                                ${!hasReviewers && !shouldShowAssignLink ? '<span class="not-assigned">Not Assigned</span>' : ''}
+                            </div>
+                            <div class="reviewers-list">
+                                ${hasReviewers 
+                                    ? reviewers.map(reviewer => 
+                                        `<div><i class="fas fa-user-check"></i> ${this.escapeHtml(reviewer.name)}</div>`
+                                      ).join('')
+                                    : shouldShowAssignLink 
+                                        ? `<a href="submission-details.html?id=${submission._id}" class="assign-link">
+                                            <i class="fas fa-user-plus"></i> Assign Reviewer
+                                           </a>`
+                                        : '<div>No reviewers assigned</div>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Footer with Background Color -->
+                    <div class="card-footer">
+                        <!-- Action Button -->
+                        <div class="card-actions">
+                            <a href="submission-details.html?id=${submission._id}" class="btn-view">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
+                        
+                        <!-- Submitted Date -->
+                        <div class="submitted-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Submitted: ${submissionDate}</span>
+                        </div>
+                    </div>
+                `;
+                
+                return card;
+            }
+
+            // Helper to truncate text with ellipsis
+            truncateText(text, maxLength) {
+                if (!text) return '';
+                if (text.length <= maxLength) return text;
+                return text.substring(0, maxLength) + '...';
+            }
+
+            // Get status color from root variables
+            getStatusColor(status) {
+                const statusColors = {
+                    'submitted': 'rgba(var(--info-rgb), 0.1)',
+                    'under_review': 'rgba(var(--warning-rgb), 0.1)',
+                    'reviewed': 'rgba(var(--primary-rgb), 0.1)',
+                    'accepted': 'rgba(var(--success-rgb), 0.1)',
+                    'rejected': 'rgba(var(--danger-rgb), 0.1)'
+                };
+                
+                const textColors = {
+                    'submitted': 'var(--info)',
+                    'under_review': 'var(--warning)',
+                    'reviewed': 'var(--primary)',
+                    'accepted': 'var(--success)',
+                    'rejected': 'var(--danger)'
+                };
+                
+                // Return CSS for background and text color
+                return `
+                    background: ${statusColors[status] || 'rgba(var(--muted-rgb), 0.1)'};
+                    color: ${textColors[status] || 'var(--text-muted)'};
+                    border: 1px solid ${textColors[status] || 'var(--border)'};
+                `;
+            }
+
+            // Format status for display
+            formatStatus(status) {
+                const statusMap = {
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected'
+                };
+                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
+            }
+
+            // Render pagination - Always show if there are submissions
+            renderPagination() {
+                const paginationContainer = document.getElementById('pagination');
+                
+                if (this.totalItems === 0) {
+                    paginationContainer.style.display = 'none';
+                    return;
+                }
+
+                // Always show pagination when there are submissions
+                paginationContainer.style.display = 'flex';
+                
+                let paginationHTML = `
+                    <div class="pagination-info">
+                        Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} 
+                        of ${this.totalItems} submission${this.totalItems !== 1 ? 's' : ''}
+                    </div>
+                    <div class="pagination-controls">
+                `;
+
+                // Previous button
+                paginationHTML += `
+                    <button class="pagination-btn" ${this.currentPage === 1 ? 'disabled' : ''} 
+                        onclick="editorSubmissions.changePage(${this.currentPage - 1})">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                `;
+
+                // Page numbers - always show first, last, and pages around current
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+                
+                // Adjust start page if we're near the end
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+
+                // First page
+                if (startPage > 1) {
+                    paginationHTML += `
+                        <button class="pagination-btn" onclick="editorSubmissions.changePage(1)">
+                            1
+                        </button>
+                    `;
+                    if (startPage > 2) {
+                        paginationHTML += `<span class="pagination-dots">...</span>`;
+                    }
+                }
+
+                // Visible page numbers
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHTML += `
+                        <button class="pagination-btn ${i === this.currentPage ? 'active' : ''}" 
+                            onclick="editorSubmissions.changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                }
+
+                // Last page
+                if (endPage < this.totalPages) {
+                    if (endPage < this.totalPages - 1) {
+                        paginationHTML += `<span class="pagination-dots">...</span>`;
+                    }
+                    paginationHTML += `
+                        <button class="pagination-btn" onclick="editorSubmissions.changePage(${this.totalPages})">
+                            ${this.totalPages}
+                        </button>
+                    `;
+                }
+
+                // Next button
+                paginationHTML += `
+                    <button class="pagination-btn" ${this.currentPage === this.totalPages ? 'disabled' : ''} 
+                        onclick="editorSubmissions.changePage(${this.currentPage + 1})">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+
+                paginationHTML += '</div>';
+                paginationContainer.innerHTML = paginationHTML;
+            }
+
+            // Change page
+            changePage(page) {
+                this.currentPage = page;
+                this.renderSubmissions();
+                this.renderPagination();
+                
+                // Scroll to top of grid smoothly
+                document.getElementById('cardsGrid').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+
+            // Show no journals message
+            showNoJournalsMessage() {
+                const cardsGrid = document.getElementById('cardsGrid');
+                cardsGrid.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-journal-whills"></i>
+                        <h3>No Journals Assigned</h3>
+                        <p>You are not assigned as an editor to any journals yet.</p>
+                    </div>
+                `;
+            }
+
+            // Show error state
+            showError(message) {
+                const cardsGrid = document.getElementById('cardsGrid');
+                cardsGrid.innerHTML = `
+                    <div class="error-screen">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Failed to Load Submissions</h3>
+                        <p>${message}</p>
+                        <button class="retry-btn" onclick="editorSubmissions.loadData()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Utility function to format date
+            formatDate(dateString) {
+                if (!dateString) return 'N/A';
+                
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                } catch (error) {
+                    return dateString;
+                }
+            }
+
+            // Utility function to escape HTML
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+        }
+
+        // CustomSelect class (reusable component)
+        class CustomSelect {
+            constructor(container, hasSearch = true) {
+                this.container = container;
+                this.header = container.querySelector('.select-header');
+                this.selectedText = container.querySelector('.selected-text');
+                this.dropdown = container.querySelector('.select-dropdown');
+                this.searchInput = hasSearch ? container.querySelector('.select-search-input') : null;
+                this.clearSearchBtn = hasSearch ? container.querySelector('.clear-search-btn') : null;
+                this.optionsContainer = container.querySelector('.select-options');
+                this.hiddenInput = container.querySelector('input[type="hidden"]');
+                this.isOpen = false;
+                this.options = [];
+                this.filteredOptions = [];
+                this.selectedOption = null;
+                this.hasSearch = hasSearch;
+                
+                this.init();
+            }
+            
+            init() {
+                // Toggle dropdown
+                this.header.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggle();
+                });
+                
+                if (this.hasSearch && this.searchInput) {
+                    // Search functionality
+                    this.searchInput.addEventListener('input', () => {
+                        this.filterOptions();
+                    });
+                    
+                    // Clear search
+                    if (this.clearSearchBtn) {
+                        this.clearSearchBtn.addEventListener('click', () => {
+                            this.searchInput.value = '';
+                            this.filterOptions();
+                            this.searchInput.focus();
+                        });
+                    }
+                }
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.container.contains(e.target)) {
+                        this.close();
+                    }
+                });
+                
+                // Prevent dropdown from closing when clicking inside
+                this.dropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+                
+                // Handle option clicks
+                this.optionsContainer.addEventListener('click', (e) => {
+                    const option = e.target.closest('.select-option');
+                    if (option) {
+                        const id = option.getAttribute('data-value') || option.getAttribute('data-id');
+                        const title = option.querySelector('.option-title') ? 
+                                   option.querySelector('.option-title').textContent : 
+                                   option.textContent.trim();
+                        this.select({ id, title });
+                    }
+                });
+            }
+            
+            toggle() {
+                if (this.isOpen) {
+                    this.close();
+                } else {
+                    this.open();
+                }
+            }
+            
+            open() {
+                if (this.isOpen) return;
+                
+                this.isOpen = true;
+                this.container.classList.add('open');
+                this.dropdown.style.display = 'block';
+                
+                // Focus search input if exists
+                if (this.hasSearch && this.searchInput) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 100);
+                }
+                
+                // Position dropdown
+                this.positionDropdown();
+            }
+            
+            close() {
+                if (!this.isOpen) return;
+                
+                this.isOpen = false;
+                this.container.classList.remove('open');
+                this.dropdown.style.display = 'none';
+                
+                if (this.hasSearch && this.searchInput) {
+                    this.searchInput.value = '';
+                    this.filterOptions();
+                }
+            }
+            
+            positionDropdown() {
+                const rect = this.container.getBoundingClientRect();
+                const dropdownHeight = 300;
+                const spaceBelow = window.innerHeight - rect.bottom;
+                
+                if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                    // Position above
+                    this.dropdown.style.bottom = '100%';
+                    this.dropdown.style.top = 'auto';
+                    this.dropdown.style.marginTop = '0';
+                    this.dropdown.style.marginBottom = '5px';
+                } else {
+                    // Position below
+                    this.dropdown.style.top = '100%';
+                    this.dropdown.style.bottom = 'auto';
+                    this.dropdown.style.marginTop = '5px';
+                    this.dropdown.style.marginBottom = '0';
+                }
+            }
+            
+            filterOptions() {
+                if (!this.hasSearch || !this.searchInput) {
+                    this.filteredOptions = [...this.options];
+                    this.renderOptions();
+                    return;
+                }
+                
+                const searchTerm = this.searchInput.value.toLowerCase().trim();
+                if (this.clearSearchBtn) {
+                    this.clearSearchBtn.style.display = searchTerm ? 'flex' : 'none';
+                }
+                
+                if (!searchTerm) {
+                    this.filteredOptions = [...this.options];
+                } else {
+                    this.filteredOptions = this.options.filter(option => 
+                        option.title.toLowerCase().includes(searchTerm) ||
+                        (option.issn && option.issn.toLowerCase().includes(searchTerm))
+                    );
+                }
+                
+                this.renderOptions();
+            }
+            
+            setOptions(options) {
+                this.options = options;
+                this.filteredOptions = [...options];
+                this.renderOptions();
+            }
+            
+            renderOptions() {
+                if (this.filteredOptions.length === 0) {
+                    this.optionsContainer.innerHTML = `
+                        <div class="select-no-results">
+                            <i class="fas fa-search"></i>
+                            <span>No results found</span>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                this.optionsContainer.innerHTML = this.filteredOptions.map(option => {
+                    const isSelected = this.selectedOption?.id === option.id;
+                    
+                    return `
+                        <div class="select-option ${isSelected ? 'selected' : ''}" 
+                             data-id="${option.id}">
+                            <div class="option-content">
+                                <div class="option-title">${this.escapeHtml(option.title)}</div>
+                                ${option.issn ? `
+                                    <div class="option-details">
+                                        <span><i class="fas fa-hashtag"></i> ${this.escapeHtml(option.issn)}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            ${isSelected ? '<i class="fas fa-check select-check"></i>' : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            select(option) {
+                this.selectedOption = option;
+                this.selectedText.textContent = option.title;
+                this.selectedText.classList.remove('placeholder');
+                
+                if (this.hiddenInput) {
+                    this.hiddenInput.value = option.id;
+                    // Trigger change event
+                    const event = new Event('change', { bubbles: true });
+                    this.hiddenInput.dispatchEvent(event);
+                }
+                
+                // Update UI
+                this.container.querySelectorAll('.select-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                const selectedEl = this.container.querySelector(`[data-id="${option.id}"]`);
+                if (selectedEl) {
+                    selectedEl.classList.add('selected');
+                }
+                
+                this.close();
+            }
+            
+            clear() {
+                this.selectedOption = null;
+                this.selectedText.textContent = 'Select an option...';
+                this.selectedText.classList.add('placeholder');
+                
+                if (this.hiddenInput) {
+                    this.hiddenInput.value = '';
+                    const event = new Event('change', { bubbles: true });
+                    this.hiddenInput.dispatchEvent(event);
+                }
+                
+                this.container.querySelectorAll('.select-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                
+                if (this.hasSearch && this.searchInput) {
+                    this.searchInput.value = '';
+                    this.filterOptions();
+                }
+            }
+            
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize editor submissions manager
+        let editorSubmissions = new EditorSubmissionsManager();
+        
+        // Make it available globally for onclick handlers
+        window.editorSubmissions = editorSubmissions;
+    </script>
 </body>
 
 </html>
