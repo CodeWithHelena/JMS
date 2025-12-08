@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard</title>
+    <title>Author — Dashboard</title>
 
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,16 +18,18 @@
 
 <body>
     <div class="dashboard-container">
-        <!-- placeholders for partials -->
-        <div id="sidebar-placeholder"></div> <!-- sidebar.html will inject <aside id="sidebar"> -->
+        <!-- Sidebar Included-->
+        <div id="sidebar-placeholder"></div> 
         <div class="main-content-wrapper">
-            <div id="header-placeholder"></div> <!-- header.html will inject header + notification, modal -->
+            <!-- Header Included-->
+            <div id="header-placeholder"></div> 
 
             <main class="main-content">
                 <div class="container page-title">
                     <h1>Dashboard</h1>
                     <p>Create a new submission</p>
                 </div>
+
                 <div class="dashboard-cards">
                     <div class="card">
                         <div class="card-title">Total Users</div>
@@ -50,11 +52,14 @@
         </div>
     </div>
 
-    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+ 
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'dashboard';
+    </script>
     <script src="/assets/js/layout.js"></script>
 
-    <!-- page-specific scripts (optional) -->
-    <script src="/assets/js/page.js"></script>
+ 
 </body>
 
 </html>

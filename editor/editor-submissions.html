@@ -141,9 +141,8 @@
             border-color: var(--primary);
         }
 
-        /* Card Header with Background Color */
+        /* Card Header - Removed background color */
         .card-header {
-            background: linear-gradient(135deg, var(--light) 0%, rgba(var(--primary-rgb), 0.05) 100%);
             padding: 1.5rem;
             position: relative;
             border-bottom: 2px solid var(--border);
@@ -151,7 +150,8 @@
         }
 
         .card-title {
-            margin-right: 100px; /* Space for status badge */
+            margin-right: 100px;
+            /* Space for status badge */
         }
 
         .card-title h3 {
@@ -283,7 +283,7 @@
             color: var(--primary-dark);
         }
 
-        /* Card Footer with Background Color */
+        /* Card Footer */
         .card-footer {
             background: var(--light);
             display: flex;
@@ -409,8 +409,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* No Results */
@@ -466,6 +471,7 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+
             .container.page-title,
             .manuscripts-wrapper {
                 padding: 0 0.5rem;
@@ -561,6 +567,7 @@
                                         <div class="select-option" data-value="reviewed">Reviewed</div>
                                         <div class="select-option" data-value="accepted">Accepted</div>
                                         <div class="select-option" data-value="rejected">Rejected</div>
+                                        <div class="select-option" data-value="revision_requested">Revision Requested</div>
                                     </div>
                                 </div>
                             </div>
@@ -627,11 +634,11 @@
                     journalId: 'all',
                     status: 'all'
                 };
-                
-                this.userCache = new Map(); // Cache for user details (reviewers)
+
+                this.userCache = new Map(); // Cache for user details (submitter and reviewers)
                 this.journalSelect = null;
                 this.statusSelect = null;
-                
+
                 this.init();
             }
 
@@ -678,16 +685,16 @@
                 try {
                     // Step 1: Get all journals for this editor
                     await this.loadEditorJournals();
-                    
+
                     // Step 2: Initialize custom selects after journals are loaded
                     await this.initializeCustomSelects();
-                    
+
                     // Step 3: Get submissions from all journals
                     await this.loadAllSubmissions();
-                    
+
                     // Step 4: Apply initial filters and render
                     this.applyFilters();
-                    
+
                 } catch (error) {
                     console.error('Error loading data:', error);
                     this.showError('Failed to load submissions. Please try again.');
@@ -720,7 +727,7 @@
                     }
 
                     this.editorJournals = data.journals || [];
-                    
+
                     if (this.editorJournals.length === 0) {
                         this.showNoJournalsMessage();
                         return;
@@ -737,14 +744,14 @@
                 const journalSelectEl = document.getElementById('journalFilter');
                 if (journalSelectEl) {
                     this.journalSelect = new CustomSelect(journalSelectEl, true);
-                    
+
                     // Add "All Journals" option first
                     const allJournalsOption = {
                         id: 'all',
                         title: 'All Journals',
                         issn: ''
                     };
-                    
+
                     const journalOptions = [
                         allJournalsOption,
                         ...this.editorJournals.map(journal => ({
@@ -753,9 +760,9 @@
                             issn: journal.issn || ''
                         }))
                     ];
-                    
+
                     this.journalSelect.setOptions(journalOptions);
-                    
+
                     // Listen for journal selection changes
                     const journalHiddenInput = document.getElementById('selectedJournalId');
                     if (journalHiddenInput) {
@@ -770,7 +777,7 @@
                 const statusSelectEl = document.getElementById('statusFilter');
                 if (statusSelectEl) {
                     this.statusSelect = new CustomSelect(statusSelectEl, false);
-                    
+
                     // Listen for status selection changes
                     const statusHiddenInput = document.getElementById('selectedStatus');
                     if (statusHiddenInput) {
@@ -790,15 +797,15 @@
 
                 try {
                     // Fetch submissions for all journals in parallel
-                    const submissionPromises = this.editorJournals.map(journal => 
+                    const submissionPromises = this.editorJournals.map(journal =>
                         this.fetchSubmissionsForJournal(journal._id)
                     );
 
                     const results = await Promise.allSettled(submissionPromises);
-                    
+
                     // Combine all submissions
                     let allSubmissions = [];
-                    
+
                     results.forEach((result, index) => {
                         if (result.status === 'fulfilled') {
                             const submissions = result.value;
@@ -817,8 +824,8 @@
                         }
                     });
 
-                    // Now enrich submissions with reviewer details
-                    this.allSubmissions = await this.enrichSubmissionsWithReviewers(allSubmissions);
+                    // Now enrich submissions with user details (submitter and reviewers)
+                    this.allSubmissions = await this.enrichSubmissionsWithUserDetails(allSubmissions);
 
                     // Sort by creation date (newest first)
                     this.allSubmissions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -860,51 +867,84 @@
                 }
             }
 
-            async enrichSubmissionsWithReviewers(submissions) {
+            async enrichSubmissionsWithUserDetails(submissions) {
                 if (!submissions || submissions.length === 0) return [];
 
-                // Collect all unique reviewer IDs from all submissions
-                const allReviewerIds = new Set();
+                // Collect all unique user IDs (submitters and reviewers)
+                const allUserIds = new Set();
+
                 submissions.forEach(submission => {
+                    // Add submitter ID
+                    if (submission.createdBy && submission.createdBy._id) {
+                        allUserIds.add(submission.createdBy._id);
+                    }
+
+                    // Add reviewer IDs from assignedReviewers
                     if (submission.assignedReviewers && Array.isArray(submission.assignedReviewers)) {
-                        submission.assignedReviewers.forEach(reviewerId => {
-                            if (reviewerId) allReviewerIds.add(reviewerId);
+                        submission.assignedReviewers.forEach(reviewer => {
+                            if (reviewer.reviewerId && reviewer.reviewerId._id) {
+                                allUserIds.add(reviewer.reviewerId._id);
+                            }
                         });
                     }
                 });
 
-                // Fetch reviewer details for all unique IDs
-                const reviewerPromises = Array.from(allReviewerIds).map(reviewerId => 
-                    this.fetchUserDetails(reviewerId)
+                // Fetch user details for all unique IDs
+                const userPromises = Array.from(allUserIds).map(userId =>
+                    this.fetchUserDetails(userId)
                 );
 
-                const reviewerResults = await Promise.allSettled(reviewerPromises);
-                
-                // Create a map of reviewerId -> reviewer details
-                const reviewerMap = new Map();
-                reviewerResults.forEach((result, index) => {
+                const userResults = await Promise.allSettled(userPromises);
+
+                // Create a map of userId -> user details
+                const userMap = new Map();
+                userResults.forEach((result, index) => {
                     if (result.status === 'fulfilled' && result.value) {
-                        const reviewerId = Array.from(allReviewerIds)[index];
-                        reviewerMap.set(reviewerId, result.value);
+                        const userId = Array.from(allUserIds)[index];
+                        userMap.set(userId, result.value);
                     }
                 });
 
-                // Enrich each submission with reviewer details
+                // Enrich each submission with user details
                 return submissions.map(submission => {
                     const enrichedSubmission = { ...submission };
-                    
+
+                    // Get submitter details
+                    if (enrichedSubmission.createdBy && enrichedSubmission.createdBy._id) {
+                        const submitter = userMap.get(enrichedSubmission.createdBy._id);
+                        if (submitter && submitter.user) {
+                            enrichedSubmission.submitterName =
+                                `${submitter.user.firstName || ''} ${submitter.user.lastName || ''}`.trim() ||
+                                submitter.user.email ||
+                                'Unknown';
+                        } else {
+                            enrichedSubmission.submitterName = enrichedSubmission.createdBy.email || 'Unknown';
+                        }
+                    } else {
+                        enrichedSubmission.submitterName = 'Unknown';
+                    }
+
+                    // Get reviewer details
+                    enrichedSubmission.enrichedReviewers = [];
                     if (enrichedSubmission.assignedReviewers && Array.isArray(enrichedSubmission.assignedReviewers)) {
                         enrichedSubmission.enrichedReviewers = enrichedSubmission.assignedReviewers
-                            .map(reviewerId => {
-                                const reviewer = reviewerMap.get(reviewerId);
-                                return reviewer ? {
-                                    _id: reviewerId,
-                                    name: reviewer.fullName || reviewer.name || reviewer.email || 'Unknown Reviewer'
-                                } : null;
+                            .map(reviewer => {
+                                if (!reviewer.reviewerId || !reviewer.reviewerId._id) return null;
+
+                                const user = userMap.get(reviewer.reviewerId._id);
+                                return {
+                                    _id: reviewer.reviewerId._id,
+                                    name: user && user.user
+                                        ? `${user.user.firstName || ''} ${user.user.lastName || ''}`.trim() ||
+                                        user.user.email ||
+                                        'Unknown Reviewer'
+                                        : reviewer.reviewerId.firstName ||
+                                        reviewer.reviewerId.email ||
+                                        'Unknown Reviewer',
+                                    hasReviewed: reviewer.hasReviewed || false
+                                };
                             })
                             .filter(reviewer => reviewer !== null);
-                    } else {
-                        enrichedSubmission.enrichedReviewers = [];
                     }
 
                     return enrichedSubmission;
@@ -938,14 +978,10 @@
                         return null;
                     }
 
-                    const user = data.user || data.data;
-                    
                     // Cache the result
-                    if (user) {
-                        this.userCache.set(userId, user);
-                    }
+                    this.userCache.set(userId, data);
 
-                    return user;
+                    return data;
 
                 } catch (error) {
                     console.error(`Error fetching user ${userId}:`, error);
@@ -970,10 +1006,10 @@
                 this.filteredSubmissions = filtered;
                 this.totalItems = filtered.length;
                 this.totalPages = Math.ceil(this.totalItems / this.limit);
-                
+
                 // Reset to page 1 when filtering
                 this.currentPage = 1;
-                
+
                 this.renderSubmissions();
                 this.renderPagination();
             }
@@ -987,13 +1023,13 @@
                 if (this.statusSelect) {
                     this.statusSelect.select({ id: 'all', title: 'All Statuses' });
                 }
-                
+
                 // Reset filters
                 this.currentFilters = {
                     journalId: 'all',
                     status: 'all'
                 };
-                
+
                 // Apply filters (which will reset to show all)
                 this.applyFilters();
             }
@@ -1001,7 +1037,7 @@
             // Render submissions in the grid
             renderSubmissions() {
                 const cardsGrid = document.getElementById('cardsGrid');
-                
+
                 if (this.filteredSubmissions.length === 0) {
                     cardsGrid.innerHTML = `
                         <div class="no-results">
@@ -1015,7 +1051,7 @@
                             ` : ''}
                         </div>
                     `;
-                    
+
                     // Add event listener to clear filters button
                     const clearFiltersBtn2 = document.getElementById('clearFiltersBtn2');
                     if (clearFiltersBtn2) {
@@ -1023,7 +1059,7 @@
                             this.clearFilters();
                         });
                     }
-                    
+
                     return;
                 }
 
@@ -1036,7 +1072,7 @@
                 submissionsToShow.forEach(submission => {
                     fragment.appendChild(this.createCardMarkup(submission));
                 });
-                
+
                 cardsGrid.innerHTML = '';
                 cardsGrid.appendChild(fragment);
             }
@@ -1045,31 +1081,31 @@
             createCardMarkup(submission) {
                 const card = document.createElement('article');
                 card.className = 'submission-card';
-                
+
                 // Truncate long titles
                 const truncatedTitle = this.truncateText(submission.title, 60);
                 const truncatedJournal = this.truncateText(submission.journalInfo?.title || 'Unknown Journal', 40);
-                
+
                 // Get status color and text
                 const statusColor = this.getStatusColor(submission.status);
                 const statusText = this.formatStatus(submission.status);
-                
+
                 // Format authors
                 const authors = submission.authors || [];
                 const hasAuthors = authors.length > 0;
-                
+
                 // Format reviewers
                 const reviewers = submission.enrichedReviewers || [];
                 const hasReviewers = reviewers.length > 0;
-                
+
                 // Check if we should show "Assign reviewer" link
                 const shouldShowAssignLink = submission.status === 'submitted';
-                
+
                 // Format submission date
                 const submissionDate = this.formatDate(submission.createdAt);
-                
+
                 card.innerHTML = `
-                    <!-- Card Header with Background Color -->
+                    <!-- Card Header -->
                     <div class="card-header">
                         <div class="card-title">
                             <h3 title="${this.escapeHtml(submission.title)}">
@@ -1098,14 +1134,14 @@
                         <div class="meta-item">
                             <div class="meta-label">Authors</div>
                             <div class="meta-value">
-                                ${hasAuthors 
-                                    ? `<div class="authors">
+                                ${hasAuthors
+                        ? `<div class="authors">
                                         ${authors.map(author => `
                                             <span class="author">${this.escapeHtml(author.name)}</span>
                                         `).join('')}
                                        </div>`
-                                    : 'No authors listed'
-                                }
+                        : 'No authors listed'
+                    }
                             </div>
                         </div>
                         
@@ -1113,7 +1149,7 @@
                         <div class="meta-item">
                             <div class="meta-label">Submitted By</div>
                             <div class="meta-value">
-                                ${this.escapeHtml(submission.createdBy?.name || submission.createdBy?.email || 'N/A')}
+                                ${this.escapeHtml(submission.submitterName || 'Unknown')}
                             </div>
                         </div>
                         
@@ -1124,21 +1160,21 @@
                                 ${!hasReviewers && !shouldShowAssignLink ? '<span class="not-assigned">Not Assigned</span>' : ''}
                             </div>
                             <div class="reviewers-list">
-                                ${hasReviewers 
-                                    ? reviewers.map(reviewer => 
-                                        `<div><i class="fas fa-user-check"></i> ${this.escapeHtml(reviewer.name)}</div>`
-                                      ).join('')
-                                    : shouldShowAssignLink 
-                                        ? `<a href="submission-details.html?id=${submission._id}" class="assign-link">
+                                ${hasReviewers
+                        ? reviewers.map(reviewer =>
+                            `<div><i class="fas fa-user-check"></i> ${this.escapeHtml(reviewer.name)} ${reviewer.hasReviewed ? '(Reviewed)' : '(Pending)'}</div>`
+                        ).join('')
+                        : shouldShowAssignLink
+                            ? `<a href="submission-details.html?id=${submission._id}" class="assign-link">
                                             <i class="fas fa-user-plus"></i> Assign Reviewer
                                            </a>`
-                                        : '<div>No reviewers assigned</div>'
-                                }
+                            : '<div>No reviewers assigned</div>'
+                    }
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Card Footer with Background Color -->
+                    <!-- Card Footer -->
                     <div class="card-footer">
                         <!-- Action Button -->
                         <div class="card-actions">
@@ -1154,7 +1190,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 return card;
             }
 
@@ -1172,17 +1208,19 @@
                     'under_review': 'rgba(var(--warning-rgb), 0.1)',
                     'reviewed': 'rgba(var(--primary-rgb), 0.1)',
                     'accepted': 'rgba(var(--success-rgb), 0.1)',
-                    'rejected': 'rgba(var(--danger-rgb), 0.1)'
+                    'rejected': 'rgba(var(--danger-rgb), 0.1)',
+                    'revision_requested': 'rgba(var(--warning-rgb), 0.1)'
                 };
-                
+
                 const textColors = {
                     'submitted': 'var(--info)',
                     'under_review': 'var(--warning)',
                     'reviewed': 'var(--primary)',
                     'accepted': 'var(--success)',
-                    'rejected': 'var(--danger)'
+                    'rejected': 'var(--danger)',
+                    'revision_requested': 'var(--warning)'
                 };
-                
+
                 // Return CSS for background and text color
                 return `
                     background: ${statusColors[status] || 'rgba(var(--muted-rgb), 0.1)'};
@@ -1198,15 +1236,16 @@
                     'under_review': 'Under Review',
                     'reviewed': 'Reviewed',
                     'accepted': 'Accepted',
-                    'rejected': 'Rejected'
+                    'rejected': 'Rejected',
+                    'revision_requested': 'Revision Requested'
                 };
-                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
+                return statusMap[status] || status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
             }
 
             // Render pagination - Always show if there are submissions
             renderPagination() {
                 const paginationContainer = document.getElementById('pagination');
-                
+
                 if (this.totalItems === 0) {
                     paginationContainer.style.display = 'none';
                     return;
@@ -1214,7 +1253,7 @@
 
                 // Always show pagination when there are submissions
                 paginationContainer.style.display = 'flex';
-                
+
                 let paginationHTML = `
                     <div class="pagination-info">
                         Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} 
@@ -1235,7 +1274,7 @@
                 const maxVisiblePages = 5;
                 let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
                 let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
-                
+
                 // Adjust start page if we're near the end
                 if (endPage - startPage + 1 < maxVisiblePages) {
                     startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -1292,7 +1331,7 @@
                 this.currentPage = page;
                 this.renderSubmissions();
                 this.renderPagination();
-                
+
                 // Scroll to top of grid smoothly
                 document.getElementById('cardsGrid').scrollIntoView({
                     behavior: 'smooth',
@@ -1330,7 +1369,7 @@
             // Utility function to format date
             formatDate(dateString) {
                 if (!dateString) return 'N/A';
-                
+
                 try {
                     const date = new Date(dateString);
                     return date.toLocaleDateString('en-US', {
@@ -1368,10 +1407,10 @@
                 this.filteredOptions = [];
                 this.selectedOption = null;
                 this.hasSearch = hasSearch;
-                
+
                 this.init();
             }
-            
+
             init() {
                 // Toggle dropdown
                 this.header.addEventListener('click', (e) => {
@@ -1379,13 +1418,13 @@
                     e.stopPropagation();
                     this.toggle();
                 });
-                
+
                 if (this.hasSearch && this.searchInput) {
                     // Search functionality
                     this.searchInput.addEventListener('input', () => {
                         this.filterOptions();
                     });
-                    
+
                     // Clear search
                     if (this.clearSearchBtn) {
                         this.clearSearchBtn.addEventListener('click', () => {
@@ -1395,32 +1434,32 @@
                         });
                     }
                 }
-                
+
                 // Close dropdown when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!this.container.contains(e.target)) {
                         this.close();
                     }
                 });
-                
+
                 // Prevent dropdown from closing when clicking inside
                 this.dropdown.addEventListener('click', (e) => {
                     e.stopPropagation();
                 });
-                
+
                 // Handle option clicks
                 this.optionsContainer.addEventListener('click', (e) => {
                     const option = e.target.closest('.select-option');
                     if (option) {
                         const id = option.getAttribute('data-value') || option.getAttribute('data-id');
-                        const title = option.querySelector('.option-title') ? 
-                                   option.querySelector('.option-title').textContent : 
-                                   option.textContent.trim();
+                        const title = option.querySelector('.option-title') ?
+                            option.querySelector('.option-title').textContent :
+                            option.textContent.trim();
                         this.select({ id, title });
                     }
                 });
             }
-            
+
             toggle() {
                 if (this.isOpen) {
                     this.close();
@@ -1428,43 +1467,43 @@
                     this.open();
                 }
             }
-            
+
             open() {
                 if (this.isOpen) return;
-                
+
                 this.isOpen = true;
                 this.container.classList.add('open');
                 this.dropdown.style.display = 'block';
-                
+
                 // Focus search input if exists
                 if (this.hasSearch && this.searchInput) {
                     setTimeout(() => {
                         this.searchInput.focus();
                     }, 100);
                 }
-                
+
                 // Position dropdown
                 this.positionDropdown();
             }
-            
+
             close() {
                 if (!this.isOpen) return;
-                
+
                 this.isOpen = false;
                 this.container.classList.remove('open');
                 this.dropdown.style.display = 'none';
-                
+
                 if (this.hasSearch && this.searchInput) {
                     this.searchInput.value = '';
                     this.filterOptions();
                 }
             }
-            
+
             positionDropdown() {
                 const rect = this.container.getBoundingClientRect();
                 const dropdownHeight = 300;
                 const spaceBelow = window.innerHeight - rect.bottom;
-                
+
                 if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
                     // Position above
                     this.dropdown.style.bottom = '100%';
@@ -1479,37 +1518,37 @@
                     this.dropdown.style.marginBottom = '0';
                 }
             }
-            
+
             filterOptions() {
                 if (!this.hasSearch || !this.searchInput) {
                     this.filteredOptions = [...this.options];
                     this.renderOptions();
                     return;
                 }
-                
+
                 const searchTerm = this.searchInput.value.toLowerCase().trim();
                 if (this.clearSearchBtn) {
                     this.clearSearchBtn.style.display = searchTerm ? 'flex' : 'none';
                 }
-                
+
                 if (!searchTerm) {
                     this.filteredOptions = [...this.options];
                 } else {
-                    this.filteredOptions = this.options.filter(option => 
+                    this.filteredOptions = this.options.filter(option =>
                         option.title.toLowerCase().includes(searchTerm) ||
                         (option.issn && option.issn.toLowerCase().includes(searchTerm))
                     );
                 }
-                
+
                 this.renderOptions();
             }
-            
+
             setOptions(options) {
                 this.options = options;
                 this.filteredOptions = [...options];
                 this.renderOptions();
             }
-            
+
             renderOptions() {
                 if (this.filteredOptions.length === 0) {
                     this.optionsContainer.innerHTML = `
@@ -1520,10 +1559,10 @@
                     `;
                     return;
                 }
-                
+
                 this.optionsContainer.innerHTML = this.filteredOptions.map(option => {
                     const isSelected = this.selectedOption?.id === option.id;
-                    
+
                     return `
                         <div class="select-option ${isSelected ? 'selected' : ''}" 
                              data-id="${option.id}">
@@ -1540,19 +1579,19 @@
                     `;
                 }).join('');
             }
-            
+
             select(option) {
                 this.selectedOption = option;
                 this.selectedText.textContent = option.title;
                 this.selectedText.classList.remove('placeholder');
-                
+
                 if (this.hiddenInput) {
                     this.hiddenInput.value = option.id;
                     // Trigger change event
                     const event = new Event('change', { bubbles: true });
                     this.hiddenInput.dispatchEvent(event);
                 }
-                
+
                 // Update UI
                 this.container.querySelectorAll('.select-option').forEach(el => {
                     el.classList.remove('selected');
@@ -1561,31 +1600,31 @@
                 if (selectedEl) {
                     selectedEl.classList.add('selected');
                 }
-                
+
                 this.close();
             }
-            
+
             clear() {
                 this.selectedOption = null;
                 this.selectedText.textContent = 'Select an option...';
                 this.selectedText.classList.add('placeholder');
-                
+
                 if (this.hiddenInput) {
                     this.hiddenInput.value = '';
                     const event = new Event('change', { bubbles: true });
                     this.hiddenInput.dispatchEvent(event);
                 }
-                
+
                 this.container.querySelectorAll('.select-option').forEach(el => {
                     el.classList.remove('selected');
                 });
-                
+
                 if (this.hasSearch && this.searchInput) {
                     this.searchInput.value = '';
                     this.filterOptions();
                 }
             }
-            
+
             escapeHtml(text) {
                 if (!text) return '';
                 const div = document.createElement('div');
@@ -1596,7 +1635,7 @@
 
         // Initialize editor submissions manager
         let editorSubmissions = new EditorSubmissionsManager();
-        
+
         // Make it available globally for onclick handlers
         window.editorSubmissions = editorSubmissions;
     </script>

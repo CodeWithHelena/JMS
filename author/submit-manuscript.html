@@ -302,8 +302,10 @@
 
 <body>
     <div class="dashboard-container">
+        <!-- Sidebar Included-->
         <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
+            <!-- Header Included-->
             <div id="header-placeholder"></div>
             <main class="main-content">
                 <div class="container page-title">
@@ -387,7 +389,11 @@
             </main>
         </div>
     </div>
-
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'create-submission';
+    </script>
+    <script src="/assets/js/layout.js"></script>
     <!-- Quill JS -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <!-- Bootstrap JS -->
@@ -400,7 +406,6 @@
     
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script src="/assets/js/layout.js"></script>
     <script type="module" src="js/submit-manuscript2.js"></script>
 </body>
 

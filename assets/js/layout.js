@@ -1,40 +1,151 @@
 // assets/js/layout.js
-// Loads /partials/header.html and /partials/sidebar.html into placeholders and initializes behavior.
+// Loads /partials/header.html and /partials/sidebar-base.html and then injects module-specific sidebar items.
+// Also wires up header interactions (search, notifications, more menu) and sidebar dropdowns.
+// Written to be defensive about missing elements.
 
-// NOTE: set this relative to the page (author/index.html lives in author/)
 const partialsPath = '../assets/partials/';
+
+async function fetchText(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch: ' + url + ' (' + res.status + ')');
+  return await res.text();
+}
 
 // loadPartial: fetch the partial and REPLACE the placeholder element itself
 async function loadPartial(url, placeholderId) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Failed to load partial: ' + url);
-  const html = await res.text();
-
+  const html = await fetchText(url);
   const placeholder = document.getElementById(placeholderId);
   if (!placeholder) {
-    // fallback: try injecting into body
+    // fallback: inject into body top (useful for debug pages)
     document.body.insertAdjacentHTML('afterbegin', html);
     return;
   }
-
-  // Replace the placeholder element with the returned partial markup.
   placeholder.insertAdjacentHTML('afterend', html);
   placeholder.remove();
 }
 
+// Main entry: load header, base sidebar, module items, then init bindings
 async function loadLayout() {
-  // placeholders in the page: #header-placeholder and #sidebar-placeholder
-  await Promise.all([
-    loadPartial(partialsPath + 'header.html', 'header-placeholder'),
-    loadPartial(partialsPath + 'sidebar.html', 'sidebar-placeholder'),
-  ]);
+  // Load header
+  await loadPartial(partialsPath + 'header.html', 'header-placeholder');
 
-  // Once injected, initialize behavior
+  // Load sidebar base
+  // NOTE: loadPartial removes the placeholder element. If you rely on dataset on the placeholder,
+  // prefer setting window.SIDEBAR_MODULE / window.SIDEBAR_ACTIVE_ID before including this script.
+  await loadPartial(partialsPath + 'sidebar-base.html', 'sidebar-placeholder');
+
+  // Insert module-specific items into the base
+  try {
+    await loadModuleSidebar();
+  } catch (err) {
+    console.warn('Error loading module sidebar:', err);
+  }
+
+  // Initialize all bindings (header + sidebar interactions)
   initLayoutBindings();
 }
 
+async function loadModuleSidebar() {
+  // Determine module name and active id using window globals if set.
+  // (Reading dataset from #sidebar-placeholder is unreliable if the placeholder has been removed,
+  // so prefer window.SIDEBAR_MODULE or include a tiny inline script on the page that sets it.)
+  const placeholder = document.getElementById('sidebar-placeholder'); // may be null if already removed
+  const moduleFromAttr = placeholder && placeholder.dataset && placeholder.dataset.module;
+  const activeFromAttr = placeholder && placeholder.dataset && placeholder.dataset.active;
+
+  const moduleName = (window.SIDEBAR_MODULE || moduleFromAttr || 'author').trim();
+  const activeId = (window.SIDEBAR_ACTIVE_ID || activeFromAttr || '').trim();
+
+  const moduleUrl = partialsPath + 'sidebar-items/' + moduleName + '.html';
+
+  let moduleHtml = '';
+  try {
+    moduleHtml = await fetchText(moduleUrl);
+  } catch (err) {
+    console.warn('module sidebar not found for', moduleName, err);
+    moduleHtml = '<!-- no sidebar items for ' + moduleName + ' -->';
+  }
+
+  const sidebarItems = document.getElementById('sidebarItems');
+  if (!sidebarItems) {
+    console.warn('No #sidebarItems container found to insert module menu');
+    return;
+  }
+
+  // Insert module markup (module partials should contain <li> elements)
+  sidebarItems.innerHTML = moduleHtml;
+
+  // After injection, set active item (explicit ID or fallback by path)
+  setActiveSidebarItem(activeId);
+}
+
+// small helper for safe contains checks
+function safeContains(el, target) {
+  return !!(el && target && typeof el.contains === 'function' && el.contains(target));
+}
+
+// Set active item by explicitId or by trying to match current pathname
+function setActiveSidebarItem(explicitId) {
+  const sidebarItems = document.getElementById('sidebarItems');
+  if (!sidebarItems) return;
+
+  // clear existing active classes
+  sidebarItems.querySelectorAll('.active').forEach(n => n.classList.remove('active'));
+
+  let activeEl = null;
+
+  if (explicitId) {
+    activeEl = sidebarItems.querySelector('[data-id="' + explicitId + '"]');
+  }
+
+  if (!activeEl) {
+    // fallback: match by current pathname
+    const path = window.location.pathname.split('/').pop(); // e.g. page.html
+    const candidates = Array.from(sidebarItems.querySelectorAll('a[href]'));
+    activeEl = candidates.find(a => {
+      const href = a.getAttribute('href');
+      if (!href) return false;
+      // normalize comparisons
+      const hrefLast = href.split('/').pop();
+      return href === path || href === './' + path || href === '/' + path || hrefLast === path;
+    });
+  }
+
+  if (activeEl) {
+    // prefer adding .active to the <a> and its closest <li>
+    activeEl.classList.add('active');
+    const parentLi = activeEl.closest('li');
+    if (parentLi) parentLi.classList.add('active');
+
+    // ensure dropdown parents open so active item is visible
+    expandParentDropdowns(activeEl);
+
+    try { activeEl.scrollIntoView({ block: 'nearest' }); } catch (e) { /* ignore */ }
+  }
+}
+
+// walk upward and open any parent dropdowns so children are visible
+function expandParentDropdowns(el) {
+  if (!el) return;
+  let p = el.parentElement;
+  while (p && p.id !== 'sidebarItems') {
+    if (p.classList && p.classList.contains('dropdown-menu')) {
+      p.classList.add('show');
+      const parentLi = p.closest('li');
+      if (parentLi) parentLi.classList.add('dropdown-open');
+      const toggleBtn = parentLi && parentLi.querySelector('.dropdown-toggle');
+      if (toggleBtn) {
+        toggleBtn.classList.add('active');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+      }
+    }
+    p = p.parentElement;
+  }
+}
+
+/* ----------------- initLayoutBindings (header + sidebar) ----------------- */
 function initLayoutBindings() {
-  // Elements (now available in DOM)
+  // Elements (now in DOM)
   const sidebar = document.getElementById('sidebar');
   const toggleSidebar = document.getElementById('toggleSidebar');
   const toggleIcon = document.getElementById('toggleIcon');
@@ -125,7 +236,13 @@ function initLayoutBindings() {
   }
 
   initLayoutState();
-  window.addEventListener('resize', initLayoutState);
+  // debounced resize handler
+  let resizeTimer;
+  window.removeEventListener('resize', initLayoutState); // safe remove (no-op if not attached)
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(initLayoutState, 120);
+  });
 
   // Toggle sidebar behavior
   if (toggleSidebar && sidebar) {
@@ -164,13 +281,63 @@ function initLayoutBindings() {
     });
   }
 
+  // ---------------------- Sidebar dropdowns (module menus) ----------------------
+  // Attach click and keyboard handlers to any .dropdown-toggle inside the sidebar.
+  const sidebarNav = document.querySelector('.sidebar-nav');
+  if (sidebarNav) {
+    const sidebarDropdownToggles = sidebarNav.querySelectorAll('.dropdown-toggle');
+    sidebarDropdownToggles.forEach(btn => {
+      // Ensure button is focusable and has aria-expanded
+      if (!btn.hasAttribute('tabindex')) btn.setAttribute('tabindex', '0');
+      if (!btn.hasAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
+
+      btn.addEventListener('click', function (e) {
+        const li = btn.closest('li');
+        const menu = li && li.querySelector('.dropdown-menu');
+        const isOpen = btn.classList.contains('active') || (menu && menu.classList.contains('show')) || (li && li.classList.contains('dropdown-open'));
+
+        if (isOpen) {
+          // close this dropdown
+          btn.classList.remove('active');
+          btn.setAttribute('aria-expanded', 'false');
+          li && li.classList.remove('dropdown-open');
+          if (menu) menu.classList.remove('show');
+        } else {
+          // close other open sidebar dropdowns first
+          const openLis = sidebarNav.querySelectorAll('li.dropdown-open');
+          openLis.forEach(openLi => {
+            if (openLi !== li) {
+              openLi.classList.remove('dropdown-open');
+              const t = openLi.querySelector('.dropdown-toggle'); if (t) { t.classList.remove('active'); t.setAttribute('aria-expanded', 'false'); }
+              const m = openLi.querySelector('.dropdown-menu'); if (m) m.classList.remove('show');
+            }
+          });
+
+          // open this one
+          btn.classList.add('active');
+          btn.setAttribute('aria-expanded', 'true');
+          li && li.classList.add('dropdown-open');
+          if (menu) menu.classList.add('show');
+        }
+
+        e.stopPropagation();
+      });
+
+      // keyboard support (Enter / Space)
+      btn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+  }
+
   // ---------------------- Search behavior & "active submit" state ----------------------
-  // runSearch: placeholder for actual search submission logic
   function runSearch(query) {
     // Replace this with your real search route or function
     console.log('runSearch →', query);
-    // For now, a UI feedback placeholder:
-    alert('Searching for: ' + query);
+    // For now, a UI feedback placeholder (non-blocking)
   }
 
   if (searchInput && searchIcon) {
@@ -183,10 +350,6 @@ function initLayoutBindings() {
       }
     });
 
-    // Click behavior:
-    // - If input hidden → open it (and focus)
-    // - If input visible and has text → submit search
-    // - If input visible and empty → focus the input
     searchIcon.addEventListener('click', function (e) {
       // If search box is not visible, open it
       if (!searchInput.classList.contains('show')) {
@@ -216,31 +379,31 @@ function initLayoutBindings() {
     }
   }
 
-  // ---------------------- user menu, more menu, notifications etc (unchanged) ----------------------
+  // ---------------------- user menu, more menu, notifications etc ----------------------
 
   // User avatar menu (large screens)
   if (userAvatar) {
     userAvatar.addEventListener('click', function (e) {
       if (isMobile()) return;
-      const shown = userDropdown.classList.contains('show');
+      const shown = userDropdown && userDropdown.classList.contains('show');
       hideMoreDropdown();
       hideNotificationBox();
 
       if (shown) userDropdown.classList.remove('show');
-      else userDropdown.classList.add('show');
+      else userDropdown && userDropdown.classList.add('show');
       e.stopPropagation();
     });
   }
 
   // user menu actions (large)
-  if (userProfileLarge) userProfileLarge.addEventListener('click', e => { userDropdown.classList.remove('show'); alert('Open My Profile (large screen)'); e.preventDefault(); });
-  if (userSettingsLarge) userSettingsLarge.addEventListener('click', e => { userDropdown.classList.remove('show'); alert('Open Settings (large screen)'); e.preventDefault(); });
-  if (userLogoutLarge) userLogoutLarge.addEventListener('click', e => { userDropdown.classList.remove('show'); alert('Perform logout (large screen)'); e.preventDefault(); });
+  if (userProfileLarge) userProfileLarge.addEventListener('click', e => { userDropdown && userDropdown.classList.remove('show'); alert('Open My Profile (large screen)'); e.preventDefault(); });
+  if (userSettingsLarge) userSettingsLarge.addEventListener('click', e => { userDropdown && userDropdown.classList.remove('show'); alert('Open Settings (large screen)'); e.preventDefault(); });
+  if (userLogoutLarge) userLogoutLarge.addEventListener('click', e => { userDropdown && userDropdown.classList.remove('show'); alert('Perform logout (large screen)'); e.preventDefault(); });
 
   // More (three dot) menu (mobile)
   if (moreMenu) {
     moreMenu.addEventListener('click', function (e) {
-      const show = moreDropdown.classList.contains('show');
+      const show = moreDropdown && moreDropdown.classList.contains('show');
       if (userDropdown) userDropdown.classList.remove('show');
       hideNotificationBox();
 
@@ -335,22 +498,36 @@ function initLayoutBindings() {
   // Close dropdowns when clicking outside
   document.addEventListener('click', function (e) {
     const avatarEl = document.getElementById('userAvatar');
-    if (!avatarEl || !avatarEl.contains(e.target)) {
+    if (!avatarEl || !safeContains(avatarEl, e.target)) {
       if (userDropdown) userDropdown.classList.remove('show');
     }
-    if (!moreMenu || !moreMenu.contains(e.target)) hideMoreDropdown();
-    if (!notificationBox || (!notificationBox.contains(e.target) && !notificationIcon.contains(e.target))) hideNotificationBox();
-    if (!documentDropdownBtn || (!documentDropdownBtn.contains(e.target) && !documentMenu.contains(e.target))) {
+
+    if (!moreMenu || !safeContains(moreMenu, e.target)) hideMoreDropdown();
+
+    if (!notificationBox || (!safeContains(notificationBox, e.target) && !safeContains(notificationIcon, e.target))) hideNotificationBox();
+
+    if (!documentDropdownBtn || (!safeContains(documentDropdownBtn, e.target) && !(documentMenu && safeContains(documentMenu, e.target)))) {
       if (documentDropdownBtn) documentDropdownBtn.classList.remove('active');
       if (documentMenu) documentMenu.classList.remove('show');
       if (documentDropdownLi) documentDropdownLi.classList.remove('dropdown-open');
+    }
+
+    // close sidebar dropdowns if clicking outside the sidebar nav
+    const sidebarNavEl = document.querySelector('.sidebar-nav');
+    if (!sidebarNavEl || !safeContains(sidebarNavEl, e.target)) {
+      const openSidebarLis = document.querySelectorAll('.sidebar-nav li.dropdown-open');
+      openSidebarLis.forEach(openLi => {
+        openLi.classList.remove('dropdown-open');
+        const t = openLi.querySelector('.dropdown-toggle'); if (t) { t.classList.remove('active'); t.setAttribute('aria-expanded', 'false'); }
+        const m = openLi.querySelector('.dropdown-menu'); if (m) m.classList.remove('show');
+      });
     }
   });
 
   // Sidebar links close overlay on mobile
   document.querySelectorAll('.sidebar-nav a').forEach(a => {
     a.addEventListener('click', function () {
-      if (isMobile()) {
+      if (isMobile() && sidebar && toggleSidebar) {
         sidebar.classList.remove('show');
         toggleSidebar.classList.remove('open');
       }
@@ -385,6 +562,14 @@ function initLayoutBindings() {
       if (sidebar) sidebar.classList.remove('show');
       if (toggleSidebar) toggleSidebar.classList.remove('open');
       if (searchIcon) searchIcon.classList.remove('search-active');
+
+      // also close open sidebar dropdowns
+      const openSidebarLis = document.querySelectorAll('.sidebar-nav li.dropdown-open');
+      openSidebarLis.forEach(openLi => {
+        openLi.classList.remove('dropdown-open');
+        const t = openLi.querySelector('.dropdown-toggle'); if (t) { t.classList.remove('active'); t.setAttribute('aria-expanded', 'false'); }
+        const m = openLi.querySelector('.dropdown-menu'); if (m) m.classList.remove('show');
+      });
     }
   });
 
