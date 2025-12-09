@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JournalFlow | Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: var(--bg);
+        }
+
+        /* Form Side */
+        .form-side {
+            width: 50%;
+            /* padding: var(--spacing-xl) var(--spacing-xxl); */
+            overflow-y: auto;
+            background-color: var(--card-bg);
+            z-index: 2;
+
+        }
+
+        /* Custom Scrollbar */
+        .form-side::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-side::-webkit-scrollbar-track {
+            background: var(--light);
+            border-radius: 4px;
+        }
+
+        .form-side::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .form-side::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        .form-side .form-side-wrapper{
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin: 1rem 4%;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            margin-bottom: var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.95);
+            
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            width: 120px;
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+            text-align: center;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-xl);
+            font-size: var(--font-size-base);
+            text-align: center;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        label.required::after {
+            content: " *";
+            color: var(--danger);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            transition: var(--transition-normal);
+            background-color: var(--form-bg);
+            color: var(--text-primary);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+        }
+
+        /* Custom Select */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-header {
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--form-bg);
+            transition: var(--transition-normal);
+            color: var(--text-primary);
+        }
+
+        .select-header:hover {
+            border-color: var(--text-light);
+        }
+
+        .select-header.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .select-dropdown.active {
+            display: block;
+        }
+
+        .select-search-container {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .select-search-container input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+        }
+
+        .search-clear {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            display: none;
+        }
+
+        .search-clear.visible {
+            display: block;
+        }
+
+        .select-options {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .select-options::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .select-options::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .journal-option {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background-color var(--transition-fast);
+        }
+
+        .journal-option:last-child {
+            border-bottom: none;
+        }
+
+        .journal-option:hover {
+            background-color: var(--light);
+        }
+
+        .journal-option.selected {
+            background-color: var(--primary-light);
+        }
+
+        .journal-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .journal-issn {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+        }
+
+        .no-journals {
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .no-journals i {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: var(--font-size-xl);
+            color: var(--text-light);
+        }
+
+        /* Journal Select Container */
+        .journal-select-container {
+            display: none;
+            margin-top: var(--spacing-md);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .journal-select-container.visible {
+            display: block;
+        }
+
+        /* Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: var(--spacing-lg) 0;
+        }
+
+        .checkbox-input {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            margin-right: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-normal);
+        }
+
+        .checkbox-input:checked+.checkbox-label .custom-checkbox {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkbox-input:checked+.checkbox-label .custom-checkbox::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--btn-primary-text);
+            font-size: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--btn-primary-text);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .signin-link {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+        }
+
+        .signin-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signin-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        /* Background Side */
+        .background-side {
+            width: 50%;
+            background: linear-gradient(rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.9)),
+                url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--spacing-xxl);
+            color: white;
+            z-index: 1;
+        }
+
+        .background-content {
+            max-width: 600px;
+        }
+
+        .tagline {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+
+        .description {
+            font-size: var(--font-size-lg);
+            line-height: var(--line-height-relaxed);
+            margin-bottom: var(--spacing-xl);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .features {
+            margin-top: var(--spacing-xl);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .feature-icon {
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            flex-shrink: 0;
+        }
+
+        .feature-icon i {
+            color: var(--primary);
+        }
+
+        .feature-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--font-size-base);
+        }
+
+        /* Error Messages */
+        .error-message {
+            color: var(--danger);
+            font-size: var(--font-size-sm);
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .input-error {
+            border-color: var(--danger) !important;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: var(--success-light);
+            color: var(--success);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-md);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: var(--font-size-sm);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .form-side {
+                padding: var(--spacing-xl);
+            }
+
+            .background-side {
+                padding: var(--spacing-xl);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                background: linear-gradient(rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.9)),
+                    url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+                background-size: cover;
+                background-position: center;
+            }
+
+            .form-side {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: var(--radius);
+                margin: 1rem;
+                padding: var(--spacing-lg);
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+                z-index: 2;
+            }
+
+            .background-side {
+                display: none;
+            }
+
+            h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .logo-text {
+                font-size: var(--font-size-xl);
+            }
+
+            .logo-subtext {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-side {
+                margin: 0.5rem;
+                padding: var(--spacing-md);
+            }
+
+            h1 {
+                font-size: var(--font-size-xl);
+            }
+
+            .tagline {
+                font-size: var(--font-size-2xl);
+            }
+
+            .journal-option {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Form Side -->
+    <div class="form-side">
+        <div class="form-side-wrapper">
+            <div class="logo-container">
+                <img src="assets/img/logo.png" alt="">
+            </div>
+            
+            <h1>Create Account</h1>
+            <p class="subtitle">Join our platform for seamless journal management and peer review</p>
+            
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> Account created successfully! Redirecting...
+            </div>
+            
+            <form class="form-container" id="signupForm">
+                <!-- First Name -->
+                <div class="form-group">
+                    <label for="firstName" class="required">
+                        <i class="fas fa-user" style="color: var(--primary);"></i> First Name
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="error-message" id="firstNameError">Please enter a valid first name (minimum 2 characters)</div>
+                </div>
+            
+                <!-- Last Name -->
+                <div class="form-group">
+                    <label for="lastName" class="required">
+                        <i class="fas fa-user" style="color: var(--primary);"></i> Last Name
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                    </div>
+                    <div class="error-message" id="lastNameError">Please enter a valid last name (minimum 2 characters)</div>
+                </div>
+            
+                <!-- Gender -->
+                <div class="form-group">
+                    <label for="gender" class="required">
+                        <i class="fas fa-venus-mars" style="color: var(--primary);"></i> Gender
+                    </label>
+                    <div class="custom-select" id="genderSelect">
+                        <div class="select-header" id="genderSelectHeader">
+                            <span class="placeholder">Select your gender</span>
+                            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="select-dropdown" id="genderDropdown">
+                            <div class="select-options">
+                                <div class="journal-option" data-value="male">
+                                    <i class="fas fa-mars" style="color: var(--primary); margin-right: 0.5rem;"></i> Male
+                                </div>
+                                <div class="journal-option" data-value="female">
+                                    <i class="fas fa-venus" style="color: var(--primary); margin-right: 0.5rem;"></i> Female
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="gender" name="gender" required>
+                    </div>
+                    <div class="error-message" id="genderError">Please select your gender</div>
+                </div>
+            
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email" class="required">
+                        <i class="fas fa-envelope" style="color: var(--primary);"></i> Email Address
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                    </div>
+                    <div class="error-message" id="emailError">Please enter a valid email address</div>
+                </div>
+            
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone" class="required">
+                        <i class="fas fa-phone" style="color: var(--primary);"></i> Phone Number
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="phone" name="phone" placeholder="+2348012345678" required>
+                    </div>
+                    <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+                </div>
+            
+                <!-- Address -->
+                <div class="form-group">
+                    <label for="address" class="required">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Address
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                    </div>
+                    <div class="error-message" id="addressError">Please enter your address</div>
+                </div>
+            
+                <!-- Affiliation -->
+                <div class="form-group">
+                    <label for="affiliation">
+                        <i class="fas fa-university" style="color: var(--primary);"></i> Affiliation / Institution
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="affiliation" name="affiliation" placeholder="Enter your university or institution">
+                    </div>
+                </div>
+            
+                <!-- ORCID -->
+                <div class="form-group">
+                    <label for="orcid">
+                        <i class="fas fa-id-card" style="color: var(--primary);"></i> ORCID iD
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="orcid" name="orcid" placeholder="0000-0000-0000-0000">
+                    </div>
+                </div>
+            
+                <!-- Reviewer Checkbox -->
+                <div class="checkbox-container">
+                    <input type="checkbox" id="reviewer" name="reviewer" class="checkbox-input">
+                    <label for="reviewer" class="checkbox-label">
+                        <span class="custom-checkbox"></span>
+                        <span>Register as a Reviewer</span>
+                    </label>
+                </div>
+            
+                <!-- Journal Selection -->
+                <div id="journalSelectContainer" class="journal-select-container">
+                    <label for="journalSearch">
+                        <i class="fas fa-book" style="color: var(--primary);"></i> Select Journal (Optional)
+                    </label>
+                    <div class="custom-select" id="journalSelect">
+                        <div class="select-header" id="journalSelectHeader">
+                            <span class="placeholder">Search and select a journal...</span>
+                            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="select-dropdown" id="journalDropdown">
+                            <div class="select-search-container">
+                                <input type="text" placeholder="Search journals..." id="journalSearch">
+                                <button type="button" class="search-clear" id="clearJournalSearch">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="select-options" id="journalOptions">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selectedJournalId" name="journalId">
+                </div>
+            
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password" class="required">
+                        <i class="fas fa-lock" style="color: var(--primary);"></i> Password
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Create a password (min. 8 characters)" required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
+                </div>
+            
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="confirmPassword" class="required">
+                        <i class="fas fa-lock" style="color: var(--primary);"></i> Confirm Password
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                        <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
+                </div>
+            
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            
+                <div class="signin-link">
+                    Already a user? <a href="login.html">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Background Side -->
+    <div class="background-side">
+        <div class="background-content">
+            <h2 class="tagline">Streamline Your Academic Publishing Workflow</h2>
+            <p class="description">
+                JournalFlow is the premier platform for researchers, reviewers, and editors to manage the entire publication process from submission to peer review and final decision.
+            </p>
+
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <div class="feature-text">Submit manuscripts to multiple journals with one click</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-text">Collaborate with reviewers and editors in real-time</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-text">Track submission progress and review status</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">Secure, encrypted platform compliant with academic standards</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+        import { BASE_URL } from '../assets/js/utility.js';
+
+        class SignupManager {
+            constructor() {
+                this.journals = [];
+                this.filteredJournals = [];
+                this.selectedJournal = null;
+                this.isSubmitting = false;
+
+                this.initializeToastr();
+                this.bindEvents();
+                this.initializeGenderSelect();
+                this.setupPasswordToggles();
+                this.initializeJournalSelect();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            bindEvents() {
+                // Reviewer checkbox toggles journal select
+                document.getElementById('reviewer').addEventListener('change', (e) => {
+                    this.toggleJournalSelect(e.target.checked);
+                });
+
+                // Form submission
+                document.getElementById('signupForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.submitForm();
+                });
+
+                // Real-time validation
+                document.getElementById('firstName').addEventListener('blur', () => this.validateFirstName());
+                document.getElementById('lastName').addEventListener('blur', () => this.validateLastName());
+                document.getElementById('email').addEventListener('blur', () => this.validateEmail());
+                document.getElementById('phone').addEventListener('blur', () => this.validatePhone());
+                document.getElementById('address').addEventListener('blur', () => this.validateAddress());
+                document.getElementById('password').addEventListener('blur', () => this.validatePassword());
+                document.getElementById('confirmPassword').addEventListener('blur', () => this.validateConfirmPassword());
+
+                // ORCID validation
+                document.getElementById('orcid').addEventListener('blur', () => this.validateORCID());
+            }
+
+            setupPasswordToggles() {
+                const togglePassword = document.getElementById('togglePassword');
+                const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+                const passwordInput = document.getElementById('password');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+
+                togglePassword.addEventListener('click', () => {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    const icon = togglePassword.querySelector('i');
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                });
+
+                toggleConfirmPassword.addEventListener('click', () => {
+                    const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    confirmPasswordInput.setAttribute('type', type);
+                    const icon = toggleConfirmPassword.querySelector('i');
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                });
+            }
+
+            initializeGenderSelect() {
+                const selectHeader = document.getElementById('genderSelectHeader');
+                const dropdown = document.getElementById('genderDropdown');
+                const genderInput = document.getElementById('gender');
+                const options = dropdown.querySelectorAll('.journal-option');
+
+                selectHeader.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('active');
+                    selectHeader.classList.toggle('active');
+                });
+
+                options.forEach(option => {
+                    option.addEventListener('click', () => {
+                        const value = option.getAttribute('data-value');
+                        const text = option.textContent.trim();
+
+                        // Update header text
+                        selectHeader.querySelector('.placeholder').textContent = text;
+                        genderInput.value = value;
+
+                        // Update selection
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+
+                        // Close dropdown
+                        dropdown.classList.remove('active');
+                        selectHeader.classList.remove('active');
+
+                        // Clear error
+                        this.hideError('genderError', selectHeader);
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', () => {
+                    dropdown.classList.remove('active');
+                    selectHeader.classList.remove('active');
+                });
+            }
+
+            initializeJournalSelect() {
+                const selectHeader = document.getElementById('journalSelectHeader');
+                const dropdown = document.getElementById('journalDropdown');
+                const searchInput = document.getElementById('journalSearch');
+                const clearBtn = document.getElementById('clearJournalSearch');
+
+                selectHeader.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!dropdown.classList.contains('active')) {
+                        this.loadJournals();
+                    }
+                    dropdown.classList.toggle('active');
+                    selectHeader.classList.toggle('active');
+                });
+
+                // Search functionality
+                searchInput.addEventListener('input', () => {
+                    const term = searchInput.value.toLowerCase().trim();
+                    clearBtn.classList.toggle('visible', term.length > 0);
+                    this.filterJournals(term);
+                });
+
+                clearBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    clearBtn.classList.remove('visible');
+                    this.filterJournals('');
+                    searchInput.focus();
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#journalSelect')) {
+                        dropdown.classList.remove('active');
+                        selectHeader.classList.remove('active');
+                    }
+                });
+            }
+
+            toggleJournalSelect(show) {
+                const container = document.getElementById('journalSelectContainer');
+                if (show) {
+                    container.classList.add('visible');
+                } else {
+                    container.classList.remove('visible');
+                    this.clearJournalSelection();
+                }
+            }
+
+            async loadJournals() {
+                const optionsContainer = document.getElementById('journalOptions');
+
+                try {
+                    optionsContainer.innerHTML = `
+                        <div class="no-journals">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <div>Loading journals...</div>
+                        </div>
+                    `;
+
+                    const response = await fetch(`${BASE_URL}/journal/shallow`);
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load journals');
+                    }
+
+                    this.journals = data.journals || [];
+                    this.filteredJournals = [...this.journals];
+
+                    this.renderJournalOptions();
+
+                } catch (error) {
+                    console.error('Error loading journals:', error);
+                    optionsContainer.innerHTML = `
+                        <div class="no-journals">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>Failed to load journals</div>
+                        </div>
+                    `;
+                }
+            }
+
+            filterJournals(searchTerm) {
+                if (!searchTerm) {
+                    this.filteredJournals = [...this.journals];
+                } else {
+                    this.filteredJournals = this.journals.filter(journal =>
+                        journal.title.toLowerCase().includes(searchTerm) ||
+                        (journal.issn && journal.issn.toLowerCase().includes(searchTerm))
+                    );
+                }
+                this.renderJournalOptions();
+            }
+
+            renderJournalOptions() {
+                const optionsContainer = document.getElementById('journalOptions');
+
+                if (this.filteredJournals.length === 0) {
+                    optionsContainer.innerHTML = `
+                        <div class="no-journals">
+                            <i class="fas fa-search"></i>
+                            <div>No journal found</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                optionsContainer.innerHTML = this.filteredJournals.map(journal => `
+                    <div class="journal-option ${this.selectedJournal?._id === journal._id ? 'selected' : ''}" 
+                         data-id="${journal._id}">
+                        <div class="journal-title">${this.escapeHtml(journal.title)}</div>
+                        ${journal.issn ? `<div class="journal-issn">ISSN: ${journal.issn}</div>` : ''}
+                    </div>
+                `).join('');
+
+                // Add click handlers
+                optionsContainer.querySelectorAll('.journal-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        const id = option.getAttribute('data-id');
+                        const journal = this.filteredJournals.find(j => j._id === id);
+
+                        if (journal) {
+                            this.selectedJournal = journal;
+                            document.getElementById('journalSelectHeader').querySelector('.placeholder').textContent = journal.title;
+                            document.getElementById('selectedJournalId').value = journal._id;
+
+                            // Update selection
+                            optionsContainer.querySelectorAll('.journal-option').forEach(opt => {
+                                opt.classList.remove('selected');
+                            });
+                            option.classList.add('selected');
+
+                            // Close dropdown
+                            document.getElementById('journalDropdown').classList.remove('active');
+                            document.getElementById('journalSelectHeader').classList.remove('active');
+                        }
+                    });
+                });
+            }
+
+            clearJournalSelection() {
+                this.selectedJournal = null;
+                const header = document.getElementById('journalSelectHeader');
+                header.querySelector('.placeholder').textContent = 'Search and select a journal...';
+                document.getElementById('selectedJournalId').value = '';
+                document.getElementById('journalSearch').value = '';
+                document.getElementById('clearJournalSearch').classList.remove('visible');
+                this.filteredJournals = [...this.journals];
+                this.renderJournalOptions();
+            }
+
+            // Validation Methods
+            validateFirstName() {
+                const value = document.getElementById('firstName').value.trim();
+                const isValid = value.length >= 2;
+                this.toggleError('firstNameError', 'firstName', isValid, 'Please enter a valid first name (minimum 2 characters)');
+                return isValid;
+            }
+
+            validateLastName() {
+                const value = document.getElementById('lastName').value.trim();
+                const isValid = value.length >= 2;
+                this.toggleError('lastNameError', 'lastName', isValid, 'Please enter a valid last name (minimum 2 characters)');
+                return isValid;
+            }
+
+            validateEmail() {
+                const value = document.getElementById('email').value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const isValid = emailRegex.test(value);
+                this.toggleError('emailError', 'email', isValid, 'Please enter a valid email address');
+                return isValid;
+            }
+
+            validatePhone() {
+                const value = document.getElementById('phone').value.trim();
+                const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+                const isValid = phoneRegex.test(value);
+                this.toggleError('phoneError', 'phone', isValid, 'Please enter a valid phone number');
+                return isValid;
+            }
+
+            validateAddress() {
+                const value = document.getElementById('address').value.trim();
+                const isValid = value.length >= 5;
+                this.toggleError('addressError', 'address', isValid, 'Please enter a valid address (minimum 5 characters)');
+                return isValid;
+            }
+
+            validatePassword() {
+                const value = document.getElementById('password').value;
+                const isValid = value.length >= 8;
+                this.toggleError('passwordError', 'password', isValid, 'Password must be at least 8 characters');
+                return isValid;
+            }
+
+            validateConfirmPassword() {
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const isValid = password === confirmPassword && confirmPassword.length > 0;
+                this.toggleError('confirmPasswordError', 'confirmPassword', isValid, 'Passwords do not match');
+                return isValid;
+            }
+
+            validateORCID() {
+                const value = document.getElementById('orcid').value.trim();
+                if (value && !/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(value)) {
+                    toastr.error('Please enter a valid ORCID iD (format: 0000-0000-0000-0000)');
+                    document.getElementById('orcid').value = '';
+                    return false;
+                }
+                return true;
+            }
+
+            validateGender() {
+                const value = document.getElementById('gender').value;
+                const isValid = value !== '';
+                this.toggleError('genderError', 'genderSelectHeader', isValid, 'Please select your gender');
+                return isValid;
+            }
+
+            toggleError(errorId, fieldId, isValid, message) {
+                const errorEl = document.getElementById(errorId);
+                const fieldEl = document.getElementById(fieldId);
+
+                if (!isValid && fieldEl.value && fieldEl.value.trim() !== '') {
+                    errorEl.textContent = message;
+                    errorEl.style.display = 'block';
+                    fieldEl.classList.add('input-error');
+                } else {
+                    errorEl.style.display = 'none';
+                    fieldEl.classList.remove('input-error');
+                }
+            }
+
+            hideError(errorId, fieldEl) {
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) errorElement.style.display = 'none';
+                if (fieldEl) fieldEl.classList.remove('input-error', 'select-error');
+            }
+
+            validateForm() {
+                return this.validateFirstName() &&
+                    this.validateLastName() &&
+                    this.validateEmail() &&
+                    this.validatePhone() &&
+                    this.validateAddress() &&
+                    this.validateGender() &&
+                    this.validatePassword() &&
+                    this.validateConfirmPassword() &&
+                    this.validateORCID();
+            }
+
+            async submitForm() {
+                if (this.isSubmitting) return;
+
+                if (!this.validateForm()) {
+                    toastr.error('Please fix the errors in the form before submitting');
+                    return;
+                }
+
+                try {
+                    this.isSubmitting = true;
+                    const submitBtn = document.getElementById('submitBtn');
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+                    submitBtn.disabled = true;
+
+                    // Get form data
+                    const email = document.getElementById('email').value.trim();
+
+                    // Store email in localStorage
+                    localStorage.setItem('authmail', email);
+
+                    const formData = {
+                        firstName: document.getElementById('firstName').value.trim(),
+                        lastName: document.getElementById('lastName').value.trim(),
+                        gender: document.getElementById('gender').value,
+                        email: email,
+                        phone: document.getElementById('phone').value.trim(),
+                        address: document.getElementById('address').value.trim(),
+                        role: document.getElementById('reviewer').checked ? 'Reviewer' : 'Author',
+                        password: document.getElementById('password').value
+                    };
+
+                    // Add optional fields
+                    const affiliation = document.getElementById('affiliation').value.trim();
+                    if (affiliation) formData.affiliation = affiliation;
+
+                    const orcid = document.getElementById('orcid').value.trim();
+                    if (orcid) formData.orcid = orcid;
+
+                    const journalId = document.getElementById('selectedJournalId').value;
+                    if (journalId) formData.journalId = journalId;
+
+                    console.log('Submitting form data:', formData);
+
+                    const response = await fetch(`${BASE_URL}/auth/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        throw new Error('Invalid response from server');
+                    }
+
+                    if (!response.ok) {
+                        // Remove email from localStorage if registration fails
+                        localStorage.removeItem('authmail');
+                        throw new Error(data.message || `Registration failed: ${response.status}`);
+                    }
+
+                    if (!data.success) {
+                        // Remove email from localStorage if registration fails
+                        localStorage.removeItem('authmail');
+                        throw new Error(data.message || 'Registration failed');
+                    }
+
+                    // Success - redirect to OTP verification
+                    await Swal.fire({
+                        title: 'Account Created Successfully!',
+                        text: 'Please check your email for the verification code.',
+                        icon: 'success',
+                        confirmButtonText: 'Continue',
+                        confirmButtonColor: 'var(--success)'
+                    });
+
+                    // Redirect to OTP verification page
+                    window.location.href = 'verify-otp.html';
+
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    toastr.error(error.message || 'Failed to create account. Please try again.');
+                } finally {
+                    this.isSubmitting = false;
+                    const submitBtn = document.getElementById('submitBtn');
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                    submitBtn.disabled = false;
+                }
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize signup manager
+        let signupManager;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            signupManager = new SignupManager();
+        });
+    </script>
+</body>
+
+</html>

@@ -386,10 +386,11 @@
 
 <body>
     <div class="dashboard-container">
-        <!-- placeholders for partials -->
-        <div id="sidebar-placeholder"></div> <!-- sidebar.html will inject <aside id="sidebar"> -->
+        <!-- Sidebar Included-->
+        <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
-            <div id="header-placeholder"></div> <!-- header.html will inject header + notification, modal -->
+            <!-- Header Included-->
+            <div id="header-placeholder"></div> 
 
             <main class="main-content">
                 <div class="container page-title d-flex justify-content-between align-items-center mb-0">
@@ -502,7 +503,11 @@
         </div>
     </div>
 
-
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'create-editor';
+    </script>
+    <script src="/assets/js/layout.js"></script>
 
     <!-- jQuery (required for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -511,11 +516,7 @@
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <!-- layout.js loads partials and wires header+sidebar behaviors -->
-    <script src="/assets/js/layout.js"></script>
 
-    <!-- page-specific scripts (optional) -->
-    <script src="/assets/js/page.js"></script>
     <script src="./js/create-user.js"></script>
 </body>
 

@@ -250,6 +250,11 @@ p{
     color: var(--text-light);
 }
 
+ol,
+ul {
+    /* padding-left: 0 !important; */
+}
+
 /* Loading Screen */
 .loading-screen {
     display: flex;

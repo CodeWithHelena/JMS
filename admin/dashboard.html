@@ -22,9 +22,12 @@
         <!-- Admin-specific content -->
     </main>
 
-    <!-- Include layout.js LAST -->
-    <script src="../assets/js/layout.js"></script>
-    <!-- Admin-specific JS -->
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'admin-dashboard';
+    </script>
+    <script src="/assets/js/layout.js"></script>
+    
 </body>
 
 </html>

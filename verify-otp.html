@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JournalFlow | Verify OTP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--card-bg);
+            overflow: hidden;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            flex: 1;
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-xl);
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* Content */
+        .content {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Logo */
+        .logo-container {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: auto;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-normal);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .email-display {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            margin: var(--spacing-md) 0;
+        }
+
+        .email-display i {
+            font-size: var(--font-size-sm);
+        }
+
+        /* OTP Container */
+        .otp-container {
+            border-radius: var(--radius);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .otp-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        .otp-title i {
+            color: var(--primary);
+        }
+
+        /* OTP Inputs */
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .otp-digit {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-normal);
+            caret-color: var(--primary);
+            position: relative;
+        }
+
+        .otp-digit:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+        }
+
+        .otp-digit.filled {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .otp-digit.active {
+            border-color: var(--primary);
+        }
+
+        /* Cursor */
+        .cursor {
+            position: absolute;
+            width: 2px;
+            height: 24px;
+            background: var(--primary);
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-lg);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Resend Section */
+        .resend-section {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+        }
+
+        .resend-timer {
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            color: var(--primary);
+            margin: var(--spacing-xs) 0;
+        }
+
+        .resend-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: var(--font-size-sm);
+        }
+
+        .resend-link:hover {
+            text-decoration: underline;
+        }
+
+        .resend-link.disabled {
+            color: var(--text-light);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .resend-link.loading {
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            flex: 1;
+            background: linear-gradient(rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.9)),
+                url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--spacing-xl);
+            color: var(--btn-primary-text);
+            position: relative;
+        }
+
+        .right-content {
+            max-width: 600px;
+        }
+
+        .tagline {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+
+        .description {
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-relaxed);
+            margin-bottom: var(--spacing-lg);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .features {
+            margin-top: var(--spacing-lg);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .feature-icon {
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-sm);
+            flex-shrink: 0;
+        }
+
+        .feature-icon i {
+            color: var(--primary);
+            font-size: var(--font-size-base);
+        }
+
+        .feature-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--font-size-sm);
+            line-height: var(--line-height-normal);
+        }
+
+        /* Loading */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-top: -8px;
+            margin-left: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--btn-primary-text);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+
+            .left-panel {
+                min-height: 50vh;
+                padding: var(--spacing-lg);
+            }
+
+            .right-panel {
+                min-height: 50vh;
+                padding: var(--spacing-lg);
+            }
+
+            .otp-inputs {
+                gap: 0.5rem;
+            }
+
+            .otp-digit {
+                width: 45px;
+                height: 55px;
+                font-size: var(--font-size-xl);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background: linear-gradient(rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.9)),
+                    url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+                background-size: cover;
+                background-position: center;
+            }
+
+            .left-panel {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: var(--radius);
+                margin: 1rem;
+                padding: var(--spacing-md);
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+                z-index: 2;
+            }
+
+            .right-panel {
+                display: none;
+            }
+
+            h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .otp-inputs {
+                gap: 0.25rem;
+            }
+
+            .otp-digit {
+                width: 40px;
+                height: 50px;
+                font-size: var(--font-size-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-panel {
+                margin: 0.5rem;
+                padding: var(--spacing-sm);
+            }
+
+            h1 {
+                font-size: var(--font-size-xl);
+            }
+
+            .otp-inputs {
+                gap: 0.25rem;
+            }
+
+            .otp-digit {
+                width: 35px;
+                height: 45px;
+                font-size: var(--font-size-base);
+            }
+
+            .otp-container {
+                padding: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left Panel: OTP Verification -->
+        <div class="left-panel">
+            <div class="content">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <img src="assets/img/logo.png" alt="JournalFlow Logo">
+                </div>
+
+                <!-- Header -->
+                <div class="header">
+                    <h1>Verify Your Account</h1>
+                    <p class="subtitle">
+                        We've sent a 5-digit verification code to your email address.
+                        Please enter it below to complete your registration.
+                    </p>
+
+                    <div class="email-display" id="emailDisplay">
+                        <i class="fas fa-envelope"></i>
+                        <span id="userEmail">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- OTP Container -->
+                <div class="otp-container">
+                    <h2 class="otp-title">
+                        <i class="fas fa-key"></i> Enter Verification Code
+                    </h2>
+
+                    <!-- OTP Inputs -->
+                    <div class="otp-inputs" id="otpInputs">
+                        <input type="text" class="otp-digit" maxlength="1" data-index="0" autocomplete="off" inputmode="numeric">
+                        <input type="text" class="otp-digit" maxlength="1" data-index="1" autocomplete="off" inputmode="numeric">
+                        <input type="text" class="otp-digit" maxlength="1" data-index="2" autocomplete="off" inputmode="numeric">
+                        <input type="text" class="otp-digit" maxlength="1" data-index="3" autocomplete="off" inputmode="numeric">
+                        <input type="text" class="otp-digit" maxlength="1" data-index="4" autocomplete="off" inputmode="numeric">
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-primary" id="verifyBtn" disabled>
+                            <i class="fas fa-check-circle"></i> Verify OTP
+                        </button>
+                    </div>
+
+                    <!-- Resend Timer -->
+                    <div class="resend-section">
+                        <p>Didn't receive the code?</p>
+                        <div class="resend-timer" id="resendTimer">02:00</div>
+                        <a href="#" class="resend-link" id="resendLink" style="display: none;">
+                            <i class="fas fa-paper-plane"></i> Resend OTP
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hidden Form -->
+                <form id="verifyForm" style="display: none;">
+                    <input type="hidden" id="email" name="email">
+                    <input type="hidden" id="otp" name="otp">
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Panel: Features -->
+        <div class="right-panel">
+            <div class="right-content">
+                <h2 class="tagline">Secure & Seamless Verification</h2>
+                <p class="description">
+                    Your security is our priority. This one-time code ensures that only you can access your JournalFlow
+                    account.
+                </p>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-text">
+                            Two-factor authentication protects your account from unauthorized access
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="feature-text">
+                            Get verified in seconds and start using all JournalFlow features immediately
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="feature-text">
+                            Codes expire after 2 minutes for added security. You can request a new one anytime.
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="feature-text">
+                            Copy and paste support makes verification easy on any device
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+        import { BASE_URL } from '../assets/js/utility.js';
+
+        class OTPVerification {
+            constructor() {
+                this.otpLength = 5;
+                this.resendTimer = 120; // 2 minutes in seconds
+                this.timerInterval = null;
+                this.isVerifying = false;
+                this.userEmail = localStorage.getItem('authmail') || '';
+
+                if (!this.userEmail) {
+                    // Redirect back to registration if no email
+                    toastr.error('No email found. Please register first.');
+                    setTimeout(() => {
+                        window.location.href = 'signup.html';
+                    }, 2000);
+                    return;
+                }
+
+                this.initializeToastr();
+                this.bindEvents();
+                this.initializeOTPInputs();
+                this.startResendTimer();
+                this.updateEmailDisplay();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            bindEvents() {
+                document.getElementById('verifyBtn').addEventListener('click', () => {
+                    this.verifyOTP();
+                });
+
+                document.getElementById('resendLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.resendOTP();
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    // Ctrl+V or Cmd+V for paste
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+                        this.handlePaste();
+                    }
+
+                    // Enter key to submit
+                    if (e.key === 'Enter') {
+                        const verifyBtn = document.getElementById('verifyBtn');
+                        if (!verifyBtn.disabled) {
+                            this.verifyOTP();
+                        }
+                    }
+                });
+            }
+
+            initializeOTPInputs() {
+                const otpInputs = document.querySelectorAll('.otp-digit');
+
+                // Focus first input
+                otpInputs[0].focus();
+                this.addCursor(otpInputs[0]);
+
+                otpInputs.forEach((input, index) => {
+                    // Handle input
+                    input.addEventListener('input', (e) => {
+                        const value = e.target.value;
+
+                        if (value) {
+                            // Remove non-numeric characters
+                            const numericValue = value.replace(/\D/g, '');
+                            e.target.value = numericValue.charAt(0);
+                            e.target.classList.add('filled');
+
+                            // Move to next input if available
+                            if (index < this.otpLength - 1) {
+                                setTimeout(() => {
+                                    otpInputs[index + 1].focus();
+                                    this.addCursor(otpInputs[index + 1]);
+                                }, 10);
+                            }
+                        } else {
+                            e.target.classList.remove('filled');
+                        }
+
+                        this.updateVerifyButton();
+                    });
+
+                    // Handle backspace
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace') {
+                            if (!input.value && index > 0) {
+                                // Move to previous input
+                                setTimeout(() => {
+                                    otpInputs[index - 1].focus();
+                                    otpInputs[index - 1].value = '';
+                                    otpInputs[index - 1].classList.remove('filled');
+                                    this.addCursor(otpInputs[index - 1]);
+                                }, 10);
+                            }
+                        }
+                    });
+
+                    // Handle click
+                    input.addEventListener('click', () => {
+                        this.addCursor(input);
+                    });
+
+                    // Handle focus
+                    input.addEventListener('focus', () => {
+                        this.addCursor(input);
+                    });
+
+                    // Handle paste
+                    input.addEventListener('paste', (e) => {
+                        e.preventDefault();
+                        const pastedText = e.clipboardData.getData('text');
+                        this.handlePaste(pastedText);
+                    });
+                });
+            }
+
+            addCursor(input) {
+                // Remove existing cursor
+                document.querySelectorAll('.cursor').forEach(cursor => cursor.remove());
+
+                // Add new cursor
+                const cursor = document.createElement('div');
+                cursor.className = 'cursor';
+                input.appendChild(cursor);
+            }
+
+            handlePaste(pastedText = '') {
+                if (!pastedText) {
+                    // Try to get from clipboard
+                    navigator.clipboard.readText().then(text => {
+                        this.fillOTPFromText(text);
+                    }).catch(() => {
+                        toastr.info('Unable to read clipboard. Please paste manually.');
+                    });
+                } else {
+                    this.fillOTPFromText(pastedText);
+                }
+            }
+
+            fillOTPFromText(text) {
+                // Extract numbers from text
+                const numbers = text.replace(/\D/g, '');
+
+                if (numbers.length >= this.otpLength) {
+                    const otp = numbers.substring(0, this.otpLength);
+                    const otpInputs = document.querySelectorAll('.otp-digit');
+
+                    // Fill inputs
+                    otp.split('').forEach((digit, index) => {
+                        otpInputs[index].value = digit;
+                        otpInputs[index].classList.add('filled');
+                    });
+
+                    // Focus last input
+                    otpInputs[this.otpLength - 1].focus();
+                    this.addCursor(otpInputs[this.otpLength - 1]);
+
+                    this.updateVerifyButton();
+                    //toastr.success('OTP pasted successfully!');
+                } else {
+                    toastr.error('Pasted text doesn\'t contain enough numbers');
+                }
+            }
+
+            updateVerifyButton() {
+                const otpInputs = document.querySelectorAll('.otp-digit');
+                const isComplete = Array.from(otpInputs).every(input => input.value.length === 1);
+                const verifyBtn = document.getElementById('verifyBtn');
+
+                verifyBtn.disabled = !isComplete;
+            }
+
+            getOTPCode() {
+                const otpInputs = document.querySelectorAll('.otp-digit');
+                return Array.from(otpInputs).map(input => input.value).join('');
+            }
+
+            async verifyOTP() {
+                if (this.isVerifying) return;
+
+                const otpCode = this.getOTPCode();
+
+                if (otpCode.length !== this.otpLength) {
+                    toastr.error('Please enter a complete 5-digit OTP code');
+                    return;
+                }
+
+                try {
+                    this.isVerifying = true;
+                    const verifyBtn = document.getElementById('verifyBtn');
+                    verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                    verifyBtn.disabled = true;
+
+                    const requestData = {
+                        email: this.userEmail,
+                        otp: otpCode
+                    };
+
+                    console.log('Verifying OTP:', requestData);
+
+                    const response = await fetch(`${BASE_URL}/auth/verify-registration-otp`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        throw new Error('Invalid response from server');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data.message || `Verification failed: ${response.status}`);
+                    }
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Verification failed');
+                    }
+
+                    // Success - delete authmail from localStorage
+                    localStorage.removeItem('authmail');
+
+                    await Swal.fire({
+                        title: 'Verification Successful!',
+                        text: 'Your account has been verified successfully. You can now login to your account.',
+                        icon: 'success',
+                        confirmButtonText: 'Go to Login',
+                        confirmButtonColor: 'var(--success)',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+
+                    window.location.href = 'login.html';
+
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    toastr.error(error.message || 'Failed to verify OTP. Please try again.');
+
+                    // Do NOT delete authmail on failure
+                    const otpInputs = document.querySelectorAll('.otp-digit');
+                    otpInputs.forEach(input => {
+                        input.value = '';
+                        input.classList.remove('filled');
+                    });
+
+                    // Focus first input
+                    otpInputs[0].focus();
+                    this.addCursor(otpInputs[0]);
+
+                } finally {
+                    this.isVerifying = false;
+                    const verifyBtn = document.getElementById('verifyBtn');
+                    verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify OTP';
+                    this.updateVerifyButton();
+                }
+            }
+
+            async resendOTP() {
+                try {
+                    const resendLink = document.getElementById('resendLink');
+                    resendLink.classList.add('loading');
+
+                    const requestData = {
+                        email: this.userEmail
+                    };
+
+                    console.log('Requesting OTP resend:', requestData);
+
+                    const response = await fetch(`${BASE_URL}/auth/password-reset/request`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        throw new Error('Invalid response from server');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data.message || `Failed to resend OTP: ${response.status}`);
+                    }
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to resend OTP');
+                    }
+
+                    // Success
+                    toastr.success('New OTP has been sent to your email');
+
+                    // Reset timer and clear inputs
+                    this.resetResendTimer();
+                    const otpInputs = document.querySelectorAll('.otp-digit');
+                    otpInputs.forEach(input => {
+                        input.value = '';
+                        input.classList.remove('filled');
+                    });
+
+                    // Focus first input
+                    otpInputs[0].focus();
+                    this.addCursor(otpInputs[0]);
+
+                } catch (error) {
+                    console.error('Resend error:', error);
+                    toastr.error(error.message || 'Failed to resend OTP. Please try again.');
+                } finally {
+                    const resendLink = document.getElementById('resendLink');
+                    resendLink.classList.remove('loading');
+                }
+            }
+
+            startResendTimer() {
+                this.updateTimerDisplay();
+
+                this.timerInterval = setInterval(() => {
+                    this.resendTimer--;
+                    this.updateTimerDisplay();
+
+                    if (this.resendTimer <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.showResendLink();
+                    }
+                }, 1000);
+            }
+
+            resetResendTimer() {
+                clearInterval(this.timerInterval);
+                this.resendTimer = 120; // Reset to 2 minutes
+                this.startResendTimer();
+                this.hideResendLink();
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.resendTimer / 60);
+                const seconds = this.resendTimer % 60;
+                const timerDisplay = document.getElementById('resendTimer');
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            showResendLink() {
+                document.getElementById('resendTimer').style.display = 'none';
+                document.getElementById('resendLink').style.display = 'inline-flex';
+            }
+
+            hideResendLink() {
+                document.getElementById('resendTimer').style.display = 'block';
+                document.getElementById('resendLink').style.display = 'none';
+            }
+
+            updateEmailDisplay() {
+                const emailDisplay = document.getElementById('userEmail');
+                const emailInput = document.getElementById('email');
+
+                if (this.userEmail) {
+                    emailDisplay.textContent = this.userEmail;
+                    emailInput.value = this.userEmail;
+                } else {
+                    emailDisplay.textContent = 'Email not found';
+                    emailDisplay.style.color = 'var(--danger)';
+                }
+            }
+        }
+
+        // Initialize OTP verification
+        let otpVerification;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            otpVerification = new OTPVerification();
+        });
+    </script>
+</body>
+
+</html>
