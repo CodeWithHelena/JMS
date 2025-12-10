@@ -1,4 +1,14 @@
-<li><a href="reviewer-dashboard.html" data-id="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-<li><a href="assigned-reviews.html" data-id="assigned-reviews"><i class="fas fa-clipboard-list"></i> <span>Assigned Reviews</span></a></li>
-<li><a href="completed-reviews.html" data-id="completed-reviews"><i class="fas fa-check-circle"></i> <span>Completed Reviews</span></a></li>
-<li><a href="reviewer-settings.html" data-id="reviewer-settings"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+<li><a href="dashboard.html" data-id="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+<li><a href="reviews.html" data-id="assigned-reviews"><i class="fas fa-clipboard-list"></i> <span>Reviews</span></a></li>
+<!-- <li><a href="completed-reviews.html" data-id="completed-reviews"><i class="fas fa-check-circle"></i> <span>Completed Reviews</span></a></li> -->
+
+
+<li id="reviewerSettingsLi">
+    <button class="dropdown-toggle" data-id="settings" aria-expanded="false">
+        <span class="title"><i class="fas fa-cog"></i><span>Settings</span></span>
+    </button>
+    <div class="dropdown-menu">
+        <a href="change-password.html" data-id="change-password">Change Password</a>
+        <a href="reviewer-profile.html" data-id="profile">Profile</a>
+    </div>
+</li>

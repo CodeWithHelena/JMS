@@ -526,9 +526,10 @@
 
 <body>
     <div class="dashboard-container">
-        <!-- placeholders for partials -->
+        <!-- Sidebar Included-->
         <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
+            <!-- Header Included-->
             <div id="header-placeholder"></div>
             <main class="main-content">
                 <div class="d-flex justify-content-between">
@@ -582,7 +583,10 @@
                 </div>
             </main>
         </div>
-
+        <script>
+            window.SIDEBAR_MODULE = 'editor';
+            window.SIDEBAR_ACTIVE_ID = 'editor-journals';
+        </script>
         <!-- jQuery (required for toastr) -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Bootstrap JS -->

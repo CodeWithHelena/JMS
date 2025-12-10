@@ -1,13 +1,29 @@
 <!-- partials/sidebar-items/admin.html -->
 <li><a href="dashboard.html" data-id="admin-dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-<li><a href="create-user.html" data-id="create-editor"><i class="fas fa-user-plus"></i> <span>Create Editor</span></a></li>
 <li id="usersDropdownLi">
     <button class="dropdown-toggle" data-id="manage-users" aria-expanded="false">
         <span class="title"><i class="fas fa-users"></i><span>Manage Users</span></span>
     </button>
     <div class="dropdown-menu">
-        <a href="list-users.html" data-id="list-users">List users</a>
-        <a href="roles.html" data-id="roles">Roles</a>
+        <a href="create-user.html" data-id="create-user">Create Users</a>
+        <a href="users.html" data-id="view-user">View Users</a>
     </div>
 </li>
-<li><a href="settings.html" data-id="settings"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+<li id="usersDropdownLi">
+    <button class="dropdown-toggle" data-id="manage-journals" aria-expanded="false">
+        <span class="title"><i class="fas fa-users"></i><span>Manage Journals</span></span>
+    </button>
+    <div class="dropdown-menu">
+        <a href="create-journal.html" data-id="create-journal">Create Journals</a>
+        <a href="view-journals.html" data-id="view-journals">View Journals</a>
+    </div>
+</li>
+<li id="adminSettingsLi">
+    <button class="dropdown-toggle" data-id="adminSettings" aria-expanded="false">
+        <span class="title"><i class="fas fa-cog"></i><span>Settings</span></span>
+    </button>
+    <div class="dropdown-menu">
+        <a href="admin-profile.html" data-id="admin-profile">Profile</a>
+        <a href="change-password.html" data-id="change-password">Change Password</a>
+    </div>
+</li>

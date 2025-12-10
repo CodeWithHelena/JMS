@@ -513,9 +513,10 @@
 
 <body>
     <div class="dashboard-container">
-        <!-- placeholders for partials -->
+        <!-- Sidebar Included-->
         <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
+            <!-- Header Included-->
             <div id="header-placeholder"></div>
 
             <main class="main-content">
@@ -609,7 +610,10 @@
             </main>
         </div>
     </div>
-
+    <script>
+        window.SIDEBAR_MODULE = 'editor';
+        window.SIDEBAR_ACTIVE_ID = 'editor-submission';
+    </script>
     <!-- layout.js loads partials and wires header+sidebar behaviors -->
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (required for toastr) -->

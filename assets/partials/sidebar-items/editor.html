@@ -1,11 +1,22 @@
-<li><a href="editor-dashboard.html" data-id="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-<li id="articlesDropdownLi">
-    <button class="dropdown-toggle" data-id="manage-articles" aria-expanded="false">
-        <span class="title"><i class="fas fa-book-open"></i><span>Articles</span></span>
+<li><a href="dashboard.html" data-id="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+<li><a href="editor-journals.html" data-id="editor-journals"><i class="fas fa-tachometer-alt"></i> <span>Journals</span></a></li>
+
+<li><a href="editor-submissions.html" data-id="editor-submission"><i class="fas fa-tachometer-alt"></i> <span>Submissions</span></a></li>
+<li id="DropdownLi">
+    <button class="dropdown-toggle" data-id="manage-issue" aria-expanded="false">
+        <span class="title"><i class="fas fa-book-open"></i><span>Issue Management</span></span>
     </button>
     <div class="dropdown-menu">
-        <a href="review-queue.html" data-id="review-queue">Review Queue</a>
-        <a href="published.html" data-id="published">Published</a>
+        <a href="create-issue.html" data-id="create-issue">Create Issue</a>
+        <a href="view-issues.html" data-id="view-issues">View Issues</a>
     </div>
 </li>
-<li><a href="editor-settings.html" data-id="editor-settings"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+<li id="EditorSettingsLi">
+    <button class="dropdown-toggle" data-id="editorSettings" aria-expanded="false">
+        <span class="title"><i class="fas fa-cog"></i><span>Settings</span></span>
+    </button>
+    <div class="dropdown-menu">
+        <a href="change-password.html" data-id="change-password">Change Password</a>
+        <a href="editor-profile.html" data-id="editor-profile">Profile</a>
+    </div>
+</li>

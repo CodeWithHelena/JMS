@@ -553,14 +553,14 @@
 
             <main class="main-content">
                 <!-- Welcome Header -->
-                <div class="welcome-header">
+                <!-- <div class="welcome-header">
                     <h1 id="greeting">Good Morning!</h1>
                     <p id="dashboardMessage">Welcome back to your Journal Management Dashboard</p>
                     <div class="date-display">
                         <i class="far fa-calendar"></i>
                         <span id="currentDate">Loading...</span>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Stats Overview -->
                 <div class="stats-grid">
@@ -766,7 +766,10 @@
             </main>
         </div>
     </div>
-
+    <script>
+        window.SIDEBAR_MODULE = 'reviewer';
+        window.SIDEBAR_ACTIVE_ID = 'dashboard.html';
+    </script>
     <!-- layout.js loads partials and wires header+sidebar behaviors -->
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (for toastr) -->

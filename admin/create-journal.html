@@ -626,9 +626,10 @@
 
 <body>
     <div class="dashboard-container">
-        <!-- placeholders for partials -->
+        <!-- Sidebar Included-->
         <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
+            <!-- Header Included-->
             <div id="header-placeholder"></div>
             <div class="container page-title">
                 <h1>Create New Journal</h1>
@@ -819,6 +820,10 @@
         </div>
     </div>
 
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'create-journal';
+    </script>
     <!-- jQuery (required for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JS -->
