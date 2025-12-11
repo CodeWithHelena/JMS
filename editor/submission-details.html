@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
     <!-- Header + Sidebar CSS -->
@@ -28,9 +32,13 @@
             --light: #f8fafc;
             --border: #e2e8f0;
             --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
             --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
             --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
             --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
             --radius: 12px;
             --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
             --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
@@ -688,6 +696,334 @@
             gap: 0.5rem;
         }
 
+        /* Editorial Decision Section */
+        .editorial-decision-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid var(--border);
+        }
+
+        .decision-buttons-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .decision-form-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .decision-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .decision-option {
+            position: relative;
+        }
+
+        .decision-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .decision-option label {
+            display: block;
+            padding: 1rem;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .decision-option input[type="radio"]:checked+label {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .decision-option label:hover {
+            border-color: var(--primary);
+        }
+
+        .decision-status-message {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .decision-status-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .decision-status-message.rejected i {
+            color: var(--danger);
+        }
+
+        .decision-status-message.accepted i {
+            color: var(--success);
+        }
+
+        .decision-status-message.revision i {
+            color: var(--warning);
+        }
+
+        .published-status-message {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .published-status-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .published-status-message.awaiting-payment i {
+            color: var(--warning);
+        }
+
+        .published-status-message.published i {
+            color: var(--success);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Issue Option Styles */
+        .issue-option {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background-color var(--transition-fast);
+        }
+
+        .issue-option:last-child {
+            border-bottom: none;
+        }
+
+        .issue-option:hover {
+            background-color: var(--light);
+        }
+
+        .issue-option.selected {
+            background-color: var(--primary-light);
+        }
+
+        .issue-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .issue-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .journal-name {
+            flex: 1;
+        }
+
+        .volume-info {
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        .no-issues {
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .no-issues i {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: var(--font-size-xl);
+            color: var(--text-light);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-submit-decision {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-submit-decision:hover:not(:disabled) {
+            background: #0da271;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-submit-decision:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Form Hints */
+        .form-hint {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Form Group */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label.required::after {
+            content: "*";
+            color: var(--danger);
+            margin-left: 0.25rem;
+        }
+
+        /* Quill Editor Styles */
+        .ql-toolbar {
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            border-color: var(--border) !important;
+        }
+
+        .ql-container {
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            border-color: var(--border) !important;
+            min-height: 150px;
+        }
+
+        .ql-editor {
+            min-height: 150px;
+        }
+
         /* Loading and Error States */
         .loading-screen {
             text-align: center;
@@ -810,6 +1146,25 @@
             .author-item,
             .reviewer-card {
                 min-width: 100%;
+            }
+
+            .decision-options {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-submit-decision,
+            .btn-reset {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
             }
         }
     </style>
@@ -935,7 +1290,10 @@
                             </div>
                         </div>
 
-                        <!-- Timeline Section (Optional) -->
+                        <!-- Editorial Decision Section (will be dynamically inserted) -->
+                        <!-- This section will be created by JavaScript -->
+
+                        <!-- Timeline Section -->
                         <div class="content-section timeline-section">
                             <h2 class="section-title">
                                 <i class="fas fa-history"></i> Timeline
@@ -965,837 +1323,1412 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Quill Rich Text Editor -->
+    <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
     <!-- Submission Details JavaScript (self-contained) -->
-    <script>
-        // Constants from utility.js (recreated here to avoid import issues)
-        const BASE_URL = 'https://fp.247laboratory.net/api/v1';
-        const getAuthToken2 = () => localStorage.getItem('editor_tkn') || localStorage.getItem('token');
+   <script>
+        /* --- Constants / auth helper --- */
+            const BASE_URL = 'https://fp.247laboratory.net/api/v1';
+            const getAuthToken2 = () => localStorage.getItem('editor_tkn') || localStorage.getItem('token');
 
-        class SubmissionDetailsManager {
-            constructor() {
-                this.submissionId = this.getSubmissionIdFromURL();
-                this.submission = null;
-                this.selectedReviewers = [];
-                this.journalId = null;
-                this.allReviewers = [];
-                this.userCache = new Map();
+            /* SubmissionDetailsManager - full updated script */
+            class SubmissionDetailsManager {
+                constructor() {
+                    this.submissionId = this.getSubmissionIdFromURL();
+                    this.submission = null;
+                    this.selectedReviewers = [];
+                    this.journalId = null;
+                    this.allReviewers = [];
+                    this.userCache = new Map();
+                    this.issues = [];
+                    this.filteredIssues = [];
+                    this.selectedIssue = null;
+                    this.decisionQuill = null;
 
-                if (!this.submissionId) {
-                    this.showError('No submission ID provided');
-                    return;
+                    // flags/handlers
+                    this._issuesFetched = false;
+                    this._globalClickHandler = null;
+                    this._issueOutsideHandler = null;
+                    this._modalKeyHandler = null;
+
+                    if (!this.submissionId) {
+                        this.showError('No submission ID provided');
+                        return;
+                    }
+
+                    this.initializeToastr();
+                    this.bindEvents();
+                    this.initialize();
                 }
 
-                this.initializeToastr();
-                this.bindEvents();
-                this.initialize();
-            }
+                initializeToastr() {
+                    toastr.options = {
+                        closeButton: false,
+                        progressBar: false,
+                        positionClass: "toast-top-right",
+                        timeOut: 3000,
+                        extendedTimeOut: 1000
+                    };
+                }
 
-            initializeToastr() {
-                toastr.options = {
-                    closeButton: false,
-                    progressBar: false,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000,
-                    extendedTimeOut: 1000
-                };
-            }
+                bindEvents() {
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => this._attachDOMEvents());
+                    } else {
+                        this._attachDOMEvents();
+                    }
+                }
 
-            
-            bindEvents() {
-                document.addEventListener('DOMContentLoaded', () => {
+                _attachDOMEvents() {
                     document.getElementById('assignReviewersBtn')?.addEventListener('click', () => this.assignReviewers());
                     document.getElementById('clearSelectionBtn')?.addEventListener('click', () => this.clearSelection());
 
-                    // Remove the old event listener and make it dynamic
-                    const viewTimelineBtn = document.getElementById('viewTimelineBtn');
-                    if (viewTimelineBtn) {
-                        viewTimelineBtn.onclick = () => {
-                            window.location.href = `submission-timeline.html?id=${this.submissionId}`;
-                        };
-                    }
-                });
-            }
-
-            getSubmissionIdFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('id');
-            }
-
-            async initialize() {
-                this.showLoading();
-
-                try {
-                    await this.loadSubmissionData();
-
-                    // Get journal ID from submission
-                    this.journalId = this.submission.journalId?._id;
-
-                    if (this.journalId) {
-                        await this.loadAvailableReviewers();
-                        this.initializeReviewerSelect();
-                    }
-
-                    await this.loadLatestTimelineEvent();
-
-                    this.hideLoading();
-                    this.showContent();
-
-                } catch (error) {
-                    console.error('Error initializing:', error);
-                    this.showError('Failed to load submission details. Please try again.');
-                }
-            }
-
-            async loadSubmissionData() {
-                try {
-                    const token = getAuthToken2();
-                    if (!token) {
-                        throw new Error('Authentication token not found');
-                    }
-
-                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
+                    document.getElementById('viewTimelineBtn')?.addEventListener('click', () => {
+                        window.location.href = `submission-timeline.html?id=${this.submissionId}`;
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch submission: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to load submission data');
-                    }
-
-                    this.submission = data.submission;
-                    console.log('Submission data loaded:', this.submission);
-
-                    // Get submitter details from history array
-                    const submittedEvent = this.submission.history?.find(event => event.status === 'submitted');
-                    if (submittedEvent?.by) {
-                        const submitter = await this.getUserDetails(submittedEvent.by);
-                        if (submitter) {
-                            this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
-                            this.submission.submitterEmail = submitter.email;
-                        }
-                    }
-
-                    // Get reviewer details for assigned reviewers
-                    if (this.submission.assignedReviewers && this.submission.assignedReviewers.length > 0) {
-                        await this.enrichAssignedReviewers();
-                    }
-
-                    this.renderManuscriptHeader();
-                    this.renderAuthors();
-                    this.renderCurrentReviewers();
-
-                } catch (error) {
-                    console.error('Error loading submission data:', error);
-                    throw error;
-                }
-            }
-
-            async getUserDetails(userId) {
-                if (this.userCache.has(userId)) {
-                    return this.userCache.get(userId);
-                }
-
-                try {
-                    const token = getAuthToken2();
-                    if (!token) return null;
-
-                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
+                    // delegate remove button clicks inside selected reviewers preview
+                    document.getElementById('selectedReviewersList')?.addEventListener('click', (e) => {
+                        const btn = e.target.closest('.remove-selected-btn');
+                        if (!btn) return;
+                        const tag = btn.closest('.selected-reviewer-tag');
+                        if (!tag) return;
+                        const id = tag.getAttribute('data-id');
+                        if (id) this.removeSelectedReviewer(id);
                     });
+                }
 
-                    if (!response.ok) {
-                        console.warn(`Failed to fetch user ${userId}: ${response.status}`);
+                getSubmissionIdFromURL() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get('id');
+                }
+
+                async initialize() {
+                    try {
+                        this.showLoading();
+                        await this.loadSubmissionData();
+
+                        // journalId: API may return object or id
+                        this.journalId = this.submission?.journalId?._id || this.submission?.journalId || null;
+
+                        if (this.journalId) {
+                            await this.loadAvailableReviewers();
+                            this.initializeReviewerSelect();
+                        } else {
+                            // still create select area empty so it doesn't break UI
+                            this.initializeReviewerSelect();
+                        }
+
+                        this.initializeEditorialDecision();
+                        await this.loadLatestTimelineEvent();
+
+                        this.hideLoading();
+                        this.showContent();
+                    } catch (error) {
+                        console.error('Error initializing:', error);
+                        this.showError('Failed to load submission details. Please try again.');
+                    }
+                }
+
+                async loadSubmissionData() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) throw new Error('Authentication token not found');
+
+                        const submissionResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!submissionResponse.ok) {
+                            throw new Error(`Failed to fetch submission: ${submissionResponse.status}`);
+                        }
+
+                        const submissionData = await submissionResponse.json();
+                        // accommodating several possible shapes
+                        this.submission = submissionData.submission || submissionData.data || submissionData;
+
+                        // attempt to get currentStatus from history endpoint (non-fatal)
+                        try {
+                            const historyResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            if (historyResponse.ok) {
+                                const historyData = await historyResponse.json();
+                                if (historyData?.submission?.currentStatus) {
+                                    this.submission.currentStatus = historyData.submission.currentStatus;
+                                }
+                            }
+                        } catch (e) {
+                            console.warn('history fetch non-fatal', e);
+                        }
+
+                        // get submitter info from history 'submitted' event if available
+                        const submittedEvent = (this.submission.history || []).find(ev => ev.status === 'submitted');
+                        if (submittedEvent?.by) {
+                            const submitter = await this.getUserDetails(submittedEvent.by);
+                            if (submitter) {
+                                this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
+                                this.submission.submitterEmail = submitter.email;
+                            }
+                        }
+
+                        // assignedReviewers may already come from the submission: no API enrichment required, but we enrich for names/emails
+                        if (Array.isArray(this.submission.assignedReviewers) && this.submission.assignedReviewers.length) {
+                            await this.enrichAssignedReviewers();
+                        }
+
+                        this.renderManuscriptHeader();
+                        this.renderAuthors();
+                        this.renderCurrentReviewers();
+
+                    } catch (error) {
+                        console.error('Error loading submission data:', error);
+                        throw error;
+                    }
+                }
+
+                async getUserDetails(userId) {
+                    if (!userId) return null;
+                    if (this.userCache.has(userId)) return this.userCache.get(userId);
+
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) return null;
+                        const response = await fetch(`${BASE_URL}/user/${userId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            console.warn(`Failed to fetch user ${userId}: ${response.status}`);
+                            return null;
+                        }
+
+                        const data = await response.json();
+                        const user = data.user || data.data || data;
+                        if (!user) return null;
+                        this.userCache.set(userId, user);
+                        return user;
+                    } catch (error) {
+                        console.error(`Error fetching user ${userId}:`, error);
                         return null;
                     }
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        console.warn(`Failed to fetch user ${userId}:`, data.message);
-                        return null;
-                    }
-
-                    const user = data.user;
-                    this.userCache.set(userId, user);
-                    return user;
-
-                } catch (error) {
-                    console.error(`Error fetching user ${userId}:`, error);
-                    return null;
                 }
-            }
 
-            async enrichAssignedReviewers() {
-                const assignedReviewers = this.submission.assignedReviewers || [];
-                const enrichedReviewers = [];
+                async enrichAssignedReviewers() {
+                    const assignedReviewers = this.submission.assignedReviewers || [];
+                    const enrichedReviewers = [];
 
-                for (const assignment of assignedReviewers) {
-                    const reviewerId = assignment.reviewerId;
-
-                    if (reviewerId) {
-                        const user = await this.getUserDetails(reviewerId);
-                        if (user) {
-                            enrichedReviewers.push({
-                                ...assignment,
-                                name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-                                email: user.email
-                            });
+                    for (const assignment of assignedReviewers) {
+                        // assignment might have reviewerId or reviewer
+                        const reviewerId = assignment.reviewerId || assignment.reviewer || assignment.userId || assignment._id || assignment.id;
+                        if (reviewerId) {
+                            const user = await this.getUserDetails(reviewerId);
+                            if (user) {
+                                enrichedReviewers.push({
+                                    ...assignment,
+                                    name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+                                    email: user.email
+                                });
+                            } else {
+                                enrichedReviewers.push({
+                                    ...assignment,
+                                    name: assignment.name || 'Unknown Reviewer',
+                                    email: assignment.email || 'N/A'
+                                });
+                            }
                         } else {
-                            enrichedReviewers.push({
-                                ...assignment,
-                                name: 'Unknown Reviewer',
-                                email: 'N/A'
-                            });
+                            enrichedReviewers.push(assignment);
                         }
                     }
+
+                    this.submission.assignedReviewers = enrichedReviewers;
                 }
 
-                this.submission.assignedReviewers = enrichedReviewers;
-                console.log('Enriched assigned reviewers:', this.submission.assignedReviewers);
-            }
+                async loadAvailableReviewers() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token || !this.journalId) {
+                            this.allReviewers = [];
+                            return;
+                        }
 
-            async loadAvailableReviewers() {
-                try {
-                    const token = getAuthToken2();
-                    if (!token || !this.journalId) {
-                        console.warn('Missing token or journalId for loading reviewers');
+                        const response = await fetch(`${BASE_URL}/editor/journal-reviewers?journalId=${this.journalId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            this.allReviewers = [];
+                            return;
+                        }
+
+                        const data = await response.json();
+                        const reviewers = data.reviewers || data.data || [];
+                        this.allReviewers = reviewers.map(r => ({
+                            id: r._id || r.id || r.userId || r.email,
+                            name: `${r.firstName || ''} ${r.lastName || ''}`.trim(),
+                            email: r.email || ''
+                        }));
+
+                        // update the options list if the select exists
+                        const optionsList = document.querySelector('.custom-search-select .select-options-list');
+                        if (optionsList) optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
+                    } catch (error) {
+                        console.error('Error loading available reviewers:', error);
                         this.allReviewers = [];
-                        return;
-                    }
-
-                    console.log(`Fetching reviewers for journal: ${this.journalId}`);
-
-                    const response = await fetch(`${BASE_URL}/editor/journal-reviewers?journalId=${this.journalId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.warn(`Failed to fetch reviewers: ${response.status}`);
-                        this.allReviewers = [];
-                        return;
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        console.warn(`Failed to load reviewers:`, data.message);
-                        this.allReviewers = [];
-                        return;
-                    }
-
-                    console.log('Reviewers API response:', data);
-
-                    // Process reviewers - directly use the objects from API
-                    const reviewers = data.reviewers || [];
-                    this.allReviewers = reviewers.map(reviewer => ({
-                        id: reviewer._id,
-                        name: `${reviewer.firstName || ''} ${reviewer.lastName || ''}`.trim(),
-                        email: reviewer.email
-                    }));
-
-                    console.log('Processed reviewers:', this.allReviewers);
-
-                } catch (error) {
-                    console.error('Error loading available reviewers:', error);
-                    this.allReviewers = [];
-                }
-            }
-
-            initializeReviewerSelect() {
-                const container = document.getElementById('reviewerSearchContainer');
-                if (!container) return;
-
-                // Create the custom search select
-                this.createCustomSearchSelect(container);
-            }
-
-            createCustomSearchSelect(container) {
-                const selectId = 'reviewerSearchSelect_' + Math.random().toString(36).substr(2, 9);
-
-                const html = `
-                    <div class="custom-search-select" id="${selectId}">
-                        <div class="select-header">
-                            <span class="placeholder">Search for reviewers...</span>
-                            <span class="selected-value"></span>
-                            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
-                        </div>
-                        <div class="select-dropdown">
-                            <div class="search-input-wrapper">
-                                <input type="text" class="search-input" placeholder="Search by name or email...">
-                                <button type="button" class="clear-search" title="Clear search">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="select-options-list">
-                                ${this.renderReviewerOptions(this.allReviewers)}
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                container.innerHTML = html;
-
-                // Get DOM elements
-                const selectElement = document.getElementById(selectId);
-                const header = selectElement.querySelector('.select-header');
-                const dropdown = selectElement.querySelector('.select-dropdown');
-                const searchInput = selectElement.querySelector('.search-input');
-                const clearSearchBtn = selectElement.querySelector('.clear-search');
-                const optionsList = selectElement.querySelector('.select-options-list');
-                const selectedValueSpan = selectElement.querySelector('.selected-value');
-                const placeholderSpan = selectElement.querySelector('.placeholder');
-
-                // Filter reviewers based on search
-                const filterReviewers = (searchTerm) => {
-                    if (!searchTerm.trim()) {
-                        optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
-                        clearSearchBtn.classList.remove('visible');
-                        return;
-                    }
-
-                    const searchLower = searchTerm.toLowerCase();
-                    const filtered = this.allReviewers.filter(reviewer =>
-                        reviewer.name.toLowerCase().includes(searchLower) ||
-                        (reviewer.email && reviewer.email.toLowerCase().includes(searchLower))
-                    );
-
-                    optionsList.innerHTML = this.renderReviewerOptions(filtered);
-                    clearSearchBtn.classList.add('visible');
-                };
-
-                // Select a reviewer
-                const selectReviewer = (reviewer) => {
-                    const isSelected = this.selectedReviewers.some(r => r.id === reviewer.id);
-                    if (!isSelected) {
-                        this.selectedReviewers.push(reviewer);
-                        this.renderSelectedReviewers();
-                        this.updateAssignButton();
-
-                        // Update selected value display
-                        if (this.selectedReviewers.length === 1) {
-                            selectedValueSpan.textContent = reviewer.name;
-                            selectedValueSpan.style.display = 'inline';
-                            placeholderSpan.style.display = 'none';
-                        } else {
-                            selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`;
-                            selectedValueSpan.style.display = 'inline';
-                            placeholderSpan.style.display = 'none';
-                        }
-                    }
-
-                    // Close dropdown
-                    dropdown.classList.remove('active');
-                    header.classList.remove('active');
-                };
-
-                // Clear search
-                const clearSearch = (e) => {
-                    if (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                    searchInput.value = '';
-                    filterReviewers('');
-                    searchInput.focus();
-                };
-
-                // Event Listeners
-                header.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dropdown.classList.toggle('active');
-                    header.classList.toggle('active');
-                    if (dropdown.classList.contains('active')) {
-                        searchInput.focus();
-                    }
-                });
-
-                searchInput.addEventListener('input', (e) => {
-                    filterReviewers(e.target.value);
-                });
-
-                clearSearchBtn.addEventListener('click', clearSearch);
-
-                searchInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                    }
-                });
-
-                optionsList.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const optionItem = e.target.closest('.select-option-item');
-                    if (optionItem) {
-                        const reviewerId = optionItem.getAttribute('data-id');
-                        const reviewer = this.allReviewers.find(r => r.id === reviewerId);
-                        if (reviewer) {
-                            selectReviewer(reviewer);
-                        }
-                    }
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!selectElement.contains(e.target)) {
-                        dropdown.classList.remove('active');
-                        header.classList.remove('active');
-                    }
-                });
-
-                // Initial render
-                filterReviewers('');
-            }
-
-            renderReviewerOptions(reviewers) {
-                if (reviewers.length === 0) {
-                    return '<div class="no-results">No reviewers available for this journal</div>';
-                }
-
-                return reviewers.map(reviewer => `
-                    <div class="select-option-item" data-id="${reviewer.id}">
-                        <div class="option-text">
-                            <span class="option-name">${this.escapeHtml(reviewer.name)}</span>
-                            ${reviewer.email ? `<span class="option-email">${this.escapeHtml(reviewer.email)}</span>` : ''}
-                        </div>
-                        <div class="add-icon">
-                            <i class="fas fa-plus"></i>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            async loadLatestTimelineEvent() {
-                try {
-                    const token = getAuthToken2();
-                    if (!token) return;
-
-                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.warn(`Failed to fetch timeline: ${response.status}`);
-                        this.renderTimeline([]);
-                        return;
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        console.warn(`Failed to load timeline:`, data.message);
-                        this.renderTimeline([]);
-                        return;
-                    }
-
-                    const timelineData = data.submission || data;
-                    const history = timelineData.history || [];
-
-                    // Get the latest event (first in the array based on the API response)
-                    const latestEvent = history.length > 0 ? history[0] : null;
-
-                    if (latestEvent) {
-                        await this.renderLatestTimelineEvent(latestEvent);
-                    } else {
-                        this.renderTimeline([]);
-                    }
-
-                } catch (error) {
-                    console.error('Error loading timeline data:', error);
-                    this.renderTimeline([]);
-                }
-            }
-
-            async renderLatestTimelineEvent(event) {
-                const timelineContainer = document.getElementById('recentTimeline');
-                if (!timelineContainer) return;
-
-                let updatedBy = 'System';
-                if (event.by) {
-                    const user = await this.getUserDetails(event.by);
-                    if (user) {
-                        updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
                     }
                 }
 
-                timelineContainer.innerHTML = `
-                    <div class="timeline-item">
-                        <div class="card">
-                            <span class="status-badge" style="${this.getStatusStyle(event.status)}">
-                                ${this.formatStatus(event.status)}
-                            </span>
-                            <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
-                            <p class="timeline-date">
-                                <i class="far fa-clock"></i> ${this.formatDate(event.date)}
-                            </p>
-                            <div class="updated-by">
-                                <strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            renderManuscriptHeader() {
-                const header = document.getElementById('manuscriptHeader');
-                if (!header || !this.submission) return;
-
-                const formattedDate = this.formatDate(this.submission.createdAt);
-                const statusDisplay = this.formatStatus(this.submission.status);
-                const journalName = this.submission.journalId?.title || 'Unknown Journal';
-                const journalISSN = this.submission.journalId?.issn || 'N/A';
-                const submittedByName = this.submission.submitterName || 'Unknown';
-
-                header.innerHTML = `
-                    <h1>${this.escapeHtml(this.submission.title)}</h1>
-                    <span class="header-status-badge">${statusDisplay}</span>
-                    <div class="header-meta">
-                        <div class="meta-item">
-                            <i class="fas fa-book-open"></i>
-                            <span>Journal: ${this.escapeHtml(journalName)}</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-hashtag"></i>
-                            <span>ISSN: ${journalISSN}</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-user"></i>
-                            <span>Submitted by: ${this.escapeHtml(submittedByName)}</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="far fa-calendar"></i>
-                            <span>Submitted on: ${formattedDate}</span>
-                        </div>
-                    </div>
-                `;
-            }
-
-            renderAuthors() {
-                const authorsList = document.getElementById('authorsList');
-                if (!authorsList || !this.submission) return;
-
-                const authors = this.submission.authors || [];
-
-                if (authors.length === 0) {
-                    authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
-                    return;
+                initializeReviewerSelect() {
+                    const container = document.getElementById('reviewerSearchContainer');
+                    if (!container) return;
+                    this.createCustomSearchSelect(container);
                 }
 
-                authorsList.innerHTML = authors.map(author => `
-                    <div class="author-item">
-                        <div class="author-name">${this.escapeHtml(author.name)}</div>
-                        <div class="author-email">
-                            <i class="fas fa-envelope"></i>
-                            ${this.escapeHtml(author.email)}
-                        </div>
-                    </div>
-                `).join('');
-            }
+                createCustomSearchSelect(container) {
+                    // remove previous if exists
+                    const existing = container.querySelector('.custom-search-select');
+                    if (existing) existing.remove();
 
-            renderCurrentReviewers() {
-                const reviewersContainer = document.getElementById('currentReviewers');
-                const reviewersCount = document.getElementById('reviewersCount');
-                if (!reviewersContainer || !this.submission) return;
+                    const selectId = 'reviewerSearchSelect_' + Math.random().toString(36).substr(2, 9);
+                    const html = `
+        <div class="custom-search-select" id="${selectId}">
+            <div class="select-header" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
+                <span class="placeholder">Search for reviewers...</span>
+                <span class="selected-value" style="display:none"></span>
+                <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="select-dropdown">
+                <div class="search-input-wrapper" style="padding:0.6rem;">
+                    <input type="text" class="search-input" placeholder="Search by name or email..." style="width:100%;padding:0.5rem 0.75rem;border-radius:6px;border:1px solid var(--border);outline:none;">
+                    <button type="button" class="clear-search" title="Clear search" style="display:none;margin-left:6px;"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="select-options-list" style="max-height:40vh;overflow:auto;padding:0.5rem;">
+                    ${this.renderReviewerOptions(this.allReviewers)}
+                </div>
+            </div>
+        </div>
+    `;
+                    container.insertAdjacentHTML('beforeend', html);
 
-                const reviewers = this.submission.assignedReviewers || [];
-                reviewersCount.textContent = reviewers.length;
-
-                if (reviewers.length === 0) {
-                    reviewersContainer.innerHTML = `
-                        <div class="no-reviewers">
-                            <i class="fas fa-user-slash"></i>
-                            <p>No reviewers assigned yet</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Render reviewer cards
-                let reviewersHTML = reviewers.map(reviewer => `
-                    <div class="reviewer-card">
-                        <div class="reviewer-name">${this.escapeHtml(reviewer.name)}</div>
-                        <div class="reviewer-email">
-                            <i class="fas fa-envelope"></i>
-                            ${this.escapeHtml(reviewer.email)}
-                        </div>
-                        <div class="reviewer-status">
-                            <span class="status-indicator ${reviewer.hasReviewed ? 'completed' : 'pending'}"></span>
-                            ${reviewer.hasReviewed ? 'Review completed' : 'Awaiting review'}
-                        </div>
-                    </div>
-                `).join('');
-
-                // Add View Progress button if there are reviewers
-                if (reviewers.length > 0 && this.journalId) {
-                    reviewersHTML += `
-                        <div class="view-progress-container">
-                            <button class="btn-view-progress" onclick="window.location.href='reviewer-progress.html?journalId=${this.journalId}'">
-                                <i class="fas fa-chart-line"></i> View Progress
-                            </button>
-                        </div>
-                    `;
-                }
-
-                reviewersContainer.innerHTML = reviewersHTML;
-            }
-
-            renderSelectedReviewers() {
-                const previewContainer = document.getElementById('selectedReviewersPreview');
-                const selectedList = document.getElementById('selectedReviewersList');
-                const selectedCount = document.getElementById('selectedCount');
-
-                if (!this.selectedReviewers.length) {
-                    previewContainer.style.display = 'none';
-                    return;
-                }
-
-                previewContainer.style.display = 'block';
-                selectedCount.textContent = this.selectedReviewers.length;
-
-                selectedList.innerHTML = this.selectedReviewers.map(reviewer => `
-                    <div class="selected-reviewer-tag" data-id="${reviewer.id}">
-                        ${this.escapeHtml(reviewer.name)}
-                        <button class="remove-selected-btn" onclick="submissionDetails.removeSelectedReviewer('${reviewer.id}')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `).join('');
-            }
-
-            removeSelectedReviewer(reviewerId) {
-                this.selectedReviewers = this.selectedReviewers.filter(r => r.id !== reviewerId);
-                this.renderSelectedReviewers();
-                this.updateAssignButton();
-
-                // Update the selected value display in the select
-                const selectElement = document.querySelector('.custom-search-select');
-                if (selectElement) {
+                    const selectElement = document.getElementById(selectId);
+                    const header = selectElement.querySelector('.select-header');
+                    const dropdown = selectElement.querySelector('.select-dropdown');
+                    const searchInput = selectElement.querySelector('.search-input');
+                    const clearBtn = selectElement.querySelector('.clear-search');
+                    const optionsList = selectElement.querySelector('.select-options-list');
                     const selectedValueSpan = selectElement.querySelector('.selected-value');
                     const placeholderSpan = selectElement.querySelector('.placeholder');
 
-                    if (this.selectedReviewers.length === 0) {
-                        selectedValueSpan.textContent = '';
-                        selectedValueSpan.style.display = 'none';
-                        placeholderSpan.style.display = 'inline';
-                    } else if (this.selectedReviewers.length === 1) {
-                        selectedValueSpan.textContent = this.selectedReviewers[0].name;
-                        selectedValueSpan.style.display = 'inline';
-                        placeholderSpan.style.display = 'none';
-                    } else {
-                        selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`;
-                        selectedValueSpan.style.display = 'inline';
-                        placeholderSpan.style.display = 'none';
-                    }
-                }
-            }
-
-            updateAssignButton() {
-                const assignBtn = document.getElementById('assignReviewersBtn');
-                if (assignBtn) {
-                    assignBtn.disabled = this.selectedReviewers.length === 0;
-                }
-            }
-
-            async assignReviewers() {
-                if (this.selectedReviewers.length === 0) return;
-
-                try {
-                    const token = getAuthToken2();
-                    if (!token) {
-                        toastr.error('Authentication required. Please login again.', 'Error');
-                        return;
+                    // global click close handler
+                    if (!this._globalClickHandler) {
+                        this._globalClickHandler = (e) => {
+                            document.querySelectorAll('.custom-search-select .select-dropdown.active').forEach(dd => {
+                                const parent = dd.closest('.custom-search-select');
+                                if (!parent.contains(e.target)) {
+                                    dd.classList.remove('active');
+                                    parent.querySelector('.select-header')?.classList.remove('active');
+                                    parent.querySelector('.select-header')?.setAttribute('aria-expanded', 'false');
+                                }
+                            });
+                        };
+                        document.addEventListener('click', this._globalClickHandler);
                     }
 
-                    const reviewerIds = this.selectedReviewers.map(r => r.id);
-
-                    const requestBody = {
-                        submissionId: this.submissionId,
-                        reviewerIds: reviewerIds
+                    const filterReviewers = (term) => {
+                        if (!term || !term.trim()) {
+                            optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
+                            clearBtn.style.display = 'none';
+                            return;
+                        }
+                        const s = term.toLowerCase();
+                        const filtered = this.allReviewers.filter(r => (r.name || '').toLowerCase().includes(s) || (r.email || '').toLowerCase().includes(s));
+                        optionsList.innerHTML = this.renderReviewerOptions(filtered);
+                        clearBtn.style.display = 'inline-flex';
                     };
 
-                    console.log('Assigning reviewers:', requestBody);
+                    const selectReviewer = (reviewer) => {
+                        const isSelected = this.selectedReviewers.some(r => String(r.id) === String(reviewer.id));
+                        if (!isSelected) {
+                            this.selectedReviewers.push(reviewer);
+                            this.renderSelectedReviewers();
+                            this.updateAssignButton();
 
-                    // Show loading state
-                    const assignBtn = document.getElementById('assignReviewersBtn');
-                    const originalText = assignBtn.innerHTML;
-                    assignBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
-                    assignBtn.disabled = true;
-
-                    const response = await fetch(`${BASE_URL}/editor/assign-reviewers`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Assign reviewers error:', errorText);
-                        let errorMessage = `Failed to assign reviewers: ${response.status}`;
-                        try {
-                            const errorData = JSON.parse(errorText);
-                            errorMessage = errorData.message || errorMessage;
-                        } catch (e) {
-                            // Not JSON response
+                            if (this.selectedReviewers.length === 1) {
+                                selectedValueSpan.textContent = reviewer.name;
+                                selectedValueSpan.style.display = 'inline';
+                                placeholderSpan.style.display = 'none';
+                            } else {
+                                selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`;
+                                selectedValueSpan.style.display = 'inline';
+                                placeholderSpan.style.display = 'none';
+                            }
                         }
-                        throw new Error(errorMessage);
-                    }
 
-                    const data = await response.json();
+                        dropdown.classList.remove('active');
+                        header.classList.remove('active');
+                        header.setAttribute('aria-expanded', 'false');
+                    };
 
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to assign reviewers');
-                    }
-
-                    // Success - update local state and refresh page data
-                    toastr.success(`Successfully assigned ${this.selectedReviewers.length} reviewer(s)`, 'Success');
-
-                    // Refresh the page data after a short delay
-                    setTimeout(async () => {
-                        await this.loadSubmissionData();
-                        await this.loadAvailableReviewers();
-                        this.clearSelection();
-                    }, 1000);
-
-                } catch (error) {
-                    console.error('Error assigning reviewers:', error);
-                    toastr.error(error.message || 'Failed to assign reviewers', 'Error');
-                } finally {
-                    // Reset button state
-                    const assignBtn = document.getElementById('assignReviewersBtn');
-                    if (assignBtn) {
-                        assignBtn.innerHTML = '<i class="fas fa-user-check"></i> Assign Selected Reviewers';
-                        assignBtn.disabled = this.selectedReviewers.length === 0;
-                    }
-                }
-            }
-
-            clearSelection() {
-                this.selectedReviewers = [];
-                this.renderSelectedReviewers();
-                this.updateAssignButton();
-
-                // Clear the search select display
-                const selectElement = document.querySelector('.custom-search-select');
-                if (selectElement) {
-                    const selectedValueSpan = selectElement.querySelector('.selected-value');
-                    const placeholderSpan = selectElement.querySelector('.placeholder');
-                    const searchInput = selectElement.querySelector('.search-input');
-                    const optionsList = selectElement.querySelector('.select-options-list');
-
-                    selectedValueSpan.textContent = '';
-                    selectedValueSpan.style.display = 'none';
-                    placeholderSpan.style.display = 'inline';
-
-                    if (searchInput) {
-                        searchInput.value = '';
-                    }
-
-                    if (optionsList) {
-                        optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
-                    }
-                }
-            }
-
-            viewTimeline() {
-                window.location.href = `timeline.html?id=${this.submissionId}`;
-            }
-
-            getStatusStyle(status) {
-                const colors = {
-                    'submitted': 'background-color: #3b82f6; color: white;',
-                    'under_review': 'background-color: #f59e0b; color: white;',
-                    'reviewed': 'background-color: #8b5cf6; color: white;',
-                    'accepted': 'background-color: #10b981; color: white;',
-                    'rejected': 'background-color: #ef4444; color: white;'
-                };
-                return colors[status] || 'background-color: #6b7280; color: white;';
-            }
-
-            formatStatus(status) {
-                const statusMap = {
-                    'submitted': 'Submitted',
-                    'under_review': 'Under Review',
-                    'reviewed': 'Reviewed',
-                    'accepted': 'Accepted',
-                    'rejected': 'Rejected'
-                };
-                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
-            }
-
-            formatDate(dateString) {
-                try {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
+                    header.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const isOpen = dropdown.classList.contains('active');
+                        if (isOpen) {
+                            dropdown.classList.remove('active');
+                            header.classList.remove('active');
+                            header.setAttribute('aria-expanded', 'false');
+                        } else {
+                            dropdown.classList.add('active');
+                            header.classList.add('active');
+                            header.setAttribute('aria-expanded', 'true');
+                            searchInput.focus();
+                        }
                     });
-                } catch (error) {
-                    console.error('Error formatting date:', error);
-                    return dateString;
+
+                    header.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
+                    });
+
+                    searchInput.addEventListener('input', (e) => filterReviewers(e.target.value));
+                    clearBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); searchInput.value = ''; filterReviewers(''); searchInput.focus(); });
+
+                    optionsList.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const optionItem = e.target.closest('.select-option-item');
+                        if (!optionItem) return;
+                        const reviewerId = optionItem.getAttribute('data-id');
+                        const reviewer = this.allReviewers.find(r => String(r.id) === String(reviewerId));
+                        if (reviewer) selectReviewer(reviewer);
+                    });
+
+                    // initial filter to render current options
+                    filterReviewers('');
+                }
+
+                renderReviewerOptions(reviewers) {
+                    if (!reviewers || reviewers.length === 0) {
+                        return '<div class="no-results" style="padding:12px;text-align:center;color:var(--muted)">No reviewers available for this journal</div>';
+                    }
+                    return reviewers.map(reviewer => `
+        <div class="select-option-item" data-id="${this.escapeHtml(reviewer.id)}" style="padding:0.6rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.03);">
+            <div style="flex:1;">
+                <div class="option-name" style="font-weight:600;">${this.escapeHtml(reviewer.name)}</div>
+                ${reviewer.email ? `<div class="option-email" style="font-size:0.9rem;color:var(--muted);">${this.escapeHtml(reviewer.email)}</div>` : ''}
+            </div>
+            <div style="padding-left:8px;"><i class="fas fa-plus"></i></div>
+        </div>
+    `).join('');
+                }
+
+                renderManuscriptHeader() {
+                    const header = document.getElementById('manuscriptHeader');
+                    if (!header || !this.submission) return;
+
+                    const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
+                    const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
+                    const statusDisplay = this.formatStatus(statusToDisplay);
+                    const journalName = this.submission.journalId?.title || this.submission.journalTitle || 'Unknown Journal';
+                    const journalISSN = this.submission.journalId?.issn || 'N/A';
+                    const submittedByName = this.submission.submitterName || 'Unknown';
+
+                    header.innerHTML = `
+        <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
+        <span class="header-status-badge">${this.escapeHtml(statusDisplay)}</span>
+        <div class="header-meta">
+            <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
+            <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
+            <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
+            <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
+        </div>
+    `;
+                }
+
+                renderAuthors() {
+                    const authorsList = document.getElementById('authorsList');
+                    if (!authorsList || !this.submission) return;
+
+                    const authors = this.submission.authors || [];
+                    if (authors.length === 0) {
+                        authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
+                        return;
+                    }
+
+                    authorsList.innerHTML = authors.map(author => `
+        <div class="author-item">
+            <div class="author-name">${this.escapeHtml(author.name)}</div>
+            <div class="author-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(author.email)}</div>
+        </div>
+    `).join('');
+                }
+
+                renderCurrentReviewers() {
+                    const reviewersContainer = document.getElementById('currentReviewers');
+                    const reviewersCount = document.getElementById('reviewersCount');
+                    if (!reviewersContainer || !this.submission) return;
+
+                    const reviewers = this.submission.assignedReviewers || [];
+                    if (reviewersCount) reviewersCount.textContent = reviewers.length;
+
+                    if (reviewers.length === 0) {
+                        reviewersContainer.innerHTML = `
+            <div class="no-reviewers">
+                <i class="fas fa-user-slash"></i>
+                <p>No reviewers assigned yet</p>
+            </div>
+        `;
+                        return;
+                    }
+
+                    // Render reviewer cards
+                    let reviewersHTML = reviewers.map(reviewer => `
+        <div class="reviewer-card">
+            <div class="reviewer-name">${this.escapeHtml(reviewer.name)}</div>
+            <div class="reviewer-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(reviewer.email)}</div>
+            <div class="reviewer-status"><span class="status-indicator ${reviewer.hasReviewed ? 'completed' : 'pending'}"></span>${reviewer.hasReviewed ? 'Review completed' : 'Awaiting review'}</div>
+        </div>
+    `).join('');
+
+                    // Show View Progress when there's at least one assigned reviewer (only submission id required)
+                    if (reviewers.length > 0) {
+                        reviewersHTML += `
+            <div class="view-progress-container">
+                <button class="btn-view-progress" id="btnViewProgress"><i class="fas fa-chart-line"></i> View Progress</button>
+            </div>
+        `;
+                    }
+
+                    reviewersContainer.innerHTML = reviewersHTML;
+
+                    // now bind view progress button to correct URL (only submission id)
+                    const vp = document.getElementById('btnViewProgress');
+                    if (vp) {
+                        vp.addEventListener('click', () => {
+                            // Only pass submission id parameter (page expects ?id=...)
+                            window.location.href = `view-progress.html?id=${this.submissionId}`;
+                        });
+                    }
+                }
+
+                renderSelectedReviewers() {
+                    const previewContainer = document.getElementById('selectedReviewersPreview');
+                    const selectedList = document.getElementById('selectedReviewersList');
+                    const selectedCount = document.getElementById('selectedCount');
+
+                    if (!previewContainer || !selectedList || !selectedCount) return;
+
+                    if (this.selectedReviewers.length === 0) {
+                        previewContainer.style.display = 'none';
+                        selectedList.innerHTML = '';
+                        selectedCount.textContent = '0';
+                        return;
+                    }
+
+                    previewContainer.style.display = 'block';
+                    selectedCount.textContent = this.selectedReviewers.length;
+
+                    selectedList.innerHTML = this.selectedReviewers.map(reviewer => `
+        <div class="selected-reviewer-tag" data-id="${this.escapeHtml(reviewer.id)}">
+            ${this.escapeHtml(reviewer.name)}
+            <button class="remove-selected-btn" aria-label="Remove reviewer"><i class="fas fa-times"></i></button>
+        </div>
+    `).join('');
+                }
+
+                removeSelectedReviewer(reviewerId) {
+                    this.selectedReviewers = this.selectedReviewers.filter(r => String(r.id) !== String(reviewerId));
+                    this.renderSelectedReviewers();
+                    this.updateAssignButton();
+
+                    const selectElement = document.querySelector('.custom-search-select');
+                    if (selectElement) {
+                        const selectedValueSpan = selectElement.querySelector('.selected-value');
+                        const placeholderSpan = selectElement.querySelector('.placeholder');
+
+                        if (this.selectedReviewers.length === 0) {
+                            if (selectedValueSpan) { selectedValueSpan.textContent = ''; selectedValueSpan.style.display = 'none'; }
+                            if (placeholderSpan) placeholderSpan.style.display = 'inline';
+                        } else if (this.selectedReviewers.length === 1) {
+                            if (selectedValueSpan) { selectedValueSpan.textContent = this.selectedReviewers[0].name; selectedValueSpan.style.display = 'inline'; }
+                            if (placeholderSpan) placeholderSpan.style.display = 'none';
+                        } else {
+                            if (selectedValueSpan) { selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`; selectedValueSpan.style.display = 'inline'; }
+                            if (placeholderSpan) placeholderSpan.style.display = 'none';
+                        }
+                    }
+                }
+
+                updateAssignButton() {
+                    const assignBtn = document.getElementById('assignReviewersBtn');
+                    if (assignBtn) assignBtn.disabled = this.selectedReviewers.length === 0;
+                }
+
+                async assignReviewers() {
+                    if (this.selectedReviewers.length === 0) return;
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) {
+                            toastr.error('Authentication required. Please login again.', 'Error');
+                            return;
+                        }
+
+                        const reviewerIds = this.selectedReviewers.map(r => r.id);
+
+                        const assignBtn = document.getElementById('assignReviewersBtn');
+                        if (assignBtn) { assignBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...'; assignBtn.disabled = true; }
+
+                        const response = await fetch(`${BASE_URL}/editor/assign-reviewers`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ submissionId: this.submissionId, reviewerIds })
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            let errorMessage = `Failed to assign reviewers: ${response.status}`;
+                            try {
+                                const errorData = JSON.parse(errorText);
+                                errorMessage = errorData.message || errorMessage;
+                            } catch (e) { }
+                            throw new Error(errorMessage);
+                        }
+
+                        const data = await response.json();
+                        if (!data.success) {
+                            throw new Error(data.message || 'Failed to assign reviewers');
+                        }
+
+                        toastr.success(`Successfully assigned ${this.selectedReviewers.length} reviewer(s)`, 'Success');
+
+                        // Refresh local state shortly after success
+                        setTimeout(async () => {
+                            await this.loadSubmissionData();
+                            await this.loadAvailableReviewers();
+                            this.clearSelection();
+                        }, 700);
+
+                    } catch (error) {
+                        console.error('Error assigning reviewers:', error);
+                        toastr.error(error.message || 'Failed to assign reviewers', 'Error');
+                    } finally {
+                        const assignBtn = document.getElementById('assignReviewersBtn');
+                        if (assignBtn) { assignBtn.innerHTML = '<i class="fas fa-user-check"></i> Assign Selected Reviewers'; assignBtn.disabled = this.selectedReviewers.length === 0; }
+                    }
+                }
+
+                clearSelection() {
+                    this.selectedReviewers = [];
+                    this.renderSelectedReviewers();
+                    this.updateAssignButton();
+
+                    const selectElement = document.querySelector('.custom-search-select');
+                    if (selectElement) {
+                        const selectedValueSpan = selectElement.querySelector('.selected-value');
+                        const placeholderSpan = selectElement.querySelector('.placeholder');
+                        const searchInput = selectElement.querySelector('.search-input');
+                        const optionsList = selectElement.querySelector('.select-options-list');
+
+                        if (selectedValueSpan) { selectedValueSpan.textContent = ''; selectedValueSpan.style.display = 'none'; }
+                        if (placeholderSpan) placeholderSpan.style.display = 'inline';
+                        if (searchInput) searchInput.value = '';
+                        if (optionsList) optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
+                    }
+                }
+
+                async loadLatestTimelineEvent() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) return;
+
+                        const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                            method: 'GET',
+                            headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+                        });
+
+                        if (!response.ok) {
+                            console.warn(`Failed to fetch timeline: ${response.status}`);
+                            this.renderTimeline([]);
+                            return;
+                        }
+
+                        const data = await response.json();
+                        const timelineData = data.submission || data;
+                        const history = timelineData.history || [];
+
+                        const latestEvent = history.length > 0 ? history[0] : null;
+                        if (latestEvent) {
+                            await this.renderLatestTimelineEvent(latestEvent);
+                        } else {
+                            this.renderTimeline([]);
+                        }
+                    } catch (error) {
+                        console.error('Error loading timeline data:', error);
+                        this.renderTimeline([]);
+                    }
+                }
+
+                async renderLatestTimelineEvent(event) {
+                    const timelineContainer = document.getElementById('recentTimeline');
+                    if (!timelineContainer) return;
+
+                    let updatedBy = 'System';
+                    if (event.by) {
+                        const user = await this.getUserDetails(event.by);
+                        if (user) {
+                            updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+                        }
+                    }
+
+                    timelineContainer.innerHTML = `
+        <div class="timeline-item">
+            <div class="card">
+                <span class="status-badge" style="${this.getStatusStyle(event.status)}">
+                    ${this.formatStatus(event.status)}
+                </span>
+                <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
+                <p class="timeline-date"><i class="far fa-clock"></i> ${this.formatDate(event.date)}</p>
+                <div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong></div>
+            </div>
+        </div>
+    `;
+                }
+
+                // Editorial decision / publishing logic (kept same as before, only the publish modal logic below adjusted)
+                initializeEditorialDecision() {
+                    if (!document.getElementById('editorialDecisionSection')) {
+                        const decisionContainer = document.createElement('div');
+                        decisionContainer.id = 'editorialDecisionSection';
+                        decisionContainer.className = 'content-section editorial-decision-section';
+                        const insertAfter = document.querySelector('.assign-reviewers-section');
+                        if (insertAfter) insertAfter.parentNode.insertBefore(decisionContainer, insertAfter.nextSibling);
+                        else document.querySelector('.submission-details-container')?.appendChild(decisionContainer);
+                    }
+                    this.renderEditorialDecision();
+                }
+
+                renderEditorialDecision() {
+                    const decisionContainer = document.getElementById('editorialDecisionSection');
+                    if (!decisionContainer || !this.submission) return;
+
+                    const currentStatus = this.submission.currentStatus || this.submission.status || '';
+                    decisionContainer.style.display = 'block';
+                    decisionContainer.innerHTML = '';
+
+                    if (currentStatus === 'reviewed') {
+                        decisionContainer.innerHTML = `
+            <h2 class="section-title"><i class="fas fa-gavel"></i> Editorial Decision</h2>
+            <div class="decision-buttons-container">
+                <button id="makeDecisionBtn" class="btn-primary"><i class="fas fa-edit"></i> Make Editorial Decision</button>
+            </div>
+            <div id="decisionFormSection" class="decision-form-section" style="display:none;">
+                <form id="decisionForm" class="decision-form">
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-clipboard-check"></i> Decision</label>
+                        <div class="decision-options">
+                            <div class="decision-option"><input type="radio" id="accept" name="decision" value="accept"><label for="accept">Accept</label></div>
+                            <div class="decision-option"><input type="radio" id="minor_revision" name="decision" value="minor_revision"><label for="minor_revision">Minor Revision</label></div>
+                            <div class="decision-option"><input type="radio" id="major_revision" name="decision" value="major_revision"><label for="major_revision">Major Revision</label></div>
+                            <div class="decision-option"><input type="radio" id="reject" name="decision" value="reject"><label for="reject">Reject</label></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="required"><i class="fas fa-comment"></i> Comments to Author</label>
+                        <div id="decisionEditor" style="min-height:180px;border:1px solid var(--border);border-radius:6px;"></div>
+                        <textarea id="decisionComment" style="display:none" required></textarea>
+                        <div class="form-hint">These comments will be shared with the author</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelDecisionBtn" class="btn-secondary"><i class="fas fa-times"></i> Cancel</button>
+                        <button type="submit" id="submitDecisionBtn" class="btn-submit-decision"><i class="fas fa-paper-plane"></i> Submit Decision</button>
+                    </div>
+                </form>
+            </div>
+        `;
+                        this.bindDecisionEvents();
+                    } else if (currentStatus === 'accepted') {
+                        decisionContainer.innerHTML = `
+            <h2 class="section-title"><i class="fas fa-check-circle"></i> Editorial Decision</h2>
+            <div class="decision-status-message accepted">
+                <i class="fas fa-check"></i>
+                <h3>Manuscript Accepted</h3>
+                <p>This manuscript has been accepted for publication.</p>
+                <button id="publishBtn" class="btn-primary"><i class="fas fa-upload"></i> Publish Manuscript</button>
+            </div>
+        `;
+                        document.getElementById('publishBtn')?.addEventListener('click', () => this.showPublishModal());
+                    } else if (['revised', 'revision_requested'].includes(currentStatus)) {
+                        const text = currentStatus === 'revised' ? 'Revision Submitted' : 'Revision Requested';
+                        decisionContainer.innerHTML = `<h2 class="section-title"><i class="fas fa-redo"></i> Editorial Decision</h2><div class="decision-status-message revision"><i class="fas fa-edit"></i><h3>${text}</h3></div>`;
+                    } else if (currentStatus === 'awaiting_payment' || currentStatus === 'published') {
+                        decisionContainer.innerHTML = `<h2 class="section-title"><i class="fas fa-clock"></i> Published</h2><div class="published-status-message ${currentStatus === 'published' ? 'published' : 'awaiting-payment'}"><i class="fas ${currentStatus === 'published' ? 'fa-check-double' : 'fa-money-bill-wave'}"></i><h3>${currentStatus === 'published' ? 'Published Successfully' : 'Awaiting Payment'}</h3><p>${currentStatus === 'published' ? 'This manuscript has been published successfully.' : 'This manuscript is scheduled for publication and awaiting payment.'}</p><p><strong>Issue:</strong> <span id="issueInfo">Loading issue information...</span></p></div>`;
+                        this.loadIssueInfo();
+                    } else {
+                        decisionContainer.style.display = 'none';
+                    }
+                }
+
+                bindDecisionEvents() {
+                    if (typeof Quill !== 'undefined') {
+                        const editorContainer = document.getElementById('decisionEditor');
+                        if (editorContainer) {
+                            this.decisionQuill = new Quill(editorContainer, {
+                                theme: 'snow',
+                                modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered' }, { 'list': 'bullet' }], ['clean']] }
+                            });
+                            this.decisionQuill.on('text-change', () => {
+                                const ta = document.getElementById('decisionComment');
+                                if (ta) ta.value = this.decisionQuill.root.innerHTML;
+                            });
+                        }
+                    }
+
+                    const makeDecisionBtn = document.getElementById('makeDecisionBtn');
+                    if (makeDecisionBtn) makeDecisionBtn.addEventListener('click', () => {
+                        document.getElementById('decisionFormSection').style.display = 'block';
+                        makeDecisionBtn.style.display = 'none';
+                    });
+
+                    const cancelDecisionBtn = document.getElementById('cancelDecisionBtn');
+                    if (cancelDecisionBtn) cancelDecisionBtn.addEventListener('click', () => {
+                        document.getElementById('decisionFormSection').style.display = 'none';
+                        document.getElementById('makeDecisionBtn').style.display = 'block';
+                        const df = document.getElementById('decisionForm');
+                        if (df) df.reset();
+                        if (this.decisionQuill) this.decisionQuill.setText('');
+                    });
+
+                    const decisionForm = document.getElementById('decisionForm');
+                    if (decisionForm) decisionForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.submitEditorialDecision();
+                    });
+                }
+
+                async submitEditorialDecision() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) {
+                            toastr.error('Authentication required. Please login again.', 'Error');
+                            return;
+                        }
+
+                        const decision = document.querySelector('input[name="decision"]:checked')?.value;
+                        const comment = document.getElementById('decisionComment')?.value?.trim();
+
+                        if (!decision) { toastr.error('Please select a decision', 'Validation Error'); return; }
+                        if (!comment) { toastr.error('Please provide comments for the author', 'Validation Error'); return; }
+
+                        const submitBtn = document.getElementById('submitDecisionBtn');
+                        if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...'; submitBtn.disabled = true; }
+
+                        const response = await fetch(`${BASE_URL}/editor/decision?submissionId=${this.submissionId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ decision, comment })
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            let errorMessage = `Failed to submit decision: ${response.status}`;
+                            try { const errorData = JSON.parse(errorText); errorMessage = errorData.message || errorMessage; } catch { }
+                            throw new Error(errorMessage);
+                        }
+
+                        const data = await response.json();
+                        if (!data.success) throw new Error(data.message || 'Failed to submit decision');
+
+                        await Swal.fire({ title: 'Decision Submitted Successfully!', text: 'The author has been notified of your decision.', icon: 'success', confirmButtonColor: 'var(--success)' });
+
+                        await this.loadSubmissionData();
+                        this.renderEditorialDecision();
+
+                    } catch (error) {
+                        console.error('Error submitting editorial decision:', error);
+                        toastr.error(error.message || 'Failed to submit decision', 'Error');
+                    } finally {
+                        const submitBtn = document.getElementById('submitDecisionBtn');
+                        if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Decision'; submitBtn.disabled = false; }
+                    }
+                }
+
+                /* ------------------ PUBLISH MODAL & ISSUE SELECT (updated behavior) ------------------ */
+
+                showPublishModal() {
+                    // Remove existing modal if any to prevent duplicates
+                    const existingModal = document.getElementById('publishModal');
+                    if (existingModal) {
+                        existingModal.remove();
+                    }
+
+                    // Build modal HTML
+                    const modalHtml = `
+    <div id="publishModal" class="publish-modal" style="position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;">
+        <div class="publish-overlay" id="publishModalOverlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.62);backdrop-filter:blur(2px)"></div>
+        <div class="publish-dialog" id="publishModalDialog" role="dialog" aria-modal="true" aria-labelledby="publishModalTitle" style="position:relative;z-index:20001;width:90%;max-width:820px;background:#fff;border-radius:10px;box-shadow:0 30px 60px rgba(0,0,0,0.25);overflow:hidden;max-height:92vh;display:flex;flex-direction:column;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,0.06);">
+                <h3 id="publishModalTitle" style="margin:0;font-size:1.1rem;"><i class="fas fa-upload" style="margin-right:8px;color:var(--primary)"></i> Publish Manuscript</h3>
+                <button id="publishModalClose" class="modal-close" aria-label="Close" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">×</button>
+            </div>
+            <div style="padding:16px 20px;overflow:auto;">
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label for="issueSearch" class="required" style="display:block;margin-bottom:8px;"><i class="fas fa-book" style="margin-right:6px;color:var(--primary)"></i>Select Issue</label>
+
+                    <div id="issueSelect" class="custom-search-select" style="position:relative;">
+                        <div id="issueSelectHeader" class="select-header" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:#fff;">
+                            <span class="placeholder" style="color:var(--muted);">Search and select an issue...</span>
+                            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+
+                        <div id="issueDropdown" class="select-dropdown" style="position:absolute;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:8px;margin-top:8px;box-shadow:0 10px 30px rgba(0,0,0,0.08);display:none;z-index:20002;max-height:56vh;overflow:hidden;">
+                            <div style="padding:10px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;">
+                                <input id="issueSearch" class="issue-search-input" placeholder="Type to filter issues..." style="flex:1;padding:8px 10px;border-radius:6px;border:1px solid var(--border);outline:none;font-size:0.95rem;">
+                                <button id="clearIssueSearch" class="clear-search" title="Clear search" style="display:none;background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div id="issueOptions" style="max-height:46vh;overflow:auto;padding:8px;">
+                                <div style="padding:12px;text-align:center;color:var(--muted)"><i class="fas fa-chevron-down"></i> Click to load issues</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="selectedIssueId" name="issueId">
+                    <div id="issueError" class="error-message" style="display:none;margin-top:8px;color:var(--danger);">Please select an issue</div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px;justify-content:flex-end;padding:14px 20px;border-top:1px solid rgba(0,0,0,0.06);background:#fafafa;">
+                <button id="cancelPublishBtn" class="btn-secondary" style="padding:8px 14px;border-radius:8px;">Cancel</button>
+                <button id="confirmPublishBtn" class="btn-primary" disabled style="padding:8px 14px;border-radius:8px;"><i class="fas fa-upload" style="margin-right:8px"></i> Publish</button>
+            </div>
+        </div>
+    </div>
+    `;
+
+                    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+                    // Reset fetched flag when opening modal
+                    this._issuesFetched = false;
+                    this.issues = [];
+                    this.filteredIssues = [];
+                    this.selectedIssue = null;
+
+                    // make page inert while modal open
+                    document.body.style.overflow = 'hidden';
+                    this._lastActive = document.activeElement;
+
+                    // trap focus + close on ESC
+                    this._modalKeyHandler = (e) => {
+                        if (e.key === 'Escape') this.closePublishModal();
+                        if (e.key === 'Tab') {
+                            const modal = document.getElementById('publishModalDialog');
+                            if (!modal) return;
+                            const focusables = modal.querySelectorAll('a[href],button:not([disabled]),input,textarea,select,[tabindex]:not([tabindex="-1"])');
+                            if (!focusables.length) return;
+                            const first = focusables[0], last = focusables[focusables.length - 1];
+                            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                        }
+                    };
+
+                    document.addEventListener('keydown', this._modalKeyHandler);
+
+                    // Initialize issue select behavior now that modal exists
+                    this.initializeIssueSelect();
+                    this.bindPublishModalEvents();
+
+                    // focus search input for accessibility
+                    setTimeout(() => { document.getElementById('issueSearch')?.focus(); }, 80);
+                }
+                closePublishModal() {
+                    const modal = document.getElementById('publishModal');
+                    if (modal) modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    if (this._modalKeyHandler) { document.removeEventListener('keydown', this._modalKeyHandler); this._modalKeyHandler = null; }
+                    if (this._issueOutsideHandler) { document.removeEventListener('click', this._issueOutsideHandler); this._issueOutsideHandler = null; }
+                    try { this._lastActive?.focus(); } catch { }
+                    this.selectedIssue = null;
+                }
+
+                initializeIssueSelect() {
+                    const selectHeader = document.getElementById('issueSelectHeader');
+                    const dropdown = document.getElementById('issueDropdown');
+                    const searchInput = document.getElementById('issueSearch');
+                    const clearBtn = document.getElementById('clearIssueSearch');
+                    const optionsContainer = document.getElementById('issueOptions');
+
+                    if (!selectHeader || !dropdown || !searchInput || !optionsContainer) return;
+
+                    // ensure only one outside handler
+                    if (this._issueOutsideHandler) {
+                        document.removeEventListener('click', this._issueOutsideHandler);
+                        this._issueOutsideHandler = null;
+                    }
+
+                    this._issueOutsideHandler = (e) => {
+                        const sel = document.getElementById('issueSelect');
+                        if (!sel) return;
+                        if (!sel.contains(e.target)) {
+                            dropdown.classList.remove('active');
+                            selectHeader.classList.remove('active');
+                            selectHeader.setAttribute('aria-expanded', 'false');
+                        }
+                    };
+
+                    document.addEventListener('click', this._issueOutsideHandler);
+
+                    selectHeader.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const willOpen = !dropdown.classList.contains('active');
+
+                        if (willOpen) {
+                            // open immediately, show spinner
+                            dropdown.classList.add('active');
+                            selectHeader.classList.add('active');
+                            selectHeader.setAttribute('aria-expanded', 'true');
+
+                            // Show loading state
+                            optionsContainer.innerHTML = `<div style="padding:12px;text-align:center;color:var(--muted)"><i class="fas fa-spinner fa-spin"></i> Loading issues...</div>`;
+                            searchInput.value = '';
+                            clearBtn.style.display = 'none';
+
+                            // Fetch issues if not already fetched
+                            if (!this._issuesFetched) {
+                                try {
+                                    await this.loadIssues();
+                                } catch (error) {
+                                    console.error('Failed to load issues:', error);
+                                    optionsContainer.innerHTML = `<div style="padding:12px;text-align:center;color:var(--muted)"><i class="fas fa-exclamation-triangle"></i> Failed to load issues</div>`;
+                                }
+                            } else {
+                                // If already fetched, render them immediately
+                                this.filteredIssues = [...this.issues];
+                                this.renderIssueOptions();
+                            }
+
+                            setTimeout(() => searchInput.focus(), 40);
+                        } else {
+                            dropdown.classList.remove('active');
+                            selectHeader.classList.remove('active');
+                            selectHeader.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+
+                    selectHeader.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            selectHeader.click();
+                        }
+                    });
+
+                    searchInput.addEventListener('input', (e) => {
+                        const term = e.target.value.trim().toLowerCase();
+                        clearBtn.style.display = term.length ? 'inline-flex' : 'none';
+                        this.filterIssues(term);
+                    });
+
+                    clearBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        searchInput.value = '';
+                        clearBtn.style.display = 'none';
+                        this.filterIssues('');
+                        searchInput.focus();
+                    });
+
+                    // prevent clicks inside dropdown from closing modal/select
+                    dropdown.addEventListener('click', (e) => e.stopPropagation());
+                }
+
+                async loadIssues() {
+                    const optionsContainer = document.getElementById('issueOptions');
+                    if (!optionsContainer) return;
+
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) {
+                            this._issuesFetched = true;
+                            optionsContainer.innerHTML = `<div style="padding:12px;color:var(--muted);text-align:center"><i class="fas fa-exclamation-triangle"></i> Authentication required</div>`;
+                            return;
+                        }
+
+                        console.log('Fetching issues from API...');
+                        const response = await fetch(`${BASE_URL}/issues?page=1&limit=50`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        console.log('API Response status:', response.status);
+
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch issues: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        console.log('API Response data:', data);
+
+                        // Handle different API response structures
+                        if (data.success === false) {
+                            throw new Error(data.message || 'Failed to load issues');
+                        }
+
+                        // Extract issues from different possible response structures
+                        let issues = [];
+                        if (Array.isArray(data.issues)) {
+                            issues = data.issues;
+                        } else if (Array.isArray(data.data)) {
+                            issues = data.data;
+                        } else if (Array.isArray(data)) {
+                            issues = data;
+                        }
+
+                        console.log('Parsed issues:', issues);
+
+                        this.issues = issues;
+                        this.filteredIssues = [...this.issues];
+                        this._issuesFetched = true;
+
+                        // If there are no issues, update the placeholder and show message
+                        if (this.issues.length === 0) {
+                            const header = document.getElementById('issueSelectHeader');
+                            if (header) {
+                                const placeholder = header.querySelector('.placeholder');
+                                if (placeholder) placeholder.textContent = 'No issues available';
+                            }
+                            optionsContainer.innerHTML = `<div style="padding:12px;text-align:center;color:var(--muted)"><i class="fas fa-folder-open"></i> No issues available for this journal</div>`;
+                        } else {
+                            this.renderIssueOptions();
+                        }
+
+                    } catch (error) {
+                        console.error('Error loading issues:', error);
+                        this._issuesFetched = true;
+                        this.issues = [];
+                        this.filteredIssues = [];
+
+                        const header = document.getElementById('issueSelectHeader');
+                        if (header) {
+                            const placeholder = header.querySelector('.placeholder');
+                            if (placeholder) placeholder.textContent = 'Failed to load issues';
+                        }
+
+                        optionsContainer.innerHTML = `
+            <div style="padding:12px;color:var(--muted);text-align:center">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <div>Failed to load issues</div>
+                <div style="font-size:0.8rem;margin-top:4px;">${error.message || 'Please try again'}</div>
+            </div>
+        `;
+                    }
+                }
+
+                renderIssueOptions() {
+                    const optionsContainer = document.getElementById('issueOptions');
+                    if (!optionsContainer) return;
+
+                    if (!this.filteredIssues || this.filteredIssues.length === 0) {
+                        optionsContainer.innerHTML = `
+            <div style="padding:12px;text-align:center;color:var(--muted)">
+                <i class="fas fa-search"></i> 
+                ${this.issues && this.issues.length === 0 ?
+                                'No issues available for this journal' :
+                                'No matching issues found'}
+            </div>
+        `;
+                        return;
+                    }
+
+                    optionsContainer.innerHTML = this.filteredIssues.map(issue => `
+        <div class="issue-option" data-id="${this.escapeHtml(issue._id || issue.id)}" 
+             style="padding:8px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;transition:background 0.2s;"
+             onmouseover="this.style.background='#f5f5f5'"
+             onmouseout="this.style.background=''">
+            <div style="font-weight:600;margin-bottom:4px;">${this.escapeHtml(issue.title || 'Untitled Issue')}</div>
+            <div style="font-size:0.85rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center;">
+                <span>${this.escapeHtml(issue.journalId?.title || issue.journalTitle || 'Unknown Journal')}</span>
+                <span style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:0.8rem;">
+                    Vol. ${this.escapeHtml(issue.volume || 'N/A')}, Issue ${this.escapeHtml(issue.issueNumber || 'N/A')}
+                </span>
+            </div>
+        </div>
+    `).join('');
+
+                    // Add click handlers for issue selection
+                    optionsContainer.querySelectorAll('.issue-option').forEach(opt => {
+                        opt.addEventListener('click', (e) => {
+                            const id = opt.getAttribute('data-id');
+                            const issue = this.filteredIssues.find(i => String(i._id || i.id) === String(id));
+                            if (!issue) return;
+
+                            this.selectedIssue = issue;
+                            const header = document.getElementById('issueSelectHeader');
+                            if (header) {
+                                const placeholder = header.querySelector('.placeholder');
+                                if (placeholder) {
+                                    placeholder.textContent = issue.title || 'Selected Issue';
+                                    placeholder.style.color = '#111827'; // Darker color to indicate selection
+                                }
+                            }
+
+                            document.getElementById('selectedIssueId').value = issue._id || issue.id || '';
+                            document.getElementById('issueError')?.style.setProperty('display', 'none');
+
+                            const confirmBtn = document.getElementById('confirmPublishBtn');
+                            if (confirmBtn) confirmBtn.disabled = false;
+
+                            // close dropdown
+                            const dropdown = document.getElementById('issueDropdown');
+                            dropdown.classList.remove('active');
+                            header.classList.remove('active');
+                            header.setAttribute('aria-expanded', 'false');
+                        });
+                    });
+                }
+
+                filterIssues(searchTerm) {
+                    if (!searchTerm) this.filteredIssues = [...this.issues];
+                    else {
+                        const s = searchTerm.toLowerCase();
+                        this.filteredIssues = (this.issues || []).filter(issue =>
+                            (issue.title || '').toLowerCase().includes(s) ||
+                            String(issue.volume || '').includes(s) ||
+                            String(issue.issueNumber || '').includes(s) ||
+                            (issue.journalId?.title || '').toLowerCase().includes(s)
+                        );
+                    }
+                    this.renderIssueOptions();
+                }
+
+                renderIssueOptions() {
+                    const optionsContainer = document.getElementById('issueOptions');
+                    if (!optionsContainer) return;
+
+                    if (!this.filteredIssues || this.filteredIssues.length === 0) {
+                        optionsContainer.innerHTML = `<div style="padding:12px;text-align:center;color:var(--muted)"><i class="fas fa-search"></i> ${this.issues && this.issues.length === 0 ? 'No issues available for this journal' : 'No matching issues found'}</div>`;
+                        return;
+                    }
+
+                    optionsContainer.innerHTML = this.filteredIssues.map(issue => `
+            <div class="issue-option" data-id="${this.escapeHtml(issue._id || issue.id)}" style="padding:8px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;">
+                <div style="font-weight:600;">${this.escapeHtml(issue.title)}</div>
+                <div style="font-size:0.9rem;color:var(--muted);display:flex;justify-content:space-between;">
+                    <span>${this.escapeHtml(issue.journalId?.title || issue.journalTitle || 'Unknown Journal')}</span>
+                    <span>Vol. ${this.escapeHtml(issue.volume || '')}, Issue ${this.escapeHtml(issue.issueNumber || '')}</span>
+                </div>
+            </div>
+        `).join('');
+
+                    // click handlers
+                    optionsContainer.querySelectorAll('.issue-option').forEach(opt => {
+                        opt.addEventListener('click', (e) => {
+                            const id = opt.getAttribute('data-id');
+                            const issue = this.filteredIssues.find(i => String(i._id || i.id) === String(id));
+                            if (!issue) return;
+                            this.selectedIssue = issue;
+                            const header = document.getElementById('issueSelectHeader');
+                            if (header) header.querySelector('.placeholder').textContent = issue.title;
+                            document.getElementById('selectedIssueId').value = issue._id || issue.id || '';
+                            document.getElementById('issueError')?.style.setProperty('display', 'none');
+                            const confirmBtn = document.getElementById('confirmPublishBtn');
+                            if (confirmBtn) confirmBtn.disabled = false;
+
+                            // close dropdown
+                            const dropdown = document.getElementById('issueDropdown');
+                            dropdown.classList.remove('active');
+                            header.classList.remove('active');
+                            header.setAttribute('aria-expanded', 'false');
+                        });
+                    });
+                }
+
+                bindPublishModalEvents() {
+                    const modal = document.getElementById('publishModal');
+                    if (!modal) return;
+
+                    const closeBtn = document.getElementById('publishModalClose');
+                    const cancelBtn = document.getElementById('cancelPublishBtn');
+                    const confirmBtn = document.getElementById('confirmPublishBtn');
+                    const overlay = document.getElementById('publishModalOverlay');
+
+                    const closeModal = () => this.closePublishModal();
+
+                    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+                    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+                    if (overlay) overlay.addEventListener('click', closeModal);
+
+                    if (confirmBtn) {
+                        confirmBtn.addEventListener('click', async () => { await this.publishToIssue(); });
+                    }
+                }
+
+                async publishToIssue() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) { toastr.error('Authentication required. Please login again.', 'Error'); return; }
+
+                        const issueId = document.getElementById('selectedIssueId')?.value;
+                        if (!issueId) { document.getElementById('issueError').style.display = 'block'; return; }
+
+                        const confirmBtn = document.getElementById('confirmPublishBtn');
+                        if (confirmBtn) { confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...'; confirmBtn.disabled = true; }
+
+                        const response = await fetch(`${BASE_URL}/editor/schedule-issue`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ submissionId: this.submissionId, issueId })
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            let errorMessage = `Failed to publish: ${response.status}`;
+                            try { const errorData = JSON.parse(errorText); errorMessage = errorData.message || errorMessage; } catch { }
+                            throw new Error(errorMessage);
+                        }
+
+                        const data = await response.json();
+                        if (!data.success) throw new Error(data.message || 'Failed to publish');
+
+                        await Swal.fire({ title: 'Published Successfully!', text: 'The manuscript has been scheduled for publication.', icon: 'success', confirmButtonColor: 'var(--success)' });
+
+                        this.closePublishModal();
+                        await this.loadSubmissionData();
+                        this.renderEditorialDecision();
+                    } catch (error) {
+                        console.error('Error publishing to issue:', error);
+                        toastr.error(error.message || 'Failed to publish', 'Error');
+                    } finally {
+                        const confirmBtn = document.getElementById('confirmPublishBtn');
+                        if (confirmBtn) { confirmBtn.innerHTML = '<i class="fas fa-upload"></i> Publish'; confirmBtn.disabled = false; }
+                    }
+                }
+
+                async loadIssueInfo() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) return;
+
+                        const response = await fetch(`${BASE_URL}/issues?page=1&limit=50`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (!response.ok) return;
+
+                        const data = await response.json();
+                        if (!data.success) return;
+
+                        const issues = data.issues || data.data || [];
+                        const issueWithSubmission = issues.find(issue => (issue.submissions || []).some(sub => String(sub.submissionId || sub) === String(this.submissionId)));
+
+                        if (issueWithSubmission) {
+                            const issueInfo = document.getElementById('issueInfo');
+                            if (issueInfo) {
+                                issueInfo.innerHTML = `${this.escapeHtml(issueWithSubmission.title)} (Vol. ${issueWithSubmission.volume}, Issue ${issueWithSubmission.issueNumber}) - ${issueWithSubmission.journalId?.title || ''}`;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error loading issue info:', error);
+                    }
+                }
+
+                /* ------------------ Utilities & UI helpers ------------------ */
+
+                getStatusStyle(status) {
+                    const colors = {
+                        'submitted': 'background-color: #3b82f6; color: white;',
+                        'under_review': 'background-color: #f59e0b; color: white;',
+                        'reviewed': 'background-color: #8b5cf6; color: white;',
+                        'accepted': 'background-color: #10b981; color: white;',
+                        'rejected': 'background-color: #ef4444; color: white;',
+                        'revised': 'background-color: #8b5cf6; color: white;',
+                        'awaiting_payment': 'background-color: #f59e0b; color: white;',
+                        'published': 'background-color: #10b981; color: white;'
+                    };
+                    return colors[status] || 'background-color: #6b7280; color: white;';
+                }
+
+                formatStatus(status) {
+                    if (!status) return '';
+                    const statusMap = {
+                        'submitted': 'Submitted',
+                        'under_review': 'Under Review',
+                        'reviewed': 'Reviewed',
+                        'accepted': 'Accepted',
+                        'rejected': 'Rejected',
+                        'revised': 'Revised',
+                        'awaiting_payment': 'Awaiting Payment',
+                        'published': 'Published',
+                        'minor_revision': 'Minor Revision',
+                        'major_revision': 'Major Revision',
+                        'revision_requested': 'Revision Requested'
+                    };
+                    return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
+                }
+
+                formatDate(dateString) {
+                    try {
+                        if (!dateString) return '';
+                        const date = new Date(dateString);
+                        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+                    } catch (error) {
+                        return dateString;
+                    }
+                }
+
+                showLoading() {
+                    document.getElementById('loadingScreen')?.style.setProperty('display', 'block');
+                    document.getElementById('errorScreen')?.style.setProperty('display', 'none');
+                    document.getElementById('contentContainer')?.style.setProperty('display', 'none');
+                }
+                hideLoading() { document.getElementById('loadingScreen')?.style.setProperty('display', 'none'); }
+                showContent() { document.getElementById('contentContainer')?.style.setProperty('display', 'block'); }
+                showError(message) {
+                    document.getElementById('loadingScreen')?.style.setProperty('display', 'none');
+                    document.getElementById('errorScreen')?.style.setProperty('display', 'block');
+                    const em = document.getElementById('errorMessage');
+                    if (em) em.textContent = message;
+                }
+
+                escapeHtml(str) {
+                    if (str === undefined || str === null) return '';
+                    return String(str).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
                 }
             }
 
-            showLoading() {
-                document.getElementById('loadingScreen').style.display = 'block';
-                document.getElementById('errorScreen').style.display = 'none';
-                document.getElementById('contentContainer').style.display = 'none';
-            }
+            /* instantiate */
+            window.submissionDetails = new SubmissionDetailsManager();
+   </script>
 
-            hideLoading() {
-                document.getElementById('loadingScreen').style.display = 'none';
-            }
 
-            showContent() {
-                document.getElementById('contentContainer').style.display = 'block';
-            }
-
-            showError(message) {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('errorScreen').style.display = 'block';
-                document.getElementById('errorMessage').textContent = message;
-            }
-
-            escapeHtml(str) {
-                if (!str && str !== 0) return '';
-                return String(str)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
-            }
-        }
-
-        // Initialize submission details manager
-        let submissionDetails = new SubmissionDetailsManager();
-    </script>
 </body>
 
 </html>

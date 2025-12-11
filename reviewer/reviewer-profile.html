@@ -70,7 +70,7 @@
             transform: translateY(-1px);
         }
 
-        
+
 
         /* Profile Header Card */
         .profile-header-card {
@@ -861,26 +861,11 @@
 
         class ProfileManager {
             constructor() {
-                this.userId = this.getUserId(); // For now, using a static ID
                 this.user = null;
-
-                if (!this.userId) {
-                    this.showError('User ID not found');
-                    return;
-                }
 
                 this.initializeToastr();
                 this.bindEvents();
-                this.loadProfileData();
-            }
-
-            getUserId() {
-                // For now, using a static user ID
-                // In a real application, this would come from:
-                // 1. URL parameters (?id=...)
-                // 2. Current logged-in user session
-                // 3. Local storage or cookies
-                return '6939fa3b7409ad900774e469'; // Replace with dynamic ID when available
+                this.loadProfileData(); // load current user's profile via profile/me
             }
 
             initializeToastr() {
@@ -990,15 +975,13 @@
                         return;
                     }
 
-                    console.log('Saving profile changes:', formData);
-
                     // Show loading state
                     const saveBtn = document.getElementById('saveProfileBtn');
                     const originalText = saveBtn.innerHTML;
                     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
                     saveBtn.disabled = true;
 
-                    // Send update request
+                    // Use profile/update for edit profile as requested
                     const response = await fetch(`${BASE_URL}/profile/update`, {
                         method: 'PUT',
                         headers: {
@@ -1009,32 +992,34 @@
                         body: JSON.stringify(formData)
                     });
 
+                    const text = await response.text();
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        // Not JSON
+                        data = null;
+                    }
+
                     if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Save profile error:', errorText);
                         let errorMessage = `Failed to update profile: ${response.status}`;
-                        try {
-                            const errorData = JSON.parse(errorText);
-                            errorMessage = errorData.message || errorMessage;
-                        } catch (e) {
-                            // Not JSON response
+                        if (data && (data.message || data.error)) {
+                            errorMessage = data.message || data.error;
                         }
                         throw new Error(errorMessage);
                     }
 
-                    const data = await response.json();
-
-                    if (!data.success) {
+                    if (data && data.success === false) {
                         throw new Error(data.message || 'Failed to update profile');
                     }
 
                     // Success
                     toastr.success('Profile updated successfully!', 'Success');
 
-                    // Update local user data
+                    // Merge changes into local user object
                     this.user = { ...this.user, ...formData };
 
-                    // Update UI with new data
+                    // Update UI
                     this.renderProfile();
 
                     // Close modal
@@ -1044,7 +1029,6 @@
                     console.error('Error saving profile changes:', error);
                     toastr.error(error.message || 'Failed to update profile', 'Error');
                 } finally {
-                    // Reset button state
                     const saveBtn = document.getElementById('saveProfileBtn');
                     saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
                     saveBtn.disabled = false;
@@ -1064,7 +1048,8 @@
                         throw new Error('Authentication required. Please login.');
                     }
 
-                    const response = await fetch(`${BASE_URL}/user/${this.userId}`, {
+                    // Use profile/me as requested
+                    const response = await fetch(`${BASE_URL}/profile/me`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -1073,16 +1058,40 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch profile: ${response.status}`);
+                        const statusText = `Failed to fetch profile: ${response.status}`;
+                        throw new Error(statusText);
                     }
 
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to load profile data');
+                    const raw = await response.text();
+                    let data;
+                    try {
+                        data = JSON.parse(raw);
+                    } catch (e) {
+                        data = raw;
                     }
 
-                    this.user = data.user;
+                    // The API may return different shapes. Try common ones:
+                    // 1) { success: true, user: {...} }
+                    // 2) { success: true, data: {...} }
+                    // 3) { success: true, profile: {...} }
+                    // 4) direct user object
+                    let profileObj = null;
+
+                    if (data && typeof data === 'object') {
+                        if (data.user) profileObj = data.user;
+                        else if (data.data && (typeof data.data === 'object')) profileObj = data.data;
+                        else if (data.profile) profileObj = data.profile;
+                        else if (data.success === false) {
+                            throw new Error(data.message || 'Failed to load profile data');
+                        } else {
+                            // assume the object itself is the user
+                            profileObj = data;
+                        }
+                    } else {
+                        throw new Error('Unexpected profile response from server');
+                    }
+
+                    this.user = profileObj;
                     console.log('Profile data loaded:', this.user);
 
                     this.renderProfile();
@@ -1092,7 +1101,7 @@
 
                 } catch (error) {
                     console.error('Error loading profile data:', error);
-                    this.showError('Failed to load profile information. Please try again.');
+                    this.showError(error.message || 'Failed to load profile information. Please try again.');
                 }
             }
 
@@ -1107,11 +1116,11 @@
                 const address = this.user.address || 'Not provided';
 
                 // Format member since date
-                const memberSince = this.formatDate(this.user.createdAt);
+                const memberSince = this.formatDate(this.user.createdAt || this.user.createdAtAt || this.user.created_at);
 
                 // Determine status badges
-                const accountStatus = this.user.isActive ? 'active' : 'inactive';
-                const verificationStatus = this.user.isVerified ? 'verified' : 'unverified';
+                const accountStatus = this.user.isActive || this.user.active ? 'active' : 'inactive';
+                const verificationStatus = this.user.isVerified || this.user.verified ? 'verified' : 'unverified';
 
                 // Update header
                 document.getElementById('userFullName').textContent = fullName;
@@ -1150,7 +1159,7 @@
                     .toUpperCase()
                     .substring(0, 2);
 
-                if (initials.length >= 2) {
+                if (initials.length >= 1) {
                     avatar.innerHTML = `<span style="font-size: 2rem; font-weight: 700;">${initials}</span>`;
                 }
             }
@@ -1197,6 +1206,7 @@
 
             formatDate(dateString) {
                 try {
+                    if (!dateString) return 'Not available';
                     const date = new Date(dateString);
                     return date.toLocaleDateString('en-US', {
                         year: 'numeric',

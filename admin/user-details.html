@@ -1,1039 +1,616 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>User Details | JournalFlow</title>
-
-    <!-- Font Awesome -->
+    <title>User Details </title>
+    <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- Global CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
+
     <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <link rel="stylesheet" href="../assets/css/modal.css">
+</head>
+<style>
+    :root {
+        --primary-color: rgba(204, 85, 0, 0.12);
+        --secondary-color: #cc5500;
+        --sidebar-width: 260px;
+        --sidebar-collapsed-width: 70px;
+        --header-height: 70px;
+        --sidebar-bg: #ffffff;
+        --header-bg: #ffffff;
+        --bg-white: #ffffff;
+        --body-bg: #f5f5f5;
+        --text-color: #333333;
+        --text-light: #666666;
+        --border-color: #e0e0e0;
+        --hover-bg: rgba(204, 85, 0, 0.12);
+        --active-bg: rgba(204, 85, 0, 0.15);
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --brand: #cc5500;
+        --muted: #6b7280;
 
-    <style>
-        .user-details-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        /* Role Colors */
+        --role-editor: #3b82f6;
+        --role-editor-bg: rgba(59, 130, 246, 0.1);
+        --role-author: #10b981;
+        --role-author-bg: rgba(16, 185, 129, 0.1);
+        --role-reviewer: #f59e0b;
+        --role-reviewer-bg: rgba(245, 158, 11, 0.1);
+        --role-admin: #8b5cf6;
+        --role-admin-bg: rgba(139, 92, 246, 0.1);
+
+        /* Status Colors */
+        --status-active: #059669;
+        --status-active-bg: rgba(5, 150, 105, 0.1);
+        --status-inactive: #dc2626;
+        --status-inactive-bg: rgba(220, 38, 38, 0.1);
+        --status-pending: #d97706;
+        --status-pending-bg: rgba(217, 119, 6, 0.1);
+
+        /* Toggle Colors */
+        --toggle-on: #10b981;
+        --toggle-off: #d1d5db;
+        --toggle-bg: #f3f4f6;
+
+        --card-bg-primary: rgba(204, 85, 0, 0.08);
+        --card-bg-secondary: rgba(59, 130, 246, 0.08);
+        --card-bg-tertiary: rgba(16, 185, 129, 0.08);
+        --card-bg-quaternary: rgba(139, 92, 246, 0.08);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+        background-color: var(--body-bg);
+        color: var(--text-color);
+        min-height: 100vh;
+    }
+
+    .user-details-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        color: var(--brand);
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 30px;
+        padding: 10px 16px;
+        border-radius: 6px;
+        transition: var(--transition);
+        background-color: var(--primary-color);
+        border: 1px solid var(--border-color);
+    }
+
+    .back-btn:hover {
+        background-color: var(--hover-bg);
+    }
+
+    .back-btn i {
+        margin-right: 8px;
+    }
+
+    .user-details-card {
+        background-color: var(--bg-white);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+
+    .user-header {
+        padding: 30px;
+        background: linear-gradient(135deg, var(--primary-color), rgba(204, 85, 0, 0.08));
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 8px;
+    }
+
+    .user-email {
+        font-size: 16px;
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+
+    .user-badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .user-role {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .role-editor {
+        background-color: var(--role-editor-bg);
+        color: var(--role-editor);
+    }
+
+    .role-author {
+        background-color: var(--role-author-bg);
+        color: var(--role-author);
+    }
+
+    .role-reviewer {
+        background-color: var(--role-reviewer-bg);
+        color: var(--role-reviewer);
+    }
+
+    .role-admin {
+        background-color: var(--role-admin-bg);
+        color: var(--role-admin);
+    }
+
+    .user-status {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-active {
+        background-color: var(--status-active-bg);
+        color: var(--status-active);
+    }
+
+    .status-inactive {
+        background-color: var(--status-inactive-bg);
+        color: var(--status-inactive);
+    }
+
+    .status-pending {
+        background-color: var(--status-pending-bg);
+        color: var(--status-pending);
+    }
+
+    .user-body {
+        padding: 30px;
+    }
+
+    .section {
+        margin-bottom: 30px;
+    }
+
+    .section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+    }
+
+    .section-title i {
+        margin-right: 12px;
+        color: var(--brand);
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-item {
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: var(--transition);
+    }
+
+    .detail-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-light);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-size: 16px;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .detail-item {
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: var(--transition);
+    }
+
+    /* Alternating background colors for detail items */
+    .details-grid .detail-item:nth-child(4n+1) {
+        background-color: var(--card-bg-primary);
+    }
+
+    .details-grid .detail-item:nth-child(4n+2) {
+        background-color: var(--card-bg-secondary);
+    }
+
+    .details-grid .detail-item:nth-child(4n+3) {
+        background-color: var(--card-bg-tertiary);
+    }
+
+    .details-grid .detail-item:nth-child(4n+4) {
+        background-color: var(--card-bg-quaternary);
+    }
+
+    .detail-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+
+    /* Action buttons for email and phone */
+    .detail-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .action-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .email-action {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--role-editor);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .email-action:hover {
+        background-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .phone-action {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--role-author);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .phone-action:hover {
+        background-color: rgba(16, 185, 129, 0.2);
+    }
+
+    /* Toggle Switch */
+    .toggle-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background-color: var(--body-bg);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+
+    .toggle-info {
+        flex: 1;
+    }
+
+    .toggle-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 5px;
+    }
+
+    .toggle-description {
+        color: var(--text-light);
+        font-size: 14px;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--toggle-off);
+        transition: var(--transition);
+        border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: var(--transition);
+        border-radius: 50%;
+    }
+
+    input:checked+.toggle-slider {
+        background-color: var(--toggle-on);
+    }
+
+    input:checked+.toggle-slider:before {
+        transform: translateX(30px);
+    }
+
+    .toggle-status {
+        font-size: 14px;
+        font-weight: 600;
+        margin-left: 15px;
+        min-width: 60px;
+    }
+
+    .toggle-on {
+        color: var(--toggle-on);
+    }
+
+    .toggle-off {
+        color: var(--muted);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color);
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .edit-btn {
+        background-color: var(--brand);
+        color: white;
+    }
+
+    .edit-btn:hover {
+        background-color: #b34900;
+    }
+
+    .delete-btn {
+        background-color: #fee;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+
+    .delete-btn:hover {
+        background-color: #fecaca;
+    }
+
+    .back-list-btn {
+        background-color: var(--primary-color);
+        color: var(--brand);
+        border: 1px solid var(--border-color);
+    }
+
+    .back-list-btn:hover {
+        background-color: var(--hover-bg);
+    }
+
+    /* Loading State */
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 100px;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid var(--primary-color);
+        border-top-color: var(--brand);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
         }
+    }
 
-        /* Back Button - Improved Design */
-        .back-button-wrap {
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    /* Error State */
+    .error-state {
+        text-align: center;
+        padding: 60px 20px;
+        background-color: var(--bg-white);
+        border-radius: 12px;
+        border: 2px dashed var(--border-color);
+    }
 
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--light);
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-normal);
-            text-decoration: none;
-            box-shadow: var(--shadow-sm);
-        }
+    .error-state i {
+        font-size: 48px;
+        color: var(--text-light);
+        margin-bottom: 20px;
+    }
 
-        .back-button:hover {
-            background: var(--btn-secondary-hover);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
+    .error-state h3 {
+        font-size: 20px;
+        color: var(--text-color);
+        margin-bottom: 10px;
+    }
 
-        .back-button i {
-            font-size: 0.9em;
-        }
+    .error-state p {
+        color: var(--text-light);
+        margin-bottom: 20px;
+    }
 
-        /* User Header - Matching Profile Page */
-        .user-header-card {
-            background: var(--header-gradient);
-            border-radius: var(--radius);
-            color: var(--text-on-gradient);
-            padding: 2.5rem 2rem 0 2.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
-
-        .user-header-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
-        .user-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--avatar-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            border: 4px solid var(--avatar-border);
-            position: relative;
-            z-index: 1;
-            color: white;
+    /* Responsive */
+    @media screen and (max-width: 768px) {
+        .user-header {
+            padding: 20px;
+            flex-direction: column;
         }
 
         .user-name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 1;
+            font-size: 24px;
         }
 
-        .user-role-badge {
-            font-size: 1rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
+        .user-body {
+            padding: 20px;
         }
 
-        /* User Stats */
-        .user-stats {
-            display: flex;
-            gap: 2rem;
-            margin-top: 2rem;
-            position: relative;
-            z-index: 1;
+        .details-grid {
+            grid-template-columns: 1fr;
         }
 
-        .user-stat {
-            text-align: center;
-        }
-
-        .user-stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .user-stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* Content Grid */
-        .user-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .user-content {
-                grid-template-columns: 1fr;
-            }
-
-            .user-header-card {
-                padding: 1.5rem;
-                text-align: center;
-            }
-
-            .user-avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 2rem;
-                margin: 0 auto 1rem;
-            }
-
-            .user-stats {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
-
-        /* User Card */
-        .user-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-            transition: var(--transition-normal);
-        }
-
-        .user-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-shadow-hover);
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--light);
-        }
-
-        .card-title i {
-            color: var(--primary);
-        }
-
-        /* Info Grid */
-        .info-grid {
-            display: grid;
-            gap: 1.25rem;
-        }
-
-        .detail-item {
-            display: flex;
+        .toggle-section {
             flex-direction: column;
-            gap: 0.5rem;
+            align-items: flex-start;
+            gap: 15px;
         }
 
-        .detail-label {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .detail-value {
-            font-size: 1rem;
-            color: var(--text-primary);
-            padding: 0.75rem;
-            background: var(--light);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-        }
-
-        /* Status Badge */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .status-active {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .status-inactive {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .status-pending {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        /* Role-specific Badges */
-        .role-editor {
-            background: var(--role-editor-bg);
-            color: var(--role-editor);
-        }
-
-        .role-author {
-            background: var(--role-author-bg);
-            color: var(--role-author);
-        }
-
-        .role-reviewer {
-            background: var(--role-reviewer-bg);
-            color: var(--role-reviewer);
-        }
-
-        .role-admin {
-            background: var(--role-admin-bg);
-            color: var(--role-admin);
-        }
-
-        /* Action Buttons */
         .action-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-            flex-wrap: wrap;
+            flex-direction: column;
         }
 
         .action-btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .user-details-container {
+            padding: 0 15px;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
+        .user-badges {
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: var(--light);
-            color: var(--muted);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--btn-secondary-hover);
-            border-color: var(--text-light);
-        }
-
-        .btn-danger {
-            background: var(--danger-light);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Toggle Switch for Approval */
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-            margin-left: 10px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--muted);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.toggle-slider {
-            background-color: var(--success);
-        }
-
-        input:checked+.toggle-slider:before {
-            transform: translateX(30px);
-        }
-
-        /* Approval Status Container */
-        .approval-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .approval-note {
-            font-size: 0.85rem;
-            color: var(--muted);
-            font-style: italic;
-        }
-
-        /* Loading States */
-        .loading-screen {
+        .user-role,
+        .user-status {
+            width: 100%;
             text-align: center;
-            padding: 3rem;
-            color: var(--muted);
         }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Error Screen */
-        .error-screen {
-            text-align: center;
-            padding: 3rem;
-            color: var(--muted);
-        }
-
-        .error-screen i {
-            color: var(--danger);
-            margin-bottom: 1rem;
-        }
-
-        .retry-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 1rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .retry-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
+    }
+</style>
 
 <body>
     <div class="dashboard-container">
         <!-- placeholders for partials -->
-        <div id="sidebar-placeholder"></div>
+        <div id="sidebar-placeholder"></div> <!-- sidebar.html will inject <aside id="sidebar"> -->
         <div class="main-content-wrapper">
-            <div id="header-placeholder"></div>
+            <div id="header-placeholder"></div> <!-- header.html will inject header + notification, modal -->
 
             <main class="main-content">
-                <div class="user-details-container">
-                    <!-- Back Button -->
-                    <div class="back-button-wrap">
-                        <button onclick="window.history.back()" class="back-button">
-                            <i class="fas fa-arrow-left"></i> Back to Users
-                        </button>
-                        <div class="page-title">
-                            <h1>User Details</h1>
-                            <p>View and manage user information</p>
-                        </div>
-                    </div>
-
-                    <!-- Loading Screen -->
-                    <div id="loadingScreen" class="loading-screen">
-                        <div class="spinner"></div>
-                        <p>Loading user information...</p>
-                    </div>
-
-                    <!-- Error Screen -->
-                    <div id="errorScreen" class="error-screen" style="display: none;">
-                        <i class="fas fa-exclamation-triangle fa-3x"></i>
-                        <h3>Failed to load user</h3>
-                        <p id="errorMessage">An error occurred while loading user details.</p>
-                        <button class="retry-btn" onclick="window.location.reload()">
-                            <i class="fas fa-redo"></i> Try Again
-                        </button>
-                    </div>
-
-                    <!-- User Content (hidden until loaded) -->
-                    <div id="contentContainer" style="display: none;">
-                        <!-- User Header Card -->
-                        <div class="user-header-card">
-                            <div class="user-avatar" id="userAvatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="user-name" id="userFullName">Loading...</div>
-                            <div class="user-role-badge" id="userRoleBadge">
-                                <i class="fas fa-briefcase"></i>
-                                <span id="userRole">Loading...</span>
-                            </div>
-                            <div class="user-stats">
-                                <div class="user-stat">
-                                    <div class="user-stat-value" id="userStatusValue">Active</div>
-                                    <div class="user-stat-label">Account Status</div>
-                                </div>
-                                <div class="user-stat">
-                                    <div class="user-stat-value" id="verificationStatusValue">Verified</div>
-                                    <div class="user-stat-label">Verification</div>
-                                </div>
-                                <div class="user-stat">
-                                    <div class="user-stat-value" id="memberSinceValue">Today</div>
-                                    <div class="user-stat-label">Member Since</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- User Content Grid -->
-                        <div class="user-content">
-                            <!-- Personal Information Card -->
-                            <div class="user-card">
-                                <h2 class="card-title">
-                                    <i class="fas fa-user-circle"></i> Personal Information
-                                </h2>
-                                <div class="info-grid">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-user"></i> First Name
-                                        </span>
-                                        <div class="detail-value" id="firstName">Loading...</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-user"></i> Last Name
-                                        </span>
-                                        <div class="detail-value" id="lastName">Loading...</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-venus-mars"></i> Gender
-                                        </span>
-                                        <div class="detail-value" id="gender">Loading...</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-envelope"></i> Email Address
-                                        </span>
-                                        <div class="detail-value" id="email">Loading...</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-phone"></i> Phone Number
-                                        </span>
-                                        <div class="detail-value" id="phone">Loading...</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-map-marker-alt"></i> Address
-                                        </span>
-                                        <div class="detail-value" id="address">Loading...</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Account Information Card -->
-                            <div class="user-card">
-                                <h2 class="card-title">
-                                    <i class="fas fa-info-circle"></i> Account Information
-                                </h2>
-                                <div class="info-grid">
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-briefcase"></i> Role
-                                        </span>
-                                        <div class="detail-value">
-                                            <span id="roleDisplay" class="status-badge role-reviewer">Loading...</span>
-                                        </div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-user-check"></i> Account Status
-                                        </span>
-                                        <div class="detail-value">
-                                            <span id="accountStatus" class="status-badge status-active">Active</span>
-                                        </div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-shield-alt"></i> Verification Status
-                                        </span>
-                                        <div class="detail-value">
-                                            <span id="verificationStatus" class="status-badge status-active">Verified</span>
-                                        </div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">
-                                            <i class="fas fa-calendar-alt"></i> Member Since
-                                        </span>
-                                        <div class="detail-value" id="memberSince">Loading...</div>
-                                    </div>
-
-                                    <!-- Approval Status (Only for Reviewers not approved) -->
-                                    <div id="approvalSection" class="detail-item" style="display: none;">
-                                        <span class="detail-label">
-                                            <i class="fas fa-user-check"></i> Approval Status
-                                        </span>
-                                        <div class="detail-value">
-                                            <div class="approval-container">
-                                                <span class="status-badge status-pending">Pending Approval</span>
-                                                <div class="toggle-switch">
-                                                    <input type="checkbox" id="approvalToggle">
-                                                    <span class="toggle-slider"></span>
-                                                </div>
-                                            </div>
-                                            <div class="approval-note">
-                                                Toggle to approve this reviewer
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="action-buttons">
-                            <button id="toggleActiveBtn" class="btn-primary">
-                                <i class="fas fa-power-off"></i> Deactivate User
-                            </button>
-                            <button id="editUserBtn" class="btn-secondary">
-                                <i class="fas fa-edit"></i> Edit User
-                            </button>
-                            <button id="deleteUserBtn" class="btn-danger">
-                                <i class="fas fa-trash"></i> Delete User
-                            </button>
-                        </div>
+                <div class="container page-title">
+                    <h1>Users Details</h1>
+                    <p>View and Edit User details</p>
+                    <a href="users.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Users
+                    </a>
+                </div>
+                <div id="userDetails">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
 
+
     <script>
-        // Get user ID from URL
-        function getUserIdFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
-        }
-
-        // Format date
-        function formatDate(dateString) {
-            try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-            } catch (error) {
-                return dateString;
-            }
-        }
-
-        // Get role badge class
-        function getRoleBadgeClass(role) {
-            const roleLower = (role || '').toLowerCase();
-            switch (roleLower) {
-                case 'editor': return 'role-editor';
-                case 'author': return 'role-author';
-                case 'reviewer': return 'role-reviewer';
-                case 'admin': return 'role-admin';
-                default: return 'role-editor';
-            }
-        }
-
-        // Get status badge class
-        function getStatusBadgeClass(isActive, isVerified) {
-            if (!isVerified) return 'status-pending';
-            return isActive ? 'status-active' : 'status-inactive';
-        }
-
-        // Get status text
-        function getStatusText(isActive, isVerified) {
-            if (!isVerified) return 'Pending';
-            return isActive ? 'Active' : 'Inactive';
-        }
-
-        // Update avatar with initials
-        function updateAvatar(fullName) {
-            const avatar = document.getElementById('userAvatar');
-            if (!avatar) return;
-
-            const initials = fullName
-                .split(' ')
-                .map(name => name.charAt(0))
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
-
-            if (initials.length >= 2) {
-                avatar.innerHTML = `<span style="font-size: 2.5rem; font-weight: 700;">${initials}</span>`;
-            }
-        }
-
-        // Load user data
-        async function loadUserData() {
-            const userId = getUserIdFromURL();
-            if (!userId) {
-                showError('User ID not found in URL');
-                return;
-            }
-
-            showLoading();
-
-            try {
-                // Get token from localStorage
-                const token = localStorage.getItem('pilot_tkn');
-                if (!token) {
-                    throw new Error('Authentication required');
-                }
-
-                // Fetch user data
-                const response = await fetch(`https://fp.247laboratory.net/api/v1/user/${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch user: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to load user data');
-                }
-
-                const user = data.user;
-                console.log('User data loaded:', user);
-
-                // Render user data
-                renderUserData(user);
-
-                hideLoading();
-                showContent();
-
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                showError(error.message || 'Failed to load user information');
-            }
-        }
-
-        // Render user data
-        function renderUserData(user) {
-            // Format data
-            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'No Name';
-            const role = user.role || 'User';
-            const gender = user.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : 'Not specified';
-            const memberSince = formatDate(user.createdAt);
-            const accountStatusText = getStatusText(user.isActive, user.isVerified);
-            const verificationStatusText = user.isVerified ? 'Verified' : 'Not Verified';
-
-            // Update header
-            document.getElementById('userFullName').textContent = fullName;
-            document.getElementById('userRole').textContent = role;
-            document.getElementById('userStatusValue').textContent = accountStatusText;
-            document.getElementById('verificationStatusValue').textContent = verificationStatusText;
-            document.getElementById('memberSinceValue').textContent = memberSince;
-
-            // Update personal information
-            document.getElementById('firstName').textContent = user.firstName || 'Not provided';
-            document.getElementById('lastName').textContent = user.lastName || 'Not provided';
-            document.getElementById('gender').textContent = gender;
-            document.getElementById('email').textContent = user.email || 'Not provided';
-            document.getElementById('phone').textContent = user.phone || 'Not provided';
-            document.getElementById('address').textContent = user.address || 'Not provided';
-
-            // Update account information
-            document.getElementById('roleDisplay').textContent = role;
-            document.getElementById('roleDisplay').className = `status-badge ${getRoleBadgeClass(role)}`;
-            document.getElementById('accountStatus').textContent = accountStatusText;
-            document.getElementById('accountStatus').className = `status-badge ${getStatusBadgeClass(user.isActive, user.isVerified)}`;
-            document.getElementById('verificationStatus').textContent = verificationStatusText;
-            document.getElementById('verificationStatus').className = `status-badge ${user.isVerified ? 'status-active' : 'status-pending'}`;
-            document.getElementById('memberSince').textContent = memberSince;
-
-            // Update avatar
-            updateAvatar(fullName);
-
-            // Update action buttons
-            updateActionButtons(user);
-
-            // Handle approval section for reviewers
-            handleApprovalSection(user);
-        }
-
-        // Handle approval section (only for reviewers not approved)
-        function handleApprovalSection(user) {
-            const approvalSection = document.getElementById('approvalSection');
-
-            if (user.role === 'Reviewer' && !user.isApproved) {
-                approvalSection.style.display = 'block';
-
-                // Setup toggle event
-                const approvalToggle = document.getElementById('approvalToggle');
-                approvalToggle.addEventListener('change', function () {
-                    toggleApproval(user._id, this.checked);
-                });
-            } else {
-                approvalSection.style.display = 'none';
-            }
-        }
-
-        // Toggle approval status
-        async function toggleApproval(userId, approved) {
-            try {
-                const token = localStorage.getItem('pilot_tkn');
-                if (!token) {
-                    toastr.error('Authentication required');
-                    return;
-                }
-
-                // Show loading on toggle
-                const toggle = document.getElementById('approvalToggle');
-                toggle.disabled = true;
-
-                const response = await fetch(`https://fp.247laboratory.net/api/v1/user/${userId}/approve-toggle`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to update approval: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to update approval status');
-                }
-
-                toastr.success(`Reviewer ${approved ? 'approved' : 'unapproved'} successfully!`);
-
-                // Reload user data to update UI
-                loadUserData();
-
-            } catch (error) {
-                console.error('Error toggling approval:', error);
-                toastr.error(error.message || 'Failed to update approval status');
-
-                // Reset toggle on error
-                const toggle = document.getElementById('approvalToggle');
-                toggle.checked = !toggle.checked;
-                toggle.disabled = false;
-            }
-        }
-
-        // Update action buttons
-        function updateActionButtons(user) {
-            const toggleBtn = document.getElementById('toggleActiveBtn');
-            const editBtn = document.getElementById('editUserBtn');
-            const deleteBtn = document.getElementById('deleteUserBtn');
-
-            // Toggle active button
-            if (user.isActive) {
-                toggleBtn.innerHTML = '<i class="fas fa-power-off"></i> Deactivate User';
-                toggleBtn.className = 'action-btn btn-danger';
-            } else {
-                toggleBtn.innerHTML = '<i class="fas fa-power-on"></i> Activate User';
-                toggleBtn.className = 'action-btn btn-primary';
-            }
-
-            // Add event listeners
-            toggleBtn.onclick = () => toggleUserStatus(user._id, !user.isActive);
-            editBtn.onclick = () => editUser(user);
-            deleteBtn.onclick = () => deleteUser(user._id);
-        }
-
-        // Toggle user active status
-        async function toggleUserStatus(userId, makeActive) {
-            try {
-                const confirmText = makeActive
-                    ? 'Are you sure you want to activate this user?'
-                    : 'Are you sure you want to deactivate this user?';
-
-                const result = await Swal.fire({
-                    title: 'Confirm Action',
-                    text: confirmText,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, proceed'
-                });
-
-                if (!result.isConfirmed) return;
-
-                const token = localStorage.getItem('pilot_tkn');
-                const endpoint = makeActive ? 'activate' : 'deactivate';
-
-                const response = await fetch(`https://fp.247laboratory.net/api/v1/user/${userId}/${endpoint}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to ${endpoint} user: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.message || `Failed to ${endpoint} user`);
-                }
-
-                toastr.success(`User ${makeActive ? 'activated' : 'deactivated'} successfully!`);
-                loadUserData();
-
-            } catch (error) {
-                console.error('Error toggling user status:', error);
-                toastr.error(error.message || 'Failed to update user status');
-            }
-        }
-
-        // Edit user
-        function editUser(user) {
-            // Redirect to edit page or open modal
-            window.location.href = `edit-user.html?id=${user._id}`;
-        }
-
-        // Delete user
-        async function deleteUser(userId) {
-            try {
-                const result = await Swal.fire({
-                    title: 'Delete User',
-                    text: 'Are you sure you want to delete this user? This action cannot be undone.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete'
-                });
-
-                if (!result.isConfirmed) return;
-
-                const token = localStorage.getItem('pilot_tkn');
-
-                const response = await fetch(`https://fp.247laboratory.net/api/v1/user/${userId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to delete user: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to delete user');
-                }
-
-                Swal.fire(
-                    'Deleted!',
-                    'User has been deleted successfully.',
-                    'success'
-                ).then(() => {
-                    window.history.back();
-                });
-
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                toastr.error(error.message || 'Failed to delete user');
-            }
-        }
-
-        // UI Helper functions
-        function showLoading() {
-            document.getElementById('loadingScreen').style.display = 'block';
-            document.getElementById('errorScreen').style.display = 'none';
-            document.getElementById('contentContainer').style.display = 'none';
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
-
-        function showContent() {
-            document.getElementById('contentContainer').style.display = 'block';
-        }
-
-        function showError(message) {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('errorScreen').style.display = 'block';
-            document.getElementById('errorMessage').textContent = message;
-        }
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function () {
-            // Initialize toastr
-            toastr.options = {
-                closeButton: false,
-                progressBar: false,
-                positionClass: "toast-top-right",
-                timeOut: 3000,
-                extendedTimeOut: 1000
-            };
-
-            // Load user data
-            loadUserData();
-        });
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'view-user';
     </script>
-
-    <!-- jQuery (for toastr) -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (required for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Toastr -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- User Details Script -->
+    <script src="./js/user-details.js"></script>
+    <script src="./js/edit-user.js"></script>
 </body>
 
 </html>
