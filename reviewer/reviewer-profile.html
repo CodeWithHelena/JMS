@@ -843,7 +843,10 @@
         </div>
     </div>
 
-    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script>
+        window.SIDEBAR_MODULE = 'reviewer';
+        window.SIDEBAR_ACTIVE_ID = 'reviewer-profile';
+    </script>
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -877,7 +880,7 @@
                 // 1. URL parameters (?id=...)
                 // 2. Current logged-in user session
                 // 3. Local storage or cookies
-                return '6931252bfe5ccc3cdad91eea'; // Replace with dynamic ID when available
+                return '6939fa3b7409ad900774e469'; // Replace with dynamic ID when available
             }
 
             initializeToastr() {

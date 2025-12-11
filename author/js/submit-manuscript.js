@@ -1,3 +1,4 @@
+// submit-manuscript2.js
 document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------
     // Config: base URL and token
@@ -155,13 +156,80 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // -------------------------------
-    // AUTHORS: add/remove logic
+    // AUTHORS: new add/remove model
     // -------------------------------
     const authorsContainer = document.getElementById("authors-container");
+
+    // We'll render two sections inside authorsContainer:
+    // 1) addedAuthorsList (visual list of added authors)
+    // 2) authorInputArea (the input rows)
+    authorsContainer.innerHTML = `
+        <div id="addedAuthorsList" class="mb-3"></div>
+        <div id="authorInputArea"></div>
+    `;
+
+    const addedAuthorsList = document.getElementById('addedAuthorsList');
+    const authorInputArea = document.getElementById('authorInputArea');
+
+    let authorsAdded = []; // {id, name, email}
 
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    }
+
+    function renderAddedAuthors() {
+        // Shows the added authors at the top with an X to remove
+        addedAuthorsList.innerHTML = '';
+        if (authorsAdded.length === 0) {
+            // no authors - show nothing (or a subtle hint if desired)
+            return;
+        }
+
+        authorsAdded.forEach(a => {
+            const item = document.createElement('div');
+            item.className = 'd-flex align-items-center justify-content-between p-2 mb-2';
+            item.style.background = 'var(--body-bg)';
+            item.style.border = '1px solid var(--border-color)';
+            item.style.borderRadius = '8px';
+
+            item.innerHTML = `
+                <div>
+                    <strong>${escapeHtml(a.name)}</strong>
+                    <div style="font-size:0.9rem;color:var(--text-light)">${escapeHtml(a.email)}</div>
+                </div>
+                <div>
+                    <button type="button" class="btn" data-id="${a.id}" title="Remove author" style="background:none;border:none;color:var(--danger-color)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            const btn = item.querySelector('button');
+            btn.addEventListener('click', function () {
+                const id = this.dataset.id;
+                authorsAdded = authorsAdded.filter(x => String(x.id) !== String(id));
+                renderAddedAuthors();
+            });
+
+            addedAuthorsList.appendChild(item);
+        });
+    }
+
+    // simple HTML escape helper
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"'`=\/]/g, function (s) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+                '/': '&#x2F;',
+                '`': '&#x60;',
+                '=': '&#x3D;'
+            })[s];
+        });
     }
 
     function createAuthorRow() {
@@ -184,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         `;
 
-        authorsContainer.appendChild(row);
+        authorInputArea.appendChild(row);
 
         const addBtn = row.querySelector(".add-btn");
         addBtn.addEventListener("click", () => handleAdd(row));
@@ -196,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const errorFullname = row.querySelector(".error-fullname");
         const errorEmail = row.querySelector(".error-email");
 
+        // hide previous inline errors
         errorFullname.style.display = "none";
         errorEmail.style.display = "none";
 
@@ -205,39 +274,38 @@ document.addEventListener('DOMContentLoaded', function () {
             errorFullname.textContent = "Full name is required";
             errorFullname.style.display = "block";
             hasError = true;
-            toastr.error("Please enter full name for author");
         }
 
         if (emailInput.value.trim() === "") {
             errorEmail.textContent = "Email is required";
             errorEmail.style.display = "block";
             hasError = true;
-            if (!fullNameInput.value.trim()) {
-                toastr.error("Please enter email for author");
-            }
         } else if (!isValidEmail(emailInput.value.trim())) {
             errorEmail.textContent = "Please enter a valid email address";
             errorEmail.style.display = "block";
             hasError = true;
-            toastr.error("Please enter a valid email address for author");
         }
 
-        if (hasError) return;
+        if (hasError) {
+            // Per your requirement: do not use toastr for add/remove. Only inline errors for the inputs.
+            return;
+        }
 
-        // Convert add button to remove button
-        const btn = row.querySelector(".add-btn");
-        btn.classList.remove("add-btn");
-        btn.classList.add("remove-btn");
-        btn.innerHTML = `<i class="fas fa-minus"></i> Remove`;
-        btn.replaceWith(btn.cloneNode(true));
-        const newBtn = row.querySelector(".remove-btn");
-        newBtn.addEventListener("click", () => row.remove());
+        // Add to the top list
+        const authorObj = {
+            id: Date.now() + Math.random().toString(36).slice(2, 8),
+            name: fullNameInput.value.trim(),
+            email: emailInput.value.trim()
+        };
+        authorsAdded.unshift(authorObj); // add to start so newest appears on top
+        renderAddedAuthors();
 
-        // Create a fresh empty row for next author
+        // remove the current row from DOM and create a fresh one
+        row.remove();
         createAuthorRow();
     }
 
-    // start with one row
+    // start with one empty row
     createAuthorRow();
 
     // -------------------------------
@@ -293,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="file-preview-item">
                 <div class="file-preview-name">
                     <i class="fas fa-file"></i>
-                    <span>${file.name}</span>
+                    <span>${escapeHtml(file.name)}</span>
                 </div>
                 <button type="button" class="file-preview-remove" id="removeFile">
                     <i class="fas fa-times"></i>
@@ -326,11 +394,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const titleVal = document.getElementById('manuscriptTitle').value.trim();
         const abstractText = quill.getText().trim(); // plain text check
         const filePresent = manuscriptFile.files && manuscriptFile.files.length > 0;
-        const allRows = Array.from(document.querySelectorAll('.author-row'));
-        const addedRows = allRows.filter(r => r.querySelector('.remove-btn')); // only confirmed authors
+        // use authorsAdded array
+        const addedAuthorsCount = authorsAdded.length;
 
         // If everything is empty -> show "cannot submit empty field"
-        if (!journalVal && !titleVal && !abstractText && !filePresent && addedRows.length === 0) {
+        if (!journalVal && !titleVal && !abstractText && !filePresent && addedAuthorsCount === 0) {
             toastr.error('Cannot submit empty field');
             return;
         }
@@ -349,25 +417,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // 3. authors - at least one confirmed author
-        if (addedRows.length === 0) {
+        if (addedAuthorsCount === 0) {
             toastr.error('Please add at least one author');
             return;
         }
 
-        // 4. validate first invalid author (if any)
-        for (let i = 0; i < addedRows.length; i++) {
-            const row = addedRows[i];
-            const nameInput = row.querySelector('.fullName');
-            const emailInput = row.querySelector('.email');
-            if (!nameInput.value.trim()) {
+        // 4. validate authors (they should be valid already)
+        for (let i = 0; i < authorsAdded.length; i++) {
+            const a = authorsAdded[i];
+            if (!a.name || !a.name.trim()) {
                 toastr.error(`Please enter full name for author #${i + 1}`);
                 return;
             }
-            if (!emailInput.value.trim()) {
+            if (!a.email || !a.email.trim()) {
                 toastr.error(`Please enter email for author #${i + 1}`);
                 return;
             }
-            if (!isValidEmail(emailInput.value.trim())) {
+            if (!isValidEmail(a.email.trim())) {
                 toastr.error(`Author #${i + 1} email is invalid`);
                 return;
             }
@@ -396,12 +462,12 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('abstract', document.getElementById('abstractContent').value || '');
             // send journalId (selectedJournal holds id when API provided it)
             formData.append('journalId', journalVal);
-            // authors: only confirmed rows
-            const authors = addedRows.map(row => ({
-                name: row.querySelector('.fullName').value.trim(),
-                email: row.querySelector('.email').value.trim()
+            // authors: from authorsAdded
+            const authorsPayload = authorsAdded.map(a => ({
+                name: a.name,
+                email: a.email
             }));
-            formData.append('authors', JSON.stringify(authors));
+            formData.append('authors', JSON.stringify(authorsPayload));
             // file -- key 'file' to match your Postman sample
             formData.append('file', manuscriptFile.files[0]);
 
@@ -417,14 +483,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const respJson = await res.json().catch(() => null);
 
+            // IMPORTANT: show errors in toastr. Success remains in SweetAlert.
             if (!res.ok) {
                 const message = (respJson && (respJson.message || respJson.error)) || `Submission failed (status ${res.status})`;
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Submission Failed',
-                    text: message,
-                    confirmButtonColor: '#d33'
-                });
+                toastr.error(message);
+            } else if (respJson && respJson.success === false) {
+                // API returned success:false with 200/ok status
+                const message = respJson.message || respJson.error || 'Submission failed';
+                toastr.error(message);
             } else {
                 // Success
                 const message = (respJson && (respJson.message || 'Manuscript submitted successfully')) || 'Manuscript submitted successfully';
@@ -441,12 +507,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (err) {
             console.error('Submit error', err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An error occurred while submitting. Please try again.',
-                confirmButtonColor: '#d33'
-            });
+            toastr.error('An error occurred while submitting. Please try again.');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit';
@@ -471,8 +532,10 @@ document.addEventListener('DOMContentLoaded', function () {
         filePreview.style.display = 'none';
         fileError.style.display = 'none';
         
-        // Reset authors - remove all rows and create one fresh row
-        authorsContainer.innerHTML = '';
+        // Reset authors - clear added authors and input area
+        authorsAdded = [];
+        renderAddedAuthors();
+        authorInputArea.innerHTML = '';
         createAuthorRow();
     }
 });

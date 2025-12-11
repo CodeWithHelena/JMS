@@ -110,6 +110,26 @@
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
+  
+            /* ... existing variables ... */
+    
+            /* Add these new variables */
+            --header-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --text-on-gradient: #ffffff;
+            --avatar-bg: rgba(255, 255, 255, 0.2);
+            --avatar-border: rgba(255, 255, 255, 0.3);
+    
+            /* Role Colors - For badges */
+            --role-editor: #2563eb;
+            --role-editor-bg: rgba(37, 99, 235, 0.12);
+            --role-author: #059669;
+            --role-author-bg: rgba(5, 150, 105, 0.12);
+            --role-reviewer: #ea580c;
+            --role-reviewer-bg: rgba(234, 88, 12, 0.12);
+            --role-admin: #7c3aed;
+            --role-admin-bg: rgba(124, 58, 237, 0.12);
+    
+
     /* Button Colors */
     --btn-primary-bg: var(--primary);
     --btn-primary-text: #ffffff;
