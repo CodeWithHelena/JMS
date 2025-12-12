@@ -25,7 +25,7 @@
 
         <div class="header-icon" id="notificationIcon">
             <i class="fas fa-bell"></i>
-            <span class="notification-badge" id="notifCount">3</span>
+            <span class="notification-badge" id="notifCount">0</span>
         </div>
 
         <!-- User icon visible on large screens only -->
@@ -50,7 +50,7 @@
 
                 <a href="#" id="moreNotification" class="notification-menu-item">
                     <span class="text"><i class="fas fa-bell"></i> Notifications</span>
-                    <span class="notification-badge">3</span>
+                    <span class="notification-badge">0</span>
                 </a>
 
                 <a href="#" id="moreSettings"><i class="fas fa-cog"></i> Settings</a>
@@ -67,28 +67,8 @@
         <small id="clearAllNotif">CLEAR ALL</small>
     </div>
     <div class="notif-body" id="notifBody">
-        <div class="notif-item">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div class="text">
-                <div>New user registered — John Doe</div>
-                <small>4 mins ago</small>
-            </div>
-        </div>
-
-        <div class="notif-item">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div class="text">
-                <div>Submission #234 approved</div>
-                <small>22 mins ago</small>
-            </div>
-        </div>
-
-        <div class="notif-item">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div class="text">
-                <div>System scheduled maintenance</div>
-                <small>1 hour ago</small>
-            </div>
+        <div class="notif-loading" style="text-align: center; padding: 20px;">
+            <i class="fas fa-spinner fa-spin"></i> Loading notifications...
         </div>
     </div>
 

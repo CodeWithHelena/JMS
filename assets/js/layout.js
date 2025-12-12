@@ -3,6 +3,15 @@
 // Also wires up header interactions (search, notifications, more menu) and sidebar dropdowns.
 // Written to be defensive about missing elements.
 
+// Import utility functions
+//import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+const BASE_URL = 'https://fp.247laboratory.net/api/v1/';
+
+function getAuthToken2() {
+    return localStorage.getItem('token');
+}
+
+
 const partialsPath = '../assets/partials/';
 
 async function fetchText(url) {
@@ -140,6 +149,251 @@ function expandParentDropdowns(el) {
       }
     }
     p = p.parentElement;
+  }
+}
+
+// Notification API helper functions
+const NOTIFICATION_API = {
+  getUnreadCount: function() {
+    return `${BASE_URL}notifications/unread-count`;
+  },
+  
+  getRecent: function(limit = 3) {
+    return `${BASE_URL}notifications/all?page=1&limit=${limit}`;
+  },
+  
+  markAsRead: function(id) {
+    return `${BASE_URL}notifications/${id}/read`;
+  },
+  
+  clearAll: function() {
+    return `${BASE_URL}notifications/read-all`;
+  }
+};
+
+// Helper function to format notification date
+function formatNotificationDate(dateString) {
+  try {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch (error) {
+    return '';
+  }
+}
+
+// Helper function to escape HTML
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Update notification badge count (called once on page load and when actions occur)
+async function updateNotificationBadge() {
+  try {
+    const token = getAuthToken2();
+    if (!token) return;
+    
+    const response = await fetch(NOTIFICATION_API.getUnreadCount(), {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success) {
+        const count = data.count || 0;
+        
+        // Update main badge
+        const notifCount = document.getElementById('notifCount');
+        if (notifCount) {
+          notifCount.textContent = count;
+          notifCount.style.display = count > 0 ? 'flex' : 'none';
+        }
+        
+        // Update more menu badge
+        const moreBadge = document.querySelector('#moreNotification .notification-badge');
+        if (moreBadge) {
+          moreBadge.textContent = count;
+          moreBadge.style.display = count > 0 ? 'flex' : 'none';
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error updating notification badge:', error);
+  }
+}
+
+// Mark notification as read
+async function markNotificationAsRead(notificationId) {
+  try {
+    const token = getAuthToken2();
+    if (!token) return false;
+    
+    const response = await fetch(NOTIFICATION_API.markAsRead(notificationId), {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      // Update badge count
+      updateNotificationBadge();
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+    return false;
+  }
+}
+
+// Helper function for toast messages
+function showToast(message, type = 'success') {
+  // Use existing toastr if available
+  if (typeof toastr !== 'undefined') {
+    toastr[type === 'error' ? 'error' : 'success'](message);
+  }
+}
+
+// Load recent notifications (3 most recent)
+async function loadRecentNotifications() {
+  const notifBody = document.getElementById('notifBody');
+  if (!notifBody) return;
+  
+  try {
+    const token = getAuthToken2();
+    if (!token) {
+      notifBody.innerHTML = '<div style="padding:12px;color:var(--text-light)">Please login to view notifications</div>';
+      return;
+    }
+    
+    // Show loading
+    notifBody.innerHTML = '<div class="notif-loading" style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading notifications...</div>';
+    
+    const response = await fetch(NOTIFICATION_API.getRecent(3), {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to load notifications: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    if (!data.success || !data.notifications) {
+      throw new Error('Invalid response format');
+    }
+    
+    const notifications = data.notifications || [];
+    
+    if (notifications.length === 0) {
+      notifBody.innerHTML = '<div style="padding:12px;color:var(--text-light)">No notifications</div>';
+      return;
+    }
+    
+    // Render notifications
+    notifBody.innerHTML = notifications.map(notif => {
+      // Choose icon based on notification type
+      let icon = 'fas fa-bell';
+      let iconColor = '#ff7a18'; // primary color
+      
+      switch(notif.type) {
+        case 'editorial_decision':
+          icon = 'fas fa-gavel';
+          iconColor = notif.message.includes('accept') ? '#10b981' : // success
+                      notif.message.includes('reject') ? '#ef4444' : // danger
+                      notif.message.includes('revision') ? '#f59e0b' : '#ff7a18'; // warning : primary
+          break;
+        case 'submission':
+          icon = 'fas fa-file-alt';
+          iconColor = '#3b82f6'; // info
+          break;
+        case 'review':
+          icon = 'fas fa-clipboard-check';
+          iconColor = '#3b82f6'; // info
+          break;
+        case 'payment':
+          icon = 'fas fa-credit-card';
+          iconColor = '#10b981'; // success
+          break;
+        case 'system':
+          icon = 'fas fa-cog';
+          iconColor = '#6b7280'; // muted
+          break;
+      }
+      
+      // Format date
+      const date = formatNotificationDate(notif.createdAt);
+      
+      // Truncate message if too long
+      const message = notif.message.length > 80 
+        ? notif.message.substring(0, 80) + '...' 
+        : notif.message;
+      
+      return `
+        <div class="notif-item ${notif.isRead ? 'read' : 'unread'}" 
+             data-id="${notif._id}"
+             data-entity-id="${notif.relatedEntity?.id || ''}">
+          <div class="avatar" style="color: ${iconColor}">
+            <i class="${icon}"></i>
+          </div>
+          <div class="text">
+            <div class="notif-message" title="${escapeHtml(notif.message)}">
+              ${escapeHtml(message)}
+            </div>
+            <small>${date}</small>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    // Add click handlers to notifications
+    document.querySelectorAll('.notif-item').forEach(item => {
+      item.addEventListener('click', async function(e) {
+        e.stopPropagation();
+        const notificationId = this.dataset.id;
+        
+        // Always mark as read (even if already read, API handles it)
+        await markNotificationAsRead(notificationId);
+        this.classList.remove('unread');
+        this.classList.add('read');
+        
+        // Close dropdown
+        hideNotificationBox();
+        
+        // Navigate to notifications page
+        window.location.href = 'notifications.html';
+      });
+    });
+    
+  } catch (error) {
+    console.error('Error loading notifications:', error);
+    notifBody.innerHTML = '<div style="padding:12px;color:var(--text-light)">Failed to load notifications</div>';
   }
 }
 
@@ -434,7 +688,7 @@ function initLayoutBindings() {
 
   // Notification icon (large)
   if (notificationIcon) {
-    notificationIcon.addEventListener('click', function (e) {
+    notificationIcon.addEventListener('click', async function (e) {
       hideMoreDropdown();
       if (userDropdown) userDropdown.classList.remove('show');
       toggleNotificationBox();
@@ -446,21 +700,76 @@ function initLayoutBindings() {
     if (!notificationBox) return;
     const show = notificationBox.classList.contains('show');
     if (show) hideNotificationBox();
-    else showNotificationBox();
+    else {
+      loadRecentNotifications();
+      showNotificationBox();
+    }
   }
-  function showNotificationBox() { if (notificationBox) notificationBox.classList.add('show'); }
-  function hideNotificationBox() { if (notificationBox) notificationBox.classList.remove('show'); }
+  
+  function showNotificationBox() { 
+    if (notificationBox) notificationBox.classList.add('show'); 
+  }
+  
+  function hideNotificationBox() { 
+    if (notificationBox) notificationBox.classList.remove('show'); 
+  }
 
-  // Notification clear all
+  // Notification clear all - WITH CONFIRMATION
   const clearAll = document.getElementById('clearAllNotif');
   if (clearAll) {
-    clearAll.addEventListener('click', function () {
-      const notifBody = document.getElementById('notifBody');
-      if (notifBody) notifBody.innerHTML = '<div style="padding:12px;color:var(--text-light)">No notifications</div>';
-      const notifCount = document.getElementById('notifCount');
-      if (notifCount) notifCount.textContent = '0';
-      const moreBadge = document.querySelector('#moreNotification .notification-badge');
-      if (moreBadge) moreBadge.textContent = '0';
+    clearAll.addEventListener('click', async function (e) {
+      e.stopPropagation();
+      
+      // Show confirmation dialog using SweetAlert2 if available, otherwise native confirm
+      let confirmed = false;
+      
+      if (typeof Swal !== 'undefined') {
+        const result = await Swal.fire({
+          title: 'Clear all notifications?',
+          text: 'This will mark all notifications as read.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, clear all!',
+          cancelButtonText: 'Cancel'
+        });
+        confirmed = result.isConfirmed;
+      } else {
+        confirmed = confirm('Are you sure you want to clear all notifications? This will mark all notifications as read.');
+      }
+      
+      if (confirmed) {
+        try {
+          const token = getAuthToken2();
+          if (!token) return;
+          
+          const response = await fetch(NOTIFICATION_API.clearAll(), {
+            method: 'PATCH',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            // Clear UI
+            const notifBody = document.getElementById('notifBody');
+            if (notifBody) notifBody.innerHTML = '<div style="padding:12px;color:var(--text-light)">No notifications</div>';
+            
+            // Update badges
+            updateNotificationBadge();
+            
+            // Show success message
+            showToast('All notifications cleared');
+          } else {
+            showToast('Failed to clear notifications', 'error');
+          }
+        } catch (error) {
+          console.error('Error clearing all notifications:', error);
+          showToast('Failed to clear notifications', 'error');
+        }
+      }
     });
   }
 
@@ -468,9 +777,9 @@ function initLayoutBindings() {
   const viewAllNotifications = document.getElementById('viewAllNotifications');
   if (viewAllNotifications) {
     viewAllNotifications.addEventListener('click', function (e) {
-      hideNotificationBox();
-      alert('Open all notifications page (placeholder)');
       e.preventDefault();
+      hideNotificationBox();
+      window.location.href = 'notifications.html';
     });
   }
 
@@ -572,6 +881,11 @@ function initLayoutBindings() {
       });
     }
   });
+
+  // Initialize notification badge on page load (once)
+  setTimeout(() => {
+    updateNotificationBadge();
+  }, 500);
 
   // done
 }

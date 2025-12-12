@@ -891,3 +891,99 @@
     vertical-align: middle;
     display: inline-block;
 }
+
+
+
+/* Add to header_sidebar.css */
+
+/* Updated notification item styling */
+.notification-box .notif-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.notification-box .notif-item:hover {
+    background: var(--hover-bg);
+}
+
+.notification-box .notif-item.unread {
+    background: rgba(255, 122, 24, 0.05);
+}
+
+.notification-box .notif-item.read {
+    opacity: 0.8;
+}
+
+.notification-box .notif-item .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--body-bg);
+    flex-shrink: 0;
+}
+
+.notification-box .notif-item .avatar i {
+    font-size: 16px;
+}
+
+.notification-box .notif-item .text {
+    flex: 1;
+    min-width: 0;
+    /* Important for text truncation */
+}
+
+.notification-box .notif-item .notif-message {
+    color: var(--text-color);
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+}
+
+.notification-box .notif-item small {
+    display: block;
+    color: var(--text-light);
+    font-size: 11px;
+}
+
+/* Clear all confirmation styling */
+.notification-box .notif-header small {
+    color: var(--danger);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.notification-box .notif-header small:hover {
+    color: var(--danger-dark);
+    text-decoration: underline;
+}
+
+/* Loading state */
+.notif-loading {
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.notif-loading i {
+    margin-right: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .notification-box .notif-item .notif-message {
+        max-width: 180px;
+    }
+}

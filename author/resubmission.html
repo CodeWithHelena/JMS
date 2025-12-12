@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resubmit Manuscript</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Quill Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --header-height: 70px;
+
+            /* Light theme */
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --body-bg: #f5f5f5;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --hover-bg: rgba(204, 85, 0, 0.1);
+            --active-bg: rgba(204, 85, 0, 0.15);
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+
+            /* Dark Mode Variables */
+            --dark-sidebar-bg: #1e1e2d;
+            --dark-header-bg: #1e1e2d;
+            --dark-body-bg: #151521;
+            --dark-text-color: #ffffff;
+            --dark-text-light: #a2a3b7;
+            --dark-border-color: #2d2d3d;
+            --dark-hover-bg: rgba(204, 85, 0, 0.2);
+            --dark-active-bg: rgba(204, 85, 0, 0.25);
+            --dark-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+            /* Form specific colors */
+            --primary-color: #cc5500;
+            --primary-hover: #b34a00;
+            --success-color: #28a745;
+            --success-hover: #218838;
+            --danger-color: #dc3545;
+            --danger-hover: #c82333;
+            --warning-color: #ffc107;
+        }
+
+        body.dark-mode {
+            --sidebar-bg: var(--dark-sidebar-bg);
+            --header-bg: var(--dark-header-bg);
+            --body-bg: var(--dark-body-bg);
+            --text-color: var(--dark-text-color);
+            --text-light: var(--dark-text-light);
+            --border-color: var(--dark-border-color);
+            --hover-bg: var(--dark-hover-bg);
+            --active-bg: var(--dark-active-bg);
+            --shadow: var(--dark-shadow);
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .resubmission-form {
+            background: var(--sidebar-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .form-title {
+            color: var(--text-color);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .form-subtitle {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        /* Manuscript Cards */
+        .manuscript-card {
+            background: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .abstract-card {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .manuscript-card h3 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manuscript-card h3 i {
+            color: var(--primary-color);
+        }
+
+        .abstract-card h3 i {
+            color: var(--success-color);
+        }
+
+        .manuscript-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .detail-group {
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-label i {
+            color: var(--primary-color);
+            width: 20px;
+        }
+
+        .detail-content {
+            font-size: 1rem;
+            color: var(--text-color);
+            line-height: 1.5;
+            padding-left: 28px;
+        }
+
+        /* Abstract display card */
+        .abstract-content {
+            background: var(--body-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .abstract-content p {
+            margin: 0 0 15px 0;
+        }
+
+        .abstract-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Authors display */
+        .authors-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .author-tag {
+            background: rgba(204, 85, 0, 0.1);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .author-tag i {
+            font-size: 0.8rem;
+        }
+
+        /* File Upload Area */
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            background-color: var(--body-bg);
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.dragover {
+            border-color: var(--primary-color);
+            background-color: var(--hover-bg);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .file-upload-subtext {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .file-types {
+            display: inline-block;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .file-preview {
+            margin-top: 20px;
+        }
+
+        .file-preview-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background-color: var(--body-bg);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .file-preview-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+
+        .file-preview-remove {
+            color: var(--danger-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+            font-size: 1rem;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Action Buttons */
+        .submit-btn {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .cancel-btn {
+            background-color: var(--text-light);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cancel-btn:hover {
+            background-color: var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        /* Quill Editor Styling */
+        .ql-toolbar.ql-snow {
+            border-color: var(--border-color);
+            background-color: var(--body-bg);
+        }
+
+        .ql-container.ql-snow {
+            border-color: var(--border-color);
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            min-height: 200px;
+        }
+
+        .ql-editor {
+            color: var(--text-color);
+        }
+
+        .ql-editor.ql-blank::before {
+            color: var(--text-light);
+        }
+
+        /* Form Section Styling */
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .resubmission-form {
+                padding: 20px;
+            }
+
+            .manuscript-card {
+                padding: 20px;
+            }
+
+            .submit-btn,
+            .cancel-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .submit-btn,
+            .cancel-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Included-->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <!-- Header Included-->
+            <div id="header-placeholder"></div>
+            <main class="main-content">
+                <div class="container page-title">
+                    <h1>Resubmit Manuscript</h1>
+                    <p>Submit a revised version of your manuscript</p>
+                </div>
+                <div class="container my-4">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-12">
+                            <!-- Original Manuscript Details Card -->
+                            <div id="originalManuscriptCard" class="manuscript-card">
+                                <div class="skeleton" style="height: 32px; width: 60%; margin-bottom: 20px;"></div>
+                                <div class="manuscript-details">
+                                    <div class="detail-group">
+                                        <div class="detail-label">
+                                            <div class="skeleton-icon" style="width: 16px; height: 16px;"></div>
+                                            <div class="skeleton" style="height: 16px; width: 120px;"></div>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="skeleton" style="height: 16px; width: 200px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-group">
+                                        <div class="detail-label">
+                                            <div class="skeleton-icon" style="width: 16px; height: 16px;"></div>
+                                            <div class="skeleton" style="height: 16px; width: 100px;"></div>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="skeleton" style="height: 16px; width: 180px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-group">
+                                        <div class="detail-label">
+                                            <div class="skeleton-icon" style="width: 16px; height: 16px;"></div>
+                                            <div class="skeleton" style="height: 16px; width: 80px;"></div>
+                                        </div>
+                                        <div class="detail-content">
+                                            <div class="skeleton" style="height: 16px; width: 250px; margin-bottom: 5px;"></div>
+                                            <div class="skeleton" style="height: 16px; width: 230px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Abstract Card (Separate) -->
+                            <div id="abstractCard" class="manuscript-card abstract-card">
+                                <h3><i class="fas fa-align-left"></i> Abstract</h3>
+                                <div class="skeleton" style="height: 120px; width: 100%; margin-bottom: 10px;"></div>
+                                <div class="skeleton" style="height: 100px; width: 100%;"></div>
+                            </div>
+
+                            <!-- Resubmission Form -->
+                            <form id="resubmissionForm" class="resubmission-form">
+                                <!-- Cover Letter -->
+                                <div class="form-section">
+                                    <label for="coverLetterEditor" class="form-label">Cover Letter <span style="color: var(--danger-color);">*</span></label>
+                                    <p class="form-text" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;">
+                                        Please provide a cover letter explaining the resubmission
+                                    </p>
+                                    <div id="coverLetterEditor"></div>
+                                    <input type="hidden" id="coverLetterContent" name="coverLetter">
+                                </div>
+
+                                <!-- Changes Summary -->
+                                <div class="form-section">
+                                    <label for="changesSummaryEditor" class="form-label">Summary of Changes <span style="color: var(--danger-color);">*</span></label>
+                                    <p class="form-text" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;">
+                                        Describe the changes made to the manuscript
+                                    </p>
+                                    <div id="changesSummaryEditor"></div>
+                                    <input type="hidden" id="changesSummaryContent" name="changesSummary">
+                                </div>
+
+                                <!-- Revised Manuscript File -->
+                                <div class="form-section">
+                                    <label class="form-label">Upload Revised Manuscript <span class="file-types">.PDF, .DOCX</span> <span style="color: var(--danger-color);">*</span></label>
+                                    <p class="form-text" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;">
+                                        Upload the revised version of your manuscript
+                                    </p>
+                                    <div class="file-upload-area" id="fileUploadArea">
+                                        <div class="file-upload-icon">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                        </div>
+                                        <div class="file-upload-text">Drag & Drop your revised file here</div>
+                                        <div class="file-upload-subtext">or click to browse</div>
+                                        <input type="file" id="revisedManuscriptFile" name="file" accept=".pdf,.docx" style="display: none;">
+                                    </div>
+                                    <div class="error-message" id="fileError">
+                                        <i class="fas fa-times-circle"></i> Only .PDF or .DOCX files are allowed.
+                                    </div>
+                                    <div class="file-preview" id="filePreview">
+                                        <!-- File preview will be added here -->
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex justify-content-between align-items-center action-buttons">
+                                    <a href="#" id="cancelBtn" class="btn cancel-btn">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                    <button type="submit" id="submitBtn" class="btn submit-btn">
+                                        <i class="fas fa-paper-plane"></i> Submit Revision
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'author-submissions';
+    </script>
+
+    <!-- Scripts -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (required for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Resubmission JavaScript -->
+    <script type="module">
+        // Import utility functions
+        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Toastr
+            toastr.options = {
+                closeButton: false,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 5000,
+                extendedTimeOut: 2000,
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+
+            // -------------------------------
+            // Initialize
+            // -------------------------------
+            const submissionId = getSubmissionIdFromURL();
+            if (!submissionId) {
+                toastr.error('No submission ID provided. Redirecting to submissions page...');
+                setTimeout(() => {
+                    window.location.href = 'my-submission.html';
+                }, 2000);
+                return;
+            }
+
+            // Initialize Quill editors
+            const coverLetterQuill = new Quill('#coverLetterEditor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            const changesSummaryQuill = new Quill('#changesSummaryEditor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Update hidden inputs on editor changes
+            coverLetterQuill.on('text-change', function () {
+                document.getElementById('coverLetterContent').value = coverLetterQuill.root.innerHTML;
+            });
+
+            changesSummaryQuill.on('text-change', function () {
+                document.getElementById('changesSummaryContent').value = changesSummaryQuill.root.innerHTML;
+            });
+
+            // -------------------------------
+            // Load Original Manuscript Data
+            // -------------------------------
+            loadOriginalManuscript(submissionId);
+
+            // -------------------------------
+            // File Upload Functionality
+            // -------------------------------
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const revisedManuscriptFile = document.getElementById('revisedManuscriptFile');
+            const fileError = document.getElementById('fileError');
+            const filePreview = document.getElementById('filePreview');
+
+            fileUploadArea.addEventListener('click', function () {
+                revisedManuscriptFile.click();
+            });
+
+            revisedManuscriptFile.addEventListener('change', function (e) {
+                handleFileUpload(this.files);
+            });
+
+            fileUploadArea.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', function (e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+
+                if (e.dataTransfer.files.length) {
+                    handleFileUpload(e.dataTransfer.files);
+                }
+            });
+
+            function handleFileUpload(files) {
+                const file = files[0];
+                if (!file) return;
+
+                const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                const allowedExtensions = ['.pdf', '.docx'];
+
+                // Get file name for checking extension
+                const fileName = file.name.toLowerCase();
+
+                // Check file type
+                if (!allowedTypes.includes(file.type)) {
+                    // Also check by file extension for edge cases
+                    const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
+
+                    if (!hasValidExtension) {
+                        fileError.style.display = 'block';
+                        toastr.error('Please upload a PDF or Word document (.pdf, .docx)');
+                        return;
+                    }
+                }
+
+                fileError.style.display = 'none';
+
+                // Display file preview
+                filePreview.innerHTML = `
+                    <div class="file-preview-item">
+                        <div class="file-preview-name">
+                            <i class="fas ${fileName.endsWith('.pdf') ? 'fa-file-pdf' : 'fa-file-word'}"></i>
+                            <span>${escapeHtml(file.name)}</span>
+                            <span style="color: var(--text-light); font-size: 0.9rem;">
+                                (${formatFileSize(file.size)})
+                            </span>
+                        </div>
+                        <button type="button" class="file-preview-remove" id="removeFile">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                filePreview.style.display = 'block';
+
+                const removeBtn = document.getElementById('removeFile');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function (evt) {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        filePreview.style.display = 'none';
+                        filePreview.innerHTML = '';
+                        revisedManuscriptFile.value = '';
+                        // Clear any error messages
+                        fileError.style.display = 'none';
+                    });
+                }
+            }
+
+            // -------------------------------
+            // Form Submission
+            // -------------------------------
+            const submitBtn = document.getElementById('submitBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            // Cancel button - go back
+            cancelBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.history.back();
+            });
+
+            // Form submission
+            document.getElementById('resubmissionForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Get form values
+                const coverLetter = coverLetterQuill.root.innerHTML.trim();
+                const changesSummary = changesSummaryQuill.root.innerHTML.trim();
+                const filePresent = revisedManuscriptFile.files && revisedManuscriptFile.files.length > 0;
+                const token = getAuthToken2();
+
+                // Validation - ALL ERRORS IN TOASTR
+                if (!coverLetter || coverLetter === '<p><br></p>') {
+                    toastr.error('Please provide a cover letter');
+                    return;
+                }
+
+                if (!changesSummary || changesSummary === '<p><br></p>') {
+                    toastr.error('Please provide a summary of changes');
+                    return;
+                }
+
+                if (!filePresent) {
+                    toastr.error('Please upload the revised manuscript file');
+                    return;
+                }
+
+                if (!token) {
+                    toastr.error('Missing authentication token. Please login and try again.');
+                    return;
+                }
+
+                try {
+                    // Disable submit button and show loading state
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+                    // Create FormData
+                    const formData = new FormData();
+                    formData.append('coverLetter', coverLetter);
+                    formData.append('changesSummary', changesSummary);
+                    formData.append('file', revisedManuscriptFile.files[0]);
+
+                    // Submit to API - Using your corrected URL format
+                    const response = await fetch(`${BASE_URL}/submissions/${submissionId}/revise`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok || data.success === false) {
+                        const errorMessage = data.message || data.error || `Resubmission failed (status ${response.status})`;
+                        toastr.error(errorMessage);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Revision';
+                        return;
+                    }
+
+                    // SUCCESS - ONLY USE SWEETALERT FOR SUCCESS
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: data.message || 'Manuscript resubmitted successfully',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to submission details page
+                            window.location.href = `author-submission-details.html?id=${submissionId}`;
+                        }
+                    });
+
+                } catch (error) {
+                    console.error('Resubmission error:', error);
+                    toastr.error('An error occurred while submitting. Please check your connection and try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Revision';
+                }
+            });
+
+            // -------------------------------
+            // Helper Functions
+            // -------------------------------
+            function getSubmissionIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
+            }
+
+            async function loadOriginalManuscript(id) {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.');
+                        return;
+                    }
+
+                    // Using your corrected URL format with leading slash
+                    const response = await fetch(`${BASE_URL}/submissions/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to load submission: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load submission');
+                    }
+
+                    const submission = data.submission || data;
+                    renderOriginalManuscript(submission);
+                    renderAbstractCard(submission);
+
+                } catch (error) {
+                    console.error('Error loading original manuscript:', error);
+                    toastr.error('Failed to load manuscript details. Please try refreshing the page.');
+                }
+            }
+
+            function renderOriginalManuscript(submission) {
+                const card = document.getElementById('originalManuscriptCard');
+                if (!card || !submission) return;
+
+                // Format authors
+                const authors = submission.authors || [];
+                const authorsHtml = authors.length > 0
+                    ? `<div class="authors-display">${authors.map(author =>
+                        `<span class="author-tag"><i class="fas fa-user"></i> ${escapeHtml(author.name)}</span>`
+                    ).join('')}</div>`
+                    : '<div style="color: var(--text-light);">No authors listed</div>';
+
+                // Format journal info
+                const journalName = submission.journalId?.title || submission.journalTitle || 'Unknown Journal';
+                const journalIssn = submission.journalId?.issn || 'N/A';
+
+                card.innerHTML = `
+                    <h3><i class="fas fa-file-alt"></i> Original Manuscript Details</h3>
+                    <div class="manuscript-details">
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-heading"></i> Title
+                            </div>
+                            <div class="detail-content">
+                                <strong>${escapeHtml(submission.title || 'Untitled')}</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-book"></i> Journal
+                            </div>
+                            <div class="detail-content">
+                                ${escapeHtml(journalName)} <span style="color: var(--text-light);">(ISSN: ${escapeHtml(journalIssn)})</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <div class="detail-label">
+                                <i class="fas fa-users"></i> Authors
+                            </div>
+                            <div class="detail-content">
+                                ${authorsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function renderAbstractCard(submission) {
+                const abstractCard = document.getElementById('abstractCard');
+                if (!abstractCard || !submission) return;
+
+                // Format abstract
+                const abstract = submission.abstract || '<p>No abstract provided</p>';
+
+                abstractCard.innerHTML = `
+                    <h3><i class="fas fa-align-left"></i> Abstract</h3>
+                    <div class="abstract-content">
+                        ${abstract}
+                    </div>
+                `;
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        });
+    </script>
+</body>
+
+</html>

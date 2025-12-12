@@ -4,8 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My Submission</title>
+    <title>My Submissions</title>
+
     <script type="module" src="../assets/js/checkAuth.js"></script>
+
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- Font Awesome (icons) -->
@@ -13,35 +15,532 @@
 
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
-
     <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
-    <!-- Submission CSS -->
-    <link rel="stylesheet" href="/assets/css/submission.css">
-</head>
 
+    <!-- Page-specific CSS (kept here per your request) -->
+    <style>
+        /* --- Shared variables (align with editor page) --- */
+        :root {
+            --primary: #ff7a18;
+            --primary-dark: #e56c0e;
+            --primary-light: rgba(255, 122, 24, 0.1);
+            --card-bg: #ffffff;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --muted: #6b7280;
+            --text-primary: #111827;
+            --radius: 12px;
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+        }
+
+        /* Page container (same as editor page) */
+        .container.page-title {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.6rem;
+            margin: 0;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .page-title p {
+            margin: .25rem 0 0;
+            color: var(--muted);
+        }
+
+        /* --- Filter controls: match Editor Submissions exactly --- */
+        .filter-controls {
+            background: linear-gradient(180deg, #ffffff 0%, #fcfcff 100%);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.25rem;
+            margin-top: 1.25rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        /* Buttons (same visual style as editor page) */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 0.65rem 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+
+        /* --- Custom Select (same structural style as editor page) --- */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select .select-header {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.55rem 0.8rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        .custom-select .selected-text.placeholder {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .custom-select .select-arrow {
+            color: var(--muted);
+        }
+
+        .custom-select .select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            z-index: 9999;
+            display: none;
+            max-height: 260px;
+            overflow: auto;
+        }
+
+        .custom-select.open .select-dropdown {
+            display: block;
+        }
+
+        .select-search {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            padding: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .select-search input {
+            width: 100%;
+            padding: 0.45rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .select-search input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 122, 24, 0.06);
+        }
+
+        .clear-search-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            display: flex;
+        }
+
+        .select-options .select-option {
+            padding: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .select-options .select-option:hover {
+            background: var(--light);
+        }
+
+        .select-no-results {
+            padding: 0.9rem;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        /* --- Cards grid: 3 per row, matches editor page --- */
+        .manuscripts-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width:1100px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width:700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Card style (match editor look) --- */
+        .submission-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 220px;
+            position: relative;
+        }
+
+        .submission-card .card-header {
+            padding: 1rem;
+            padding-top: 2.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .submission-card .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .submission-card .card-sub {
+            color: var(--muted);
+            margin-top: 0.45rem;
+            font-size: 0.92rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .submission-card .card-content {
+            padding: 0.85rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .submission-card .authors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.35rem;
+        }
+
+        .submission-card .author {
+            background: var(--light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        /* Actions block (after authors) */
+        .action-links {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .action-links .link {
+            padding: 0.45rem 0.6rem;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            gap: 0.5rem;
+            align-items: center;
+            color: var(--muted);
+            background: transparent;
+            transition: all 0.12s ease;
+        }
+
+        .action-links .link:hover {
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            color: var(--text-primary);
+            background: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Card footer: ONLY view details + submitted date (match editor card footer) */
+        .submission-card .card-footer {
+            padding: 0.8rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+            background: var(--light);
+        }
+
+        .btn-view {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.5rem 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-view:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .submitted-date {
+            font-size: 0.92rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        /* Status badge (top-right) */
+        .status-badge {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            padding: 0.35rem 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: capitalize;
+            box-shadow: 0 6px 18px rgba(22, 24, 46, 0.06);
+        }
+
+        /* No-results fallback */
+        .no-results {
+            grid-column: 1/-1;
+            padding: 2.25rem;
+            text-align: center;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        /* small spinner animation (for loading states used by JS) */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* --- Pagination styles (copy to my-submission.html or submission.css) --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        /* left text e.g. "Showing X to Y of Z" */
+        .pagination-info {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-right: 1rem;
+        }
+
+        /* controls wrapper (buttons + dots) */
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* generic pagination button */
+        .pagination-btn {
+            background: var(--light);
+            color: var(--text-secondary, #6b7280);
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.9rem;
+            border-radius: var(--radius-sm, 6px);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal, all .18s ease);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            min-width: 44px;
+            justify-content: center;
+        }
+
+        /* hover and active states */
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--btn-secondary-hover, #f3f4f6);
+            border-color: var(--text-light);
+            transform: translateY(-2px);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* active page */
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* dots */
+        .pagination-dots {
+            color: var(--text-muted);
+            padding: 0 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* responsive tweaks to keep layout neat on small screens */
+        @media (max-width: 768px) {
+            .pagination {
+                padding-top: 1rem;
+                gap: 0.5rem;
+            }
+
+            .pagination-info {
+                width: 100%;
+                text-align: center;
+                order: 2;
+                margin: 0;
+                font-size: 0.9rem;
+            }
+
+            .pagination-controls {
+                width: 100%;
+                justify-content: center;
+                order: 1;
+            }
+
+            .pagination-btn {
+                padding: 0.45rem 0.75rem;
+                min-width: 36px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .submission-card .card-footer {
+                flex-direction: row;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .submission-card .card-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
 
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar Included-->
         <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
-            <!-- Header Included-->
-            <div id="header-placeholder"></div> 
+            <div id="header-placeholder"></div>
 
             <main class="main-content">
                 <div class="container page-title">
                     <h1>My Submissions</h1>
                     <p>View all manuscripts you’ve submitted</p>
                 </div>
+
+                <!-- Filter controls injected here by JS (keeps markup consistent) -->
+                <div id="filterArea"></div>
+
                 <div class="manuscripts-wrapper">
-                
-                    <!-- Grid container where cards will be injected -->
-                    <div id="cardsGrid" class="cards-grid"></div>
-                
-                    <!-- Template for fallback if JS disabled -->
+                    <div id="cardsGrid" class="cards-grid">
+                        <!-- cards injected here -->
+                    </div>
+
                     <noscript>
-                        <div class="alert alert-warning">JavaScript is required to load your manuscripts. Please enable JS.</div>
+                        <div class="no-results">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>JavaScript Required</h3>
+                            <p>JavaScript is required to load your manuscripts. Please enable JS.</p>
+                        </div>
                     </noscript>
                 </div>
             </main>
@@ -52,12 +551,13 @@
         window.SIDEBAR_MODULE = 'author';
         window.SIDEBAR_ACTIVE_ID = 'view-submission';
     </script>
+
     <script src="/assets/js/layout.js"></script>
-    <!-- jQuery (required for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="js/my-submissions.js"></script>
+
+    <!-- page logic (separate file) -->
+    <script type="module" src="js/my-submissions.js"></script>
 </body>
 
 </html>

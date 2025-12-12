@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Submission Details</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Submission Details CSS -->
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --primary: #ff7a18;
+            --primary-light: rgba(255, 122, 24, 0.1);
+            --primary-dark: #e56c0e;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --radius: 12px;
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+        }
+
+        .submission-details-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Back Button */
+        .back-button-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            color: #374151;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
+        /* Manuscript Header Card */
+        .manuscript-header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+            position: relative;
+            min-height: 180px;
+        }
+
+        .manuscript-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .header-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .count-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Abstract Section */
+        .abstract-content {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .abstract-content p {
+            margin: 0 0 1rem 0;
+        }
+
+        .abstract-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Authors Section */
+        .authors-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .author-item {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .author-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .author-email {
+            color: var(--muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Assigned Reviewers Section */
+        .reviewers-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .reviewer-card {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            min-width: 250px;
+            flex: 1;
+        }
+
+        .reviewer-card .reviewer-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .reviewer-card .reviewer-email {
+            color: var(--muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reviewer-status {
+            font-size: 0.85rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-indicator.pending {
+            background-color: var(--warning);
+        }
+
+        .status-indicator.completed {
+            background-color: var(--success);
+        }
+
+        .no-reviewers {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            width: 100%;
+        }
+
+        .no-reviewers i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        /* Update these styles in the CSS section */
+
+/* Review Details Section - Fixed Height Cards */
+.review-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-card {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    position: relative;
+    min-height: 146px; /* Fixed height */
+    max-height: 146px; /* Fixed height */
+    overflow: hidden; /* Hide overflow */
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+.detail-content {
+    flex: 1;
+    overflow: hidden; /* Hide overflow content */
+    position: relative;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: #111827;
+    line-height: 1.5;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Truncated text with fade effect */
+.detail-value.truncated {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Show max 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 4.5em; /* 3 lines * 1.5 line-height */
+}
+
+/* Fade effect for truncated text */
+.detail-value.truncated::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30%;
+    height: 1.5em;
+    background: linear-gradient(to right, rgba(248, 250, 252, 0), var(--light) 50%);
+}
+
+.view-more-btn {
+    background: none;
+    border: none;
+    color: var(--info);
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: underline;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    flex-shrink: 0; /* Prevent button from moving */
+}
+
+.view-more-btn:hover {
+    color: #2563eb;
+}
+
+.view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--info);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-decoration: none;
+    margin-top: 1rem;
+}
+
+.view-all-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+        /* Revised Submission Section */
+        .revisions-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .revision-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+
+        /* File Actions */
+        .file-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        /* Timeline Section */
+        .timeline-item {
+            position: relative;
+            margin: 28px 0;
+            display: block;
+            padding-top: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 6px rgba(255, 122, 24, 0.1);
+            z-index: 2;
+        }
+
+        .timeline-item .card {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+            will-change: transform;
+            position: relative;
+            min-height: 78px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .timeline-item .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .timeline-item .status-badge {
+            width: fit-content;
+            display: inline-block;
+            padding: 0.28rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+
+        .timeline-comment {
+            margin: 0.5rem 0;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .updated-by {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .updated-by strong {
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            z-index: 10001;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Loading and Error States */
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .error-screen i {
+            color: var(--danger);
+            margin-bottom: 1rem;
+        }
+
+        .error-screen h3 {
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .retry-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-icon {
+            background: #f0f0f0;
+            border-radius: 50%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .submission-details-container {
+                padding: 0 0.5rem;
+            }
+
+            .manuscript-header-card {
+                padding: 1.5rem;
+            }
+
+            .manuscript-header-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .content-section {
+                padding: 1rem;
+            }
+
+            .revisions-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .revision-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .file-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .review-details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reviewer-card,
+            .author-item {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Included-->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <!-- Header Included-->
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <!-- Back Button -->
+                <div class="back-button-wrap">
+                    <a href="my-submission.html" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Back to My Submissions
+                    </a>
+                </div>
+
+                <div class="submission-details-container">
+                    <!-- Manuscript Header Card -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Skeleton Loading -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Screen -->
+                    <div id="loadingScreen" class="loading-screen">
+                        <div class="spinner"></div>
+                        <p>Loading submission details...</p>
+                    </div>
+
+                    <!-- Error Screen -->
+                    <div id="errorScreen" class="error-screen" style="display: none;">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                        <h3>Failed to load submission</h3>
+                        <p id="errorMessage">An error occurred while loading the submission.</p>
+                        <button class="retry-btn" onclick="window.location.reload()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+
+                    <!-- Content (hidden until loaded) -->
+                    <div id="contentContainer" style="display: none;">
+                        <!-- Abstract Section -->
+                        <div id="abstractSection" class="content-section" style="display: none;">
+                            <h2 class="section-title">
+                                <i class="fas fa-align-left"></i> Abstract
+                            </h2>
+                            <div id="abstractContent" class="abstract-content">
+                                <!-- Abstract will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Authors Section -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-users"></i> Authors
+                            </h2>
+                            <div id="authorsList" class="authors-list">
+                                <!-- Authors will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Assigned Reviewers Section -->
+                        <div id="assignedReviewersSection" class="content-section" style="display: none;">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-user-check"></i> Assigned Reviewers
+                                </h2>
+                                <span id="reviewersCount" class="count-badge">0</span>
+                            </div>
+                            <div id="assignedReviewers" class="reviewers-container">
+                                <!-- Reviewers will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- File Actions Section -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-file"></i> Manuscript File
+                            </h2>
+                            <div class="file-actions">
+                                <button id="viewDocumentBtn" class="btn btn-primary">
+                                    <i class="fas fa-eye"></i> View Document
+                                </button>
+                                <button id="downloadBtn" class="btn btn-secondary">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Review Details Section -->
+                        <div id="reviewDetailsSection" class="content-section" style="display: none;">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-clipboard-check"></i> Review Details
+                                </h2>
+                                <a id="viewAllReviewsBtn" class="view-all-btn" style="display: none;">
+                                    <i class="fas fa-external-link-alt"></i> View All Reviews
+                                </a>
+                            </div>
+                            <div class="review-details-grid">
+                                <div class="detail-card">
+                                    <div class="detail-label">
+                                        <i class="fas fa-sync-alt"></i> Revision Count
+                                    </div>
+                                    <div id="rvCount" class="detail-value">0</div>
+                                </div>
+                                <div id="editorialDecisionCard" class="detail-card" style="display: none;">
+                                    <div class="detail-label">
+                                        <i class="fas fa-gavel"></i> Editorial Decision
+                                    </div>
+                                    <div id="editorialDecision" class="detail-value">
+                                        <!-- Decision content will be populated here -->
+                                    </div>
+                                </div>
+                                <div id="reviewerFeedbackCard" class="detail-card" style="display: none;">
+                                    <div class="detail-label">
+                                        <i class="fas fa-comment"></i> Reviewer Feedback
+                                    </div>
+                                    <div id="reviewerFeedback" class="detail-value">
+                                        <!-- Reviewer feedback will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Revised Submission Section -->
+                        <div id="revisedSection" class="content-section" style="display: none;">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-redo"></i> Revised Submission
+                                </h2>
+                                <span id="revisionCountDisplay" class="count-badge">0 revisions</span>
+                            </div>
+                            <div class="revisions-container">
+                                <div class="revision-stats">
+                                    <div class="stat-item">
+                                        <div id="totalRevisions" class="stat-number">0</div>
+                                        <div class="stat-label">Total Revisions</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div id="latestRevision" class="stat-number">-</div>
+                                        <div class="stat-label">Latest Revision</div>
+                                    </div>
+                                </div>
+                                <button id="resubmitBtn" class="btn btn-primary">
+                                    <i class="fas fa-upload"></i> Resubmit Manuscript
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Section -->
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-history"></i> Timeline
+                                </h2>
+                                <button id="viewFullTimelineBtn" class="btn btn-secondary">
+                                    <i class="fas fa-external-link-alt"></i> View Full Timeline
+                                </button>
+                            </div>
+                            <div id="recentTimeline">
+                                <!-- Recent timeline events will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'author-submissions';
+    </script>
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Page-specific JavaScript -->
+    <script type="module">
+        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+
+        class AuthorSubmissionDetailsManager {
+            constructor() {
+                this.submissionId = this.getSubmissionIdFromURL();
+                this.submission = null;
+                this.editorialDecision = null;
+                this.reviewerFeedback = null;
+                this.userCache = new Map();
+                this.journalCache = new Map();
+
+                if (!this.submissionId) {
+                    this.showError('No submission ID provided');
+                    return;
+                }
+
+                this.initializeToastr();
+                this.bindEvents();
+                this.initialize();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            bindEvents() {
+                // View full timeline button
+                document.getElementById('viewFullTimelineBtn')?.addEventListener('click', () => {
+                    window.location.href = `timeline.html?id=${this.submissionId}`;
+                });
+
+                // Resubmit button
+                document.getElementById('resubmitBtn')?.addEventListener('click', () => {
+                    window.location.href = `resubmission.html?id=${this.submissionId}`;
+                });
+
+                // View all reviews button
+                document.getElementById('viewAllReviewsBtn')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.href = `author-review-details.html?id=${this.submissionId}`;
+                });
+            }
+
+            getSubmissionIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
+            }
+
+            async initialize() {
+                try {
+                    this.showLoading();
+                    await this.loadMainSubmissionData();
+                    await this.loadReviewDetails();
+                    await this.loadAssignedReviewers();
+                    await this.loadLatestTimelineEvent();
+                    this.hideLoading();
+                    this.showContent();
+                } catch (error) {
+                    console.error('Error initializing:', error);
+                    this.showError('Failed to load submission details. Please try again.');
+                }
+            }
+
+            async loadMainSubmissionData() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) throw new Error('Authentication token not found');
+
+                    // Fetch main submission data
+                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch submission: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load submission');
+                    }
+
+                    this.submission = data.submission || data;
+
+                    // Get submitter info
+                    const submittedEvent = (this.submission.history || []).find(ev => ev.status === 'submitted');
+                    if (submittedEvent?.by) {
+                        const submitter = await this.getUserDetails(submittedEvent.by);
+                        if (submitter) {
+                            this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
+                            this.submission.submitterEmail = submitter.email;
+                        }
+                    }
+
+                    // Get journal details if journalId is available
+                    if (this.submission.journalId && this.submission.journalId._id) {
+                        const journal = await this.getJournalDetails(this.submission.journalId._id);
+                        if (journal) {
+                            // Merge journal details
+                            this.submission.journalId = {
+                                ...this.submission.journalId,
+                                title: journal.title || this.submission.journalId.title,
+                                issn: journal.issn || this.submission.journalId.issn
+                            };
+                        }
+                    }
+
+                    this.renderManuscriptHeader();
+                    this.renderAbstract();
+                    this.renderAuthors();
+                    this.setupFileActions();
+
+                } catch (error) {
+                    console.error('Error loading submission data:', error);
+                    throw error;
+                }
+            }
+
+            async getUserDetails(userId) {
+                if (!userId) return null;
+                if (this.userCache.has(userId)) return this.userCache.get(userId);
+
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return null;
+                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch user ${userId}: ${response.status}`);
+                        return null;
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) return null;
+
+                    const user = data.user || data;
+                    if (!user) return null;
+                    this.userCache.set(userId, user);
+                    return user;
+                } catch (error) {
+                    console.error(`Error fetching user ${userId}:`, error);
+                    return null;
+                }
+            }
+
+            async getJournalDetails(journalId) {
+                if (!journalId) return null;
+                if (this.journalCache.has(journalId)) return this.journalCache.get(journalId);
+
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return null;
+                    const response = await fetch(`${BASE_URL}/journal/${journalId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch journal ${journalId}: ${response.status}`);
+                        return null;
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) return null;
+
+                    const journal = data.journal || data;
+                    if (!journal) return null;
+                    this.journalCache.set(journalId, journal);
+                    return journal;
+                } catch (error) {
+                    console.error(`Error fetching journal ${journalId}:`, error);
+                    return null;
+                }
+            }
+
+            renderManuscriptHeader() {
+                const header = document.getElementById('manuscriptHeader');
+                if (!header || !this.submission) return;
+
+                const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
+                const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
+                const statusDisplay = this.formatStatus(statusToDisplay);
+
+                // Get journal name and ISSN
+                const journalName = this.submission.journalId?.title || this.submission.journalTitle || 'Unknown Journal';
+                const journalISSN = this.submission.journalId?.issn || 'N/A';
+                const submittedByName = this.submission.submitterName || 'Unknown';
+
+                header.innerHTML = `
+                    <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
+                    <span class="header-status-badge">${this.escapeHtml(statusDisplay)}</span>
+                    <div class="header-meta">
+                        <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
+                        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
+                        <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
+                        <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
+                    </div>
+                `;
+            }
+
+            renderAbstract() {
+                const abstractSection = document.getElementById('abstractSection');
+                const abstractContent = document.getElementById('abstractContent');
+
+                if (!abstractSection || !abstractContent || !this.submission) return;
+
+                const abstract = this.submission.abstract || '';
+                if (abstract && abstract.trim() !== '') {
+                    abstractSection.style.display = 'block';
+                    abstractContent.innerHTML = abstract;
+                } else {
+                    abstractSection.style.display = 'none';
+                }
+            }
+
+            renderAuthors() {
+                const authorsList = document.getElementById('authorsList');
+                if (!authorsList || !this.submission) return;
+
+                const authors = this.submission.authors || [];
+                if (authors.length === 0) {
+                    authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
+                    return;
+                }
+
+                authorsList.innerHTML = authors.map(author => `
+                    <div class="author-item">
+                        <div class="author-name">${this.escapeHtml(author.name)}</div>
+                        <div class="author-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(author.email)}</div>
+                    </div>
+                `).join('');
+            }
+
+            async loadAssignedReviewers() {
+                const assignedReviewersSection = document.getElementById('assignedReviewersSection');
+                const assignedReviewersContainer = document.getElementById('assignedReviewers');
+                const reviewersCount = document.getElementById('reviewersCount');
+
+                if (!assignedReviewersSection || !assignedReviewersContainer || !this.submission) return;
+
+                const assignedReviewers = this.submission.assignedReviewers || [];
+
+                if (assignedReviewers.length === 0) {
+                    assignedReviewersSection.style.display = 'none';
+                    return;
+                }
+
+                assignedReviewersSection.style.display = 'block';
+                if (reviewersCount) reviewersCount.textContent = assignedReviewers.length;
+
+                // Load reviewer details
+                const reviewerPromises = assignedReviewers.map(async (assignment) => {
+                    const reviewerId = assignment.reviewerId;
+                    if (!reviewerId) return null;
+
+                    const user = await this.getUserDetails(reviewerId);
+                    if (!user) return null;
+
+                    return {
+                        ...assignment,
+                        name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown Reviewer',
+                        email: user.email || '',
+                        hasReviewed: assignment.hasReviewed || false
+                    };
+                });
+
+                const reviewers = (await Promise.all(reviewerPromises)).filter(Boolean);
+
+                if (reviewers.length === 0) {
+                    assignedReviewersContainer.innerHTML = `
+                        <div class="no-reviewers">
+                            <i class="fas fa-user-slash"></i>
+                            <p>No reviewers information available</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                assignedReviewersContainer.innerHTML = reviewers.map(reviewer => `
+                    <div class="reviewer-card">
+                        <div class="reviewer-name">${this.escapeHtml(reviewer.name)}</div>
+                        <div class="reviewer-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(reviewer.email)}</div>
+                        <div class="reviewer-status">
+                            <span class="status-indicator ${reviewer.hasReviewed ? 'completed' : 'pending'}"></span>
+                            ${reviewer.hasReviewed ? 'Review completed' : 'Review pending'}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            setupFileActions() {
+                const viewBtn = document.getElementById('viewDocumentBtn');
+                const downloadBtn = document.getElementById('downloadBtn');
+
+                if (!viewBtn || !downloadBtn || !this.submission) return;
+
+                const fileUrl = this.submission.file?.url || this.submission.file;
+                if (!fileUrl) {
+                    viewBtn.disabled = true;
+                    downloadBtn.disabled = true;
+                    viewBtn.innerHTML = '<i class="fas fa-eye"></i> No Document Available';
+                    downloadBtn.innerHTML = '<i class="fas fa-download"></i> No Document Available';
+                    return;
+                }
+
+                const resolvedUrl = this.buildFileUrl(fileUrl);
+                const fileName = this.submission.file?.originalName || this.submission.title || 'manuscript';
+
+                viewBtn.addEventListener('click', () => {
+                    window.open(resolvedUrl, '_blank');
+                });
+
+                downloadBtn.addEventListener('click', () => {
+                    const link = document.createElement('a');
+                    link.href = resolvedUrl;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+
+            buildFileUrl(filePath) {
+                if (!filePath) return null;
+                try {
+                    // If it's already a full URL
+                    const url = new URL(filePath);
+                    return url.toString();
+                } catch {
+                    // If it's a relative path, prepend base URL
+                    return `${BASE_URL.replace('/api/v1', '')}${filePath}`;
+                }
+            }
+
+
+            async loadReviewDetails() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    const response = await fetch(`${BASE_URL}/submissions/details/${this.submissionId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn('Failed to fetch review details:', response.status);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) return;
+
+                    this.editorialDecision = data.editorialDecision || null;
+                    this.reviewerFeedback = data.reviewerFeedback || null;
+
+                    // Show review details section
+                    const reviewDetailsSection = document.getElementById('reviewDetailsSection');
+                    const viewAllReviewsBtn = document.getElementById('viewAllReviewsBtn');
+
+                    if (reviewDetailsSection) {
+                        reviewDetailsSection.style.display = 'block';
+
+                        // Show view all button
+                        if (viewAllReviewsBtn) {
+                            viewAllReviewsBtn.style.display = 'inline-flex';
+                        }
+
+                        // Revision count
+                        const revisionCount = data.submission?.revisionCount || this.submission?.revisionCount || 0;
+                        document.getElementById('rvCount').textContent = revisionCount;
+
+                        // Editorial decision
+                        const editorialDecisionCard = document.getElementById('editorialDecisionCard');
+                        if (this.editorialDecision && editorialDecisionCard) {
+                            editorialDecisionCard.style.display = 'block';
+
+                            const decisionText = this.formatDecision(this.editorialDecision.decision);
+                            const commentText = this.stripHtml(this.editorialDecision.comment || '');
+
+                            // Check if text needs truncation for 146px height (approx 100-120 chars)
+                            const maxCharsForHeight = 120;
+                            const isLongComment = commentText.length > maxCharsForHeight;
+                            const commentPreview = isLongComment ?
+                                commentText.substring(0, maxCharsForHeight) + '...' :
+                                commentText;
+
+                            const editorialDecisionDiv = document.getElementById('editorialDecision');
+                            editorialDecisionDiv.innerHTML = `
+                    <div class="detail-content">
+                        <strong style="display:block; margin-bottom: 0.5rem;">${decisionText}</strong>
+                        <div class="detail-value ${isLongComment ? 'truncated' : ''}">${this.escapeHtml(commentPreview)}</div>
+                    </div>
+                `;
+
+                            // Add view more button if comment is long
+                            if (isLongComment) {
+                                const viewMoreBtn = document.createElement('button');
+                                viewMoreBtn.className = 'view-more-btn';
+                                viewMoreBtn.innerHTML = '<i class="fas fa-eye"></i> View in review details';
+                                viewMoreBtn.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    window.location.href = `author-review-details.html?id=${this.submissionId}`;
+                                });
+
+                                editorialDecisionDiv.appendChild(viewMoreBtn);
+                            }
+                        }
+
+                        // Reviewer feedback
+                        const reviewerFeedbackCard = document.getElementById('reviewerFeedbackCard');
+                        if (this.reviewerFeedback && reviewerFeedbackCard) {
+                            reviewerFeedbackCard.style.display = 'block';
+
+                            const reviewerFeedbackDiv = document.getElementById('reviewerFeedback');
+
+                            if (this.reviewerFeedback.available && this.reviewerFeedback.reviews && this.reviewerFeedback.reviews.length > 0) {
+                                const review = this.reviewerFeedback.reviews[0]; // Show first review
+                                const recommendation = this.formatDecision(review.recommendation);
+                                const score = review.score || 'N/A';
+                                const date = this.formatDate(review.submittedAt, true); // Date only
+
+                                // Check if we need to show review comment
+                                let reviewComment = '';
+                                let isLongReview = false;
+
+                                if (review.comment) {
+                                    const commentText = this.stripHtml(review.comment);
+                                    const maxCharsForHeight = 80; // Less space due to score and date
+                                    isLongReview = commentText.length > maxCharsForHeight;
+                                    reviewComment = isLongReview ?
+                                        commentText.substring(0, maxCharsForHeight) + '...' :
+                                        commentText;
+                                }
+
+                                reviewerFeedbackDiv.innerHTML = `
+                        <div class="detail-content">
+                            <strong style="display:block; margin-bottom: 0.25rem;">${recommendation}</strong>
+                            ${reviewComment ? `<div class="detail-value ${isLongReview ? 'truncated' : ''}" style="margin-bottom: 0.5rem;">${this.escapeHtml(reviewComment)}</div>` : ''}
+                            <div style="color: var(--muted); font-size: 0.9rem;">
+                                Score: ${score}% • ${date}
+                            </div>
+                        </div>
+                    `;
+
+                                // Add view more button if review comment is long
+                                if (isLongReview) {
+                                    const viewMoreBtn = document.createElement('button');
+                                    viewMoreBtn.className = 'view-more-btn';
+                                    viewMoreBtn.innerHTML = '<i class="fas fa-eye"></i> View in review details';
+                                    viewMoreBtn.addEventListener('click', (e) => {
+                                        e.preventDefault();
+                                        window.location.href = `author-review-details.html?id=${this.submissionId}`;
+                                    });
+
+                                    reviewerFeedbackDiv.appendChild(viewMoreBtn);
+                                }
+                            } else {
+                                reviewerFeedbackDiv.innerHTML = `
+                        <div class="detail-content">
+                            <div class="detail-value">No reviewer feedback available</div>
+                        </div>
+                    `;
+                            }
+                        }
+                    }
+
+                    // Show revised section if status is revised
+                    const status = this.submission?.currentStatus || this.submission?.status || '';
+                    const revisedSection = document.getElementById('revisedSection');
+
+                    if (status === 'revised' && revisedSection) {
+                        revisedSection.style.display = 'block';
+                        const revisionCount = data.submission?.revisionCount || this.submission?.revisionCount || 0;
+                        document.getElementById('totalRevisions').textContent = revisionCount;
+                        document.getElementById('revisionCountDisplay').textContent = `${revisionCount} revision${revisionCount !== 1 ? 's' : ''}`;
+
+                        // Get latest revision date
+                        const latestRevision = this.submission.revisions?.[0]?.createdAt ||
+                            this.submission.updatedAt ||
+                            this.submission.createdAt;
+                        if (latestRevision) {
+                            document.getElementById('latestRevision').textContent = this.formatDate(latestRevision, true);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading review details:', error);
+                }
+            }
+
+            showDecisionModal() {
+                if (!this.editorialDecision) return;
+
+                // Remove existing modal if any
+                const existingModal = document.getElementById('decisionModal');
+                if (existingModal) existingModal.remove();
+
+                const decisionText = this.formatDecision(this.editorialDecision.decision);
+                const commentHtml = this.editorialDecision.comment || 'No comment provided';
+                const editorName = this.editorialDecision.editor?.name || 'Unknown Editor';
+                const editorAffiliation = this.editorialDecision.editor?.affiliation || 'No affiliation provided';
+                const decisionDate = this.formatDate(this.editorialDecision.decidedAt);
+
+                const modalHtml = `
+                    <div id="decisionModal" class="modal">
+                        <div class="modal-overlay"></div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3><i class="fas fa-gavel" style="color:var(--primary);"></i> Editorial Decision Details</h3>
+                                <button class="modal-close"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="modal-body">
+                                <div style="margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
+                                    <div style="font-size:1.1rem;font-weight:600;color:#111827;margin-bottom:0.25rem;">${this.escapeHtml(editorName)}</div>
+                                    <div style="color:var(--muted);font-size:0.9rem;">${this.escapeHtml(editorAffiliation)}</div>
+                                </div>
+                                
+                                <div style="margin-bottom:1.5rem;">
+                                    <div style="font-weight:600;color:#111827;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;">
+                                        <i class="fas fa-clipboard-check" style="color:var(--primary);"></i> Decision
+                                    </div>
+                                    <div style="background:var(--light);border-radius:8px;padding:1rem;">
+                                        <span class="status-badge" style="${this.getStatusStyle(this.editorialDecision.decision === 'accept' ? 'accepted' : this.editorialDecision.decision)}; display:inline-block;">
+                                            ${this.escapeHtml(decisionText)}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom:1.5rem;">
+                                    <div style="font-weight:600;color:#111827;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;">
+                                        <i class="fas fa-comment" style="color:var(--primary);"></i> Comments
+                                    </div>
+                                    <div style="background:var(--light);border-radius:8px;padding:1.5rem;white-space:pre-wrap;word-wrap:break-word;line-height:1.6;">
+                                        ${commentHtml}
+                                    </div>
+                                </div>
+                                
+                                <div style="color:var(--muted);font-size:0.9rem;display:flex;align-items:center;gap:0.5rem;">
+                                    <i class="far fa-clock"></i> Decided on: ${this.escapeHtml(decisionDate)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+                // Add event listeners
+                const modal = document.getElementById('decisionModal');
+                const closeBtn = modal.querySelector('.modal-close');
+                const overlay = modal.querySelector('.modal-overlay');
+
+                const closeModal = () => {
+                    modal.remove();
+                    document.body.style.overflow = '';
+                };
+
+                closeBtn.addEventListener('click', closeModal);
+                overlay.addEventListener('click', closeModal);
+
+                // Close with Escape key
+                const keyHandler = (e) => {
+                    if (e.key === 'Escape') closeModal();
+                };
+                document.addEventListener('keydown', keyHandler);
+
+                // Store handler for cleanup
+                modal._keyHandler = keyHandler;
+
+                // Prevent page scrolling
+                document.body.style.overflow = 'hidden';
+            }
+
+            async loadLatestTimelineEvent() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    // Use history from main submission data if available
+                    if (this.submission?.history && this.submission.history.length > 0) {
+                        const latestEvent = this.submission.history[0];
+                        await this.renderLatestTimelineEvent(latestEvent);
+                        return;
+                    }
+
+                    // Fallback to history endpoint
+                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch timeline: ${response.status}`);
+                        this.renderTimeline([]);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    const timelineData = data.submission || data;
+                    const history = timelineData.history || [];
+
+                    const latestEvent = history.length > 0 ? history[0] : null;
+                    if (latestEvent) {
+                        await this.renderLatestTimelineEvent(latestEvent);
+                    } else {
+                        this.renderTimeline([]);
+                    }
+                } catch (error) {
+                    console.error('Error loading timeline data:', error);
+                    this.renderTimeline([]);
+                }
+            }
+
+            async renderLatestTimelineEvent(event) {
+                const timelineContainer = document.getElementById('recentTimeline');
+                if (!timelineContainer) return;
+
+                let updatedBy = 'System';
+                if (event.by) {
+                    const user = await this.getUserDetails(event.by);
+                    if (user) {
+                        updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+                    }
+                }
+
+                timelineContainer.innerHTML = `
+                    <div class="timeline-item">
+                        <div class="card">
+                            <span class="status-badge" style="${this.getStatusStyle(event.status)}">
+                                ${this.formatStatus(event.status)}
+                            </span>
+                            <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
+                            <p class="timeline-date"><i class="far fa-clock"></i> ${this.formatDate(event.date)}</p>
+                            <div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getStatusStyle(status) {
+                const colors = {
+                    'submitted': 'background-color: #3b82f6; color: white;',
+                    'under_review': 'background-color: #f59e0b; color: white;',
+                    'reviewed': 'background-color: #8b5cf6; color: white;',
+                    'accepted': 'background-color: #10b981; color: white;',
+                    'rejected': 'background-color: #ef4444; color: white;',
+                    'revised': 'background-color: #8b5cf6; color: white;',
+                    'awaiting_payment': 'background-color: #f59e0b; color: white;',
+                    'published': 'background-color: #10b981; color: white;',
+                    'accept': 'background-color: #10b981; color: white;',
+                    'reject': 'background-color: #ef4444; color: white;',
+                    'minor_revision': 'background-color: #f59e0b; color: white;',
+                    'major_revision': 'background-color: #f59e0b; color: white;'
+                };
+                return colors[status] || 'background-color: #6b7280; color: white;';
+            }
+
+            formatDecision(decision) {
+                const decisionMap = {
+                    'accept': 'Accepted',
+                    'reject': 'Rejected',
+                    'minor_revision': 'Minor Revision Required',
+                    'major_revision': 'Major Revision Required'
+                };
+                return decisionMap[decision] || (decision.charAt(0).toUpperCase() + decision.slice(1)).replace(/_/g, ' ');
+            }
+
+            formatStatus(status) {
+                if (!status) return '';
+                const statusMap = {
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected',
+                    'revised': 'Revised',
+                    'awaiting_payment': 'Awaiting Payment',
+                    'published': 'Published',
+                    'minor_revision': 'Minor Revision',
+                    'major_revision': 'Major Revision',
+                    'revision_requested': 'Revision Requested'
+                };
+                return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
+            }
+
+            formatDate(dateString, dateOnly = false) {
+                try {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    if (dateOnly) {
+                        return date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                    }
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                } catch (error) {
+                    return dateString;
+                }
+            }
+
+            stripHtml(html) {
+                if (!html) return '';
+                const div = document.createElement('div');
+                div.innerHTML = html;
+                return div.textContent || div.innerText || '';
+            }
+
+            renderTimeline(events) {
+                const timelineContainer = document.getElementById('recentTimeline');
+                if (!timelineContainer) return;
+
+                if (events.length === 0) {
+                    timelineContainer.innerHTML = '<div style="color: var(--muted); text-align: center; padding: 2rem;">No timeline events found</div>';
+                }
+            }
+
+            showLoading() {
+                document.getElementById('loadingScreen').style.display = 'block';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('contentContainer').style.display = 'none';
+            }
+
+            hideLoading() {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
+
+            showContent() {
+                document.getElementById('contentContainer').style.display = 'block';
+            }
+
+            showError(message) {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('errorScreen').style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+            }
+
+            escapeHtml(str) {
+                if (str === undefined || str === null) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize the manager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AuthorSubmissionDetailsManager();
+        });
+    </script>
+</body>
+
+</html>

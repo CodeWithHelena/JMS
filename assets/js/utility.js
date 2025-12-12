@@ -15,7 +15,7 @@ function getAuthToken() {
 }
 
 export function getAuthToken2() {
-    return localStorage.getItem('editor_tkn');
+    return localStorage.getItem('token');
 }
 
 // Reusable Custom Select Component (without search)
