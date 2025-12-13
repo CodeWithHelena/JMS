@@ -253,6 +253,37 @@
             color: #2563eb;
         }
 
+        /* Comments Column Styling */
+        .comments-cell {
+            min-width: 150px;
+        }
+
+        .view-comments-btn {
+            background: var(--info);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-comments-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .view-comments-btn:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* Modal Styles */
         .modal-overlay {
             position: fixed;
@@ -264,7 +295,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 1200;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
@@ -280,8 +311,8 @@
             border-radius: var(--radius);
             box-shadow: var(--card-shadow-hover);
             width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
+            max-width: 800px;
+            max-height: 85vh;
             overflow: hidden;
             transform: translateY(20px);
             transition: transform 0.3s;
@@ -325,7 +356,7 @@
 
         .modal-body {
             padding: 1.5rem;
-            max-height: 60vh;
+            max-height: 65vh;
             overflow-y: auto;
         }
 
@@ -354,6 +385,136 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             line-height: 1.6;
+        }
+
+        /* Comments Modal Styling */
+        .modal-comments-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .comment-section {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .comment-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comment-section-header h4 {
+            margin: 0;
+            color: #111827;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comment-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background-color: var(--success);
+        }
+
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .visibility-message {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .visibility-message.hidden {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-left: 3px solid var(--danger);
+        }
+
+        .visibility-message.visible {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-left: 3px solid var(--success);
+        }
+
+        .comment-content {
+            line-height: 1.6;
+            word-wrap: break-word;
+            margin-top: 1rem;
+        }
+
+        .comment-content p {
+            margin: 0 0 1rem 0;
+        }
+
+        .comment-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .comment-content.empty {
+            color: var(--muted);
+            font-style: italic;
+            text-align: center;
+            padding: 2rem;
         }
 
         /* Timeline Section */
@@ -527,6 +688,28 @@
         }
 
         /* Responsive Design */
+        @media (max-width: 1024px) {
+            .reviewers-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .reviewers-table th,
+            .reviewers-table td {
+                white-space: normal;
+                min-width: 150px;
+            }
+
+            .reviewers-table td.reviewer-info {
+                min-width: 200px;
+            }
+
+            .reviewers-table td.comments-cell {
+                min-width: 120px;
+            }
+        }
+
         @media (max-width: 768px) {
             .review-progress-container {
                 padding: 0 0.5rem;
@@ -550,11 +733,6 @@
                 padding: 1rem;
             }
 
-            .reviewers-table {
-                display: block;
-                overflow-x: auto;
-            }
-
             .reviewers-table th,
             .reviewers-table td {
                 white-space: nowrap;
@@ -571,6 +749,30 @@
                 width: 100%;
                 justify-content: flex-start;
             }
+
+            .reviewers-table th:nth-child(5),
+            .reviewers-table td:nth-child(5) {
+                display: none;
+            }
+
+            .modal-comments-content {
+                gap: 1.5rem;
+            }
+
+            .comment-section {
+                padding: 1rem;
+            }
+
+            .comment-section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .comment-toggle {
+                width: 100%;
+                justify-content: space-between;
+            }
         }
 
         @media (max-width: 480px) {
@@ -580,6 +782,18 @@
 
             .stat-value {
                 font-size: 2rem;
+            }
+
+            .reviewers-table th:nth-child(4),
+            .reviewers-table td:nth-child(4),
+            .reviewers-table th:nth-child(3),
+            .reviewers-table td:nth-child(3) {
+                display: none;
+            }
+
+            .modal {
+                width: 95%;
+                max-height: 90vh;
             }
         }
     </style>
@@ -646,6 +860,7 @@
                                             <th>Score</th>
                                             <th>Recommendation</th>
                                             <th>Invitation Date</th>
+                                            <th>Comments</th>
                                         </tr>
                                     </thead>
                                     <tbody id="reviewersTableBody">
@@ -693,11 +908,11 @@
         </div>
     </div>
 
-    <!-- Recommendation Modal -->
-    <div class="modal-overlay" id="recommendationModal">
+    <!-- Single Modal for both comments and recommendations -->
+    <div class="modal-overlay" id="detailsModal">
         <div class="modal">
             <div class="modal-header">
-                <h3>Reviewer Recommendation</h3>
+                <h3 id="modalTitle">Details</h3>
                 <button class="modal-close" id="closeModal">
                     <i class="fas fa-times"></i>
                 </button>
@@ -720,10 +935,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Review Progress JavaScript -->
-    <script>
-        // Constants
-        const BASE_URL = 'https://fp.247laboratory.net/api/v1';
-        const getAuthToken2 = () => localStorage.getItem('editor_tkn') || localStorage.getItem('token');
+    <script type="module">
+
+        import { BASE_URL, token } from '../assets/js/utility.js';
 
         class ReviewProgressManager {
             constructor() {
@@ -731,7 +945,11 @@
                 this.progressData = null;
                 this.filteredTimeline = [];
                 this.currentFilter = 'all';
-                this.reviewersData = []; // Store enriched reviewer data
+                this.reviewersData = [];
+                this.currentReviewId = null;
+                this.currentVisibleToAuthor = false;
+                this.currentCommentToAuthor = '';
+                this.modalMode = ''; // 'comments' or 'recommendation'
 
                 if (!this.submissionId) {
                     this.showError('No submission ID provided');
@@ -769,8 +987,8 @@
                     });
 
                     // Close modal when clicking outside
-                    document.getElementById('recommendationModal')?.addEventListener('click', (e) => {
-                        if (e.target === document.getElementById('recommendationModal')) {
+                    document.getElementById('detailsModal')?.addEventListener('click', (e) => {
+                        if (e.target === document.getElementById('detailsModal')) {
                             this.closeModal();
                         }
                     });
@@ -820,11 +1038,7 @@
                     }
 
                     this.progressData = data;
-
-                    // Enrich reviewer data with names from API response
                     await this.enrichReviewerData();
-
-                    // Render the data
                     this.renderManuscriptHeader();
                     this.renderReviewersTable();
                     this.generateTimeline();
@@ -844,7 +1058,6 @@
                 const reviewers = this.progressData.reviewers;
                 this.reviewersData = reviewers.map(reviewer => ({
                     ...reviewer,
-                    // Use the reviewerName and reviewerEmail directly from API
                     reviewerName: reviewer.reviewerName || 'Unknown Reviewer',
                     reviewerEmail: reviewer.reviewerEmail || ''
                 }));
@@ -889,7 +1102,7 @@
                     const statusClass = this.getStatusClass(status);
                     const statusText = this.formatStatus(status);
 
-                    const scoreDisplay = reviewer.score !== null ?
+                    const scoreDisplay = reviewer.score !== null && reviewer.score !== undefined ?
                         `<div class="score-display"><span class="score-value">${reviewer.score}</span><span>/10</span></div>` :
                         `<span class="score-empty">Not scored</span>`;
 
@@ -899,7 +1112,35 @@
                     const reviewerName = reviewer.reviewerName;
                     const reviewerEmail = reviewer.reviewerEmail;
 
-                    // Truncate recommendation if it's too long
+                    // Check if reviewer has comments - FIXED CONDITION
+                    const hasComments = reviewer.commentToEditor || reviewer.commentToAuthor;
+                    const isReviewCompleted = reviewer.invitationStatus === 'completed' || reviewer.invitationStatus === 'accepted';
+
+                    // Comments column - FIXED LOGIC
+                    let commentsDisplay = '';
+                    if (isReviewCompleted) {
+                        if (hasComments) {
+                            commentsDisplay = `
+                                <button class="view-comments-btn" 
+                                        onclick="reviewProgress.showCommentsModal(
+                                            '${this.escapeHtml(reviewerName)}',
+                                            '${this.escapeHtml(reviewerEmail)}',
+                                            '${this.escapeHtml(reviewer.commentToEditor || '')}',
+                                            '${this.escapeHtml(reviewer.commentToAuthor || '')}',
+                                            ${reviewer.visibleToAuthor || false},
+                                            '${reviewer.reviewId}'
+                                        )">
+                                    <i class="fas fa-comment"></i> View
+                                </button>
+                            `;
+                        } else {
+                            commentsDisplay = '<span class="score-empty">No comments</span>';
+                        }
+                    } else {
+                        commentsDisplay = '<span class="score-empty">Not submitted</span>';
+                    }
+
+                    // Recommendation display
                     let recommendationDisplay = '';
                     if (recommendation) {
                         const isLong = recommendation.length > 100;
@@ -929,6 +1170,7 @@
                             <td>${scoreDisplay}</td>
                             <td class="recommendation-cell">${recommendationDisplay}</td>
                             <td>${invitationDate}</td>
+                            <td class="comments-cell">${commentsDisplay}</td>
                         </tr>
                     `;
                 });
@@ -936,25 +1178,201 @@
                 tableBody.innerHTML = tableHTML;
             }
 
-            showRecommendationModal(reviewerName, reviewerEmail, recommendation) {
+            showCommentsModal(reviewerName, reviewerEmail, commentToEditor, commentToAuthor, visibleToAuthor, reviewId) {
+                this.modalMode = 'comments';
+                this.currentReviewId = reviewId;
+                this.currentCommentToAuthor = commentToAuthor;
+                this.currentVisibleToAuthor = visibleToAuthor;
+
+                const modalTitle = document.getElementById('modalTitle');
                 const modalBody = document.getElementById('modalBody');
-                if (!modalBody) return;
+
+                if (!modalTitle || !modalBody) return;
+
+                modalTitle.textContent = 'Reviewer Comments';
+
+                // Format comments to preserve HTML formatting but safely escape
+                const formattedCommentToEditor = this.formatCommentForDisplay(commentToEditor);
+                const formattedCommentToAuthor = this.formatCommentForDisplay(commentToAuthor);
 
                 modalBody.innerHTML = `
                     <div class="modal-reviewer-info">
-                        <div class="modal-reviewer-name">${reviewerName}</div>
-                        <div class="modal-reviewer-email">${reviewerEmail}</div>
+                        <div class="modal-reviewer-name">${this.escapeHtml(reviewerName)}</div>
+                        <div class="modal-reviewer-email">${this.escapeHtml(reviewerEmail)}</div>
+                    </div>
+                    
+                    <div class="modal-comments-content">
+                        <!-- Comment to Editor -->
+                        <div class="comment-section">
+                            <div class="comment-section-header">
+                                <h4><i class="fas fa-user-tie"></i> Comment to Editor</h4>
+                            </div>
+                            <div class="comment-content">
+                                ${formattedCommentToEditor || '<div class="empty">No comments to editor</div>'}
+                            </div>
+                        </div>
+                        
+                        <!-- Comment to Author -->
+                        <div class="comment-section">
+                            <div class="comment-section-header">
+                                <h4><i class="fas fa-user-edit"></i> Comment to Author</h4>
+                                <div class="comment-toggle">
+                                    <span class="toggle-label">Visible to Author</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="visibilityToggle" ${visibleToAuthor ? 'checked' : ''}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="visibilityMessage" class="visibility-message ${visibleToAuthor ? 'visible' : 'hidden'}">
+                                <i class="fas ${visibleToAuthor ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                                ${visibleToAuthor ? 'Comment visible to author' : 'Comment not visible to author'}
+                            </div>
+                            <div class="comment-content">
+                                ${formattedCommentToAuthor || '<div class="empty">No comments to author</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add event listener for the toggle
+                const toggle = document.getElementById('visibilityToggle');
+                if (toggle) {
+                    toggle.addEventListener('change', () => this.toggleCommentVisibility());
+                }
+
+                document.getElementById('detailsModal').classList.add('active');
+            }
+
+            showRecommendationModal(reviewerName, reviewerEmail, recommendation) {
+                this.modalMode = 'recommendation';
+
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+
+                if (!modalTitle || !modalBody) return;
+
+                modalTitle.textContent = 'Reviewer Recommendation';
+                modalBody.innerHTML = `
+                    <div class="modal-reviewer-info">
+                        <div class="modal-reviewer-name">${this.escapeHtml(reviewerName)}</div>
+                        <div class="modal-reviewer-email">${this.escapeHtml(reviewerEmail)}</div>
                     </div>
                     <div class="modal-recommendation-content">
                         ${this.escapeHtml(recommendation)}
                     </div>
                 `;
 
-                document.getElementById('recommendationModal').classList.add('active');
+                document.getElementById('detailsModal').classList.add('active');
+            }
+
+            formatCommentForDisplay(comment) {
+                if (!comment || comment.trim() === '') {
+                    return '';
+                }
+
+                // Decode HTML entities and preserve basic formatting
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = comment;
+
+                // Sanitize by allowing only safe HTML tags
+                const allowedTags = ['strong', 'em', 'u', 'b', 'i', 'p', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+                // Remove potentially dangerous tags but keep allowed ones
+                const sanitizedContent = this.sanitizeHTML(comment, allowedTags);
+
+                return sanitizedContent;
+            }
+
+            sanitizeHTML(html, allowedTags) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                // Remove script tags and other dangerous elements
+                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
+                scripts.forEach(script => script.remove());
+
+                // Only keep allowed tags
+                const allElements = tempDiv.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                        // Replace disallowed tags with their text content
+                        const text = document.createTextNode(el.textContent);
+                        el.parentNode.replaceChild(text, el);
+                    }
+                });
+
+                return tempDiv.innerHTML;
+            }
+
+            async toggleCommentVisibility() {
+                if (!this.currentReviewId) return;
+
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        return;
+                    }
+
+                    const response = await fetch(`${BASE_URL}/reviews/${this.currentReviewId}/visibility`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorMessage = `Failed to update visibility: ${response.status}`;
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) { }
+                        throw new Error(errorMessage);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to update visibility');
+                    }
+
+                    // Toggle the current state
+                    this.currentVisibleToAuthor = !this.currentVisibleToAuthor;
+
+                    // Update the message
+                    const messageElement = document.getElementById('visibilityMessage');
+                    if (messageElement) {
+                        messageElement.className = `visibility-message ${this.currentVisibleToAuthor ? 'visible' : 'hidden'}`;
+                        messageElement.innerHTML = `
+                            <i class="fas ${this.currentVisibleToAuthor ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                            ${this.currentVisibleToAuthor ? 'Comment visible to author' : 'Comment not visible to author'}
+                        `;
+                    }
+
+                    toastr.success(`Comment visibility ${this.currentVisibleToAuthor ? 'enabled' : 'disabled'}`, 'Success');
+
+                } catch (error) {
+                    console.error('Error toggling comment visibility:', error);
+                    toastr.error(error.message || 'Failed to update visibility', 'Error');
+
+                    // Revert the toggle if there was an error
+                    const toggle = document.getElementById('visibilityToggle');
+                    if (toggle) {
+                        toggle.checked = this.currentVisibleToAuthor;
+                    }
+                }
             }
 
             closeModal() {
-                document.getElementById('recommendationModal').classList.remove('active');
+                const modal = document.getElementById('detailsModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    this.currentReviewId = null;
+                    this.modalMode = '';
+                }
             }
 
             getStatusClass(status) {
@@ -993,14 +1411,12 @@
 
                 noTimelineMessage.style.display = 'none';
 
-                // Generate timeline events from reviewers
                 const timelineEvents = [];
 
                 this.reviewersData.forEach(reviewer => {
                     const reviewerName = reviewer.reviewerName || reviewer.reviewerEmail || 'Unknown Reviewer';
                     const reviewerEmail = reviewer.reviewerEmail || '';
 
-                    // Invitation event
                     timelineEvents.push({
                         id: reviewer.reviewId,
                         type: 'invited',
@@ -1012,7 +1428,6 @@
                         status: 'invited'
                     });
 
-                    // Status change events based on invitation status
                     if (reviewer.invitationStatus === 'accepted') {
                         timelineEvents.push({
                             id: reviewer.reviewId + '_accepted',
@@ -1045,7 +1460,7 @@
                             type: 'completed',
                             title: 'Review Completed',
                             description: `${reviewerName} completed the review${reviewer.score ? ` with score: ${reviewer.score}/10` : ''}`,
-                            date: reviewer.createdAt,
+                            date: reviewer.submittedAt || reviewer.createdAt,
                             reviewer: reviewerName,
                             reviewerEmail: reviewerEmail,
                             status: 'completed'
@@ -1053,9 +1468,7 @@
                     }
                 });
 
-                // Sort by date (newest first)
                 timelineEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
-
                 this.filteredTimeline = timelineEvents;
                 this.renderTimeline();
             }
@@ -1065,7 +1478,6 @@
                 if (!timelineContainer) return;
 
                 let filteredEvents = this.filteredTimeline;
-
                 if (this.currentFilter !== 'all') {
                     filteredEvents = this.filteredTimeline.filter(event => event.status === this.currentFilter);
                 }
@@ -1082,7 +1494,6 @@
                 }
 
                 let timelineHTML = '';
-
                 filteredEvents.forEach(event => {
                     const icon = this.getTimelineIcon(event.type);
                     const formattedDate = this.formatDate(event.date);
@@ -1121,7 +1532,6 @@
             }
 
             filterTimeline(filter) {
-                // Update active filter button
                 document.querySelectorAll('.filter-btn').forEach(btn => {
                     btn.classList.remove('active');
                     if (btn.dataset.filter === filter) {
@@ -1135,6 +1545,7 @@
 
             formatDate(dateString) {
                 try {
+                    if (!dateString) return 'N/A';
                     const date = new Date(dateString);
                     return date.toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -1144,7 +1555,6 @@
                         minute: '2-digit'
                     });
                 } catch (error) {
-                    console.error('Error formatting date:', error);
                     return dateString;
                 }
             }
@@ -1170,7 +1580,7 @@
             }
 
             escapeHtml(str) {
-                if (!str && str !== 0) return '';
+                if (str === undefined || str === null) return '';
                 return String(str)
                     .replaceAll('&', '&amp;')
                     .replaceAll('<', '&lt;')
@@ -1182,6 +1592,7 @@
 
         // Initialize review progress manager
         const reviewProgress = new ReviewProgressManager();
+        window.reviewProgress = reviewProgress;
     </script>
 </body>
 

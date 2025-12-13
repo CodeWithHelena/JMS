@@ -8,35 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Global CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
 
     <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
     <style>
-        :root {
-            --primary-color: rgba(204, 85, 0, 0.12);
-            --secondary-color: #cc5500;
-            --sidebar-width: 260px;
-            --sidebar-collapsed-width: 70px;
-            --header-height: 70px;
-            --sidebar-bg: #ffffff;
-            --header-bg: #ffffff;
-            --bg-white: #ffffff;
-            --body-bg: #f5f5f5;
-            --text-color: #333333;
-            --text-light: #666666;
-            --border-color: #e0e0e0;
-            --hover-bg: rgba(204, 85, 0, 0.12);
-            --active-bg: rgba(204, 85, 0, 0.15);
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-            --brand: #cc5500;
-            --muted: #6b7280;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -83,23 +60,86 @@
             align-items: center;
         }
 
-        .search-btn {
-            background-color: var(--bg-white);
-            color: var(--text-color);
-            border: 1.5px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
+        /* Filter controls - simplified to just search */
+        .filter-controls {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            margin-top: 1.25rem;
+            margin-bottom: 30px;
             display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 8px;
         }
 
-        .search-btn:hover {
-            background-color: var(--hover-bg);
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+            background: var(--bg-white);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: var(--brand);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--text-light);
+            border: 1.5px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--brand);
             border-color: var(--brand);
         }
 
@@ -155,6 +195,17 @@
 
         .journal-body {
             padding: 20px;
+        }
+
+        .journal-description {
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .journal-meta {
@@ -231,13 +282,14 @@
         }
 
         .view-btn {
-            background-color: var(--primary-color);
-            color: var(--brand);
-            border: 1px solid var(--border-color);
+            background-color: var(--brand);
+            color: white;
+            border: 1px solid var(--brand);
         }
 
         .view-btn:hover {
-            background-color: var(--hover-bg);
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
 
         /* Pagination */
@@ -283,6 +335,12 @@
             cursor: not-allowed;
         }
 
+        .pagination-info {
+            margin-left: 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
         /* Empty State */
         .empty-state {
             grid-column: 1 / -1;
@@ -308,146 +366,6 @@
         .empty-state p {
             color: var(--text-light);
             margin-bottom: 20px;
-        }
-
-        /* Search Modal */
-        .search-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .search-modal.active {
-            display: flex;
-        }
-
-        .search-modal-content {
-            background-color: var(--bg-white);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 600px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-
-        .search-modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .search-modal-header h3 {
-            font-size: 20px;
-            color: var(--text-color);
-            font-weight: 600;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--muted);
-            font-size: 24px;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: var(--transition);
-        }
-
-        .close-modal:hover {
-            background-color: var(--primary-color);
-            color: var(--brand);
-        }
-
-        .search-input-container {
-            padding: 20px;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 14px 50px 14px 16px;
-            border: 1.5px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 16px;
-            transition: var(--transition);
-            background-color: white;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--primary-color);
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 35px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted);
-        }
-
-        .search-results {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 20px 20px;
-        }
-
-        .search-result-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .search-result-item:hover {
-            background-color: var(--primary-color);
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .search-result-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 5px;
-        }
-
-        .search-result-issn {
-            font-size: 14px;
-            color: var(--brand);
-            font-weight: 600;
-        }
-
-        .no-results {
-            padding: 40px 20px;
-            text-align: center;
-            color: var(--text-light);
-        }
-
-        .no-results i {
-            font-size: 36px;
-            margin-bottom: 15px;
-            opacity: 0.5;
         }
 
         /* Loading State */
@@ -486,11 +404,6 @@
                 flex-wrap: wrap;
             }
 
-            .search-btn {
-                flex: 1;
-                justify-content: center;
-            }
-
             .journals-grid {
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
@@ -510,6 +423,14 @@
                 flex: 1;
                 justify-content: center;
             }
+
+            .filter-controls {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
         }
 
         @media screen and (max-width: 480px) {
@@ -519,6 +440,24 @@
 
             .journal-card {
                 margin: 0 10px;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .pagination-info {
+                width: 100%;
+                text-align: center;
+                margin: 10px 0 0 0;
+                order: 3;
+            }
+
+            .page-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 13px;
             }
         }
     </style>
@@ -532,57 +471,43 @@
             <!-- Header Included-->
             <div id="header-placeholder"></div>
             <main class="main-content">
-                <div class="d-flex justify-content-between">
-                    <div class="container page-title">
-                        <h1>My Journals</h1>
-                        <p>Journals assigned to you for editorial management</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="search-btn" id="openSearchModal">
-                            <i class="fas fa-search"></i> Search Journals
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Journals Grid -->
-                <div class="journals-grid" id="journalsGrid">
-                    <!-- Journals will be loaded here -->
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination" id="pagination">
-                    <!-- Pagination will be loaded here -->
-                </div>
-
-                <!-- Search Modal -->
-                <div class="search-modal" id="searchModal">
-                    <div class="search-modal-content">
-                        <div class="search-modal-header">
-                            <h3>Search Journals</h3>
-                            <button class="close-modal" id="closeSearchModal">
-                                <i class="fas fa-times"></i>
-                            </button>
+                <div class="journals-container">
+                    <!-- Header -->
+                    <div class="journals-header">
+                        <div class="header-left">
+                            <h1>My Journals</h1>
+                            <p>Journals assigned to you for editorial management</p>
                         </div>
-                        <div class="search-input-container">
-                            <input type="text" class="search-input" id="searchInput" placeholder="Type to search journals...">
-                            <div class="search-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
+                    </div>
+
+                    <!-- Simplified filter controls - only search -->
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label class="filter-label">Search Journals</label>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search by title, ISSN, publisher...">
                         </div>
-                        <div class="search-results" id="searchResults">
-                            <!-- Search results will appear here -->
-                            <div class="no-results">
-                                <i class="fas fa-search"></i>
-                                <p>Type in the search box to find journals</p>
-                            </div>
+                        <div style="display:flex; gap:0.5rem; align-items:center; margin-top: 25px;">
+                            <button id="applySearch" class="btn-primary"><i class="fas fa-search"></i> Search</button>
+                            <button id="clearSearch" class="btn-secondary">Clear</button>
                         </div>
+                    </div>
+
+                    <!-- Journals Grid -->
+                    <div class="journals-grid" id="journalsGrid">
+                        <!-- Journals will be loaded here -->
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="paginationContainer" class="pagination">
+                        <!-- Pagination will be loaded here -->
                     </div>
                 </div>
             </main>
         </div>
+
         <script>
             window.SIDEBAR_MODULE = 'editor';
             window.SIDEBAR_ACTIVE_ID = 'editor-journals';
@@ -593,40 +518,131 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script src="/assets/js/layout.js"></script>
         <script type="module">
-            // API Configuration
-            // const BASE_URL = 'https://fp.247laboratory.net/api/v1';
-            // const getAuthToken2 = () => localStorage.getItem('editor_tkn') || localStorage.getItem('token');
-
             import { BASE_URL, token } from '../assets/js/utility.js';
 
-            // Format date
-            function formatDate(dateString) {
-                if (!dateString) return 'N/A';
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-            }
+            class EditorJournalsManager {
+                constructor() {
+                    this.currentPage = 1;
+                    this.limit = 9;
+                    this.totalItems = 0;
+                    this.totalPages = 0;
 
-            // Format review policy for display
-            function formatReviewPolicy(policy) {
-                if (!policy) return 'Not specified';
-                return policy.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            }
+                    this.currentFilters = {
+                        search: ''
+                    };
 
-            // Truncate text
-            function truncateText(text, maxLength = 100) {
-                if (!text) return '';
-                if (text.length <= maxLength) return text;
-                return text.substring(0, maxLength) + '...';
-            }
+                    this.init();
+                }
 
-            // Render journal card
-            function renderJournalCard(journal) {
-                return `
-                    <div class="journal-card" data-id="${journal._id}">
+                init() {
+                    if (!token) {
+                        this.showNoJournals('Please login to view your journals.');
+                        return;
+                    }
+
+                    this.bindEvents();
+                    this.fetchAndRender(1);
+                }
+
+                bindEvents() {
+                    document.getElementById('searchInput')?.addEventListener('keypress', e => {
+                        if (e.key === 'Enter') {
+                            this.currentFilters.search = e.target.value.trim();
+                            this.currentPage = 1;
+                            this.fetchAndRender(1);
+                        }
+                    });
+
+                    document.getElementById('applySearch')?.addEventListener('click', () => {
+                        this.currentFilters.search = document.getElementById('searchInput').value.trim();
+                        this.currentPage = 1;
+                        this.fetchAndRender(1);
+                    });
+
+                    document.getElementById('clearSearch')?.addEventListener('click', () => {
+                        this.currentFilters.search = '';
+                        document.getElementById('searchInput').value = '';
+                        this.currentPage = 1;
+                        this.fetchAndRender(1);
+                    });
+
+                    document.getElementById('journalsGrid')?.addEventListener('click', e => {
+                        const viewBtn = e.target.closest('.view-submissions-btn');
+                        if (viewBtn) {
+                            window.location.href = `editor-submissions.html?journalId=${viewBtn.dataset.id}`;
+                        }
+                    });
+
+                    document.getElementById('paginationContainer')?.addEventListener('click', e => {
+                        const pageBtn = e.target.closest('.page-btn');
+                        if (pageBtn) {
+                            if (pageBtn.classList.contains('disabled')) return;
+
+                            if (pageBtn.classList.contains('prev-btn')) {
+                                this.changePage(this.currentPage - 1);
+                            } else if (pageBtn.classList.contains('next-btn')) {
+                                this.changePage(this.currentPage + 1);
+                            } else if (pageBtn.hasAttribute('data-page')) {
+                                this.changePage(parseInt(pageBtn.getAttribute('data-page')));
+                            }
+                        }
+                    });
+                }
+
+                async fetchAndRender(page = 1) {
+                    const grid = document.getElementById('journalsGrid');
+                    grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
+
+                    try {
+                        const params = new URLSearchParams({
+                            page,
+                            limit: this.limit
+                        });
+
+                        if (this.currentFilters.search) {
+                            params.set('search', this.currentFilters.search);
+                        }
+
+                        const response = await fetch(`${BASE_URL}/editor/journals?${params}`, {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                Accept: 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) throw new Error('Failed to fetch journals');
+
+                        const res = await response.json();
+                        const journals = res.journals || res.data || [];
+
+                        this.totalItems = res.total ?? journals.length;
+                        this.totalPages = res.totalPages ?? Math.ceil(this.totalItems / this.limit);
+                        this.currentPage = res.page ?? page;
+
+                        this.renderGrid(journals);
+                        this.renderPagination();
+                    } catch (err) {
+                        console.error(err);
+                        this.showNoJournals('Unable to load journals.');
+                    }
+                }
+
+                renderGrid(journals) {
+                    const grid = document.getElementById('journalsGrid');
+                    if (!journals.length) {
+                        this.showNoJournals('No journals assigned to you yet.');
+                        return;
+                    }
+
+                    grid.innerHTML = '';
+                    journals.forEach(journal => grid.appendChild(this.createCard(journal)));
+                }
+
+                createCard(journal) {
+                    const el = document.createElement('article');
+                    el.className = 'journal-card';
+
+                    el.innerHTML = `
                         <div class="journal-header">
                             <h3 class="journal-title">${journal.title || 'Untitled Journal'}</h3>
                             <span class="journal-issn">${journal.issn || 'No ISSN'}</span>
@@ -654,7 +670,7 @@
                         </div>
                         <div class="journal-footer">
                             <div class="journal-date">
-                                <i class="far fa-calendar"></i> Created: ${formatDate(journal.createdAt)}
+                                <i class="far fa-calendar"></i> Created: ${new Date(journal.createdAt).toDateString()}
                             </div>
                             <div class="journal-actions">
                                 <button class="action-btn view-btn view-submissions-btn" data-id="${journal._id}">
@@ -662,393 +678,111 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
-                `;
-            }
-
-            // Render pagination
-            function renderPagination(currentPage, totalPages, totalItems, itemsPerPage) {
-                if (totalPages <= 1) {
-                    return `
-                        <div class="pagination-info" style="text-align: center; width: 100%; color: var(--muted); font-size: 14px;">
-                            Showing ${totalItems} journal${totalItems !== 1 ? 's' : ''}
-                        </div>
                     `;
+                    return el;
                 }
 
-                let paginationHTML = '';
+                renderPagination() {
+                    const paginationContainer = document.getElementById('paginationContainer');
+                    if (!paginationContainer) return;
 
-                // Previous button
-                paginationHTML += `
-                    <button class="page-btn prev-btn ${currentPage === 1 ? 'disabled' : ''}" 
-                            ${currentPage === 1 ? 'disabled' : ''}>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                `;
+                    // Always show pagination even if only one page
+                    let html = '';
 
-                // Page numbers
-                const maxVisiblePages = 5;
-                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-                if (endPage - startPage + 1 < maxVisiblePages) {
-                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
-                }
-
-                // Always show first page
-                if (startPage > 1) {
-                    paginationHTML += `
-                        <button class="page-btn" data-page="1">1</button>
-                        ${startPage > 2 ? '<span style="padding: 10px;">...</span>' : ''}
-                    `;
-                }
-
-                for (let i = startPage; i <= endPage; i++) {
-                    paginationHTML += `
-                        <button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
-                            ${i}
-                        </button>
-                    `;
-                }
-
-                // Always show last page
-                if (endPage < totalPages) {
-                    paginationHTML += `
-                        ${endPage < totalPages - 1 ? '<span style="padding: 10px;">...</span>' : ''}
-                        <button class="page-btn" data-page="${totalPages}">${totalPages}</button>
-                    `;
-                }
-
-                // Next button
-                paginationHTML += `
-                    <button class="page-btn next-btn ${currentPage === totalPages ? 'disabled' : ''}" 
-                            ${currentPage === totalPages ? 'disabled' : ''}>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                `;
-
-                // Add page info
-                const startItem = ((currentPage - 1) * itemsPerPage) + 1;
-                const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
-                paginationHTML += `
-                    <div class="pagination-info" style="margin-left: 20px; color: var(--muted); font-size: 14px;">
-                        Showing ${startItem}-${endItem} of ${totalItems} journals
-                    </div>
-                `;
-
-                return paginationHTML;
-            }
-
-            // Render empty state
-            function renderEmptyState() {
-                return `
-                    <div class="empty-state">
-                        <i class="fas fa-book-open"></i>
-                        <h3>No Journals Assigned</h3>
-                        <p>You are not assigned as an editor to any journals yet.</p>
-                    </div>
-                `;
-            }
-
-            // Render search results
-            function renderSearchResults(journals) {
-                if (!journals || journals.length === 0) {
-                    return `
-                        <div class="no-results">
-                            <i class="fas fa-search"></i>
-                            <p>No journals found matching your search</p>
-                        </div>
-                    `;
-                }
-
-                return journals.map(journal => `
-                    <div class="search-result-item" data-id="${journal._id}">
-                        <div class="search-result-title">${journal.title || 'Untitled Journal'}</div>
-                        <div class="search-result-issn">${journal.issn || 'No ISSN'}</div>
-                        <div class="search-result-publisher" style="font-size: 13px; color: #666; margin-top: 3px;">
-                            ${journal.publisher || ''}
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // Fetch editor's journals from API
-            async function fetchEditorJournals(page = 1, limit = 9) {
-                const token = getAuthToken2();
-
-                if (!token) {
-                    Swal.fire({
-                        title: 'Authentication Required',
-                        text: 'Please login to view your journals',
-                        icon: 'warning',
-                        confirmButtonColor: '#cc5500'
-                    }).then(() => {
-                        window.location.href = 'login.html';
-                    });
-                    return null;
-                }
-
-                try {
-                    const response = await fetch(`${BASE_URL}/editor/journals?page=${page}&limit=${limit}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 401) {
-                            Swal.fire({
-                                title: 'Session Expired',
-                                text: 'Please login again',
-                                icon: 'warning',
-                                confirmButtonColor: '#cc5500'
-                            }).then(() => {
-                                window.location.href = 'login.html';
-                            });
-                            return null;
-                        }
-                        throw new Error(`API error: ${response.status}`);
-                    }
-
-                    return await response.json();
-                } catch (error) {
-                    console.error('Error fetching editor journals:', error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Failed to load journals. Please try again.',
-                        icon: 'error',
-                        confirmButtonColor: '#cc5500'
-                    });
-                    return null;
-                }
-            }
-
-            // Search journals
-            async function searchJournals(query) {
-                const token = getAuthToken2();
-
-                if (!token) {
-                    return [];
-                }
-
-                try {
-                    // Fetch all editor's journals and filter client-side
-                    const response = await fetch(`${BASE_URL}/editor/journals?page=1&limit=100`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.error('Search API error:', response.status);
-                        return [];
-                    }
-
-                    const data = await response.json();
-                    const journals = data.journals || [];
-
-                    // Filter journals client-side based on search query
-                    const searchLower = query.toLowerCase();
-                    return journals.filter(journal => {
-                        const title = (journal.title || '').toLowerCase();
-                        const issn = (journal.issn || '').toLowerCase();
-                        const publisher = (journal.publisher || '').toLowerCase();
-                        const email = (journal.email || '').toLowerCase();
-                        const reviewPolicy = (journal.reviewPolicy || '').toLowerCase();
-
-                        return title.includes(searchLower) ||
-                            issn.includes(searchLower) ||
-                            publisher.includes(searchLower) ||
-                            email.includes(searchLower) ||
-                            reviewPolicy.includes(searchLower);
-                    });
-                } catch (error) {
-                    console.error('Error searching journals:', error);
-                    return [];
-                }
-            }
-
-            // Main application
-            document.addEventListener('DOMContentLoaded', async function () {
-                // DOM Elements
-                const journalsGrid = document.getElementById('journalsGrid');
-                const pagination = document.getElementById('pagination');
-                const searchModal = document.getElementById('searchModal');
-                const openSearchModalBtn = document.getElementById('openSearchModal');
-                const closeSearchModalBtn = document.getElementById('closeSearchModal');
-                const searchInput = document.getElementById('searchInput');
-                const searchResults = document.getElementById('searchResults');
-
-                // State
-                let currentPage = 1;
-                let totalPages = 1;
-                let totalItems = 0;
-                const itemsPerPage = 9;
-                let searchTimeout = null;
-
-                // Load initial journals
-                await loadJournals(currentPage);
-
-                // Open search modal
-                openSearchModalBtn.addEventListener('click', () => {
-                    searchModal.classList.add('active');
-                    searchInput.focus();
-                });
-
-                // Close search modal
-                closeSearchModalBtn.addEventListener('click', () => {
-                    searchModal.classList.remove('active');
-                    searchInput.value = '';
-                    searchResults.innerHTML = `
-                        <div class="no-results">
-                            <i class="fas fa-search"></i>
-                            <p>Type in the search box to find journals</p>
-                        </div>
-                    `;
-                });
-
-                // Close modal when clicking outside
-                searchModal.addEventListener('click', (e) => {
-                    if (e.target === searchModal) {
-                        searchModal.classList.remove('active');
-                        searchInput.value = '';
-                        searchResults.innerHTML = `
-                            <div class="no-results">
-                                <i class="fas fa-search"></i>
-                                <p>Type in the search box to find journals</p>
+                    if (this.totalPages <= 1) {
+                        // Single page - show only info
+                        html = `
+                            <div class="pagination-info">
+                                Showing ${this.totalItems} journal${this.totalItems !== 1 ? 's' : ''}
                             </div>
                         `;
-                    }
-                });
-
-                // Search input handler with debounce
-                searchInput.addEventListener('input', (e) => {
-                    const query = e.target.value.trim();
-
-                    // Clear previous timeout
-                    if (searchTimeout) {
-                        clearTimeout(searchTimeout);
-                    }
-
-                    // If query is empty, show placeholder
-                    if (!query) {
-                        searchResults.innerHTML = `
-                            <div class="no-results">
-                                <i class="fas fa-search"></i>
-                                <p>Type in the search box to find journals</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    // Show loading
-                    searchResults.innerHTML = `
-                        <div class="loading" style="padding: 20px;">
-                            <div class="loading-spinner" style="width: 30px; height: 30px;"></div>
-                        </div>
-                    `;
-
-                    // Set new timeout for search
-                    searchTimeout = setTimeout(async () => {
-                        const results = await searchJournals(query);
-                        searchResults.innerHTML = renderSearchResults(results);
-                    }, 500); // 500ms debounce
-                });
-
-                // Handle search result click
-                searchResults.addEventListener('click', (e) => {
-                    const resultItem = e.target.closest('.search-result-item');
-                    if (resultItem) {
-                        const journalId = resultItem.getAttribute('data-id');
-                        // Close modal
-                        searchModal.classList.remove('active');
-                        searchInput.value = '';
-
-                        // Navigate to editor submissions page with journal filter
-                        window.location.href = `editor-submissions.html?journalId=${journalId}`;
-                    }
-                });
-
-                // Handle pagination clicks
-                pagination.addEventListener('click', async (e) => {
-                    if (e.target.classList.contains('page-btn')) {
-                        const btn = e.target;
-
-                        if (btn.classList.contains('disabled')) return;
-
-                        if (btn.classList.contains('prev-btn')) {
-                            currentPage--;
-                        } else if (btn.classList.contains('next-btn')) {
-                            currentPage++;
-                        } else if (btn.hasAttribute('data-page')) {
-                            currentPage = parseInt(btn.getAttribute('data-page'));
-                        }
-
-                        await loadJournals(currentPage);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-
-                // Handle view submissions button click
-                journalsGrid.addEventListener('click', (e) => {
-                    const viewButton = e.target.closest('.view-submissions-btn');
-                    if (viewButton) {
-                        const journalId = viewButton.getAttribute('data-id');
-                        window.location.href = `editor-submissions.html?journalId=${journalId}`;
-                    }
-                });
-
-                // Load journals function
-                async function loadJournals(page) {
-                    // Show loading
-                    journalsGrid.innerHTML = `
-                        <div class="loading">
-                            <div class="loading-spinner"></div>
-                        </div>
-                    `;
-
-                    const response = await fetchEditorJournals(page, itemsPerPage);
-
-                    if (!response || !response.success) {
-                        journalsGrid.innerHTML = renderEmptyState();
-                        pagination.innerHTML = renderPagination(1, 1, 0, itemsPerPage);
-                        return;
-                    }
-
-                    const { journals, total, page: current, pages } = response;
-
-                    currentPage = current || 1;
-                    totalPages = pages || 1;
-                    totalItems = total || 0;
-
-                    if (!journals || journals.length === 0) {
-                        journalsGrid.innerHTML = renderEmptyState();
                     } else {
-                        journalsGrid.innerHTML = journals.map(renderJournalCard).join('');
-                    }
+                        // Multiple pages - show full pagination
+                        const startItem = ((this.currentPage - 1) * this.limit) + 1;
+                        const endItem = Math.min(this.currentPage * this.limit, this.totalItems);
 
-                    pagination.innerHTML = renderPagination(currentPage, totalPages, totalItems, itemsPerPage);
-                }
+                        // Previous button
+                        html += `
+                            <button class="page-btn prev-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
+                                    ${this.currentPage === 1 ? 'disabled' : ''}>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        `;
 
-                // Handle escape key to close modal
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && searchModal.classList.contains('active')) {
-                        searchModal.classList.remove('active');
-                        searchInput.value = '';
-                        searchResults.innerHTML = `
-                            <div class="no-results">
-                                <i class="fas fa-search"></i>
-                                <p>Type in the search box to find journals</p>
+                        // Page numbers
+                        const maxVisiblePages = 5;
+                        let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+                        let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+                        if (endPage - startPage + 1 < maxVisiblePages) {
+                            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                        }
+
+                        // Always show first page
+                        if (startPage > 1) {
+                            html += `
+                                <button class="page-btn" data-page="1">1</button>
+                                ${startPage > 2 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
+                            `;
+                        }
+
+                        for (let i = startPage; i <= endPage; i++) {
+                            html += `
+                                <button class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">
+                                    ${i}
+                                </button>
+                            `;
+                        }
+
+                        // Always show last page
+                        if (endPage < this.totalPages) {
+                            html += `
+                                ${endPage < this.totalPages - 1 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
+                                <button class="page-btn" data-page="${this.totalPages}">${this.totalPages}</button>
+                            `;
+                        }
+
+                        // Next button
+                        html += `
+                            <button class="page-btn next-btn ${this.currentPage === this.totalPages ? 'disabled' : ''}" 
+                                    ${this.currentPage === this.totalPages ? 'disabled' : ''}>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        `;
+
+                        // Add page info
+                        html += `
+                            <div class="pagination-info">
+                                Showing ${startItem}-${endItem} of ${this.totalItems} journal${this.totalItems !== 1 ? 's' : ''}
                             </div>
                         `;
                     }
-                });
-            });
+
+                    paginationContainer.innerHTML = html;
+                }
+
+                changePage(page) {
+                    if (!page || page < 1) page = 1;
+                    if (page > this.totalPages) page = this.totalPages;
+                    this.currentPage = page;
+                    this.fetchAndRender(page);
+                    document.getElementById('journalsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                showNoJournals(message) {
+                    document.getElementById('journalsGrid').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-book-open"></i>
+                            <h3>No Journals Assigned</h3>
+                            <p>${message}</p>
+                        </div>
+                    `;
+                    // Still show pagination even if empty
+                    this.renderPagination();
+                }
+            }
+
+            window.editorJournalsManager = new EditorJournalsManager();
         </script>
     </div>
 </body>

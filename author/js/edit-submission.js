@@ -1,6 +1,5 @@
 // edit-submission.js
-const BASE_URL = 'https://fp.247laboratory.net/';
-const token = localStorage.getItem('token') || null;
+import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
 class EditSubmissionManager {
     constructor() {
         this.submissionId = this.getSubmissionIdFromURL();
@@ -94,7 +93,7 @@ class EditSubmissionManager {
                 throw new Error('Authentication token not found');
             }
 
-            const response = await fetch(`${BASE_URL}/api/v1/submissions/${this.submissionId}`, {
+            const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json'
@@ -246,7 +245,7 @@ class EditSubmissionManager {
                 formData.append('file', document.getElementById('manuscriptFile').files[0]);
             }
 
-            const response = await fetch(`${BASE_URL}/api/v1/submissions/${this.submissionId}`, {
+            const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',

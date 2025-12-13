@@ -530,7 +530,7 @@
 
     <script>
         window.SIDEBAR_MODULE = 'author';
-        window.SIDEBAR_ACTIVE_ID = 'author-submissions';
+        window.SIDEBAR_ACTIVE_ID = 'view-submission';
     </script>
 
     <!-- Scripts -->
@@ -790,7 +790,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Redirect to submission details page
-                            window.location.href = `author-submission-details.html?id=${submissionId}`;
+                            window.location.href = `submission-details.html?id=${submissionId}`;
                         }
                     });
 

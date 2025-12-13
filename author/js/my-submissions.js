@@ -237,7 +237,7 @@ class MySubmissionsManager {
         // call the endpoint you confirmed: /journal?page=1&limit=10
         try {
             const token = localStorage.getItem('token');
-            const url = `${BASE_API}/journal?page=1&limit=200`;
+            const url = `${BASE_API}/journal/shallow`;
             const resp = await fetch(url, {
                 headers: { 'Accept': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
             });
