@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Published Manuscripts</title>
+
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Page-specific CSS -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        /* Page container (same as editor page) */
+        .container.page-title {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.6rem;
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .page-title p {
+            margin: .25rem 0 0;
+            color: var(--text-light);
+        }
+
+        /* --- Filter controls --- */
+        .filter-controls {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            margin-top: 1.25rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+            background: var(--bg-white);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.15);
+        }
+
+        /* Custom Select */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select .select-header {
+            background: var(--bg-white);
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            transition: var(--transition);
+        }
+
+        .custom-select .select-header:hover {
+            border-color: var(--brand);
+        }
+
+        .custom-select .selected-text.placeholder {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .custom-select .select-arrow {
+            color: var(--text-light);
+            transition: transform 0.2s ease;
+        }
+
+        .custom-select.open .select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .custom-select .select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--bg-white);
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            z-index: 9999;
+            display: none;
+            max-height: 260px;
+            overflow: auto;
+        }
+
+        .custom-select.open .select-dropdown {
+            display: block;
+        }
+
+        .select-search {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            padding: 0.6rem;
+            border-bottom: 1.5px solid var(--border-color);
+        }
+
+        .select-search input {
+            width: 100%;
+            padding: 0.45rem 0.5rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+            background: var(--bg-white);
+            color: var(--text-color);
+            font-family: inherit;
+        }
+
+        .select-search input:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.15);
+        }
+
+        .clear-search-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .clear-search-btn:hover {
+            background: var(--primary-color);
+            color: var(--brand);
+        }
+
+        .select-options .select-option {
+            padding: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            border-bottom: 1px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .select-options .select-option:hover {
+            background: var(--primary-color);
+        }
+
+        .select-no-results {
+            padding: 0.9rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--brand);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--text-light);
+            border: 1.5px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--brand);
+            border-color: var(--brand);
+        }
+
+        /* --- Cards grid --- */
+        .manuscripts-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width:1100px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width:700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Card style --- */
+        .submission-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 220px;
+            position: relative;
+        }
+
+        .submission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .submission-card .card-header {
+            padding: 1rem;
+            padding-top: 2.4rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .submission-card .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .submission-card .card-sub {
+            color: var(--text-light);
+            margin-top: 0.45rem;
+            font-size: 0.92rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .submission-card .card-content {
+            padding: 0.85rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .submission-card .authors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.35rem;
+        }
+
+        .submission-card .author {
+            background: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-color);
+        }
+
+        /* Actions block */
+        .action-links {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .action-links .link {
+            padding: 0.45rem 0.6rem;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            gap: 0.5rem;
+            align-items: center;
+            color: var(--muted);
+            background: transparent;
+            transition: all 0.12s ease;
+        }
+
+        .action-links .link:hover {
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            color: var(--text-color);
+            background: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Card footer */
+        .submission-card .card-footer {
+            padding: 0.8rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            background: var(--primary-color);
+        }
+
+        .btn-view {
+            background: var(--brand);
+            color: white;
+            border: 1px solid var(--brand);
+            padding: 0.5rem 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-view:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .published-date {
+            font-size: 0.92rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        /* Status badge (top-right) - Always shows Published */
+        .status-badge {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            padding: 0.35rem 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: capitalize;
+            box-shadow: 0 6px 18px rgba(22, 24, 46, 0.06);
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* No-results fallback */
+        .no-results {
+            grid-column: 1/-1;
+            padding: 2.25rem;
+            text-align: center;
+            color: var(--text-light);
+            background: var(--bg-white);
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+        }
+
+        /* Loading spinner */
+        .loading {
+            grid-column: 1/-1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--primary-color);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* --- Pagination styles --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-white);
+            color: var(--text-color);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover:not(.disabled) {
+            background-color: var(--hover-bg);
+            border-color: var(--brand);
+        }
+
+        .page-btn.active {
+            background-color: var(--brand);
+            color: white;
+            border-color: var(--brand);
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            margin-left: 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-controls {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .pagination-info {
+                width: 100%;
+                text-align: center;
+                margin: 10px 0 0 0;
+                order: 3;
+            }
+
+            .page-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 13px;
+            }
+        }
+
+        @media screen and (max-width: 700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .submission-card .card-footer {
+                flex-direction: row;
+            }
+        }
+
+        @media screen and (max-width: 460px) {
+            .submission-card .card-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="container page-title">
+                    <h1>Published Manuscripts</h1>
+                    <p>View all published manuscripts</p>
+                </div>
+
+                <!-- Filter controls - Search and Journal only -->
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label class="filter-label">Search</label>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search by title, abstract, authors...">
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Filter by Journal</label>
+                        <div class="custom-select with-search" id="journalFilter">
+                            <input type="hidden" id="selectedJournalId" value="all">
+                            <div class="select-header">
+                                <span class="selected-text placeholder">All Journals</span>
+                                <i class="fas fa-chevron-down select-arrow"></i>
+                            </div>
+                            <div class="select-dropdown">
+                                <div class="select-search">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="select-search-input" placeholder="Search journals...">
+                                    <button type="button" class="clear-search-btn" style="display:none;"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="select-options" id="journalOptions"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; margin-top: 25px;">
+                        <button id="applyFilters" class="btn-primary"><i class="fas fa-filter"></i> Apply</button>
+                        <button id="clearFilters" class="btn-secondary">Clear</button>
+                    </div>
+                </div>
+
+                <div class="manuscripts-wrapper">
+                    <div id="cardsGrid" class="cards-grid">
+                        <!-- cards injected here -->
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination container -->
+                    <div id="paginationContainer" class="pagination"></div>
+
+                    <noscript>
+                        <div class="no-results">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>JavaScript Required</h3>
+                            <p>JavaScript is required to load published manuscripts. Please enable JS.</p>
+                        </div>
+                    </noscript>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'published-submissions';
+    </script>
+
+    <script src="/assets/js/layout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- page logic -->
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class PublishedManuscriptsManager {
+            constructor() {
+                this.currentPage = 1;
+                this.limit = 9;
+                this.totalItems = 0;
+                this.totalPages = 0;
+
+                this.journals = [];
+                this.currentFilters = {
+                    search: '',
+                    journalId: 'all'
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.initToastr();
+                this.bindEvents();
+                this.loadJournals(); // Load journals for filter
+                this.fetchAndRender(1); // Initial load with status=published
+            }
+
+            initToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            bindEvents() {
+                // Search input
+                document.getElementById('searchInput')?.addEventListener('keypress', e => {
+                    if (e.key === 'Enter') {
+                        this.currentFilters.search = e.target.value.trim();
+                        this.currentPage = 1;
+                        this.fetchAndRender(1);
+                    }
+                });
+
+                // Apply filters button
+                document.getElementById('applyFilters')?.addEventListener('click', () => {
+                    this.currentFilters.search = document.getElementById('searchInput').value.trim();
+                    this.currentPage = 1;
+                    this.fetchAndRender(1);
+                });
+
+                // Clear filters button
+                document.getElementById('clearFilters')?.addEventListener('click', () => {
+                    this.currentFilters = { search: '', journalId: 'all' };
+                    document.getElementById('searchInput').value = '';
+                    const journalHeader = document.querySelector('#journalFilter .selected-text');
+                    if (journalHeader) {
+                        journalHeader.textContent = 'All Journals';
+                        journalHeader.classList.add('placeholder');
+                    }
+                    document.getElementById('selectedJournalId').value = 'all';
+                    this.currentPage = 1;
+                    this.fetchAndRender(1);
+                });
+
+                // Pagination
+                document.getElementById('paginationContainer')?.addEventListener('click', e => {
+                    const pageBtn = e.target.closest('.page-btn');
+                    if (pageBtn) {
+                        if (pageBtn.classList.contains('disabled')) return;
+
+                        if (pageBtn.classList.contains('prev-btn')) {
+                            this.changePage(this.currentPage - 1);
+                        } else if (pageBtn.classList.contains('next-btn')) {
+                            this.changePage(this.currentPage + 1);
+                        } else if (pageBtn.hasAttribute('data-page')) {
+                            this.changePage(parseInt(pageBtn.getAttribute('data-page')));
+                        }
+                    }
+                });
+
+                // Card actions
+                document.getElementById('cardsGrid')?.addEventListener('click', e => {
+                    const downloadBtn = e.target.closest('[data-action="download"]');
+                    if (downloadBtn) {
+                        e.preventDefault();
+                        this.downloadFile(downloadBtn.dataset.id);
+                        return;
+                    }
+
+                    const viewBtn = e.target.closest('[data-action="view"]');
+                    if (viewBtn) {
+                        e.preventDefault();
+                        this.viewDetails(viewBtn.dataset.id);
+                        return;
+                    }
+                });
+
+                // Setup custom select toggles
+                this.setupSelectToggles();
+            }
+
+            setupSelectToggles() {
+                const journalContainer = document.getElementById('journalFilter');
+                if (!journalContainer) return;
+
+                const header = journalContainer.querySelector('.select-header');
+                const dropdown = journalContainer.querySelector('.select-dropdown');
+                const searchInput = journalContainer.querySelector('.select-search-input');
+                const clearBtn = journalContainer.querySelector('.clear-search-btn');
+
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    journalContainer.classList.toggle('open');
+                    if (journalContainer.classList.contains('open') && searchInput) {
+                        setTimeout(() => searchInput.focus(), 50);
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!journalContainer.contains(e.target)) {
+                        journalContainer.classList.remove('open');
+                    }
+                });
+
+                // Search in journal dropdown
+                if (searchInput) {
+                    searchInput.addEventListener('input', () => {
+                        const query = searchInput.value.trim().toLowerCase();
+                        if (clearBtn) clearBtn.style.display = query ? 'flex' : 'none';
+
+                        const options = journalContainer.querySelectorAll('.select-option');
+                        options.forEach(opt => {
+                            const text = opt.textContent.toLowerCase();
+                            opt.style.display = text.includes(query) ? '' : 'none';
+                        });
+                    });
+
+                    if (clearBtn) {
+                        clearBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            searchInput.value = '';
+                            clearBtn.style.display = 'none';
+                            searchInput.focus();
+                            journalContainer.querySelectorAll('.select-option').forEach(opt => opt.style.display = '');
+                        });
+                    }
+                }
+
+                // Handle journal selection
+                document.getElementById('journalOptions')?.addEventListener('click', (e) => {
+                    const option = e.target.closest('.select-option');
+                    if (!option) return;
+
+                    const journalId = option.dataset.id;
+                    const title = option.querySelector('.option-title')?.textContent.trim() || option.textContent.trim();
+
+                    const header = document.querySelector('#journalFilter .selected-text');
+                    if (header) {
+                        header.textContent = title;
+                        header.classList.remove('placeholder');
+                    }
+
+                    document.getElementById('selectedJournalId').value = journalId;
+                    this.currentFilters.journalId = journalId;
+                    journalContainer.classList.remove('open');
+                });
+            }
+
+            async loadJournals() {
+                try {
+                    const response = await fetch(`${BASE_URL}/journal/shallow`, {
+                        headers: {
+                            Accept: 'application/json',
+                            ...(token ? { Authorization: `Bearer ${token}` } : {})
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn('Journals endpoint failed:', response.status);
+                        this.journals = [{ id: 'all', title: 'All Journals', issn: '' }];
+                        this.populateJournalOptions();
+                        return;
+                    }
+
+                    const data = await response.json();
+                    let list = [];
+
+                    if (Array.isArray(data.journals)) list = data.journals;
+                    else if (Array.isArray(data.data)) list = data.data;
+                    else if (Array.isArray(data.results)) list = data.results;
+                    else if (Array.isArray(data)) list = data;
+
+                    this.journals = [
+                        { id: 'all', title: 'All Journals', issn: '' },
+                        ...list.map(j => ({
+                            id: j._id || j.id || j._id,
+                            title: j.title || j.name || 'Untitled Journal',
+                            issn: j.issn || ''
+                        }))
+                    ];
+
+                    this.populateJournalOptions();
+                } catch (err) {
+                    console.error('Could not load journals', err);
+                    this.journals = [{ id: 'all', title: 'All Journals', issn: '' }];
+                    this.populateJournalOptions();
+                }
+            }
+
+            populateJournalOptions() {
+                const container = document.getElementById('journalOptions');
+                if (!container) return;
+
+                container.innerHTML = this.journals.map(j => `
+                    <div class="select-option" data-id="${this.escapeHtml(String(j.id))}">
+                        <div class="option-title" style="font-weight:600;">${this.escapeHtml(j.title)}</div>
+                        ${j.issn ? `<div style="font-size:0.85rem; color:var(--text-light)"><i class="fas fa-hashtag"></i> ${this.escapeHtml(j.issn)}</div>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            async fetchAndRender(page = 1) {
+                const grid = document.getElementById('cardsGrid');
+                grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
+
+                try {
+                    const params = new URLSearchParams({
+                        page,
+                        limit: this.limit,
+                        sortBy: 'createdAt',
+                        sortOrder: 'desc',
+                        status: 'published' // Always filter by published status
+                    });
+
+                    if (this.currentFilters.search) {
+                        params.set('search', this.currentFilters.search);
+                    }
+
+                    if (this.currentFilters.journalId && this.currentFilters.journalId !== 'all') {
+                        params.set('journalId', this.currentFilters.journalId);
+                    }
+
+                    const response = await fetch(`${BASE_URL}/submissions/my-submissions?${params}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            Accept: 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to fetch published manuscripts');
+
+                    const res = await response.json();
+                    const submissions = res.submissions || res.data || [];
+
+                    this.totalItems = res.total ?? submissions.length;
+                    this.totalPages = res.totalPages ?? Math.ceil(this.totalItems / this.limit);
+                    this.currentPage = res.page ?? page;
+
+                    this.renderGrid(submissions);
+                    this.renderPagination();
+                } catch (err) {
+                    console.error(err);
+                    this.showNoManuscripts('Unable to load published manuscripts.');
+                }
+            }
+
+            renderGrid(submissions) {
+                const grid = document.getElementById('cardsGrid');
+                if (!submissions.length) {
+                    this.showNoManuscripts('No published manuscripts found.');
+                    return;
+                }
+
+                grid.innerHTML = '';
+                submissions.forEach(submission => grid.appendChild(this.createCardElement(submission)));
+            }
+
+            createCardElement(sub) {
+                const article = document.createElement('article');
+                article.className = 'submission-card';
+
+                const title = sub.title || 'Untitled';
+                const journalTitle = (sub.journalId && (sub.journalId.title || sub.journalId)) || 'Unknown Journal';
+                const authors = Array.isArray(sub.authors) ? sub.authors : [];
+
+                article.innerHTML = `
+                    <div class="status-badge">Published</div>
+
+                    <div class="card-header">
+                        <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 80))}</div>
+                        <div class="card-sub" title="${this.escapeHtml(journalTitle)}">
+                            <i class="fas fa-book"></i>
+                            <span>${this.escapeHtml(this.truncate(journalTitle, 50))}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <div>
+                            <div style="font-weight:600; font-size:0.95rem; margin-bottom:0.25rem;">Authors</div>
+                            <div class="authors">
+                                ${authors.length ? authors.map(a => `<span class="author">${this.escapeHtml(a.name)}</span>`).join('') : '<div style="color:var(--text-light)">No authors listed</div>'}
+                            </div>
+                        </div>
+
+                        <div class="action-links">
+                            <button class="link" data-action="download" data-id="${sub._id}" title="Download published manuscript">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+
+                            <button class="link" data-action="view" data-id="${sub._id}" title="View publication details">
+                                <i class="fas fa-external-link-alt"></i> View Publication
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <a class="btn-view" href="submission-details.html?id=${sub._id}" title="View details">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+
+                        <div class="published-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Published: ${this.formatDate(sub.updatedAt || sub.createdAt)}</span>
+                        </div>
+                    </div>
+                `;
+
+                return article;
+            }
+
+            renderPagination() {
+                const paginationContainer = document.getElementById('paginationContainer');
+                if (!paginationContainer) return;
+
+                // Always show pagination even if only one page
+                let html = '';
+
+                if (this.totalPages <= 1) {
+                    // Single page - show only info
+                    html = `
+                        <div class="pagination-info">
+                            Showing ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
+                        </div>
+                    `;
+                } else {
+                    // Multiple pages - show full pagination
+                    const startItem = ((this.currentPage - 1) * this.limit) + 1;
+                    const endItem = Math.min(this.currentPage * this.limit, this.totalItems);
+
+                    // Previous button
+                    html += `
+                        <button class="page-btn prev-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
+                                ${this.currentPage === 1 ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                    `;
+
+                    // Page numbers
+                    const maxVisiblePages = 5;
+                    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+                    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+                    if (endPage - startPage + 1 < maxVisiblePages) {
+                        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                    }
+
+                    // Always show first page
+                    if (startPage > 1) {
+                        html += `
+                            <button class="page-btn" data-page="1">1</button>
+                            ${startPage > 2 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
+                        `;
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        html += `
+                            <button class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">
+                                ${i}
+                            </button>
+                        `;
+                    }
+
+                    // Always show last page
+                    if (endPage < this.totalPages) {
+                        html += `
+                            ${endPage < this.totalPages - 1 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
+                            <button class="page-btn" data-page="${this.totalPages}">${this.totalPages}</button>
+                        `;
+                    }
+
+                    // Next button
+                    html += `
+                        <button class="page-btn next-btn ${this.currentPage === this.totalPages ? 'disabled' : ''}" 
+                                ${this.currentPage === this.totalPages ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    `;
+
+                    // Add page info
+                    html += `
+                        <div class="pagination-info">
+                            Showing ${startItem}-${endItem} of ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
+                        </div>
+                    `;
+                }
+
+                paginationContainer.innerHTML = html;
+            }
+
+            changePage(page) {
+                if (!page || page < 1) page = 1;
+                if (page > this.totalPages) page = this.totalPages;
+                this.currentPage = page;
+                this.fetchAndRender(page);
+                document.getElementById('cardsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            async downloadFile(subId) {
+                try {
+                    toastr.info('Preparing download...');
+                    const response = await fetch(`${BASE_URL}/submissions/${subId}/download`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        toastr.error('Failed to download file.');
+                        return;
+                    }
+
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `published-${subId}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                    toastr.success('Download started');
+                } catch (err) {
+                    console.error('Download error', err);
+                    toastr.error('Failed to download file.');
+                }
+            }
+
+            viewDetails(subId) {
+                window.open(`/author/publication.html?id=${subId}`, '_blank');
+            }
+
+            showNoManuscripts(message) {
+                const grid = document.getElementById('cardsGrid');
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-book"></i>
+                        <h3>No Published Manuscripts</h3>
+                        <p>${message}</p>
+                    </div>
+                `;
+                // Still show pagination even if empty
+                this.renderPagination();
+            }
+
+            truncate(str, n) {
+                if (!str) return '';
+                return str.length <= n ? str : str.slice(0, n - 3) + '...';
+            }
+
+            formatDate(iso) {
+                if (!iso) return 'N/A';
+                try {
+                    const d = new Date(iso);
+                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                } catch {
+                    return iso;
+                }
+            }
+
+            escapeHtml(s) {
+                if (!s && s !== 0) return '';
+                const div = document.createElement('div');
+                div.textContent = s;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize manager globally
+        window.publishedManager = new PublishedManuscriptsManager();
+    </script>
+</body>
+
+</html>

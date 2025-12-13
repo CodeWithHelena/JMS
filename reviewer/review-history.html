@@ -304,13 +304,7 @@
             color: var(--primary);
         }
 
-        .review-comments {
-            margin: 0.75rem 0;
-            color: #374151;
-            line-height: 1.5;
-        }
-
-        .comments-section {
+        .authors-section {
             background: var(--light);
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -318,25 +312,58 @@
             margin: 0.75rem 0;
         }
 
-        .comments-label {
+        .authors-label {
             font-weight: 600;
             color: var(--muted);
             font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .comments-content {
+        .author-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .author-item:last-child {
+            border-bottom: none;
+        }
+
+        .author-name {
+            font-weight: 500;
             color: #111827;
-            line-height: 1.5;
+        }
+
+        .author-email {
+            color: var(--muted);
+            font-size: 0.85rem;
         }
 
         .timeline-date {
             font-size: 0.8rem;
             color: var(--muted);
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .version-info {
+            display: flex;
+            gap: 1rem;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .version-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -448,8 +475,8 @@
             opacity: 0.5;
         }
 
-        /* Filter controls */
-        .filter-controls {
+        /* Search filter */
+        .search-filter {
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--card-shadow);
@@ -461,25 +488,43 @@
             align-items: center;
         }
 
-        .filter-select {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
             border-radius: 6px;
-            background: white;
-            color: #374151;
-            font-size: 0.9rem;
-            min-width: 180px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            min-width: 300px;
         }
 
-        .filter-select:focus {
+        .search-input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
         }
 
-        .filter-label {
+        .search-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
             font-weight: 600;
-            color: #111827;
-            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-button:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        .search-button:active {
+            transform: translateY(0);
         }
 
         /* small responsive tweak */
@@ -509,13 +554,19 @@
                 width: 100%;
             }
 
-            .filter-controls {
+            .search-filter {
                 flex-direction: column;
                 align-items: stretch;
             }
 
-            .filter-select {
+            .search-input {
+                min-width: auto;
                 width: 100%;
+            }
+
+            .search-button {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -561,27 +612,11 @@
                         </div>
                     </div>
 
-                    <!-- Filter Controls -->
-                    <div class="filter-controls">
-                        <span class="filter-label">Filter by:</span>
-                        <select id="filterRecommendation" class="filter-select">
-                            <option value="">All Recommendations</option>
-                            <option value="accept">Accept</option>
-                            <option value="minor_revision">Minor Revision</option>
-                            <option value="major_revision">Major Revision</option>
-                            <option value="reject">Reject</option>
-                        </select>
-                        <select id="filterStatus" class="filter-select">
-                            <option value="">All Submission Statuses</option>
-                            <option value="submitted">Submitted</option>
-                            <option value="under_review">Under Review</option>
-                            <option value="reviewed">Reviewed</option>
-                            <option value="accepted">Accepted</option>
-                            <option value="rejected">Rejected</option>
-                            <option value="revision_requested">Revision Requested</option>
-                        </select>
-                        <button id="resetFilters" class="btn-secondary">
-                            <i class="fas fa-redo"></i> Reset Filters
+                    <!-- Search Filter -->
+                    <div class="search-filter">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search by title, author name, or email..." value="">
+                        <button id="searchButton" class="search-button">
+                            <i class="fas fa-search"></i> Search
                         </button>
                     </div>
 
@@ -619,7 +654,10 @@
         </div>
     </div>
 
-    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script>
+        window.SIDEBAR_MODULE = 'reviewer';
+        window.SIDEBAR_ACTIVE_ID = 'review-history';
+    </script>
     <script src="/assets/js/layout.js"></script>
 
     <!-- jQuery (for toastr) -->
@@ -673,6 +711,8 @@
                 this.completedReviews = [];
                 this.filteredReviews = [];
                 this.userCache = {}; // Cache for user data
+                this.currentSearch = '';
+                this.isLoading = false;
 
                 if (!this.token) {
                     ErrorScreen.show('Authentication required. Please login.');
@@ -695,10 +735,29 @@
             }
 
             bindEvents() {
-                // Filter events
-                document.getElementById('filterRecommendation')?.addEventListener('change', () => this.applyFilters());
-                document.getElementById('filterStatus')?.addEventListener('change', () => this.applyFilters());
-                document.getElementById('resetFilters')?.addEventListener('click', () => this.resetFilters());
+                // Search input events
+                const searchInput = document.getElementById('searchInput');
+                const searchButton = document.getElementById('searchButton');
+
+                if (searchInput && searchButton) {
+                    // Search button click
+                    searchButton.addEventListener('click', () => this.performSearch());
+
+                    // Enter key in search input
+                    searchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            this.performSearch();
+                        }
+                    });
+
+                    // Clear search when input is cleared
+                    searchInput.addEventListener('input', (e) => {
+                        if (!e.target.value.trim() && this.currentSearch) {
+                            this.currentSearch = '';
+                            this.loadReviewTimeline();
+                        }
+                    });
+                }
             }
 
             async getUserDetails(userId) {
@@ -733,12 +792,20 @@
             }
 
             async loadReviewTimeline() {
-                // Show loading immediately
+                if (this.isLoading) return;
+
+                this.isLoading = true;
                 LoadingScreen.showTimelineLoading();
+                ErrorScreen.hide();
 
                 try {
-                    // Get all completed reviews
-                    const response = await fetch(`${this.BASE_URL}/reviews/history/list`, {
+                    // Build URL with search parameter if available
+                    let url = `${this.BASE_URL}/reviews/history/list`;
+                    if (this.currentSearch) {
+                        url += `?search=${encodeURIComponent(this.currentSearch)}`;
+                    }
+
+                    const response = await fetch(url, {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
                             'Accept': 'application/json'
@@ -751,23 +818,39 @@
 
                     const data = await response.json();
 
-                    if (!data.success || !data.completedReviews) {
+                    if (!data.success) {
                         throw new Error(data.message || 'Failed to load review history data');
                     }
 
                     this.completedReviews = data.completedReviews || [];
                     this.filteredReviews = [...this.completedReviews];
 
+                    // Update search input to reflect current search
+                    if (document.getElementById('searchInput')) {
+                        document.getElementById('searchInput').value = this.currentSearch || '';
+                    }
+
                     // Render stats immediately
                     this.renderStats();
 
-                    // Then render timeline with user details
+                    // Then render timeline
                     await this.renderTimeline();
 
                 } catch (error) {
                     console.error('Error loading review timeline:', error);
                     ErrorScreen.show('Failed to load review history. Please try again.');
+                } finally {
+                    this.isLoading = false;
                 }
+            }
+
+            performSearch() {
+                const searchInput = document.getElementById('searchInput');
+                if (!searchInput) return;
+
+                const searchTerm = searchInput.value.trim();
+                this.currentSearch = searchTerm;
+                this.loadReviewTimeline();
             }
 
             renderStats() {
@@ -843,37 +926,6 @@
                 `;
             }
 
-            applyFilters() {
-                const recommendationFilter = document.getElementById('filterRecommendation').value;
-                const statusFilter = document.getElementById('filterStatus').value;
-
-                this.filteredReviews = this.completedReviews.filter(review => {
-                    let matches = true;
-
-                    // Filter by recommendation
-                    if (recommendationFilter && review.recommendation !== recommendationFilter) {
-                        matches = false;
-                    }
-
-                    // Filter by submission status
-                    if (statusFilter && review.submissionId?.status !== statusFilter) {
-                        matches = false;
-                    }
-
-                    return matches;
-                });
-
-                // Re-render timeline with filtered data
-                this.renderTimeline();
-            }
-
-            resetFilters() {
-                document.getElementById('filterRecommendation').value = '';
-                document.getElementById('filterStatus').value = '';
-                this.filteredReviews = [...this.completedReviews];
-                this.renderTimeline();
-            }
-
             async renderTimeline() {
                 const timelineContainer = document.getElementById('timelineContainer');
                 const noDataMessage = document.getElementById('noDataMessage');
@@ -938,6 +990,13 @@
                 const submissionTitle = review.submissionId?.title || 'Unknown Manuscript';
                 const submissionStatus = review.submissionId?.status || 'unknown';
 
+                // Authors information
+                const authors = review.submissionId?.authors || [];
+
+                // Version information
+                const currentVersion = review.version || 'N/A';
+                const totalVersions = review.totalVersions || 'N/A';
+
                 timelineItem.innerHTML = `
                     <div class="card">
                         <div class="review-title">
@@ -953,21 +1012,24 @@
                             <i class="far fa-clock"></i> Submitted on: ${submittedDate}
                         </p>
                         
-                        <div class="comments-section">
-                            <div class="comments-label">
-                                <i class="fas fa-comments"></i> Comments to Author
+                        ${authors.length > 0 ? `
+                        <div class="authors-section">
+                            <div class="authors-label">
+                                <i class="fas fa-users"></i> Authors
                             </div>
-                            <div class="comments-content">
-                                ${this.escapeHtml(review.commentsToAuthor || 'No comments provided to author.')}
-                            </div>
+                            ${authors.map(author => `
+                                <div class="author-item">
+                                    <div class="author-name">${this.escapeHtml(author.name || 'Unknown Author')}</div>
+                                    <div class="author-email">${this.escapeHtml(author.email || 'No email')}</div>
+                                </div>
+                            `).join('')}
                         </div>
+                        ` : ''}
                         
-                        <div class="comments-section">
-                            <div class="comments-label">
-                                <i class="fas fa-comment-dots"></i> Confidential Comments to Editor
-                            </div>
-                            <div class="comments-content">
-                                ${this.escapeHtml(review.commentsToEditor || 'No confidential comments provided.')}
+                        <div class="version-info">
+                            <div class="version-item">
+                                <i class="fas fa-code-branch"></i>
+                                <span>Version: <strong>${currentVersion}</strong> of ${totalVersions}</span>
                             </div>
                         </div>
                         

@@ -116,7 +116,7 @@
     --status-reviewed: var(--primary);
     --status-accepted: var(--success);
     --status-rejected: var(--danger);
-    --status-revision_requested: var(--warning);
+    --status-revision_requested: var(--primary-light);
     --status-revised: var(--info);
     --status-awaiting_payment: var(--warning);
     --status-published: var(--success);

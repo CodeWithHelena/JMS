@@ -619,7 +619,10 @@
         </div>
     </div>
 
-    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script>
+        window.SIDEBAR_MODULE = 'reviewer';
+        window.SIDEBAR_ACTIVE_ID = 'review-history';
+    </script>
     <script src="/assets/js/layout.js"></script>
 
     <!-- jQuery (for toastr) -->

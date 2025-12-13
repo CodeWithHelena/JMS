@@ -248,7 +248,7 @@
             transform: translateY(-2px);
         }
 
-        /* Abstract Section */
+        /* Abstract Section Styling - Same as submission details page */
         .abstract-content {
             background: var(--light);
             border: 1px solid var(--border);
@@ -256,6 +256,58 @@
             padding: 1.5rem;
             line-height: 1.6;
             color: #374151;
+        }
+
+        .abstract-content p {
+            margin: 0 0 1rem 0;
+        }
+
+        .abstract-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .abstract-content .abstract-text {
+            line-height: 1.6;
+            color: #374151;
+            word-wrap: break-word;
+        }
+
+        .abstract-content .abstract-text.truncated {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 8;
+            -webkit-box-orient: vertical;
+            max-height: 12.8em;
+            position: relative;
+        }
+
+        .abstract-content .abstract-text.truncated::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 30%;
+            height: 1.6em;
+            background: linear-gradient(to right, rgba(248, 250, 252, 0), var(--light) 50%);
+        }
+
+        .abstract-content .view-more-link {
+            margin-top: 0.5rem;
+            display: inline-block;
+            color: var(--info);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .abstract-content .view-more-link:hover {
+            color: #2563eb;
+            text-decoration: underline;
         }
 
         /* Decision Buttons Section */
@@ -641,10 +693,94 @@
             text-transform: capitalize;
         }
 
+        /* Timeline comment styling - same as submission details page */
         .timeline-comment {
-            margin: 0.5rem 0;
-            color: #111827;
+            font-size: 0.95rem;
+            color: #374151 !important;
             line-height: 1.5;
+            margin: 0.75rem 0;
+            word-wrap: break-word;
+        }
+
+        .timeline-comment p {
+            margin: 0 0 0.75rem 0;
+            color: #374151;
+        }
+
+        .timeline-comment p:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-comment strong,
+        .timeline-comment b {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .timeline-comment em,
+        .timeline-comment i {
+            font-style: italic;
+        }
+
+        .timeline-comment u {
+            text-decoration: underline;
+        }
+
+        .timeline-comment ul,
+        .timeline-comment ol {
+            margin: 0 0 0.75rem 1.5rem;
+            padding: 0;
+        }
+
+        .timeline-comment li {
+            margin-bottom: 0.25rem;
+            color: #374151;
+        }
+
+        .timeline-comment li:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-comment h1,
+        .timeline-comment h2,
+        .timeline-comment h3,
+        .timeline-comment h4,
+        .timeline-comment h5,
+        .timeline-comment h6 {
+            margin: 1rem 0 0.75rem 0;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .timeline-comment h1 {
+            font-size: 1.4rem;
+        }
+
+        .timeline-comment h2 {
+            font-size: 1.2rem;
+        }
+
+        .timeline-comment h3 {
+            font-size: 1.1rem;
+        }
+
+        .timeline-comment .view-more-link {
+            display: inline-block;
+            margin-left: 0.5rem;
+            color: var(--info);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .timeline-comment .view-more-link:hover {
+            color: #2563eb;
+            text-decoration: underline;
         }
 
         .timeline-date {
@@ -669,6 +805,147 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        /* Content Modal Styles - Same as submission details page */
+        .content-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-modal .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .content-modal .modal-content {
+            position: relative;
+            z-index: 10001;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .content-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content-modal-header h3 {
+            margin: 0;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content-type {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+            font-weight: normal;
+        }
+
+        .content-modal-body {
+            padding: 1.5rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .content-display {
+            line-height: 1.6;
+            color: #374151;
+            word-wrap: break-word;
+        }
+
+        .content-display p {
+            margin: 0 0 1rem 0;
+        }
+
+        .content-display p:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-display strong,
+        .content-display b {
+            font-weight: 600;
+        }
+
+        .content-display em,
+        .content-display i {
+            font-style: italic;
+        }
+
+        .content-display u {
+            text-decoration: underline;
+        }
+
+        .content-display ul,
+        .content-display ol {
+            margin: 0 0 1rem 1.5rem;
+            padding: 0;
+        }
+
+        .content-display li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-display li:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-display h1,
+        .content-display h2,
+        .content-display h3,
+        .content-display h4,
+        .content-display h5,
+        .content-display h6 {
+            margin: 1.5rem 0 1rem 0;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .content-display h1 {
+            font-size: 1.8rem;
+        }
+
+        .content-display h2 {
+            font-size: 1.5rem;
+        }
+
+        .content-display h3 {
+            font-size: 1.3rem;
+        }
+
+        .content-display h4 {
+            font-size: 1.1rem;
+        }
+
+        .content-display h5 {
+            font-size: 1rem;
+        }
+
+        .content-display h6 {
+            font-size: 0.9rem;
         }
 
         /* Review Submitted Message */
@@ -843,6 +1120,11 @@
             .btn-reset {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .content-modal .modal-content {
+                width: 95%;
+                max-height: 90vh;
             }
         }
     </style>
@@ -1084,7 +1366,31 @@
         </div>
     </div>
 
-    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <!-- Content Display Modal - Same as submission details page -->
+    <div id="contentModal" class="modal content-modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="content-modal-header">
+                <div>
+                    <h3 id="contentModalTitle">Content Details</h3>
+                    <div id="contentModalType" class="modal-content-type"></div>
+                </div>
+                <button class="modal-close" id="closeContentModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="content-modal-body">
+                <div id="contentDisplay" class="content-display">
+                    <!-- Content will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'reviewer';
+        window.SIDEBAR_ACTIVE_ID = 'assigned-reviews';
+    </script>
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1102,6 +1408,9 @@
                 this.reviewId = this.getReviewIdFromURL();
                 this.review = null;
                 this.userCache = new Map();
+                this.currentModalContent = '';
+                this.currentModalType = '';
+                this.currentModalTitle = '';
 
                 if (!this.reviewId) {
                     this.showError('No review ID provided');
@@ -1124,6 +1433,25 @@
             }
 
             bindEvents() {
+                // Content modal close button
+                document.getElementById('closeContentModal')?.addEventListener('click', () => {
+                    this.closeContentModal();
+                });
+
+                // Close modal when clicking outside
+                document.getElementById('contentModal')?.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        this.closeContentModal();
+                    }
+                });
+
+                // Close modal with Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeContentModal();
+                    }
+                });
+
                 document.addEventListener('DOMContentLoaded', () => {
                     // Decision buttons
                     document.getElementById('acceptBtn')?.addEventListener('click', () => this.respondToInvitation('accept'));
@@ -1245,13 +1573,30 @@
                     }
                 }
 
+                // Process comment with preserved formatting - same as submission details page
+                const processedComment = this.processContentForDisplay(event.comment || 'No comment provided');
+                const isCommentLong = processedComment.plainText.length > 150;
+                const commentPreview = isCommentLong ?
+                    processedComment.plainText.substring(0, 150) + '...' :
+                    processedComment.plainText;
+                const commentDisplayHtml = isCommentLong ?
+                    this.processContentForDisplay(commentPreview).displayHtml :
+                    processedComment.displayHtml;
+
                 timelineContainer.innerHTML = `
                     <div class="timeline-item">
                         <div class="card">
                             <span class="status-badge" style="${this.getStatusStyle(event.status)}">
                                 ${this.formatStatus(event.status)}
                             </span>
-                            <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
+                            <div class="timeline-comment">
+                                ${commentDisplayHtml}
+                                ${isCommentLong ? `
+                                    <a class="view-more-link" onclick="reviewDetails.showFullContent('${this.escapeHtml(processedComment.displayHtml)}', 'timeline-comment', 'Timeline Comment - ${this.formatStatus(event.status)}')">
+                                        <i class="fas fa-eye"></i> View full comment
+                                    </a>
+                                ` : ''}
+                            </div>
                             <p class="timeline-date">
                                 <i class="far fa-clock"></i> ${this.formatDate(event.date)}
                             </p>
@@ -1353,7 +1698,31 @@
                 if (!abstractContent || !this.review) return;
 
                 const abstract = this.review.manuscript.abstract || 'No abstract provided.';
-                abstractContent.innerHTML = `<p>${this.escapeHtml(abstract)}</p>`;
+
+                if (abstract && abstract.trim() !== '') {
+                    // Process abstract for display - same as submission details page
+                    const processedAbstract = this.processContentForDisplay(abstract);
+                    const isAbstractLong = processedAbstract.plainText.length > 300;
+                    const abstractPreview = isAbstractLong ?
+                        processedAbstract.plainText.substring(0, 300) + '...' :
+                        processedAbstract.plainText;
+                    const abstractDisplayHtml = isAbstractLong ?
+                        this.processContentForDisplay(abstractPreview).displayHtml :
+                        processedAbstract.displayHtml;
+
+                    abstractContent.innerHTML = `
+                        <div class="abstract-text ${isAbstractLong ? 'truncated' : ''}">
+                            ${abstractDisplayHtml}
+                        </div>
+                        ${isAbstractLong ? `
+                            <a class="view-more-link" onclick="reviewDetails.showFullContent('${this.escapeHtml(processedAbstract.displayHtml)}', 'abstract', 'Abstract')">
+                                <i class="fas fa-eye"></i> View full abstract
+                            </a>
+                        ` : ''}
+                    `;
+                } else {
+                    abstractContent.innerHTML = '<span style="color: #9ca3af;">No abstract provided.</span>';
+                }
             }
 
             renderAuthors() {
@@ -1621,6 +1990,105 @@
                 }
             }
 
+            // Methods from submission details page for content display
+            processContentForDisplay(content) {
+                if (!content || content.trim() === '') {
+                    return {
+                        plainText: '',
+                        displayHtml: '<span style="color: #9ca3af;">No content provided.</span>'
+                    };
+                }
+
+                // Sanitize HTML but preserve formatting - same as submission details page
+                const sanitizedHtml = this.sanitizeHTML(content);
+
+                // Create plain text version for length checking
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = sanitizedHtml;
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+                return {
+                    plainText: plainText,
+                    displayHtml: sanitizedHtml
+                };
+            }
+
+            sanitizeHTML(html) {
+                if (!html) return '';
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                // Remove script tags and other dangerous elements
+                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
+                scripts.forEach(script => script.remove());
+
+                // Allow safe HTML tags for formatting - same as submission details page
+                const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+                // Process all elements
+                const allElements = tempDiv.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                        // Replace disallowed tags with their text content
+                        const text = document.createTextNode(el.textContent);
+                        el.parentNode.replaceChild(text, el);
+                    }
+                });
+
+                // Return sanitized HTML
+                return tempDiv.innerHTML.trim() || html;
+            }
+
+            showFullContent(contentHtml, contentType, title) {
+                this.currentModalContent = contentHtml;
+                this.currentModalType = contentType;
+                this.currentModalTitle = title;
+
+                const modal = document.getElementById('contentModal');
+                const modalTitle = document.getElementById('contentModalTitle');
+                const modalType = document.getElementById('contentModalType');
+                const contentDisplay = document.getElementById('contentDisplay');
+
+                if (!modal || !modalTitle || !modalType || !contentDisplay) return;
+
+                // Set modal title and type
+                modalTitle.textContent = title;
+
+                const typeMap = {
+                    'cover-letter': 'Cover Letter',
+                    'changes-summary': 'Changes Summary',
+                    'abstract': 'Abstract',
+                    'timeline-comment': 'Timeline Comment'
+                };
+
+                modalType.textContent = typeMap[contentType] || 'Content';
+
+                // Display the content with proper formatting
+                contentDisplay.innerHTML = `
+                    <div class="content-display">
+                        ${contentHtml || '<div class="empty">No content available</div>'}
+                    </div>
+                `;
+
+                // Show modal
+                modal.style.display = 'flex';
+
+                // Prevent page scrolling
+                document.body.style.overflow = 'hidden';
+            }
+
+            closeContentModal() {
+                const modal = document.getElementById('contentModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    this.currentModalContent = '';
+                    this.currentModalType = '';
+                    this.currentModalTitle = '';
+                }
+            }
+
             async getUserDetails(userId) {
                 if (this.userCache.has(userId)) {
                     return this.userCache.get(userId);
@@ -1726,10 +2194,20 @@
                     .replaceAll('"', '&quot;')
                     .replaceAll("'", '&#39;');
             }
+
+            renderTimeline(events) {
+                const timelineContainer = document.getElementById('recentTimeline');
+                if (!timelineContainer) return;
+
+                if (events.length === 0) {
+                    timelineContainer.innerHTML = '<div style="color: var(--muted); text-align: center; padding: 2rem;">No timeline events found</div>';
+                }
+            }
         }
 
         // Initialize review details manager
         let reviewDetails = new ReviewDetailsManager();
+        window.reviewDetails = reviewDetails; // Make it globally accessible for onclick handlers
     </script>
 </body>
 

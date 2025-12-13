@@ -50,6 +50,9 @@
         /* Back Button */
         .back-button-wrap {
             margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .back-button {
@@ -71,6 +74,134 @@
             background: #e5e7eb;
             border-color: #9ca3af;
             transform: translateY(-1px);
+        }
+
+        /* Status Notification Section */
+        .status-notification {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-notification.published {
+            border-left-color: var(--success);
+            background: linear-gradient(to right, var(--success-light), var(--card-bg));
+        }
+
+        .status-notification.rejected {
+            border-left-color: var(--danger);
+            background: linear-gradient(to right, var(--danger-light), var(--card-bg));
+        }
+
+        .status-notification.awaiting_payment {
+            border-left-color: var(--warning);
+            background: linear-gradient(to right, var(--warning-light), var(--card-bg));
+        }
+
+        .status-notification.accepted {
+            border-left-color: var(--success);
+            background: linear-gradient(to right, var(--success-light), var(--card-bg));
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .notification-icon.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .notification-icon.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .notification-icon.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .notification-icon.info {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .notification-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .notification-content {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .notification-content p {
+            margin: 0 0 0.5rem 0;
+        }
+
+        .notification-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-payment {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-payment:hover {
+            background: #d97706;
+            transform: translateY(-2px);
         }
 
         /* Manuscript Header Card */
@@ -1002,6 +1133,30 @@
             }
         }
 
+        /* Edit Button Styling */
+        .edit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .edit-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        .edit-btn:active {
+            transform: translateY(0);
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .submission-details-container {
@@ -1079,6 +1234,35 @@
             .author-item {
                 min-width: 100%;
             }
+
+            .back-button-wrap {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .edit-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .back-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .status-notification {
+                padding: 1rem;
+            }
+
+            .notification-actions {
+                flex-direction: column;
+            }
+
+            .btn-payment {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1102,11 +1286,31 @@
             <div id="header-placeholder"></div>
 
             <main class="main-content">
-                <!-- Back Button -->
+                <!-- Status Notification Section -->
+                <div id="statusNotification" class="status-notification" style="display: none;">
+                    <div class="notification-header">
+                        <div id="notificationIcon" class="notification-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h3 id="notificationTitle" class="notification-title"></h3>
+                    </div>
+                    <div id="notificationContent" class="notification-content">
+                        <!-- Notification content will be populated here -->
+                    </div>
+                    <div id="notificationActions" class="notification-actions">
+                        <!-- Action buttons will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Back Button and Edit Button -->
                 <div class="back-button-wrap">
                     <a href="my-submission.html" class="back-button">
                         <i class="fas fa-arrow-left"></i> Back to My Submissions
                     </a>
+
+                    <button id="editSubmissionBtn" class="edit-btn">
+                        <i class="fas fa-edit"></i> Edit Submission
+                    </button>
                 </div>
 
                 <div class="submission-details-container">
@@ -1399,6 +1603,22 @@
                         this.closeContentModal();
                     }
                 });
+
+                // Make Payment button
+                document.addEventListener('click', (e) => {
+                    if (e.target.id === 'makePaymentBtn' || e.target.closest('#makePaymentBtn')) {
+                        this.handleMakePayment();
+                    }
+                });
+
+                // Setup edit button with submission ID
+                document.getElementById('editSubmissionBtn')?.addEventListener('click', () => {
+                    if (this.submissionId) {
+                        window.location.href = `/author/edit-submission.html?id=${this.submissionId}`;
+                    } else {
+                        toastr.error('Submission ID not found', 'Error');
+                    }
+                });
             }
 
             getSubmissionIdFromURL() {
@@ -1415,6 +1635,8 @@
                     await this.loadLatestTimelineEvent();
                     this.hideLoading();
                     this.showContent();
+                    this.checkAndShowStatusNotification();
+                    this.handleEditButtonVisibility();
                 } catch (error) {
                     console.error('Error initializing:', error);
                     this.showError('Failed to load submission details. Please try again.');
@@ -1479,6 +1701,100 @@
                     console.error('Error loading submission data:', error);
                     throw error;
                 }
+            }
+
+            checkAndShowStatusNotification() {
+                if (!this.submission) return;
+
+                const status = (this.submission.currentStatus || this.submission.status || '').toLowerCase();
+                const statusNotification = document.getElementById('statusNotification');
+                const notificationTitle = document.getElementById('notificationTitle');
+                const notificationContent = document.getElementById('notificationContent');
+                const notificationActions = document.getElementById('notificationActions');
+                const notificationIcon = document.getElementById('notificationIcon');
+
+                // Hide by default
+                statusNotification.style.display = 'none';
+
+                // Define status messages and configurations
+                const statusConfigs = {
+                    'awaiting_payment': {
+                        title: 'Awaiting Payment',
+                        message: 'Your submission has been approved by the editorial team and is ready for publication. To proceed with the publication process, please complete the payment.',
+                        icon: 'fas fa-credit-card',
+                        iconClass: 'warning',
+                        actions: '<button id="makePaymentBtn" class="btn-payment"><i class="fas fa-credit-card"></i> Make Payment</button>'
+                    },
+                    'rejected': {
+                        title: 'Submission Rejected',
+                        message: 'We regret to inform you that your submission has not been accepted for publication. The editorial team has reviewed your manuscript and determined that it does not meet the journal\'s publication criteria at this time.',
+                        icon: 'fas fa-times-circle',
+                        iconClass: 'danger',
+                        actions: ''
+                    },
+                    'published': {
+                        title: 'Congratulations! Published',
+                        message: 'Great news! Your manuscript has been successfully published. You can now view it in the journal\'s latest issue. Thank you for contributing to our publication.',
+                        icon: 'fas fa-check-circle',
+                        iconClass: 'success',
+                        actions: '<a href="#" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> View Published Article</a>'
+                    },
+                    'accepted': {
+                        title: 'Submission Accepted',
+                        message: 'Excellent news! Your submission has been accepted for publication. The editorial team is preparing it for the upcoming issue.',
+                        icon: 'fas fa-check-circle',
+                        iconClass: 'success',
+                        actions: ''
+                    }
+                };
+
+                const config = statusConfigs[status];
+                if (config) {
+                    // Show notification
+                    statusNotification.className = `status-notification ${status}`;
+                    notificationTitle.textContent = config.title;
+                    notificationContent.innerHTML = `<p>${config.message}</p>`;
+                    notificationActions.innerHTML = config.actions;
+
+                    // Set icon
+                    notificationIcon.className = `notification-icon ${config.iconClass}`;
+                    notificationIcon.innerHTML = `<i class="${config.icon}"></i>`;
+
+                    statusNotification.style.display = 'block';
+                }
+            }
+
+            handleEditButtonVisibility() {
+                if (!this.submission) return;
+
+                const status = (this.submission.currentStatus || this.submission.status || '').toLowerCase();
+                const editButton = document.getElementById('editSubmissionBtn');
+
+                // Statuses where edit button should be hidden
+                const hideEditForStatuses = ['accepted', 'rejected', 'awaiting_payment', 'published'];
+
+                if (hideEditForStatuses.includes(status) && editButton) {
+                    editButton.style.display = 'none';
+                }
+            }
+
+            handleMakePayment() {
+                // Here you would implement the payment logic
+                // For now, show a message and redirect to payment page
+                Swal.fire({
+                    title: 'Proceed to Payment',
+                    text: 'You will be redirected to the payment page to complete the publication process.',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Continue to Payment',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#ff7a18'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to payment page with submission ID
+                        window.location.href = `/author/payment.html?submission=${this.submissionId}`;
+                    }
+                });
             }
 
             async getUserDetails(userId) {
@@ -2107,89 +2423,6 @@
                 } catch (error) {
                     console.error('Error loading review details:', error);
                 }
-            }
-
-            showDecisionModal() {
-                if (!this.editorialDecision) return;
-
-                // Remove existing modal if any
-                const existingModal = document.getElementById('decisionModal');
-                if (existingModal) existingModal.remove();
-
-                const decisionText = this.formatDecision(this.editorialDecision.decision);
-                const commentHtml = this.editorialDecision.comment || 'No comment provided';
-                const editorName = this.editorialDecision.editor?.name || 'Unknown Editor';
-                const editorAffiliation = this.editorialDecision.editor?.affiliation || 'No affiliation provided';
-                const decisionDate = this.formatDate(this.editorialDecision.decidedAt);
-
-                const modalHtml = `
-                    <div id="decisionModal" class="modal">
-                        <div class="modal-overlay"></div>
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3><i class="fas fa-gavel" style="color:var(--primary);"></i> Editorial Decision Details</h3>
-                                <button class="modal-close"><i class="fas fa-times"></i></button>
-                            </div>
-                            <div class="modal-body">
-                                <div style="margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
-                                    <div style="font-size:1.1rem;font-weight:600;color:#111827;margin-bottom:0.25rem;">${this.escapeHtml(editorName)}</div>
-                                    <div style="color:var(--muted);font-size:0.9rem;">${this.escapeHtml(editorAffiliation)}</div>
-                                </div>
-                                
-                                <div style="margin-bottom:1.5rem;">
-                                    <div style="font-weight:600;color:#111827;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;">
-                                        <i class="fas fa-clipboard-check" style="color:var(--primary);"></i> Decision
-                                    </div>
-                                    <div style="background:var(--light);border-radius:8px;padding:1rem;">
-                                        <span class="status-badge" style="${this.getStatusStyle(this.editorialDecision.decision === 'accept' ? 'accepted' : this.editorialDecision.decision)}; display:inline-block;">
-                                            ${this.escapeHtml(decisionText)}
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <div style="margin-bottom:1.5rem;">
-                                    <div style="font-weight:600;color:#111827;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;">
-                                        <i class="fas fa-comment" style="color:var(--primary);"></i> Comments
-                                    </div>
-                                    <div style="background:var(--light);border-radius:8px;padding:1.5rem;white-space:pre-wrap;word-wrap:break-word;line-height:1.6;">
-                                        ${commentHtml}
-                                    </div>
-                                </div>
-                                
-                                <div style="color:var(--muted);font-size:0.9rem;display:flex;align-items:center;gap:0.5rem;">
-                                    <i class="far fa-clock"></i> Decided on: ${this.escapeHtml(decisionDate)}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-                // Add event listeners
-                const modal = document.getElementById('decisionModal');
-                const closeBtn = modal.querySelector('.modal-close');
-                const overlay = modal.querySelector('.modal-overlay');
-
-                const closeModal = () => {
-                    modal.remove();
-                    document.body.style.overflow = '';
-                };
-
-                closeBtn.addEventListener('click', closeModal);
-                overlay.addEventListener('click', closeModal);
-
-                // Close with Escape key
-                const keyHandler = (e) => {
-                    if (e.key === 'Escape') closeModal();
-                };
-                document.addEventListener('keydown', keyHandler);
-
-                // Store handler for cleanup
-                modal._keyHandler = keyHandler;
-
-                // Prevent page scrolling
-                document.body.style.overflow = 'hidden';
             }
 
             async loadLatestTimelineEvent() {
