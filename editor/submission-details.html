@@ -1329,10 +1329,9 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
     <!-- Submission Details JavaScript (self-contained) -->
-   <script>
-        /* --- Constants / auth helper --- */
-            const BASE_URL = 'https://fp.247laboratory.net/api/v1';
-            const getAuthToken2 = () => localStorage.getItem('editor_tkn') || localStorage.getItem('token');
+   <script type="module">
+           import { BASE_URL, token } from '../assets/js/utility.js';
+
 
             /* SubmissionDetailsManager - full updated script */
             class SubmissionDetailsManager {

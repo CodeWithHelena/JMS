@@ -8,8 +8,6 @@
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -21,22 +19,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <style>
-        :root {
-            --bg: #f4f7fb;
-            --card-bg: #ffffff;
-            --accent: #4f46e5;
-            --primary: #ff7a18;
-            --muted: #6b7280;
-            --line-color: #e6e9f2;
-            --dot-color: var(--primary);
-            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
-            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
-            --radius: 12px;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-        }
+        /* Add these CSS variables to your style.css root:
+        --status-submitted: var(--info);
+        --status-under_review: var(--warning);
+        --status-reviewed: var(--primary);
+        --status-accepted: var(--success);
+        --status-rejected: var(--danger);
+        --status-revision_requested: var(--warning);
+        --status-revised: var(--info);
+        --status-awaiting_payment: var(--warning);
+        --status-published: var(--success);
+        */
 
         body {
             background-color: var(--bg);
@@ -45,7 +38,7 @@
         /* Manuscript Header Card */
         .manuscript-header-card {
             background: var(--card-bg);
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             box-shadow: var(--card-shadow);
             padding: 2rem;
             margin-bottom: 2rem;
@@ -56,7 +49,7 @@
         .manuscript-header-card h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-primary);
             margin-bottom: 1rem;
             line-height: 1.3;
         }
@@ -73,8 +66,8 @@
             padding: 0.5rem 1.2rem;
             font-weight: 700;
             font-size: 0.85rem;
-            border-radius: 20px;
-            background: rgba(255, 122, 24, 0.1);
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
             color: var(--primary);
             margin-bottom: 1rem;
             text-transform: capitalize;
@@ -91,7 +84,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--muted);
+            color: var(--text-muted);
             font-size: 0.95rem;
         }
 
@@ -108,28 +101,27 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
+            background: var(--light);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
             padding: 0.5rem 1rem;
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: var(--transition-normal);
             text-decoration: none;
             margin-bottom: 1.5rem;
         }
 
         .back-button:hover {
-            background: #e5e7eb;
-            border-color: #9ca3af;
-            transform: translateY(-1px);
+            background: var(--bg);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
         }
 
         /* timeline container */
         .timeline-wrap {
-            max-width: 780px;
-            margin: 0 auto;
             padding: 0 1rem;
         }
 
@@ -219,7 +211,7 @@
             height: 14px;
             border-radius: 50%;
             background: var(--primary);
-            box-shadow: 0 0 0 6px rgba(255, 122, 24, 0.1);
+            box-shadow: 0 0 0 6px var(--primary-light);
             transform: translateX(-50%);
             transition: background .25s, transform .25s, box-shadow .25s;
             z-index: 2;
@@ -229,15 +221,15 @@
         .card {
             background: var(--card-bg);
             padding: 18px 20px;
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             box-shadow: var(--card-shadow);
-            transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+            transition: var(--transition-normal);
             will-change: transform;
             position: relative;
             min-height: 78px;
             margin-left: 56px;
             overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
         }
 
         .card:hover {
@@ -251,20 +243,67 @@
             padding: 0.28rem 1rem;
             font-weight: 700;
             font-size: 0.78rem;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             margin-bottom: 12px;
             text-transform: capitalize;
+            border: none;
+        }
+
+        /* Status badge colors using the new variables */
+        .status-submitted {
+            background-color: var(--status-submitted, var(--info));
+            color: white;
+        }
+
+        .status-under_review {
+            background-color: var(--status-under_review, var(--warning));
+            color: white;
+        }
+
+        .status-reviewed {
+            background-color: var(--status-reviewed, var(--primary));
+            color: white;
+        }
+
+        .status-accepted {
+            background-color: var(--status-accepted, var(--success));
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: var(--status-rejected, var(--danger));
+            color: white;
+        }
+
+        .status-revision_requested {
+            background-color: var(--status-revision_requested, var(--warning));
+            color: white;
+        }
+
+        .status-revised {
+            background-color: var(--status-revised, var(--info));
+            color: white;
+        }
+
+        .status-awaiting_payment {
+            background-color: var(--status-awaiting_payment, var(--warning));
+            color: white;
+        }
+
+        .status-published {
+            background-color: var(--status-published, var(--success));
+            color: white;
         }
 
         .timeline-comment {
             margin: 0.5rem 0;
-            color: #111827;
+            color: var(--text-primary);
             line-height: 1.5;
         }
 
         .timeline-date {
             font-size: 0.8rem;
-            color: var(--muted);
+            color: var(--text-muted);
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -273,14 +312,14 @@
 
         .updated-by {
             font-size: 0.85rem;
-            color: var(--muted);
+            color: var(--text-muted);
             margin-top: 12px;
             padding-top: 12px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            border-top: 1px solid var(--border);
         }
 
         .updated-by strong {
-            color: #374151;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -290,7 +329,7 @@
         .error-screen {
             text-align: center;
             padding: 3rem;
-            color: var(--muted);
+            color: var(--text-muted);
         }
 
         .retry-btn {
@@ -298,28 +337,29 @@
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             margin-top: 1rem;
             font-weight: 600;
-            transition: all 0.2s;
+            transition: var(--transition-normal);
         }
 
         .retry-btn:hover {
-            background: #e56c0e;
+            background: var(--primary-dark);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         /* Page title styling */
         .page-title h1 {
             font-size: 2rem;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
 
         .page-title p {
-            color: var(--muted);
+            color: var(--text-muted);
             font-size: 1.1rem;
         }
 
@@ -327,9 +367,9 @@
         .no-data {
             text-align: center;
             padding: 3rem;
-            color: var(--muted);
+            color: var(--text-muted);
             background: var(--card-bg);
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             box-shadow: var(--card-shadow);
             margin-top: 2rem;
         }
@@ -348,13 +388,13 @@
         .loading-screen {
             text-align: center;
             padding: 3rem;
-            color: var(--muted);
+            color: var(--text-muted);
         }
 
         .loading-screen .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #f3f3f3;
+            border: 4px solid var(--light);
             border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -368,6 +408,33 @@
 
             100% {
                 transform: rotate(360deg);
+            }
+        }
+
+        /* Skeleton loading styles */
+        .skeleton {
+            background: var(--light);
+            border-radius: var(--radius-md);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .skeleton-icon {
+            background: var(--light);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
             }
         }
 
@@ -500,10 +567,8 @@
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script>
-        // Constants
-        const BASE_URL = 'https://fp.247laboratory.net/api/v1';
-        const getAuthToken2 = () => localStorage.getItem('editor_tkn') || localStorage.getItem('token');
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
 
         // Loading Functions
         const LoadingScreen = {
@@ -656,10 +721,11 @@
 
                 const formattedDate = this.formatDate(this.submission.createdAt);
                 const statusDisplay = this.formatStatus(this.submission.currentStatus || this.submission.status);
+                const statusClass = this.getStatusClass(this.submission.currentStatus || this.submission.status);
 
                 manuscriptHeader.innerHTML = `
                     <h1>${this.escapeHtml(this.submission.title)}</h1>
-                    <span class="header-status-badge">Current Status: ${statusDisplay}</span>
+                    <span class="header-status-badge ${statusClass}">Current Status: ${statusDisplay}</span>
                     <div class="header-meta">
                         <div class="meta-item">
                             <i class="far fa-calendar"></i>
@@ -715,8 +781,8 @@
                 // Format status for display
                 const statusDisplay = this.formatStatus(item.status);
 
-                // Get status color
-                const statusColor = this.getStatusColor(item.status);
+                // Get status class
+                const statusClass = this.getStatusClass(item.status);
 
                 // Get user details if available
                 let updatedByText = '';
@@ -732,7 +798,7 @@
 
                 timelineItem.innerHTML = `
                     <div class="card">
-                        <span class="status-badge" style="${statusColor}">
+                        <span class="status-badge ${statusClass}">
                             ${statusDisplay}
                         </span>
                         <p class="timeline-comment">${this.escapeHtml(item.comment || 'No comment provided.')}</p>
@@ -746,15 +812,20 @@
                 return timelineItem;
             }
 
-            getStatusColor(status) {
-                const colors = {
-                    'submitted': 'background-color: var(--info); color: white;',
-                    'under_review': 'background-color: var(--warning); color: white;',
-                    'reviewed': 'background-color: var(--primary); color: white;',
-                    'accepted': 'background-color: var(--success); color: white;',
-                    'rejected': 'background-color: var(--danger); color: white;'
+            getStatusClass(status) {
+                // Map status to CSS class
+                const statusMap = {
+                    'submitted': 'status-submitted',
+                    'under_review': 'status-under_review',
+                    'reviewed': 'status-reviewed',
+                    'accepted': 'status-accepted',
+                    'rejected': 'status-rejected',
+                    'revision_requested': 'status-revision_requested',
+                    'revised': 'status-revised',
+                    'awaiting_payment': 'status-awaiting_payment',
+                    'published': 'status-published'
                 };
-                return colors[status] || 'background-color: var(--muted); color: white;';
+                return statusMap[status] || 'status-submitted';
             }
 
             formatStatus(status) {
@@ -763,7 +834,11 @@
                     'under_review': 'Under Review',
                     'reviewed': 'Reviewed',
                     'accepted': 'Accepted',
-                    'rejected': 'Rejected'
+                    'rejected': 'Rejected',
+                    'revision_requested': 'Revision Requested',
+                    'revised': 'Revised',
+                    'awaiting_payment': 'Awaiting Payment',
+                    'published': 'Published'
                 };
                 return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
             }

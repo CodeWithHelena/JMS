@@ -21,54 +21,6 @@
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
 </head>
 <style>
-    :root {
-        --primary-color: rgba(204, 85, 0, 0.12);
-        --secondary-color: #cc5500;
-        --sidebar-width: 260px;
-        --sidebar-collapsed-width: 70px;
-        --header-height: 70px;
-        --sidebar-bg: #ffffff;
-        --header-bg: #ffffff;
-        --bg-white: #ffffff;
-        --body-bg: #f5f5f5;
-        --text-color: #333333;
-        --text-light: #666666;
-        --border-color: #e0e0e0;
-        --hover-bg: rgba(204, 85, 0, 0.12);
-        --active-bg: rgba(204, 85, 0, 0.15);
-        --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        --transition: all 0.3s ease;
-        --brand: #cc5500;
-        --muted: #6b7280;
-
-
-        /* Role Colors - PRIMARY COLORS */
-        --role-editor: #2563eb;
-        /* Blue */
-        --role-editor-bg: rgba(37, 99, 235, 0.12);
-        --role-author: #059669;
-        /* Emerald */
-        --role-author-bg: rgba(5, 150, 105, 0.12);
-        --role-reviewer: #ea580c;
-        /* Orange */
-        --role-reviewer-bg: rgba(234, 88, 12, 0.12);
-        --role-admin: #7c3aed;
-        /* Violet */
-        --role-admin-bg: rgba(124, 58, 237, 0.12);
-
-        /* Status Colors - SECONDARY/ACCENT COLORS */
-        --status-active: #16a34a;
-        /* Green (different shade) */
-        --status-active-bg: rgba(22, 163, 74, 0.15);
-        --status-inactive: #dc2626;
-        /* Red */
-        --status-inactive-bg: rgba(220, 38, 38, 0.15);
-        --status-pending: #ca8a04;
-        /* Gold */
-        --status-pending-bg: rgba(202, 138, 4, 0.15);
-
-    }
-
     .placeholder {
         background: none !important;
     }
@@ -80,8 +32,6 @@
     }
 
     /* Header Section */
-
-
     .header-actions {
         display: flex;
         gap: 15px;
@@ -90,15 +40,15 @@
     }
 
     .add-user-btn {
-        background-color: var(--brand);
+        background-color: var(--primary);
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: var(--radius-md);
         padding: 12px 24px;
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: var(--transition);
+        transition: var(--transition-normal);
         display: flex;
         align-items: center;
         gap: 8px;
@@ -106,23 +56,25 @@
     }
 
     .add-user-btn:hover {
-        background-color: #b34900;
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
     }
 
     /* Search Bar Section */
     .search-section {
-        background-color: var(--bg-white);
-        border-radius: 12px;
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
         padding: 25px;
         margin-bottom: 30px;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        border: 1px solid var(--border);
     }
 
     .search-title {
         font-size: 18px;
         font-weight: 600;
-        color: var(--text-color);
+        color: var(--text-primary);
         margin-bottom: 20px;
         display: flex;
         align-items: center;
@@ -130,7 +82,7 @@
     }
 
     .search-title i {
-        color: var(--brand);
+        color: var(--primary);
     }
 
     .search-filters {
@@ -152,37 +104,37 @@
         display: block;
         margin-bottom: 8px;
         font-weight: 600;
-        color: var(--text-color);
+        color: var(--text-primary);
         font-size: 14px;
     }
 
     .user-search-input {
         width: 100%;
         padding: 12px 16px;
-        border: 1.5px solid var(--border-color);
-        border-radius: 6px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
         font-size: 16px;
-        transition: var(--transition);
-        background-color: var(--bg-white);
-        color: var(--text-color);
+        transition: var(--transition-normal);
+        background-color: var(--card-bg);
+        color: var(--text-primary);
     }
 
     .user-search-input:focus {
         outline: none;
-        border-color: var(--brand);
-        box-shadow: 0 0 0 3px var(--primary-color);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
     }
 
     .search-button {
-        background-color: var(--brand);
+        background-color: var(--primary);
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: var(--radius-md);
         padding: 12px 30px;
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: var(--transition);
+        transition: var(--transition-normal);
         display: flex;
         align-items: center;
         gap: 8px;
@@ -191,19 +143,21 @@
     }
 
     .search-button:hover {
-        background-color: #b34900;
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
     }
 
     .clear-button {
-        background-color: var(--body-bg);
-        color: var(--text-color);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
+        background-color: var(--light);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
         padding: 12px 20px;
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: var(--transition);
+        transition: var(--transition-normal);
         display: flex;
         align-items: center;
         gap: 8px;
@@ -212,17 +166,18 @@
     }
 
     .clear-button:hover {
-        background-color: #e5e5e5;
+        background-color: var(--bg);
+        color: var(--text-primary);
     }
 
     /* Users Table */
     .users-table-container {
-        background-color: var(--bg-white);
-        border-radius: 12px;
-        box-shadow: var(--shadow);
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--card-shadow);
         overflow: hidden;
         margin-bottom: 30px;
-        border: 1px solid var(--border-color);
+        border: 1px solid var(--border);
     }
 
     .table-responsive {
@@ -236,33 +191,33 @@
     }
 
     .users-table thead {
-        background-color: var(--primary-color);
+        background-color: var(--light);
     }
 
     .users-table th {
         padding: 16px 20px;
         text-align: left;
         font-weight: 600;
-        color: var(--text-color);
+        color: var(--text-primary);
         font-size: 14px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        border-bottom: 2px solid var(--border-color);
+        border-bottom: 2px solid var(--border);
         white-space: nowrap;
     }
 
     .users-table td {
         padding: 16px 20px;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border);
         vertical-align: middle;
     }
 
     .users-table tbody tr {
-        transition: var(--transition);
+        transition: var(--transition-normal);
     }
 
     .users-table tbody tr:hover {
-        background-color: rgba(204, 85, 0, 0.04);
+        background-color: var(--light);
     }
 
     .users-table tbody tr:last-child td {
@@ -277,7 +232,7 @@
 
     .full-name {
         font-weight: 600;
-        color: var(--text-color);
+        color: var(--text-primary);
         max-width: 200px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -285,7 +240,7 @@
     }
 
     .user-email {
-        color: var(--text-light);
+        color: var(--text-muted);
         font-size: 14px;
         max-width: 250px;
         overflow: hidden;
@@ -293,7 +248,7 @@
         white-space: nowrap;
     }
 
-    /* Role Badges - UNIQUE COLORS */
+    /* Role Badges - using your CSS variables */
     .user-role {
         display: inline-block;
         padding: 6px 12px;
@@ -305,26 +260,30 @@
     }
 
     .role-editor {
-        background-color: var(--role-editor-bg);
-        color: var(--role-editor);
+        background-color: var(--info-light);
+        color: var(--info-dark);
+        border: 1px solid var(--info);
     }
 
     .role-author {
-        background-color: var(--role-author-bg);
-        color: var(--role-author);
+        background-color: var(--success-light);
+        color: var(--success-dark);
+        border: 1px solid var(--success);
     }
 
     .role-reviewer {
-        background-color: var(--role-reviewer-bg);
-        color: var(--role-reviewer);
+        background-color: var(--warning-light);
+        color: var(--warning-dark);
+        border: 1px solid var(--warning);
     }
 
     .role-admin {
-        background-color: var(--role-admin-bg);
-        color: var(--role-admin);
+        background-color: var(--secondary-light);
+        color: var(--secondary-dark);
+        border: 1px solid var(--secondary);
     }
 
-    /* Status Badges - DIFFERENT COLORS */
+    /* Status Badges - using your CSS variables */
     .user-status {
         display: inline-block;
         padding: 6px 12px;
@@ -336,27 +295,30 @@
     }
 
     .status-active {
-        background-color: var(--status-active-bg);
-        color: var(--status-active);
+        background-color: var(--success-light);
+        color: var(--success-dark);
+        border: 1px solid var(--success);
     }
 
     .status-inactive {
-        background-color: var(--status-inactive-bg);
-        color: var(--status-inactive);
+        background-color: var(--danger-light);
+        color: var(--danger-dark);
+        border: 1px solid var(--danger);
     }
 
     .status-pending {
-        background-color: var(--status-pending-bg);
-        color: var(--status-pending);
+        background-color: var(--warning-light);
+        color: var(--warning-dark);
+        border: 1px solid var(--warning);
     }
 
     .action-btn {
         padding: 8px 16px;
-        border-radius: 6px;
+        border-radius: var(--radius-md);
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        transition: var(--transition);
+        transition: var(--transition-normal);
         border: none;
         display: flex;
         align-items: center;
@@ -365,13 +327,15 @@
     }
 
     .view-btn {
-        background-color: var(--primary-color);
-        color: var(--brand);
-        border: 1px solid var(--border-color);
+        background-color: var(--primary-light);
+        color: var(--primary);
+        border: 1px solid var(--primary);
     }
 
     .view-btn:hover {
-        background-color: var(--hover-bg);
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-2px);
     }
 
     /* Stats and Pagination */
@@ -380,14 +344,14 @@
         justify-content: space-between;
         align-items: center;
         padding: 20px;
-        border-top: 1px solid var(--border-color);
-        background-color: var(--bg-white);
+        border-top: 1px solid var(--border);
+        background-color: var(--light);
         flex-wrap: wrap;
         gap: 15px;
     }
 
     .users-stats {
-        color: var(--text-light);
+        color: var(--text-muted);
         font-size: 14px;
     }
 
@@ -401,28 +365,30 @@
     .page-btn {
         width: 40px;
         height: 40px;
-        border-radius: 6px;
-        border: 1px solid var(--border-color);
-        background-color: var(--bg-white);
-        color: var(--text-color);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border);
+        background-color: var(--card-bg);
+        color: var(--text-primary);
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        transition: var(--transition);
+        transition: var(--transition-normal);
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .page-btn:hover:not(.disabled) {
-        background-color: var(--hover-bg);
-        border-color: var(--brand);
+        background-color: var(--light);
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
     }
 
     .page-btn.active {
-        background-color: var(--brand);
+        background-color: var(--primary);
         color: white;
-        border-color: var(--brand);
+        border-color: var(--primary);
     }
 
     .page-btn.disabled {
@@ -441,8 +407,8 @@
     .loading-spinner {
         width: 40px;
         height: 40px;
-        border: 3px solid var(--primary-color);
-        border-top-color: var(--brand);
+        border: 3px solid var(--light);
+        border-top-color: var(--primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -457,26 +423,26 @@
     .empty-state {
         text-align: center;
         padding: 60px 20px;
-        background-color: var(--bg-white);
-        border-radius: 12px;
-        border: 2px dashed var(--border-color);
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        border: 2px dashed var(--border);
         margin-bottom: 30px;
     }
 
     .empty-state i {
         font-size: 48px;
-        color: var(--text-light);
+        color: var(--text-muted);
         margin-bottom: 20px;
     }
 
     .empty-state h3 {
         font-size: 20px;
-        color: var(--text-color);
+        color: var(--text-primary);
         margin-bottom: 10px;
     }
 
     .empty-state p {
-        color: var(--text-light);
+        color: var(--text-muted);
         margin-bottom: 20px;
     }
 
@@ -556,7 +522,7 @@
         }
 
         .users-table-container {
-            border-radius: 8px;
+            border-radius: var(--radius-md);
         }
 
         .users-table th,
@@ -610,16 +576,16 @@
         }
 
         .user-card {
-            background-color: var(--bg-white);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
             padding: 15px;
             margin-bottom: 15px;
-            transition: var(--transition);
+            transition: var(--transition-normal);
         }
 
         .user-card:hover {
-            box-shadow: var(--shadow);
+            box-shadow: var(--card-shadow);
         }
 
         .user-card-header {
@@ -635,13 +601,13 @@
 
         .user-card-name {
             font-weight: 600;
-            color: var(--text-color);
+            color: var(--text-primary);
             margin-bottom: 4px;
             font-size: 16px;
         }
 
         .user-card-email {
-            color: var(--text-light);
+            color: var(--text-muted);
             font-size: 14px;
             margin-bottom: 8px;
             word-break: break-all;
@@ -653,7 +619,7 @@
             align-items: center;
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid var(--border);
         }
 
         .user-card-role {

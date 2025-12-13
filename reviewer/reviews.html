@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Reviews</title>
+    <title>Assigned Reviews</title>
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
@@ -16,25 +16,600 @@
 
     <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
-    <!-- Submission CSS -->
-    <link rel="stylesheet" href="/assets/css/submission.css">
+
+    <!-- Page-specific CSS -->
+    <style>
+        /* --- Page container (same as my-submission.html) --- */
+        .container.page-title {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.6rem;
+            margin: 0;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .page-title p {
+            margin: .25rem 0 0;
+            color: var(--text-muted);
+        }
+
+        /* --- Filter controls: match Editor Submissions exactly --- */
+        .filter-controls {
+            background: linear-gradient(180deg, var(--card-bg) 0%, #fcfcff 100%);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            padding: 1.25rem;
+            margin-top: 1.25rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        /* Buttons (same visual style as my-submission page) */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-normal);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.65rem 0.9rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+            color: var(--text-primary);
+        }
+
+        /* --- Custom Select (same structural style as my-submission page) --- */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select .select-header {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0.55rem 0.8rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            transition: var(--transition-normal);
+        }
+
+        .custom-select .select-header:hover {
+            border-color: var(--primary-light);
+        }
+
+        .custom-select .selected-text.placeholder {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .custom-select .select-arrow {
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        .custom-select.open .select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .custom-select .select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--card-shadow);
+            z-index: 9999;
+            display: none;
+            max-height: 260px;
+            overflow: auto;
+        }
+
+        .custom-select.open .select-dropdown {
+            display: block;
+        }
+
+        .select-search {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            padding: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .select-search input {
+            width: 100%;
+            padding: 0.45rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            outline: none;
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .select-search input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .clear-search-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .clear-search-btn:hover {
+            background: var(--light);
+            color: var(--text-primary);
+        }
+
+        .select-options .select-option {
+            padding: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            border-bottom: 1px solid var(--light);
+            transition: var(--transition-fast);
+        }
+
+        .select-options .select-option:hover {
+            background: var(--light);
+        }
+
+        .select-no-results {
+            padding: 0.9rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* --- Cards grid: 3 per row, matches my-submission page --- */
+        .manuscripts-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width:1100px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width:700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Card style (match my-submission look) --- */
+        .review-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 220px;
+            position: relative;
+            transition: var(--transition-normal);
+        }
+
+        .review-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .review-card .card-header {
+            padding: 1rem;
+            padding-top: 2.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .review-card .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.4;
+            min-height: 2.8em;
+        }
+
+        .review-card .card-content {
+            padding: 0.85rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .review-card .meta-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-card .meta-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 90px;
+            font-size: 0.9rem;
+        }
+
+        .review-card .meta-value {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        /* Status display in content */
+        .submission-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        /* Actions block */
+        .action-links {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .action-links .link {
+            padding: 0.45rem 0.6rem;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            gap: 0.5rem;
+            align-items: center;
+            color: var(--text-muted);
+            background: transparent;
+            transition: var(--transition-fast);
+        }
+
+        .action-links .link:hover {
+            border-color: var(--border);
+            color: var(--text-primary);
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        /* Card footer */
+        .review-card .card-footer {
+            padding: 0.8rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+            background: var(--light);
+        }
+
+        .btn-view {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.5rem 0.95rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: var(--transition-normal);
+        }
+
+        .btn-view:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .assigned-date {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        /* Status badge (top-right) - Invitation Status */
+        .status-badge {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            padding: 0.35rem 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: capitalize;
+            box-shadow: 0 6px 18px rgba(22, 24, 46, 0.06);
+        }
+
+        /* Status badge colors */
+        .status-pending {
+            background: var(--warning-light);
+            color: var(--warning-dark);
+            border: 1px solid var(--warning);
+        }
+
+        .status-accepted {
+            background: var(--info-light);
+            color: var(--info-dark);
+            border: 1px solid var(--info);
+        }
+
+        .status-declined {
+            background: var(--danger-light);
+            color: var(--danger-dark);
+            border: 1px solid var(--danger);
+        }
+
+        .status-completed {
+            background: var(--success-light);
+            color: var(--success-dark);
+            border: 1px solid var(--success);
+        }
+
+        /* Submission status colors */
+        .submission-submitted {
+            background: var(--info-light);
+            color: var(--info-dark);
+        }
+
+        .submission-under_review {
+            background: var(--warning-light);
+            color: var(--warning-dark);
+        }
+
+        .submission-reviewed {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .submission-revision_requested {
+            background: var(--warning-light);
+            color: var(--warning-dark);
+        }
+
+        .submission-revised {
+            background: var(--info-light);
+            color: var(--info-dark);
+        }
+
+        .submission-accepted {
+            background: var(--success-light);
+            color: var(--success-dark);
+        }
+
+        .submission-rejected {
+            background: var(--danger-light);
+            color: var(--danger-dark);
+        }
+
+        .submission-awaiting_payment {
+            background: var(--warning-light);
+            color: var(--warning-dark);
+        }
+
+        .submission-published {
+            background: var(--success-light);
+            color: var(--success-dark);
+        }
+
+        /* No-results fallback */
+        .no-results {
+            grid-column: 1/-1;
+            padding: 2.25rem;
+            text-align: center;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .no-results i {
+            font-size: 2rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        /* Spinner animation */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* --- Pagination styles --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .pagination-info {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-right: 1rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            background: var(--light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.9rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            min-width: 44px;
+            justify-content: center;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--light);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-dots {
+            color: var(--text-muted);
+            padding: 0 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pagination {
+                padding-top: 1rem;
+                gap: 0.5rem;
+            }
+
+            .pagination-info {
+                width: 100%;
+                text-align: center;
+                order: 2;
+                margin: 0;
+                font-size: 0.9rem;
+            }
+
+            .pagination-controls {
+                width: 100%;
+                justify-content: center;
+                order: 1;
+            }
+
+            .pagination-btn {
+                padding: 0.45rem 0.75rem;
+                min-width: 36px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .review-card .card-footer {
+                flex-direction: row;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .review-card .card-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-<style>
-    .card-header-row {
-        position: relative;
-    }
-
-    .card-header-row .status-badge {
-        position: absolute;
-        top: -34px;
-        right: 0;
-        border-top-right-radius: var(--card-radius);
-    }
-
-    .meta-row {
-        margin-bottom: 3rem;
-    }
-</style>
 
 <body>
     <div class="dashboard-container">
@@ -47,42 +622,22 @@
                 <div class="container page-title">
                     <h1>Assigned Reviews</h1>
                     <p>View all reviews assigned to you</p>
-
-                    <!-- Filter Controls -->
-                    <div class="filter-controls mt-3">
-                        <div class="filter-group">
-                            <label for="statusFilter">Filter by Status:</label>
-                            <select id="statusFilter" class="filter-select">
-                                <option value="all">All Reviews</option>
-                                <option value="pending">Pending</option>
-                                <option value="accepted">Accepted</option>
-                                <option value="declined">Declined</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="sortBy">Sort by:</label>
-                            <select id="sortBy" class="filter-select">
-                                <option value="newest">Newest First</option>
-                                <option value="oldest">Oldest First</option>
-                                <option value="title">Title A-Z</option>
-                            </select>
-                        </div>
-                        <button id="applyFilters" class="btn-primary">Apply Filters</button>
-                        <button id="clearFilters" class="btn-secondary">Clear Filters</button>
-                    </div>
                 </div>
 
+                <!-- Filter controls injected here by JS -->
+                <div id="filterArea"></div>
+
                 <div class="manuscripts-wrapper">
-                    <!-- Grid container where cards will be injected -->
-                    <div id="cardsGrid" class="cards-grid"></div>
+                    <div id="cardsGrid" class="cards-grid">
+                        <!-- Cards will be injected here -->
+                    </div>
 
-                    <!-- Pagination will be inserted here -->
-                    <div id="pagination"></div>
-
-                    <!-- Template for fallback if JS disabled -->
                     <noscript>
-                        <div class="alert alert-warning">JavaScript is required to load reviews. Please enable JS.</div>
+                        <div class="no-results">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>JavaScript Required</h3>
+                            <p>JavaScript is required to load reviews. Please enable JS.</p>
+                        </div>
                     </noscript>
                 </div>
             </main>
@@ -93,394 +648,481 @@
         window.SIDEBAR_MODULE = 'reviewer';
         window.SIDEBAR_ACTIVE_ID = 'assigned-reviews';
     </script>
+
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (required for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <!-- Import utility functions -->
+    <!-- Reviews JavaScript -->
     <script type="module">
-        import { BASE_URL, token } from '../../assets/js/utility.js';
+        // Import utility functions
+        import { BASE_URL, getAuthToken2 } from '../../assets/js/utility.js';
 
         class ReviewsManager {
             constructor() {
                 this.currentPage = 1;
-                this.limit = 6; // Cards per page
+                this.limit = 6;
                 this.totalItems = 0;
                 this.totalPages = 0;
-                this.allReviews = []; // Store all reviews
+
                 this.filteredReviews = [];
                 this.currentFilters = {
                     status: 'all',
-                    sortBy: 'newest'
+                    search: '',
+                    sortOrder: 'desc'
                 };
 
-                this.bindEvents();
+                // Status options for submission status filter
+                this.statusOptions = [
+                    "submitted",
+                    "under_review",
+                    "reviewed",
+                    "revision_requested",
+                    "revised",
+                    "accepted",
+                    "rejected",
+                    "awaiting_payment",
+                    "published"
+                ];
+
+                this.init();
             }
 
-            bindEvents() {
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Initialize
-                    this.initialize();
+            init() {
+                this.initToastr();
+                this.injectFilterControls();
+                this.fetchAndRender(1);
+                this.bindGlobalEvents();
+            }
 
-                    // Add event listeners for filters
-                    document.getElementById('applyFilters')?.addEventListener('click', () => this.applyFilters());
-                    document.getElementById('clearFilters')?.addEventListener('click', () => this.clearFilters());
-                    document.getElementById('statusFilter')?.addEventListener('change', (e) => {
-                        this.currentFilters.status = e.target.value;
+            initToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            bindGlobalEvents() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const active = document.activeElement;
+                        if (active && active.classList && active.classList.contains('filter-search-input')) {
+                            e.preventDefault();
+                            this.applyFilters();
+                        }
+                    }
+                });
+            }
+
+            injectFilterControls() {
+                const area = document.getElementById('filterArea');
+                if (!area) return;
+
+                area.innerHTML = `
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label class="filter-label">Search</label>
+                            <input type="text" id="filterSearch" class="filter-search-input" placeholder="Search submission title, authors..." style="padding:0.6rem;border:1px solid var(--border);border-radius:8px;">
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Filter by Submission Status</label>
+                            <div class="custom-select" id="statusFilter">
+                                <input type="hidden" id="selectedStatus" value="all">
+                                <div class="select-header">
+                                    <span class="selected-text placeholder">All Statuses</span>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <div class="select-dropdown">
+                                    <div class="select-options" id="statusOptionsContainer"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center;">
+                            <button id="applyFilters" class="btn-primary"><i class="fas fa-filter"></i> Apply</button>
+                            <button id="clearFilters" class="btn-secondary">Clear</button>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('applyFilters').addEventListener('click', () => this.applyFilters());
+                document.getElementById('clearFilters').addEventListener('click', () => this.clearFilters());
+                document.getElementById('filterSearch').addEventListener('input', (e) => {
+                    this.currentFilters.search = e.target.value.trim();
+                });
+
+                // Fill status options for submission status filter
+                const statusContainer = document.getElementById('statusOptionsContainer');
+                if (statusContainer) {
+                    const opts = [{ id: 'all', title: 'All Statuses' }, ...this.statusOptions.map(s => ({
+                        id: s,
+                        title: this.formatSubmissionStatus(s)
+                    }))];
+                    statusContainer.innerHTML = opts.map(o => `<div class="select-option" data-id="${o.id}">${this.escapeHtml(o.title)}</div>`).join('');
+
+                    statusContainer.addEventListener('click', (e) => {
+                        const opt = e.target.closest('.select-option');
+                        if (!opt) return;
+                        const id = opt.getAttribute('data-id');
+                        const header = document.querySelector('#statusFilter .selected-text');
+                        if (header) {
+                            header.textContent = opt.textContent.trim();
+                            header.classList.remove('placeholder');
+                        }
+                        document.getElementById('selectedStatus').value = id;
+                        this.currentFilters.status = id;
+                        document.getElementById('statusFilter').classList.remove('open');
                     });
-                    document.getElementById('sortBy')?.addEventListener('change', (e) => {
-                        this.currentFilters.sortBy = e.target.value;
+                }
+
+                // Attach toggle logic for custom selects
+                this.attachSimpleSelectToggles();
+            }
+
+            attachSimpleSelectToggles() {
+                document.querySelectorAll('.custom-select').forEach(container => {
+                    const header = container.querySelector('.select-header');
+                    const dropdown = container.querySelector('.select-dropdown');
+
+                    header.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        document.querySelectorAll('.custom-select.open').forEach(c => {
+                            if (c !== container) c.classList.remove('open');
+                        });
+                        container.classList.toggle('open');
+                    });
+
+                    document.addEventListener('click', (e) => {
+                        if (!container.contains(e.target)) container.classList.remove('open');
                     });
                 });
             }
 
-            async initialize() {
-                this.showLoading();
-
-                try {
-                    // Fetch assigned reviews
-                    const reviews = await this.fetchAssignedReviews();
-
-                    this.allReviews = reviews;
-                    this.totalItems = reviews.length;
-                    this.totalPages = Math.ceil(this.totalItems / this.limit);
-
-                    this.applyFilters(); // This will trigger render
-
-                } catch (error) {
-                    console.error('Error initializing:', error);
-                    this.showError('Failed to load reviews. Please try again.');
+            async fetchAndRender(page = 1) {
+                const grid = document.getElementById('cardsGrid');
+                if (grid) {
+                    grid.innerHTML = `<div class="no-results" style="grid-column:1/-1; text-align:center;">
+                        <div style="display:flex; flex-direction:column; gap:0.6rem; align-items:center; padding:2rem;">
+                          <div class="spinner" style="width:36px; height:36px; border:4px solid #f3f3f3; border-top:4px solid var(--primary); border-radius:50%; animation:spin 1s linear infinite;"></div>
+                          <div style="color:var(--text-muted)">Loading reviews...</div>
+                        </div>
+                    </div>`;
                 }
-            }
 
-            async fetchAssignedReviews() {
                 try {
-                    const response = await fetch(`${BASE_URL}/reviews/assigned`, {
-                        method: 'GET',
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login.');
+                        this.showNoReviews('Please login to see your assigned reviews.');
+                        return;
+                    }
+
+                    // Build query params for backend filtering
+                    const params = new URLSearchParams();
+                    params.set('page', page);
+                    params.set('limit', this.limit);
+                    params.set('sortBy', 'createdAt');
+                    params.set('sortOrder', this.currentFilters.sortOrder || 'desc');
+
+                    // Add status filter (submission status)
+                    if (this.currentFilters.status && this.currentFilters.status !== 'all') {
+                        params.set('status', this.currentFilters.status);
+                    }
+
+                    // Add search filter
+                    if (this.currentFilters.search) {
+                        params.set('search', this.currentFilters.search);
+                    }
+
+                    const url = `${BASE_URL}/reviews/assigned?${params.toString()}`;
+
+                    const response = await fetch(url, {
                         headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
                         }
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch reviews: ${response.status}`);
+                        const text = await response.text().catch(() => '');
+                        console.error('Reviews fetch failed', response.status, text);
+                        this.showNoReviews('Failed to load reviews. Server returned an error.');
+                        return;
                     }
 
                     const data = await response.json();
 
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to fetch reviews');
+                    if (!data || (!Array.isArray(data.reviews) && !Array.isArray(data.data))) {
+                        console.warn('Unexpected reviews response', data);
+                        this.showNoReviews('No reviews available.');
+                        return;
                     }
 
-                    return data.reviews || [];
+                    const reviews = data.reviews || data.data || [];
+                    this.totalItems = data.total ?? reviews.length;
+                    this.totalPages = data.totalPages ?? Math.max(1, Math.ceil(this.totalItems / this.limit));
+                    this.currentPage = data.page ?? page;
 
-                } catch (error) {
-                    console.error('Error fetching assigned reviews:', error);
-                    throw error;
+                    this.renderGridFromServer(reviews);
+                } catch (err) {
+                    console.error('Error fetching reviews', err);
+                    this.showNoReviews('Failed to load reviews. Please try again later.');
                 }
             }
 
-            // Apply filters and sorting
-            applyFilters() {
-                let filtered = [...this.allReviews];
+            renderGridFromServer(reviews) {
+                const grid = document.getElementById('cardsGrid');
+                if (!grid) return;
 
-                // Apply status filter
-                if (this.currentFilters.status !== 'all') {
-                    filtered = filtered.filter(review => review.invitationStatus === this.currentFilters.status);
-                }
-
-                // Apply sorting
-                switch (this.currentFilters.sortBy) {
-                    case 'oldest':
-                        filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-                        break;
-                    case 'title':
-                        filtered.sort((a, b) => a.submissionId?.title?.localeCompare(b.submissionId?.title || ''));
-                        break;
-                    case 'newest':
-                    default:
-                        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                        break;
-                }
-
-                this.filteredReviews = filtered;
-                this.totalItems = filtered.length;
-                this.totalPages = Math.ceil(this.totalItems / this.limit);
-
-                // Reset to page 1 when filtering
-                this.currentPage = 1;
-
-                this.renderReviews();
-                this.renderPagination();
-            }
-
-            // Clear all filters
-            clearFilters() {
-                this.currentFilters = {
-                    status: 'all',
-                    sortBy: 'newest'
-                };
-
-                // Reset select elements
-                document.getElementById('statusFilter').value = 'all';
-                document.getElementById('sortBy').value = 'newest';
-
-                this.applyFilters();
-            }
-
-            // Render reviews in the grid
-            renderReviews() {
-                const cardsGrid = document.getElementById('cardsGrid');
-
-                // Calculate which reviews to show based on current page
-                const startIndex = (this.currentPage - 1) * this.limit;
-                const endIndex = startIndex + this.limit;
-                const reviewsToShow = this.filteredReviews.slice(startIndex, endIndex);
-
-                if (reviewsToShow.length === 0) {
-                    cardsGrid.innerHTML = `
-                        <div class="alert alert-info" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                            <i class="fas fa-search fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
-                            <h3>No reviews found</h3>
-                            <p>${this.allReviews.length === 0 ? 'No reviews assigned to you yet.' : 'No reviews match your current filters.'}</p>
-                            ${this.allReviews.length > 0 ? `
-                                <button class="retry-btn" onclick="reviewsManager.clearFilters()" 
-                                    style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; margin-top: 1rem;">
-                                    Clear Filters
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
+                if (!reviews || reviews.length === 0) {
+                    grid.innerHTML = `<div class="no-results">
+                        <i class="fas fa-clipboard-check" style="font-size:2rem; opacity:0.5;"></i>
+                        <h3 style="margin-top:0.5rem;">No reviews found</h3>
+                        <p style="color:var(--text-muted)">
+                            ${this.totalItems === 0 ? "You don't have any assigned reviews yet." : "No reviews match your filters."}
+                        </p>
+                    </div>`;
+                    this.renderPagination();
                     return;
                 }
 
                 const fragment = document.createDocumentFragment();
-                reviewsToShow.forEach(review => {
-                    fragment.appendChild(this.createCardMarkup(review));
+                reviews.forEach(review => {
+                    fragment.appendChild(this.createCardElement(review));
                 });
+                grid.innerHTML = '';
+                grid.appendChild(fragment);
 
-                cardsGrid.innerHTML = '';
-                cardsGrid.appendChild(fragment);
-            }
-
-            // Create individual card markup for review - EXACTLY like editor-submissions.html
-            createCardMarkup(review) {
-                const card = document.createElement('article');
-                card.className = 'manuscript-card review-card';
-
-                const submission = review.submissionId || {};
-                const authors = submission.authors || [];
-
-                // Truncate long titles
-                const truncatedTitle = this.truncateText(submission.title, 60);
-
-                // Determine status color
-                const statusColor = this.getStatusColor(review.invitationStatus);
-                const statusText = this.formatStatus(review.invitationStatus);
-
-                // Format authors
-                const authorsText = this.formatAuthors(authors);
-
-                card.innerHTML = `
-                    <div class="card-header-row">
-                        <div style="flex:1; min-width:0">
-                            <h3 class="card-title" title="${this.escapeHtml(submission.title)}">
-                                ${this.escapeHtml(truncatedTitle)}
-                            </h3>
-                            <div class="card-sub">
-                                <strong>Submission Status:</strong> 
-                                <span>${this.formatStatus(submission.status || 'unknown')}</span>
-                            </div>
-                        </div>
-                        <div class="status-badge" style="background-color: ${statusColor}">
-                            ${statusText}
-                        </div>
-                    </div>
-
-                    <div class="meta-row">
-                        <div>
-                            <div class="meta"><strong>Authors:</strong> ${authorsText}</div>
-                            <div class="meta"><strong>Review ID:</strong> ${review._id.substring(0, 8)}...</div>
-                        </div>
-                        
-                        <div class="card-actions">
-                            <button class="btn-view" onclick="reviewsManager.viewReviewDetails('${review._id}')">
-                                <i class="fas fa-eye"></i> View Details
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="card-bottom">
-                        <div class="submitted-text">
-                            Assigned: ${this.formatDate(review.createdAt)}
-                        </div>
-                    </div>
-                `;
-
-                return card;
-            }
-
-            // Get status color
-            getStatusColor(status) {
-                const colors = {
-                    'pending': '#f59e0b',  // Amber
-                    'accepted': '#3b82f6',  // Blue
-                    'declined': '#ef4444',  // Red
-                    'completed': '#10b981'  // Emerald
-                };
-                return colors[status] || '#6b7280'; // Gray for unknown
-            }
-
-            // Format authors
-            formatAuthors(authors) {
-                if (!authors || !Array.isArray(authors)) return 'N/A';
-                return authors.map(author => this.escapeHtml(author.name)).join(', ');
-            }
-
-            // Format status for display
-            formatStatus(status) {
-                const statusMap = {
-                    'pending': 'Pending',
-                    'accepted': 'Accepted',
-                    'declined': 'Declined',
-                    'completed': 'Completed',
-                    'submitted': 'Submitted',
-                    'under_review': 'Under Review',
-                    'reviewed': 'Reviewed',
-                    'accepted': 'Accepted',
-                    'rejected': 'Rejected'
-                };
-                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
-            }
-
-            // View review details
-            viewReviewDetails(reviewId) {
-                window.location.href = `review-details.html?id=${reviewId}`;
-            }
-
-            // Helper to truncate text with ellipsis
-            truncateText(text, maxLength) {
-                if (!text) return '';
-                if (text.length <= maxLength) return text;
-                return text.substring(0, maxLength) + '...';
-            }
-
-            // Render pagination
-            renderPagination() {
-                const paginationContainer = document.getElementById('pagination');
-
-                if (this.totalPages <= 1) {
-                    paginationContainer.style.display = 'none';
-                    return;
-                }
-
-                let paginationHTML = `
-                    <div class="pagination-info">
-                        Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} 
-                        of ${this.totalItems} reviews
-                    </div>
-                    <div class="pagination-controls">
-                `;
-
-                // Previous button
-                paginationHTML += `
-                    <button class="pagination-btn" ${this.currentPage === 1 ? 'disabled' : ''} 
-                        onclick="reviewsManager.changePage(${this.currentPage - 1})">
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                `;
-
-                // Page numbers
-                for (let i = 1; i <= this.totalPages; i++) {
-                    if (i === 1 || i === this.totalPages || (i >= this.currentPage - 2 && i <= this.currentPage + 2)) {
-                        paginationHTML += `
-                            <button class="pagination-btn ${i === this.currentPage ? 'active' : ''}" 
-                                onclick="reviewsManager.changePage(${i})">
-                                ${i}
-                            </button>
-                        `;
-                    } else if (i === this.currentPage - 3 || i === this.currentPage + 3) {
-                        paginationHTML += `<span class="pagination-dots">...</span>`;
-                    }
-                }
-
-                // Next button
-                paginationHTML += `
-                    <button class="pagination-btn" ${this.currentPage === this.totalPages ? 'disabled' : ''} 
-                        onclick="reviewsManager.changePage(${this.currentPage + 1})">
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
-                `;
-
-                paginationHTML += '</div>';
-                paginationContainer.innerHTML = paginationHTML;
-                paginationContainer.style.display = 'flex';
-            }
-
-            // Change page (without scroll to top)
-            changePage(page) {
-                this.currentPage = page;
-                this.renderReviews();
                 this.renderPagination();
             }
 
-            // Show loading state
-            showLoading() {
-                const cardsGrid = document.getElementById('cardsGrid');
-                cardsGrid.innerHTML = `
-                    <div class="loading-screen" style="grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; height: 300px; flex-direction: column; gap: 1rem;">
-                        <div class="spinner" style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                        <p>Loading reviews...</p>
+            createCardElement(review) {
+                const article = document.createElement('article');
+                article.className = 'review-card';
+
+                const submission = review.submissionId || {};
+                const authors = Array.isArray(submission.authors) ? submission.authors : [];
+                const invitationStatus = review.invitationStatus || 'pending';
+                const submissionStatus = submission.status || 'submitted';
+
+                // Format invitation status for badge
+                const invitationStatusText = this.formatInvitationStatus(invitationStatus);
+                const invitationStatusClass = `status-${invitationStatus}`;
+
+                // Format submission status
+                const submissionStatusText = this.formatSubmissionStatus(submissionStatus);
+                const submissionStatusClass = `submission-${submissionStatus}`;
+
+                // Title - allow more characters before truncating
+                const title = submission.title || 'Untitled Submission';
+
+                // Format authors
+                const authorNames = authors.map(a => a.name).join(', ') || 'No authors listed';
+
+                article.innerHTML = `
+                    <div class="status-badge ${invitationStatusClass}">${this.escapeHtml(invitationStatusText)}</div>
+
+                    <div class="card-header">
+                        <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 120))}</div>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="meta-item">
+                            <span class="meta-label">Authors:</span>
+                            <span class="meta-value" title="${this.escapeHtml(authorNames)}">${this.escapeHtml(this.truncate(authorNames, 80))}</span>
+                        </div>
+
+                        <div class="meta-item">
+                            <span class="meta-label">Status:</span>
+                            <span class="meta-value">
+                                <span class="submission-status ${submissionStatusClass}">${this.escapeHtml(submissionStatusText)}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <a class="btn-view" href="review-details.html?id=${review._id}" title="View review details">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+
+                        <div class="assigned-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Assigned: ${this.formatDate(review.createdAt)}</span>
+                        </div>
                     </div>
                 `;
+
+                return article;
             }
 
-            // Show error state
-            showError(message) {
-                const cardsGrid = document.getElementById('cardsGrid');
-                cardsGrid.innerHTML = `
-                    <div class="error-screen" style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--muted);">
-                        <i class="fas fa-exclamation-triangle fa-2x" style="margin-bottom: 1rem; color: var(--danger);"></i>
-                        <h3>Failed to load reviews</h3>
-                        <p>${message}</p>
-                        <button class="retry-btn" onclick="reviewsManager.initialize()" 
-                            style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; margin-top: 1rem;">
-                            <i class="fas fa-redo"></i> Try Again
-                        </button>
-                    </div>
-                `;
+            applyFilters() {
+                this.currentPage = 1;
+
+                // Read UI fields
+                const searchEl = document.getElementById('filterSearch');
+                if (searchEl) this.currentFilters.search = searchEl.value.trim();
+
+                const statusHidden = document.getElementById('selectedStatus');
+                if (statusHidden) this.currentFilters.status = statusHidden.value || 'all';
+
+                this.fetchAndRender(1);
             }
 
-            // Utility function to format date
-            formatDate(dateString) {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
+            clearFilters() {
+                this.currentFilters = {
+                    status: 'all',
+                    search: '',
+                    sortOrder: 'desc'
+                };
+
+                const searchEl = document.getElementById('filterSearch');
+                if (searchEl) searchEl.value = '';
+
+                const statusHeader = document.querySelector('#statusFilter .selected-text');
+                if (statusHeader) {
+                    statusHeader.textContent = 'All Statuses';
+                    statusHeader.classList.add('placeholder');
+                }
+
+                document.getElementById('selectedStatus').value = 'all';
+
+                this.fetchAndRender(1);
             }
 
-            // Utility function to escape HTML
-            escapeHtml(str) {
-                if (!str && str !== 0) return '';
-                return String(str)
+            renderPagination() {
+                let paginationContainer = document.getElementById('pagination');
+                if (!paginationContainer) {
+                    paginationContainer = document.createElement('div');
+                    paginationContainer.id = 'pagination';
+                    paginationContainer.className = 'pagination';
+                    document.querySelector('.manuscripts-wrapper').appendChild(paginationContainer);
+                }
+
+                if (this.totalItems === 0) {
+                    paginationContainer.style.display = 'none';
+                    return;
+                }
+                paginationContainer.style.display = 'flex';
+
+                let html = `<div class="pagination-info">
+                    Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} of ${this.totalItems} review${this.totalItems !== 1 ? 's' : ''}
+                </div>
+                <div class="pagination-controls">`;
+
+                html += `<button class="pagination-btn" ${this.currentPage === 1 ? 'disabled' : ''} onclick="reviewsManager.changePage(${this.currentPage - 1})">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>`;
+
+                const maxVisible = 5;
+                let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
+                let end = Math.min(this.totalPages, start + maxVisible - 1);
+                if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1);
+
+                if (start > 1) {
+                    html += `<button class="pagination-btn" onclick="reviewsManager.changePage(1)">1</button>`;
+                    if (start > 2) html += `<span class="pagination-dots">...</span>`;
+                }
+                for (let i = start; i <= end; i++) {
+                    html += `<button class="pagination-btn ${i === this.currentPage ? 'active' : ''}" onclick="reviewsManager.changePage(${i})">${i}</button>`;
+                }
+                if (end < this.totalPages) {
+                    if (end < this.totalPages - 1) html += `<span class="pagination-dots">...</span>`;
+                    html += `<button class="pagination-btn" onclick="reviewsManager.changePage(${this.totalPages})">${this.totalPages}</button>`;
+                }
+
+                html += `<button class="pagination-btn" ${this.currentPage === this.totalPages ? 'disabled' : ''} onclick="reviewsManager.changePage(${this.currentPage + 1})">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>`;
+                html += '</div>';
+
+                paginationContainer.innerHTML = html;
+            }
+
+            changePage(page) {
+                if (!page || page < 1) page = 1;
+                if (page > this.totalPages) page = this.totalPages;
+                this.currentPage = page;
+                this.fetchAndRender(page);
+                document.getElementById('cardsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            formatInvitationStatus(status) {
+                const map = {
+                    'pending': 'Pending',
+                    'accepted': 'Accepted',
+                    'declined': 'Declined',
+                    'completed': 'Completed'
+                };
+                return map[status] || status.charAt(0).toUpperCase() + status.slice(1);
+            }
+
+            formatSubmissionStatus(status) {
+                const map = {
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'revision_requested': 'Revision Requested',
+                    'revised': 'Revised',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected',
+                    'awaiting_payment': 'Awaiting Payment',
+                    'published': 'Published'
+                };
+                return map[status] || status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            }
+
+            truncate(str, n) {
+                if (!str) return '';
+                return str.length <= n ? str : str.slice(0, n - 3) + '...';
+            }
+
+            formatDate(iso) {
+                if (!iso) return 'N/A';
+                try {
+                    const d = new Date(iso);
+                    return d.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                } catch {
+                    return iso;
+                }
+            }
+
+            escapeHtml(s) {
+                if (!s && s !== 0) return '';
+                return String(s)
                     .replaceAll('&', '&amp;')
                     .replaceAll('<', '&lt;')
                     .replaceAll('>', '&gt;')
                     .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
+                    .replaceAll("'", "&#39;");
+            }
+
+            showNoReviews(msg) {
+                const grid = document.getElementById('cardsGrid');
+                if (!grid) return;
+                grid.innerHTML = `<div class="no-results">
+                    <i class="fas fa-clipboard-check" style="font-size:2rem; opacity:0.5;"></i>
+                    <h3 style="margin-top:0.5rem;">No reviews found</h3>
+                    <p style="color:var(--text-muted)">${this.escapeHtml(msg || "You don't have any assigned reviews yet.")}</p>
+                </div>`;
             }
         }
 
-        // Initialize reviews manager
-        let reviewsManager = new ReviewsManager();
-
-        // Make it available globally
-        window.reviewsManager = reviewsManager;
+        // Initialize manager globally
+        let reviewsManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            reviewsManager = new ReviewsManager();
+            window.reviewsManager = reviewsManager;
+        });
     </script>
 </body>
 
