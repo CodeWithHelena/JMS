@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Submission Revisions</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --accent: #4f46e5;
+            --primary: #ff7a18;
+            --muted: #6b7280;
+            --line-color: #e6e9f2;
+            --dot-color: var(--primary);
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+            --radius: 12px;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info-light: rgba(59, 130, 246, 0.1);
+            --primary-light: rgba(255, 122, 24, 0.1);
+        }
+
+        body {
+            background-color: var(--bg);
+        }
+
+        /* Manuscript Header Card */
+        .manuscript-header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .manuscript-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .header-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+        }
+
+        /* Back Button */
+        .back-button-wrap {
+            width: 20%;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
+        /* timeline container */
+        .timeline-wrap {
+            margin: 0 auto;
+        }
+
+        /* vertical line */
+        .timeline {
+            position: relative;
+            padding-left: 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--line-color);
+            border-radius: 4px;
+        }
+
+        /* each timeline item */
+        .timeline-item {
+            position: relative;
+            margin: 28px 0;
+            display: block;
+            padding-top: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .timeline-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .timeline-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .timeline-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .timeline-item:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .timeline-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        .timeline-item:nth-child(7) {
+            animation-delay: 0.7s;
+        }
+
+        .timeline-item:nth-child(8) {
+            animation-delay: 0.8s;
+        }
+
+        .timeline-item:nth-child(9) {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* the dot - unified color */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 6px rgba(255, 122, 24, 0.1);
+            transform: translateX(-50%);
+            transition: background .25s, transform .25s, box-shadow .25s;
+            z-index: 2;
+        }
+
+        /* the card itself */
+        .card {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+            will-change: transform;
+            position: relative;
+            min-height: 78px;
+            margin-left: 56px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* Version badge styling */
+        .version-badge {
+            width: fit-content;
+            display: inline-block;
+            padding: 0.28rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+            background-color: var(--info);
+            color: white;
+        }
+
+        /* Revision content styling */
+        .revision-content {
+            margin: 0.75rem 0;
+            word-wrap: break-word;
+        }
+
+        .content-section {
+            margin-bottom: 1rem;
+        }
+
+        .content-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-label {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-label i {
+            color: var(--primary);
+        }
+
+        .content-text {
+            font-size: 0.95rem;
+            color: #374151;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .truncated-text {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .view-more-btn {
+            background: none;
+            border: none;
+            color: var(--info);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: underline;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .view-more-btn:hover {
+            color: #2563eb;
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Button styling */
+        .document-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            text-decoration: none;
+        }
+
+        .document-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-1px);
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #111827;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-header h3 i {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1.25rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+
+        .modal-content-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-content-label {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content-label i {
+            color: var(--primary);
+        }
+
+        .modal-content-text {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+        }
+
+        /* Styling for HTML content in modal */
+        .modal-content-text p {
+            margin: 0 0 0.75rem 0;
+        }
+
+        .modal-content-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-content-text strong,
+        .modal-content-text b {
+            font-weight: 700;
+        }
+
+        .modal-content-text em,
+        .modal-content-text i {
+            font-style: italic;
+        }
+
+        .modal-content-text ul,
+        .modal-content-text ol {
+            margin: 0 0 0.75rem 1.5rem;
+            padding: 0;
+        }
+
+        .modal-content-text li {
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-content-text li:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-content-text h1,
+        .modal-content-text h2,
+        .modal-content-text h3,
+        .modal-content-text h4,
+        .modal-content-text h5,
+        .modal-content-text h6 {
+            margin: 1rem 0 0.75rem 0;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Error screen */
+        .error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .retry-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        /* Page title styling */
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        /* No data message */
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Edit button */
+        .edit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .edit-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        /* Timeline loading container */
+        .timeline-loading {
+            margin-top: 2rem;
+        }
+
+        /* Skeleton loading styles */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-icon {
+            background: #f0f0f0;
+            border-radius: 50%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Loading spinner */
+        .loading-screen {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* small responsive tweak */
+        @media (max-width:520px) {
+            .timeline::before {
+                left: 28px;
+            }
+
+            .timeline-item::before {
+                left: 28px;
+            }
+
+            .card {
+                margin-left: 48px;
+                padding: 14px;
+            }
+
+            .timeline-wrap {
+                padding: 0 0.5rem;
+            }
+
+            .manuscript-header-card {
+                padding: 1.5rem;
+            }
+
+            .manuscript-header-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .modal {
+                width: 95%;
+                max-height: 90vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="d-flex justify-content-between">
+                    <div class="container page-title">
+                        <h1>Submission Revisions</h1>
+                        <p>Track all revision history for this manuscript</p>
+                    </div>
+                    <div class="back-button-wrap">
+                        <a href="#" class="back-button" onclick="window.history.back(); return false;">
+                            <i class="fas fa-arrow-left"></i> Go Back
+                        </a>
+                    </div>
+                </div>
+
+                <div class="timeline-wrap">
+                    <!-- Manuscript Header Card (with skeleton loading including icons) -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Title skeleton -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+
+                        <!-- Status badge skeleton -->
+                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
+
+                        <!-- Metadata with icon skeletons -->
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Edit button skeleton with icon -->
+                        <div class="header-actions">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 38px; width: 120px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Loading Screen -->
+                    <div id="timelineLoading" class="timeline-loading">
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading revision history...</p>
+                        </div>
+                    </div>
+
+                    <!-- Error Screen -->
+                    <div id="errorScreen" class="error-screen" style="display: none;">
+                        <i class="fas fa-exclamation-triangle fa-3x" style="color: var(--danger); margin-bottom: 1rem;"></i>
+                        <h3>Failed to load revision history</h3>
+                        <p id="errorMessage">An error occurred while loading revision history.</p>
+                        <button class="retry-btn" onclick="loadRevisionHistory()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+
+                    <!-- Timeline Container -->
+                    <div class="timeline" id="timelineContainer" style="display: none;">
+                        <!-- Revision items will be injected here -->
+                    </div>
+
+                    <!-- No Data Message -->
+                    <div id="noDataMessage" class="no-data" style="display: none;">
+                        <i class="fas fa-edit"></i>
+                        <h3>No Revision History</h3>
+                        <p>No revisions found for this submission.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal for viewing full content -->
+    <div class="modal-overlay" id="contentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-file-alt"></i> Revision Details</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        <script>
+            // Reusable Loading Functions
+            const LoadingScreen = {
+                showTimelineLoading: function () {
+                    document.getElementById('timelineLoading').style.display = 'block';
+                    document.getElementById('timelineContainer').style.display = 'none';
+                    document.getElementById('noDataMessage').style.display = 'none';
+                },
+
+                hideTimelineLoading: function () {
+                    document.getElementById('timelineLoading').style.display = 'none';
+                },
+
+                showHeaderLoading: function () {
+                    // Header already shows skeleton by default
+                },
+
+                hideHeaderLoading: function () {
+                    // Skeleton will be replaced with real data
+                }
+            };
+
+            const ErrorScreen = {
+                show: function (message, elementId = 'errorScreen') {
+                    document.getElementById('errorMessage').textContent = message;
+                    document.getElementById(elementId).style.display = 'block';
+                    LoadingScreen.hideTimelineLoading();
+                    document.getElementById('timelineContainer').style.display = 'none';
+                    document.getElementById('noDataMessage').style.display = 'none';
+                },
+
+                hide: function (elementId = 'errorScreen') {
+                    document.getElementById(elementId).style.display = 'none';
+                }
+            };
+
+            // Revision Manager Class
+            class RevisionManager {
+                constructor() {
+                    this.BASE_URL = 'https://fp.247laboratory.net/';
+                    this.token = localStorage.getItem('token') || null;
+                    this.submissionId = this.getSubmissionIdFromURL();
+                    this.submission = null;
+                    this.currentRevisionId = null;
+
+                    if (!this.token) {
+                        ErrorScreen.show('Authentication required. Please login.');
+                        return;
+                    }
+
+                    if (!this.submissionId) {
+                        ErrorScreen.show('No submission ID provided in URL');
+                        return;
+                    }
+
+                    this.initializeToastr();
+                    this.bindModalEvents();
+                    this.loadRevisionHistory();
+                }
+
+                initializeToastr() {
+                    toastr.options = {
+                        closeButton: true,
+                        progressBar: true,
+                        positionClass: "toast-top-right",
+                        timeOut: 5000,
+                        extendedTimeOut: 2000
+                    };
+                }
+
+                bindModalEvents() {
+                    // Modal close button
+                    const closeModalBtn = document.getElementById('closeModal');
+                    if (closeModalBtn) {
+                        closeModalBtn.addEventListener('click', () => {
+                            this.closeModal();
+                        });
+                    }
+
+                    // Close modal when clicking outside
+                    const modalOverlay = document.getElementById('contentModal');
+                    if (modalOverlay) {
+                        modalOverlay.addEventListener('click', (e) => {
+                            if (e.target === modalOverlay) {
+                                this.closeModal();
+                            }
+                        });
+                    }
+
+                    // Close modal with Escape key
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') {
+                            this.closeModal();
+                        }
+                    });
+                }
+
+                getSubmissionIdFromURL() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get('id');
+                }
+
+                async loadRevisionHistory() {
+                    // Show timeline loading immediately
+                    LoadingScreen.showTimelineLoading();
+
+                    // Manuscript header already shows skeleton loading by default (with icons)
+
+                    try {
+                        // Get the submission data
+                        const submissionResponse = await fetch(`${this.BASE_URL}/api/v1/submissions/${this.submissionId}`, {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!submissionResponse.ok) {
+                            throw new Error(`Failed to fetch submission: ${submissionResponse.status}`);
+                        }
+
+                        const submissionData = await submissionResponse.json();
+
+                        if (!submissionData.success || !submissionData.submission) {
+                            throw new Error(submissionData.message || 'Failed to load submission data');
+                        }
+
+                        this.submission = submissionData.submission;
+
+                        // Render manuscript header immediately with real data
+                        this.renderManuscriptHeader();
+
+                        // Then, render the revision timeline
+                        this.renderRevisions();
+
+                    } catch (error) {
+                        console.error('Error loading revision data:', error);
+                        ErrorScreen.show('Failed to load revision data. Please try again.');
+                        // Still show manuscript header even if revisions fail
+                        this.renderManuscriptHeader();
+                    }
+                }
+
+                renderManuscriptHeader() {
+                    const manuscriptHeader = document.getElementById('manuscriptHeader');
+
+                    if (!this.submission) return;
+
+                    const formattedDate = this.formatDate(this.submission.createdAt);
+                    const statusDisplay = this.capitalizeFirstLetter(this.submission.status);
+                    const journalName = this.submission.journalId?.title || 'Unknown Journal';
+
+                    manuscriptHeader.innerHTML = `
+                            <h1>${this.escapeHtml(this.submission.title)}</h1>
+                            <span class="header-status-badge">Current Status: ${statusDisplay}</span>
+                            <div class="header-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Journal: ${this.escapeHtml(journalName)}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="far fa-calendar"></i>
+                                    <span>Submitted On: ${formattedDate}</span>
+                                </div>
+                            </div>
+                        `;
+                }
+
+                renderRevisions() {
+                    const timelineContainer = document.getElementById('timelineContainer');
+                    const noDataMessage = document.getElementById('noDataMessage');
+
+                    if (!this.submission || !this.submission.revisions || this.submission.revisions.length === 0) {
+                        noDataMessage.style.display = 'block';
+                        timelineContainer.style.display = 'none';
+                        LoadingScreen.hideTimelineLoading();
+                        return;
+                    }
+
+                    // Sort revisions by submittedAt date (newest first for timeline)
+                    const sortedRevisions = [...this.submission.revisions].sort((a, b) =>
+                        new Date(b.submittedAt) - new Date(a.submittedAt)
+                    );
+
+                    // Create document fragment for better performance
+                    const fragment = document.createDocumentFragment();
+
+                    // Process each revision item
+                    for (let i = 0; i < sortedRevisions.length; i++) {
+                        const revision = sortedRevisions[i];
+                        const timelineItem = this.createRevisionItem(revision, i, sortedRevisions.length);
+                        fragment.appendChild(timelineItem);
+                    }
+
+                    timelineContainer.innerHTML = '';
+                    timelineContainer.appendChild(fragment);
+                    timelineContainer.style.display = 'block';
+                    noDataMessage.style.display = 'none';
+
+                    // Bind view more button events after rendering
+                    this.bindViewMoreButtons();
+
+                    LoadingScreen.hideTimelineLoading();
+                }
+
+                createRevisionItem(revision, index, totalItems) {
+                    const timelineItem = document.createElement('div');
+                    timelineItem.className = 'timeline-item';
+
+                    // Format date
+                    const formattedDate = this.formatDate(revision.submittedAt);
+
+                    // Process cover letter and changes summary for truncated display
+                    const { truncated: coverLetterTruncated, full: coverLetterFull, showMore: showCoverLetterMore } = this.processTextContent(revision.coverLetter || 'No cover letter provided.');
+                    const { truncated: changesSummaryTruncated, full: changesSummaryFull, showMore: showChangesSummaryMore } = this.processTextContent(revision.changesSummary || 'No changes summary provided.');
+
+                    timelineItem.innerHTML = `
+                            <div class="card">
+                                <span class="version-badge">Version ${revision.version}</span>
+                                
+                                <div class="revision-content">
+                                    <!-- Cover Letter Section -->
+                                    <div class="content-section">
+                                        <div class="content-label">
+                                            <i class="fas fa-envelope"></i>
+                                            Cover Letter
+                                        </div>
+                                        <div class="content-text">
+                                            ${coverLetterTruncated}
+                                        </div>
+                                        ${showCoverLetterMore ? `
+                                            <button class="view-more-btn" data-revision-id="${revision._id}" data-version="${revision.version}" data-type="coverLetter">
+                                                <i class="fas fa-eye"></i> View Full
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <!-- Changes Summary Section -->
+                                    <div class="content-section">
+                                        <div class="content-label">
+                                            <i class="fas fa-list-check"></i>
+                                            Changes Summary
+                                        </div>
+                                        <div class="content-text">
+                                            ${changesSummaryTruncated}
+                                        </div>
+                                        ${showChangesSummaryMore ? `
+                                            <button class="view-more-btn" data-revision-id="${revision._id}" data-version="${revision.version}" data-type="changesSummary">
+                                                <i class="fas fa-eye"></i> View Full
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <!-- Date and Download Button -->
+                                    <p class="timeline-date">
+                                        <i class="far fa-clock"></i> ${formattedDate}
+                                    </p>
+                                    
+                                    ${revision.file && revision.file.url ? `
+                                        <a href="${this.BASE_URL}${revision.file.url}" class="document-btn" target="_blank" download="${revision.file.originalName || 'revision-document'}">
+                                            <i class="fas fa-download"></i> Download Revision Document
+                                        </a>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+
+                    // Store the full content as custom properties on the button element
+                    if (showCoverLetterMore) {
+                        const viewMoreBtn = timelineItem.querySelector('button[data-type="coverLetter"]');
+                        if (viewMoreBtn) {
+                            // Store the content directly on the element
+                            viewMoreBtn._fullContent = coverLetterFull;
+                        }
+                    }
+
+                    if (showChangesSummaryMore) {
+                        const viewMoreBtn = timelineItem.querySelector('button[data-type="changesSummary"]');
+                        if (viewMoreBtn) {
+                            // Store the content directly on the element
+                            viewMoreBtn._fullContent = changesSummaryFull;
+                        }
+                    }
+
+                    return timelineItem;
+                }
+
+                bindViewMoreButtons() {
+                    const viewMoreButtons = document.querySelectorAll('.view-more-btn');
+                    viewMoreButtons.forEach(button => {
+                        // Remove any existing listeners to prevent duplicates
+                        button.removeEventListener('click', this.handleViewMoreClick);
+                        // Add new listener
+                        button.addEventListener('click', this.handleViewMoreClick.bind(this));
+                    });
+                }
+
+                handleViewMoreClick(e) {
+                    e.preventDefault();
+                    const button = e.currentTarget;
+                    const revisionId = button.getAttribute('data-revision-id');
+                    const version = button.getAttribute('data-version');
+                    const type = button.getAttribute('data-type');
+                    const content = button._fullContent; // Get content from custom property
+
+                    this.viewFullContent(revisionId, version, type, content);
+                }
+
+                viewFullContent(revisionId, version, type, content) {
+                    this.currentRevisionId = revisionId;
+
+                    const modalOverlay = document.getElementById('contentModal');
+                    const modalTitle = document.getElementById('modalTitle');
+                    const modalBody = document.getElementById('modalBody');
+
+                    if (!modalOverlay || !modalTitle || !modalBody) {
+                        console.error('Modal elements not found');
+                        return;
+                    }
+
+                    const titleMap = {
+                        'coverLetter': 'Cover Letter',
+                        'changesSummary': 'Changes Summary'
+                    };
+
+                    modalTitle.innerHTML = `<i class="fas fa-file-alt"></i> Version ${version} - ${titleMap[type] || 'Details'}`;
+
+                    modalBody.innerHTML = `
+                            <div class="modal-content-section">
+                                <div class="modal-content-label">
+                                    <i class="fas ${type === 'coverLetter' ? 'fa-envelope' : 'fa-list-check'}"></i>
+                                    ${titleMap[type] || 'Content'}
+                                </div>
+                                <div class="modal-content-text">
+                                    ${content || '<span style="color: #9ca3af;">No content provided.</span>'}
+                                </div>
+                            </div>
+                        `;
+
+                    // Show modal by adding active class
+                    modalOverlay.classList.add('active');
+                    // Also make sure modal is displayed correctly
+                    modalOverlay.style.display = 'flex';
+                }
+
+                closeModal() {
+                    const modalOverlay = document.getElementById('contentModal');
+                    if (modalOverlay) {
+                        modalOverlay.classList.remove('active');
+                        // Add a slight delay before hiding to allow fade out transition
+                        setTimeout(() => {
+                            modalOverlay.style.display = 'none';
+                        }, 300);
+                    }
+                    this.currentRevisionId = null;
+                }
+
+                processTextContent(text) {
+                    if (!text || text.trim() === '') {
+                        return {
+                            truncated: '<span style="color: #9ca3af;">No content provided.</span>',
+                            full: '<span style="color: #9ca3af;">No content provided.</span>',
+                            showMore: false
+                        };
+                    }
+
+                    // Sanitize and format the text
+                    const sanitizedText = this.sanitizeHTML(text);
+                    const plainText = this.stripHtmlTags(sanitizedText);
+
+                    // Check if text is longer than 300 characters
+                    if (plainText.length > 300) {
+                        // Create a truncated version
+                        const truncatedText = this.createTruncatedHtml(sanitizedText, 300);
+                        return {
+                            truncated: truncatedText + '...',
+                            full: sanitizedText,
+                            showMore: true
+                        };
+                    } else {
+                        return {
+                            truncated: sanitizedText,
+                            full: sanitizedText,
+                            showMore: false
+                        };
+                    }
+                }
+
+                createTruncatedHtml(html, maxLength) {
+                    // Create a temporary element to parse HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+
+                    // Get text content and truncate
+                    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+                    if (textContent.length <= maxLength) {
+                        return html;
+                    }
+
+                    // For simple truncation, we'll just take the first part of the HTML
+                    // This is a basic implementation - for production use a proper HTML truncation library
+                    let truncated = '';
+                    let length = 0;
+                    let inTag = false;
+
+                    for (let i = 0; i < html.length && length < maxLength; i++) {
+                        const char = html[i];
+                        truncated += char;
+
+                        if (char === '<') {
+                            inTag = true;
+                        } else if (char === '>') {
+                            inTag = false;
+                        } else if (!inTag) {
+                            length++;
+                        }
+                    }
+
+                    // Try to close any open tags
+                    if (inTag) {
+                        truncated += '>';
+                    }
+
+                    return truncated;
+                }
+
+                stripHtmlTags(html) {
+                    if (!html) return '';
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    return tempDiv.textContent || tempDiv.innerText || '';
+                }
+
+                sanitizeHTML(html) {
+                    if (!html) return '';
+
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+
+                    // Remove script tags and other dangerous elements
+                    const dangerousTags = ['script', 'style', 'link', 'meta', 'object', 'embed', 'iframe', 'frame'];
+                    dangerousTags.forEach(tag => {
+                        const elements = tempDiv.querySelectorAll(tag);
+                        elements.forEach(el => el.remove());
+                    });
+
+                    // Allow safe HTML tags for formatting
+                    const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span'];
+
+                    // Process all elements
+                    const allElements = tempDiv.querySelectorAll('*');
+                    allElements.forEach(el => {
+                        if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                            // Replace disallowed tags with their text content
+                            const text = document.createTextNode(el.textContent);
+                            el.parentNode.replaceChild(text, el);
+                        } else {
+                            // Remove potentially dangerous attributes except style and class
+                            const attributes = Array.from(el.attributes);
+                            attributes.forEach(attr => {
+                                if (attr.name !== 'style' && attr.name !== 'class') {
+                                    el.removeAttribute(attr.name);
+                                }
+                            });
+                        }
+                    });
+
+                    // Return sanitized HTML
+                    return tempDiv.innerHTML.trim() || html;
+                }
+
+                formatDate(dateString) {
+                    try {
+                        const date = new Date(dateString);
+                        return date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        });
+                    } catch (error) {
+                        console.error('Error formatting date:', error);
+                        return dateString;
+                    }
+                }
+
+                capitalizeFirstLetter(string) {
+                    if (!string) return '';
+                    return string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ');
+                }
+
+                escapeHtml(str) {
+                    if (!str && str !== 0) return '';
+                    const div = document.createElement('div');
+                    div.textContent = str;
+                    return div.innerHTML
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                }
+            }
+
+            // Initialize revision manager when DOM is loaded
+            let revisionManager;
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Make sure modal is hidden initially
+                const modalOverlay = document.getElementById('contentModal');
+                if (modalOverlay) {
+                    modalOverlay.style.display = 'none';
+                }
+
+                revisionManager = new RevisionManager();
+            });
+
+            // Global function for retry button
+            function loadRevisionHistory() {
+                if (revisionManager) {
+                    revisionManager.loadRevisionHistory();
+                }
+            }
+        </script>
+</body>
+
+</html>

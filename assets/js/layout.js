@@ -759,7 +759,7 @@ function initLayoutBindings() {
     viewAllNotifications.addEventListener('click', function (e) {
       e.preventDefault();
       hideNotificationBox();
-      window.location.href = 'notifications.html';
+      window.location.href = 'notification.html';
     });
   }
 

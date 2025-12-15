@@ -496,10 +496,13 @@
             border-left: 3px solid var(--success);
         }
 
+        /* Comment Content Styling */
         .comment-content {
             line-height: 1.6;
             word-wrap: break-word;
             margin-top: 1rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            white-space: pre-wrap;
         }
 
         .comment-content p {
@@ -510,11 +513,97 @@
             margin-bottom: 0;
         }
 
+        .comment-content h1,
+        .comment-content h2,
+        .comment-content h3,
+        .comment-content h4,
+        .comment-content h5,
+        .comment-content h6 {
+            margin: 1.5rem 0 0.75rem 0;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .comment-content h1 {
+            font-size: 1.5rem;
+        }
+
+        .comment-content h2 {
+            font-size: 1.3rem;
+        }
+
+        .comment-content h3 {
+            font-size: 1.1rem;
+        }
+
+        .comment-content ul,
+        .comment-content ol {
+            margin: 0 0 1rem 1.5rem;
+            padding: 0;
+        }
+
+        .comment-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-content strong,
+        .comment-content b {
+            font-weight: 700;
+        }
+
+        .comment-content em,
+        .comment-content i {
+            font-style: italic;
+        }
+
+        .comment-content u {
+            text-decoration: underline;
+        }
+
+        .comment-content blockquote {
+            border-left: 4px solid var(--primary-light);
+            margin: 1rem 0;
+            padding: 0.5rem 0 0.5rem 1rem;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .comment-content code {
+            background: var(--light);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .comment-content pre {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
         .comment-content.empty {
             color: var(--muted);
             font-style: italic;
             text-align: center;
             padding: 2rem;
+        }
+
+        /* Clean formatted text styles */
+        .clean-text {
+            white-space: pre-wrap;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .clean-text p {
+            margin-bottom: 1rem;
+        }
+
+        .clean-text p:last-child {
+            margin-bottom: 0;
         }
 
         /* Timeline Section */
@@ -972,33 +1061,31 @@
             }
 
             bindEvents() {
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Timeline filter buttons
-                    document.querySelectorAll('.filter-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const filter = e.target.dataset.filter;
-                            this.filterTimeline(filter);
-                        });
+                // Timeline filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const filter = e.target.dataset.filter;
+                        this.filterTimeline(filter);
                     });
+                });
 
-                    // Modal close button
-                    document.getElementById('closeModal')?.addEventListener('click', () => {
+                // Modal close button
+                document.getElementById('closeModal')?.addEventListener('click', () => {
+                    this.closeModal();
+                });
+
+                // Close modal when clicking outside
+                document.getElementById('detailsModal')?.addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('detailsModal')) {
                         this.closeModal();
-                    });
+                    }
+                });
 
-                    // Close modal when clicking outside
-                    document.getElementById('detailsModal')?.addEventListener('click', (e) => {
-                        if (e.target === document.getElementById('detailsModal')) {
-                            this.closeModal();
-                        }
-                    });
-
-                    // Close modal with Escape key
-                    document.addEventListener('keydown', (e) => {
-                        if (e.key === 'Escape') {
-                            this.closeModal();
-                        }
-                    });
+                // Close modal with Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeModal();
+                    }
                 });
             }
 
@@ -1014,7 +1101,6 @@
 
             async loadProgressData() {
                 try {
-                    const token = getAuthToken2();
                     if (!token) {
                         throw new Error('Authentication token not found');
                     }
@@ -1103,7 +1189,7 @@
                     const statusText = this.formatStatus(status);
 
                     const scoreDisplay = reviewer.score !== null && reviewer.score !== undefined ?
-                        `<div class="score-display"><span class="score-value">${reviewer.score}</span><span>/10</span></div>` :
+                        `<div class="score-display"><span class="score-value">${reviewer.score}</span><span style="font-size: 1.15rem;">/ 100</span></div>` :
                         `<span class="score-empty">Not scored</span>`;
 
                     const recommendation = reviewer.recommendation || '';
@@ -1112,24 +1198,22 @@
                     const reviewerName = reviewer.reviewerName;
                     const reviewerEmail = reviewer.reviewerEmail;
 
-                    // Check if reviewer has comments - FIXED CONDITION
+                    // Check if reviewer has comments
                     const hasComments = reviewer.commentToEditor || reviewer.commentToAuthor;
                     const isReviewCompleted = reviewer.invitationStatus === 'completed' || reviewer.invitationStatus === 'accepted';
 
-                    // Comments column - FIXED LOGIC
+                    // Comments column - Use data attributes instead of inline onclick
                     let commentsDisplay = '';
                     if (isReviewCompleted) {
                         if (hasComments) {
                             commentsDisplay = `
                                 <button class="view-comments-btn" 
-                                        onclick="reviewProgress.showCommentsModal(
-                                            '${this.escapeHtml(reviewerName)}',
-                                            '${this.escapeHtml(reviewerEmail)}',
-                                            '${this.escapeHtml(reviewer.commentToEditor || '')}',
-                                            '${this.escapeHtml(reviewer.commentToAuthor || '')}',
-                                            ${reviewer.visibleToAuthor || false},
-                                            '${reviewer.reviewId}'
-                                        )">
+                                        data-reviewer-name="${this.escapeHtml(reviewerName)}"
+                                        data-reviewer-email="${this.escapeHtml(reviewerEmail)}"
+                                        data-review-id="${reviewer.reviewId}"
+                                        data-comment-to-editor="${this.escapeHtml(reviewer.commentToEditor || '')}"
+                                        data-comment-to-author="${this.escapeHtml(reviewer.commentToAuthor || '')}"
+                                        data-visible-to-author="${reviewer.visibleToAuthor || false}">
                                     <i class="fas fa-comment"></i> View
                                 </button>
                             `;
@@ -1151,7 +1235,10 @@
                                 ${this.escapeHtml(displayText)}
                             </div>
                             ${isLong ? `
-                                <button class="view-recommendation-btn" onclick="reviewProgress.showRecommendationModal('${this.escapeHtml(reviewerName)}', '${this.escapeHtml(reviewerEmail)}', '${this.escapeHtml(recommendation)}')">
+                                <button class="view-recommendation-btn" 
+                                        data-reviewer-name="${this.escapeHtml(reviewerName)}"
+                                        data-reviewer-email="${this.escapeHtml(reviewerEmail)}"
+                                        data-recommendation="${this.escapeHtml(recommendation)}">
                                     <i class="fas fa-eye"></i> View recommendation
                                 </button>
                             ` : ''}
@@ -1176,6 +1263,38 @@
                 });
 
                 tableBody.innerHTML = tableHTML;
+
+                // Add event listeners after rendering
+                this.attachTableEventListeners();
+            }
+
+            attachTableEventListeners() {
+                // Add event listener for comment buttons
+                document.querySelectorAll('.view-comments-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const reviewerName = button.getAttribute('data-reviewer-name');
+                        const reviewerEmail = button.getAttribute('data-reviewer-email');
+                        const commentToEditor = button.getAttribute('data-comment-to-editor');
+                        const commentToAuthor = button.getAttribute('data-comment-to-author');
+                        const visibleToAuthor = button.getAttribute('data-visible-to-author') === 'true';
+                        const reviewId = button.getAttribute('data-review-id');
+
+                        this.showCommentsModal(reviewerName, reviewerEmail, commentToEditor, commentToAuthor, visibleToAuthor, reviewId);
+                    });
+                });
+
+                // Add event listener for recommendation buttons
+                document.querySelectorAll('.view-recommendation-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const reviewerName = button.getAttribute('data-reviewer-name');
+                        const reviewerEmail = button.getAttribute('data-reviewer-email');
+                        const recommendation = button.getAttribute('data-recommendation');
+
+                        this.showRecommendationModal(reviewerName, reviewerEmail, recommendation);
+                    });
+                });
             }
 
             showCommentsModal(reviewerName, reviewerEmail, commentToEditor, commentToAuthor, visibleToAuthor, reviewId) {
@@ -1191,14 +1310,14 @@
 
                 modalTitle.textContent = 'Reviewer Comments';
 
-                // Format comments to preserve HTML formatting but safely escape
+                // Format comments using the improved formatting function
                 const formattedCommentToEditor = this.formatCommentForDisplay(commentToEditor);
                 const formattedCommentToAuthor = this.formatCommentForDisplay(commentToAuthor);
 
                 modalBody.innerHTML = `
                     <div class="modal-reviewer-info">
-                        <div class="modal-reviewer-name">${this.escapeHtml(reviewerName)}</div>
-                        <div class="modal-reviewer-email">${this.escapeHtml(reviewerEmail)}</div>
+                        <div class="modal-reviewer-name">${reviewerName}</div>
+                        <div class="modal-reviewer-email">${reviewerEmail}</div>
                     </div>
                     
                     <div class="modal-comments-content">
@@ -1207,7 +1326,7 @@
                             <div class="comment-section-header">
                                 <h4><i class="fas fa-user-tie"></i> Comment to Editor</h4>
                             </div>
-                            <div class="comment-content">
+                            <div class="comment-content clean-text">
                                 ${formattedCommentToEditor || '<div class="empty">No comments to editor</div>'}
                             </div>
                         </div>
@@ -1228,7 +1347,7 @@
                                 <i class="fas ${visibleToAuthor ? 'fa-eye' : 'fa-eye-slash'}"></i>
                                 ${visibleToAuthor ? 'Comment visible to author' : 'Comment not visible to author'}
                             </div>
-                            <div class="comment-content">
+                            <div class="comment-content clean-text">
                                 ${formattedCommentToAuthor || '<div class="empty">No comments to author</div>'}
                             </div>
                         </div>
@@ -1253,53 +1372,205 @@
                 if (!modalTitle || !modalBody) return;
 
                 modalTitle.textContent = 'Reviewer Recommendation';
+
+                // Format recommendation using the improved formatting function
+                const formattedRecommendation = this.formatCommentForDisplay(recommendation);
+
                 modalBody.innerHTML = `
                     <div class="modal-reviewer-info">
-                        <div class="modal-reviewer-name">${this.escapeHtml(reviewerName)}</div>
-                        <div class="modal-reviewer-email">${this.escapeHtml(reviewerEmail)}</div>
+                        <div class="modal-reviewer-name">${reviewerName}</div>
+                        <div class="modal-reviewer-email">${reviewerEmail}</div>
                     </div>
-                    <div class="modal-recommendation-content">
-                        ${this.escapeHtml(recommendation)}
+                    <div class="modal-recommendation-content clean-text">
+                        ${formattedRecommendation || 'No recommendation provided'}
                     </div>
                 `;
 
                 document.getElementById('detailsModal').classList.add('active');
             }
 
-            formatCommentForDisplay(comment) {
-                if (!comment || comment.trim() === '') {
+            /**
+             * Improved function to format comments and recommendations for display
+             * This handles the special characters, HTML tags, and formatting
+             */
+            formatCommentForDisplay(content) {
+                if (!content || content.trim() === '') {
                     return '';
                 }
 
-                // Decode HTML entities and preserve basic formatting
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = comment;
+                // Decode HTML entities
+                const decodeHtml = (html) => {
+                    const txt = document.createElement('textarea');
+                    txt.innerHTML = html;
+                    return txt.value;
+                };
 
-                // Sanitize by allowing only safe HTML tags
-                const allowedTags = ['strong', 'em', 'u', 'b', 'i', 'p', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+                let cleanedContent = decodeHtml(content);
 
-                // Remove potentially dangerous tags but keep allowed ones
-                const sanitizedContent = this.sanitizeHTML(comment, allowedTags);
+                // Remove leading/trailing quotes if present (common in JSON strings)
+                if (cleanedContent.startsWith('"') && cleanedContent.endsWith('"')) {
+                    cleanedContent = cleanedContent.slice(1, -1);
+                }
 
-                return sanitizedContent;
+                // Replace escaped newlines with actual newlines
+                cleanedContent = cleanedContent.replace(/\\n/g, '\n');
+                cleanedContent = cleanedContent.replace(/\\r/g, '\r');
+                cleanedContent = cleanedContent.replace(/\\t/g, '\t');
+
+                // Remove HTML tags but preserve their semantic meaning
+                cleanedContent = this.convertHtmlToPlainText(cleanedContent);
+
+                // Format the text nicely for display
+                return this.formatPlainTextForDisplay(cleanedContent);
             }
 
-            sanitizeHTML(html, allowedTags) {
+            /**
+             * Convert HTML to plain text while preserving structure
+             */
+            convertHtmlToPlainText(html) {
+                // Create a temporary div to parse HTML
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
 
-                // Remove script tags and other dangerous elements
-                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
+                // Remove script and style elements
+                const scripts = tempDiv.querySelectorAll('script, style, link, meta');
                 scripts.forEach(script => script.remove());
 
-                // Only keep allowed tags
+                // Convert common HTML elements to plain text with formatting
+                const replacements = [
+                    // Headings
+                    { tag: 'h1', replacement: '\n\n## ' },
+                    { tag: 'h2', replacement: '\n\n## ' },
+                    { tag: 'h3', replacement: '\n\n### ' },
+                    { tag: 'h4', replacement: '\n\n#### ' },
+                    { tag: 'h5', replacement: '\n\n##### ' },
+                    { tag: 'h6', replacement: '\n\n###### ' },
+
+                    // Paragraphs and line breaks
+                    { tag: 'p', replacement: '\n\n' },
+                    { tag: 'br', replacement: '\n' },
+                    { tag: 'div', replacement: '\n' },
+
+                    // Lists
+                    { tag: 'li', replacement: '\n• ' },
+                    { tag: 'ul', replacement: '\n' },
+                    { tag: 'ol', replacement: '\n' },
+
+                    // Block elements
+                    { tag: 'blockquote', replacement: '\n> ' },
+                    { tag: 'pre', replacement: '\n```\n' },
+                    { tag: 'code', replacement: '`' },
+
+                    // Formatting (we'll handle these differently)
+                    { tag: 'strong', replacement: '**' },
+                    { tag: 'b', replacement: '**' },
+                    { tag: 'em', replacement: '*' },
+                    { tag: 'i', replacement: '*' },
+                    { tag: 'u', replacement: '__' }
+                ];
+
+                // First, get the text content to remove all tags
+                let text = tempDiv.textContent || tempDiv.innerText || '';
+
+                // Clean up multiple newlines
+                text = text.replace(/\n\s*\n\s*\n/g, '\n\n');
+                text = text.replace(/\r\n/g, '\n');
+
+                return text;
+            }
+
+            /**
+             * Format plain text for nice display
+             */
+            formatPlainTextForDisplay(text) {
+                if (!text) return '';
+
+                // Split by paragraphs (double newlines)
+                let paragraphs = text.split(/\n\s*\n/);
+
+                // Clean each paragraph
+                paragraphs = paragraphs.map(paragraph => {
+                    // Trim whitespace
+                    paragraph = paragraph.trim();
+
+                    // Replace multiple spaces with single space
+                    paragraph = paragraph.replace(/\s+/g, ' ');
+
+                    // Add paragraph wrapper if there's content
+                    if (paragraph) {
+                        return `<p>${this.escapeHtml(paragraph)}</p>`;
+                    }
+                    return '';
+                }).filter(p => p !== '');
+
+                // If no paragraphs, return empty
+                if (paragraphs.length === 0) {
+                    return '';
+                }
+
+                return paragraphs.join('');
+            }
+
+            /**
+             * Alternative: Keep the original HTML but sanitize it
+             */
+            sanitizeHtmlForDisplay(html) {
+                if (!html) return '';
+
+                // Decode HTML entities
+                const decodeHtml = (html) => {
+                    const txt = document.createElement('textarea');
+                    txt.innerHTML = html;
+                    return txt.value;
+                };
+
+                let content = decodeHtml(html);
+
+                // Remove leading/trailing quotes
+                if (content.startsWith('"') && content.endsWith('"')) {
+                    content = content.slice(1, -1);
+                }
+
+                // Replace escaped characters
+                content = content.replace(/\\n/g, '<br>');
+                content = content.replace(/\\r/g, '');
+                content = content.replace(/\\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+
+                // Create a temporary div to sanitize HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+
+                // Remove dangerous elements
+                const dangerousTags = ['script', 'style', 'link', 'meta', 'object', 'embed', 'iframe', 'frame'];
+                dangerousTags.forEach(tag => {
+                    const elements = tempDiv.querySelectorAll(tag);
+                    elements.forEach(el => el.remove());
+                });
+
+                // Remove all attributes except a few safe ones
+                const safeAttributes = ['href', 'src', 'alt', 'title', 'class'];
                 const allElements = tempDiv.querySelectorAll('*');
                 allElements.forEach(el => {
-                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
-                        // Replace disallowed tags with their text content
-                        const text = document.createTextNode(el.textContent);
-                        el.parentNode.replaceChild(text, el);
+                    const attributes = Array.from(el.attributes);
+                    attributes.forEach(attr => {
+                        if (!safeAttributes.includes(attr.name)) {
+                            el.removeAttribute(attr.name);
+                        }
+                    });
+                });
+
+                // Clean up empty paragraphs
+                const paragraphs = tempDiv.querySelectorAll('p');
+                paragraphs.forEach(p => {
+                    if (!p.innerHTML.trim() || p.innerHTML === '<br>') {
+                        p.remove();
                     }
+                });
+
+                // Ensure proper spacing
+                const blockElements = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote');
+                blockElements.forEach(el => {
+                    el.style.margin = '0 0 1rem 0';
                 });
 
                 return tempDiv.innerHTML;
@@ -1309,7 +1580,6 @@
                 if (!this.currentReviewId) return;
 
                 try {
-                    const token = getAuthToken2();
                     if (!token) {
                         toastr.error('Authentication required. Please login again.', 'Error');
                         return;
@@ -1580,13 +1850,21 @@
             }
 
             escapeHtml(str) {
-                if (str === undefined || str === null) return '';
-                return String(str)
+                if (str === undefined || str === null || str === '') return '';
+
+                // First escape HTML entities
+                const htmlEscaped = String(str)
                     .replaceAll('&', '&amp;')
                     .replaceAll('<', '&lt;')
                     .replaceAll('>', '&gt;')
                     .replaceAll('"', '&quot;')
                     .replaceAll("'", '&#39;');
+
+                // Then escape any remaining special characters that could break JS
+                return htmlEscaped
+                    .replace(/\n/g, '\\n')
+                    .replace(/\r/g, '\\r')
+                    .replace(/\t/g, '\\t');
             }
         }
 

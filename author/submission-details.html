@@ -1157,6 +1157,386 @@
             transform: translateY(0);
         }
 
+        /* Payment Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            /* Darker overlay for better focus */
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            z-index: 10001;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: auto;
+            /* Center the modal */
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Payment Step Styles */
+        .payment-step {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .payment-step.active {
+            display: block;
+        }
+
+        .payment-info {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .payment-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .payment-info h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0.5rem 0 1rem;
+        }
+
+        .payment-description {
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-details {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #111827;
+            font-size: 0.9rem;
+            word-break: break-all;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        /* Payment Processing Styles */
+        .payment-processing {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .processing-spinner {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+
+        .payment-processing h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-processing p {
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .processing-status {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 1.5rem;
+        }
+
+        /* Payment Redirect Styles */
+        /* .payment-redirect {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .redirect-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--info-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--info);
+        }
+
+        .payment-redirect h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-redirect p {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .redirect-timer {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+            display: inline-block;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .redirect-timer span {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .redirect-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        } */
+
+        /* Payment Success Styles */
+        .payment-success {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--success-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--success);
+        }
+
+        .payment-success h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-success p {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .success-details {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .success-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .success-item:last-child {
+            border-bottom: none;
+        }
+
+        .success-item i {
+            color: var(--primary);
+            font-size: 1rem;
+            width: 20px;
+        }
+
+        .success-label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            display: block;
+        }
+
+        .success-value {
+            font-weight: 600;
+            color: #111827;
+            font-size: 0.9rem;
+            display: block;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Payment Error Styles */
+        .payment-error {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--danger-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--danger);
+        }
+
+        .payment-error h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-error p {
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .error-details {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: left;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .submission-details-container {
@@ -1263,6 +1643,43 @@
                 width: 100%;
                 justify-content: center;
             }
+
+
+            /* Payment Modal Responsive */
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .success-actions,
+            .error-actions,
+            .redirect-actions {
+                flex-direction: column;
+            }
+
+            .success-actions .btn,
+            .error-actions .btn,
+            .redirect-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .payment-details,
+            .success-details,
+            .error-details {
+                padding: 0.75rem;
+            }
+
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .detail-value {
+                text-align: left;
+                max-width: 100%;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1304,7 +1721,7 @@
 
                 <!-- Back Button and Edit Button -->
                 <div class="back-button-wrap">
-                    <a href="my-submission.html" class="back-button">
+                    <a href="my-submissions.html" class="back-button">
                         <i class="fas fa-arrow-left"></i> Back to My Submissions
                     </a>
 
@@ -1514,6 +1931,147 @@
         </div>
     </div>
 
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-credit-card"></i> Complete Payment</h3>
+                <button class="modal-close" id="closePaymentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Payment Step 1: Confirmation -->
+                <div id="paymentConfirmationStep" class="payment-step active">
+                    <div class="payment-info">
+                        <div class="payment-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h4>Publication Fee</h4>
+                        <p class="payment-amount">₦15,000.00</p>
+                        <p class="payment-description">
+                            Publication fee for manuscript: <strong id="paymentManuscriptTitle"></strong>
+                        </p>
+                        <div class="payment-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Journal:</span>
+                                <span id="paymentJournalName" class="detail-value"></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Submission ID:</span>
+                                <span id="paymentSubmissionId" class="detail-value"></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Payment Reference:</span>
+                                <span id="paymentReference" class="detail-value">Will be generated</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Step 2: Processing -->
+                <div id="paymentProcessingStep" class="payment-step">
+                    <div class="payment-processing">
+                        <div class="processing-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <h4>Processing Payment</h4>
+                        <p>Please wait while we initialize your payment...</p>
+                        <div class="processing-status" id="processingStatus">
+                            Initializing payment gateway...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Step 3: Redirect -->
+                <div id="paymentRedirectStep" class="payment-step">
+                    <div class="payment-redirect">
+                        <div class="redirect-icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                        <h4>Redirecting to Payment Gateway</h4>
+                        <p>You will be redirected to Paystack to complete your payment securely.</p>
+                        <div class="redirect-timer">
+                            Redirecting in <span id="redirectTimer">5</span> seconds...
+                        </div>
+                        <div class="redirect-actions">
+                            <button id="manualRedirectBtn" class="btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Proceed to Payment Now
+                            </button>
+                            <button id="cancelRedirectBtn" class="btn-secondary">
+                                Cancel Payment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Step 4: Success -->
+                <div id="paymentSuccessStep" class="payment-step">
+                    <div class="payment-success">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h4>Payment Successful!</h4>
+                        <p>Your payment has been processed successfully.</p>
+                        <div class="success-details">
+                            <div class="success-item">
+                                <i class="fas fa-receipt"></i>
+                                <div>
+                                    <span class="success-label">Reference:</span>
+                                    <span id="successReference" class="success-value"></span>
+                                </div>
+                            </div>
+                            <div class="success-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <div>
+                                    <span class="success-label">Paid On:</span>
+                                    <span id="successDate" class="success-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="success-actions">
+                            <button id="viewReceiptBtn" class="btn-primary">
+                                <i class="fas fa-receipt"></i> View Receipt
+                            </button>
+                            <button id="closeSuccessBtn" class="btn-secondary">
+                                <i class="fas fa-check"></i> Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Step 5: Error -->
+                <div id="paymentErrorStep" class="payment-step">
+                    <div class="payment-error">
+                        <div class="error-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h4>Payment Failed</h4>
+                        <p id="errorMessage">There was an error processing your payment.</p>
+                        <div class="error-details" id="errorDetails">
+                            <!-- Error details will be shown here -->
+                        </div>
+                        <div class="error-actions">
+                            <button id="retryPaymentBtn" class="btn-primary">
+                                <i class="fas fa-redo"></i> Try Again
+                            </button>
+                            <button id="closeErrorBtn" class="btn-secondary">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="paymentModalFooter">
+                <button id="confirmPaymentBtn" class="btn-primary">
+                    <i class="fas fa-credit-card"></i> Proceed to Payment
+                </button>
+                <button id="cancelPaymentBtn" class="btn-secondary">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.SIDEBAR_MODULE = 'author';
         window.SIDEBAR_ACTIVE_ID = 'author-submissions';
@@ -1542,6 +2100,11 @@
                 this.currentModalContent = '';
                 this.currentModalType = '';
                 this.currentModalTitle = '';
+                this.paymentReference = null;
+                this.paymentAuthorizationUrl = null;
+                this.paymentTimer = null;
+                this.currentStep = 'confirmation';
+                this.verificationInterval = null;
 
                 if (!this.submissionId) {
                     this.showError('No submission ID provided');
@@ -1604,13 +2167,6 @@
                     }
                 });
 
-                // Make Payment button
-                document.addEventListener('click', (e) => {
-                    if (e.target.id === 'makePaymentBtn' || e.target.closest('#makePaymentBtn')) {
-                        this.handleMakePayment();
-                    }
-                });
-
                 // Setup edit button with submission ID
                 document.getElementById('editSubmissionBtn')?.addEventListener('click', () => {
                     if (this.submissionId) {
@@ -1619,6 +2175,77 @@
                         toastr.error('Submission ID not found', 'Error');
                     }
                 });
+
+                // Bind payment events
+                this.bindPaymentEvents();
+            }
+
+            bindPaymentEvents() {
+                // Make Payment button in status notification
+                document.addEventListener('click', (e) => {
+                    if (e.target.id === 'makePaymentBtn' || e.target.closest('#makePaymentBtn')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.openPaymentModal();
+                    }
+                });
+
+                // Payment Modal Events
+                const paymentModal = document.getElementById('paymentModal');
+                const closePaymentModal = document.getElementById('closePaymentModal');
+                const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+                const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+                const closeErrorBtn = document.getElementById('closeErrorBtn');
+                const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+                const retryPaymentBtn = document.getElementById('retryPaymentBtn');
+                const viewReceiptBtn = document.getElementById('viewReceiptBtn');
+                const manualRedirectBtn = document.getElementById('manualRedirectBtn');
+                const cancelRedirectBtn = document.getElementById('cancelRedirectBtn');
+
+                if (closePaymentModal) {
+                    closePaymentModal.addEventListener('click', () => this.closePaymentModal());
+                }
+
+                if (cancelPaymentBtn) {
+                    cancelPaymentBtn.addEventListener('click', () => this.closePaymentModal());
+                }
+
+                if (confirmPaymentBtn) {
+                    confirmPaymentBtn.addEventListener('click', () => this.initiatePayment());
+                }
+
+                if (closeErrorBtn) {
+                    closeErrorBtn.addEventListener('click', () => this.closePaymentModal());
+                }
+
+                if (closeSuccessBtn) {
+                    closeSuccessBtn.addEventListener('click', () => this.completePaymentProcess());
+                }
+
+                if (retryPaymentBtn) {
+                    retryPaymentBtn.addEventListener('click', () => this.retryPayment());
+                }
+
+                if (viewReceiptBtn) {
+                    viewReceiptBtn.addEventListener('click', () => this.viewReceipt());
+                }
+
+                if (manualRedirectBtn) {
+                    manualRedirectBtn.addEventListener('click', () => this.redirectToPaymentGateway());
+                }
+
+                if (cancelRedirectBtn) {
+                    cancelRedirectBtn.addEventListener('click', () => this.cancelRedirect());
+                }
+
+                // Close modal when clicking outside
+                if (paymentModal) {
+                    paymentModal.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('modal-overlay')) {
+                            this.closePaymentModal();
+                        }
+                    });
+                }
             }
 
             getSubmissionIdFromURL() {
@@ -1737,7 +2364,7 @@
                         message: 'Great news! Your manuscript has been successfully published. You can now view it in the journal\'s latest issue. Thank you for contributing to our publication.',
                         icon: 'fas fa-check-circle',
                         iconClass: 'success',
-                        actions: '<a href="#" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> View Published Article</a>'
+                        actions: '<a href="published.html" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> View Published Article</a>'
                     },
                     'accepted': {
                         title: 'Submission Accepted',
@@ -1778,23 +2405,434 @@
                 }
             }
 
-            handleMakePayment() {
-                // Here you would implement the payment logic
-                // For now, show a message and redirect to payment page
-                Swal.fire({
-                    title: 'Proceed to Payment',
-                    text: 'You will be redirected to the payment page to complete the publication process.',
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Continue to Payment',
-                    cancelButtonText: 'Cancel',
-                    confirmButtonColor: '#ff7a18'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Redirect to payment page with submission ID
-                        window.location.href = `/author/payment.html?submission=${this.submissionId}`;
+            openPaymentModal() {
+                if (!this.submission) {
+                    toastr.error('Submission data not loaded', 'Error');
+                    return;
+                }
+
+                const paymentModal = document.getElementById('paymentModal');
+                const paymentManuscriptTitle = document.getElementById('paymentManuscriptTitle');
+                const paymentJournalName = document.getElementById('paymentJournalName');
+                const paymentSubmissionId = document.getElementById('paymentSubmissionId');
+
+                if (paymentModal && paymentManuscriptTitle && paymentJournalName && paymentSubmissionId) {
+                    // Set payment details
+                    paymentManuscriptTitle.textContent = this.submission.title || 'Untitled Manuscript';
+                    paymentJournalName.textContent = this.submission.journalId?.title || 'Unknown Journal';
+                    paymentSubmissionId.textContent = this.submissionId;
+
+                    // Reset modal to initial state
+                    this.resetPaymentModal();
+                    this.showPaymentStep('confirmation');
+
+                    // Show modal
+                    paymentModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            closePaymentModal() {
+                const paymentModal = document.getElementById('paymentModal');
+                if (paymentModal) {
+                    paymentModal.style.display = 'none';
+                    document.body.style.overflow = '';
+
+                    // Clear any active timers
+                    if (this.paymentTimer) {
+                        clearInterval(this.paymentTimer);
+                        this.paymentTimer = null;
+                    }
+
+                    // Clear verification interval
+                    if (this.verificationInterval) {
+                        clearInterval(this.verificationInterval);
+                        this.verificationInterval = null;
+                    }
+                }
+            }
+
+            resetPaymentModal() {
+                this.showPaymentStep('confirmation');
+                this.currentStep = 'confirmation';
+
+                // Reset UI elements
+                const paymentReference = document.getElementById('paymentReference');
+                const processingStatus = document.getElementById('processingStatus');
+                const successReference = document.getElementById('successReference');
+                const successDate = document.getElementById('successDate');
+                const errorMessage = document.getElementById('errorMessage');
+                const errorDetails = document.getElementById('errorDetails');
+
+                if (paymentReference) paymentReference.textContent = 'Will be generated';
+                if (processingStatus) processingStatus.textContent = 'Initializing payment gateway...';
+                if (successReference) successReference.textContent = '';
+                if (successDate) successDate.textContent = '';
+                if (errorMessage) errorMessage.textContent = 'There was an error processing your payment.';
+                if (errorDetails) errorDetails.innerHTML = '';
+
+                // Show/hide footer buttons based on step
+                this.updateModalFooter();
+            }
+
+            showPaymentStep(step) {
+                const steps = ['confirmation', 'processing', 'redirect', 'success', 'error'];
+
+                // Hide all steps
+                steps.forEach(stepName => {
+                    const stepElement = document.getElementById(`payment${stepName.charAt(0).toUpperCase() + stepName.slice(1)}Step`);
+                    if (stepElement) {
+                        stepElement.classList.remove('active');
                     }
                 });
+
+                // Show the requested step
+                const activeStepElement = document.getElementById(`payment${step.charAt(0).toUpperCase() + step.slice(1)}Step`);
+                if (activeStepElement) {
+                    activeStepElement.classList.add('active');
+                }
+
+                this.currentStep = step;
+                this.updateModalFooter();
+            }
+
+            updateModalFooter() {
+                const modalFooter = document.getElementById('paymentModalFooter');
+                const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+                const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+
+                if (!modalFooter || !confirmPaymentBtn || !cancelPaymentBtn) return;
+
+                switch (this.currentStep) {
+                    case 'confirmation':
+                        modalFooter.style.display = 'flex';
+                        confirmPaymentBtn.style.display = 'inline-flex';
+                        cancelPaymentBtn.style.display = 'inline-flex';
+                        confirmPaymentBtn.disabled = false;
+                        confirmPaymentBtn.innerHTML = '<i class="fas fa-credit-card"></i> Proceed to Payment';
+                        break;
+
+                    case 'processing':
+                    case 'redirect':
+                        modalFooter.style.display = 'none';
+                        break;
+
+                    case 'success':
+                    case 'error':
+                        modalFooter.style.display = 'none';
+                        break;
+                }
+            }
+
+            async initiatePayment() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        this.showPaymentError('Authentication required');
+                        return;
+                    }
+
+                    // Show processing step
+                    this.showPaymentStep('processing');
+
+                    // Call the payment initiation API
+                    const response = await fetch(`${BASE_URL}/payments/initiate`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            submissionId: this.submissionId
+                        })
+                    });
+
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        throw new Error('Invalid response from payment server');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data.message || `Payment initiation failed: ${response.status}`);
+                    }
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Payment initiation failed');
+                    }
+
+                    // Store payment details
+                    this.paymentReference = data.reference;
+                    this.paymentAuthorizationUrl = data.authorizationUrl;
+
+                    // Update UI with reference
+                    const paymentReference = document.getElementById('paymentReference');
+                    if (paymentReference) {
+                        paymentReference.textContent = data.reference;
+                    }
+
+                    const processingStatus = document.getElementById('processingStatus');
+                    if (processingStatus) {
+                        processingStatus.textContent = 'Payment initialized successfully. Redirecting...';
+                    }
+
+                    // Immediately redirect to Paystack after a brief delay
+                    setTimeout(() => {
+                        if (this.paymentAuthorizationUrl) {
+                            // Open payment gateway in new tab
+                            window.open(this.paymentAuthorizationUrl, '_blank');
+
+                            // Start polling for payment verification
+                            this.startPaymentVerification();
+
+                            // Show processing state while waiting for payment
+                            if (processingStatus) {
+                                processingStatus.textContent = 'Waiting for payment confirmation...';
+                            }
+                        }
+                    }, 1000);
+
+                } catch (error) {
+                    console.error('Error initiating payment:', error);
+                    this.showPaymentError(error.message || 'Failed to initialize payment');
+                }
+            }
+
+            // Remove the redirectToPaymentGateway method since we're redirecting immediately
+            // Remove the startRedirectTimer method since we don't have a redirect step anymore
+            // Remove the cancelRedirect method since we don't have a redirect step anymore
+
+            // Update the bindPaymentEvents method to remove redirect-related event listeners:
+            bindPaymentEvents() {
+                // Make Payment button in status notification
+                document.addEventListener('click', (e) => {
+                    if (e.target.id === 'makePaymentBtn' || e.target.closest('#makePaymentBtn')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.openPaymentModal();
+                    }
+                });
+
+                // Payment Modal Events
+                const paymentModal = document.getElementById('paymentModal');
+                const closePaymentModal = document.getElementById('closePaymentModal');
+                const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+                const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+                const closeErrorBtn = document.getElementById('closeErrorBtn');
+                const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+                const retryPaymentBtn = document.getElementById('retryPaymentBtn');
+                const viewReceiptBtn = document.getElementById('viewReceiptBtn');
+
+                if (closePaymentModal) {
+                    closePaymentModal.addEventListener('click', () => this.closePaymentModal());
+                }
+
+                if (cancelPaymentBtn) {
+                    cancelPaymentBtn.addEventListener('click', () => this.closePaymentModal());
+                }
+
+                if (confirmPaymentBtn) {
+                    confirmPaymentBtn.addEventListener('click', () => this.initiatePayment());
+                }
+
+                if (closeErrorBtn) {
+                    closeErrorBtn.addEventListener('click', () => this.closePaymentModal());
+                }
+
+                if (closeSuccessBtn) {
+                    closeSuccessBtn.addEventListener('click', () => this.completePaymentProcess());
+                }
+
+                if (retryPaymentBtn) {
+                    retryPaymentBtn.addEventListener('click', () => this.retryPayment());
+                }
+
+                if (viewReceiptBtn) {
+                    viewReceiptBtn.addEventListener('click', () => this.viewReceipt());
+                }
+
+                // Close modal when clicking outside
+                if (paymentModal) {
+                    paymentModal.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('modal-overlay')) {
+                            this.closePaymentModal();
+                        }
+                    });
+                }
+            }
+
+            startRedirectTimer() {
+                let countdown = 5;
+                const redirectTimer = document.getElementById('redirectTimer');
+
+                if (redirectTimer) {
+                    redirectTimer.textContent = countdown;
+                }
+
+                this.paymentTimer = setInterval(() => {
+                    countdown--;
+
+                    if (redirectTimer) {
+                        redirectTimer.textContent = countdown;
+                    }
+
+                    if (countdown <= 0) {
+                        clearInterval(this.paymentTimer);
+                        this.redirectToPaymentGateway();
+                    }
+                }, 1000);
+            }
+
+            redirectToPaymentGateway() {
+                if (this.paymentAuthorizationUrl) {
+                    // Clear timer if still running
+                    if (this.paymentTimer) {
+                        clearInterval(this.paymentTimer);
+                        this.paymentTimer = null;
+                    }
+
+                    // Open payment gateway in new tab
+                    window.open(this.paymentAuthorizationUrl, '_blank');
+
+                    // Start polling for payment verification
+                    this.startPaymentVerification();
+                }
+            }
+
+            cancelRedirect() {
+                if (this.paymentTimer) {
+                    clearInterval(this.paymentTimer);
+                    this.paymentTimer = null;
+                }
+                this.closePaymentModal();
+            }
+
+            startPaymentVerification() {
+                // Poll for payment verification every 5 seconds
+                this.verificationInterval = setInterval(async () => {
+                    await this.checkPaymentStatus();
+                }, 5000);
+
+                // Also check immediately
+                setTimeout(() => {
+                    this.checkPaymentStatus();
+                }, 1000);
+            }
+
+            async checkPaymentStatus() {
+                if (!this.paymentReference) return;
+
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    const response = await fetch(`${BASE_URL}/payments/verify?reference=${this.paymentReference}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) return;
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Payment successful
+                        clearInterval(this.verificationInterval);
+                        this.showPaymentSuccess(data);
+                    } else if (data.error && data.error.code === 'invalid_Key') {
+                        // Still waiting for payment
+                        console.log('Payment verification pending...');
+                    } else {
+                        // Payment failed
+                        clearInterval(this.verificationInterval);
+                        this.showPaymentError(data.message || 'Payment verification failed');
+                    }
+                } catch (error) {
+                    console.error('Error checking payment status:', error);
+                    // Don't show error here, just log it
+                }
+            }
+
+            showPaymentSuccess(paymentData) {
+                this.showPaymentStep('success');
+
+                // Update success details
+                const successReference = document.getElementById('successReference');
+                const successDate = document.getElementById('successDate');
+
+                if (successReference) {
+                    successReference.textContent = this.paymentReference;
+                }
+
+                if (successDate) {
+                    successDate.textContent = new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                }
+            }
+
+            showPaymentError(errorMessage, errorDetails = '') {
+                this.showPaymentStep('error');
+
+                const errorMessageEl = document.getElementById('errorMessage');
+                const errorDetailsEl = document.getElementById('errorDetails');
+
+                if (errorMessageEl) {
+                    errorMessageEl.textContent = errorMessage;
+                }
+
+                if (errorDetailsEl && errorDetails) {
+                    errorDetailsEl.innerHTML = `<p>${this.escapeHtml(errorDetails)}</p>`;
+                }
+            }
+
+            completePaymentProcess() {
+                this.closePaymentModal();
+
+                // Refresh the submission data to update status
+                setTimeout(async () => {
+                    try {
+                        await this.loadMainSubmissionData();
+                        this.checkAndShowStatusNotification();
+                        toastr.success('Payment completed successfully!');
+                    } catch (error) {
+                        console.error('Error refreshing submission data:', error);
+                    }
+                }, 500);
+            }
+
+            retryPayment() {
+                this.resetPaymentModal();
+            }
+
+            async viewReceipt() {
+                if (!this.paymentReference) {
+                    toastr.error('No payment reference found', 'Error');
+                    return;
+                }
+
+                try {
+                    // Open receipt in new tab
+                    window.open(`/author/payment-receipt.html?reference=${this.paymentReference}`, '_blank');
+
+                    // Also close the modal
+                    this.completePaymentProcess();
+                } catch (error) {
+                    console.error('Error viewing receipt:', error);
+                    toastr.error('Failed to open receipt', 'Error');
+                }
             }
 
             async getUserDetails(userId) {

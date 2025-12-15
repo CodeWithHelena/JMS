@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --header-height: 70px;
+
+            /* Light theme */
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --body-bg: #f4f7fb;
+            --text-color: #111827;
+            --text-light: #6b7280;
+            --border-color: #e2e8f0;
+            --hover-bg: rgba(255, 122, 24, 0.1);
+            --active-bg: rgba(255, 122, 24, 0.15);
+            --shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+            --transition: all 0.3s ease;
+
+            /* Primary Colors */
+            --primary: #ff7a18;
+            --primary-light: rgba(255, 122, 24, 0.1);
+            --primary-dark: #e56c0e;
+            --primary-rgb: 255, 122, 24;
+
+            /* Status Colors */
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --success-dark: #0da271;
+            --success-rgb: 16, 185, 129;
+
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --danger-dark: #dc2626;
+            --danger-rgb: 239, 68, 68;
+
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --warning-dark: #d97706;
+            --warning-rgb: 245, 158, 11;
+
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --info-dark: #2563eb;
+            --info-rgb: 59, 130, 246;
+
+            /* Neutral Colors */
+            --card-bg: #ffffff;
+            --light: #f8fafc;
+            --muted: #6b7280;
+            --border: #e2e8f0;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+        }
+
+        body.dark-mode {
+            --sidebar-bg: #1e1e2d;
+            --header-bg: #1e1e2d;
+            --body-bg: #151521;
+            --text-color: #ffffff;
+            --text-light: #a2a3b7;
+            --border-color: #2d2d3d;
+            --hover-bg: rgba(255, 122, 24, 0.2);
+            --active-bg: rgba(255, 122, 24, 0.25);
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            --card-bg: #1e1e2d;
+            --light: #2d2d3d;
+            --border: #2d2d3d;
+            --text-secondary: #a2a3b7;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .notifications-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Section */
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .unread-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* Controls Section - All in one line */
+        .notifications-controls {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filters-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background-color: var(--hover-bg);
+            border-color: var(--primary);
+        }
+
+        .selection-info {
+            padding: 0.5rem 1rem;
+            background: var(--primary-light);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 140px;
+        }
+
+        .selection-info i {
+            color: var(--primary);
+        }
+
+        .actions-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn.primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .action-btn.primary:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .action-btn.success:hover:not(:disabled) {
+            background-color: var(--success-dark);
+            transform: translateY(-2px);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* More Options Dropdown */
+        .more-options {
+            position: relative;
+        }
+
+        .more-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .more-btn:hover {
+            background-color: var(--hover-bg);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow-hover);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .dropdown-item.danger {
+            color: var(--danger);
+        }
+
+        .dropdown-item.danger:hover {
+            background-color: var(--danger-light);
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Notifications Grid */
+        .notifications-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--border);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        /* Notification Card */
+        .notification-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-content {
+            padding: 1.25rem;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .unread-indicator {
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            display: none;
+        }
+
+        .notification-card.unread .unread-indicator {
+            display: block;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .priority-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-high {
+            background-color: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .priority-medium {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .priority-low {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+
+        .notification-message {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .card-footer {
+            border-top: 1px solid var(--border);
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--light);
+        }
+
+        .notification-date {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-color);
+        }
+
+        .btn-icon.delete {
+            color: var(--danger);
+        }
+
+        .btn-icon.delete:hover {
+            background-color: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .btn-view {
+            padding: 0.5rem 1.25rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-view:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-btn:hover:not(.active):not(:disabled) {
+            background-color: var(--hover-bg);
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0 1rem;
+        }
+
+        /* Loading State */
+        .loading-skeleton {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .skeleton-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .skeleton-line {
+            height: 12px;
+            background: linear-gradient(90deg, var(--border) 25%, var(--light) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-line.short {
+            width: 60%;
+        }
+
+        .skeleton-line.medium {
+            width: 80%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Checkbox */
+        .notification-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            transition: var(--transition);
+        }
+
+        .notification-checkbox:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .notifications-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .filters-section {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .notifications-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .header-title h1 {
+                font-size: 1.75rem;
+            }
+
+            .filters-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .notification-actions {
+                justify-content: space-between;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .actions-section {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .action-btn {
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
+            }
+
+            .selection-info {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Included -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <!-- Header Included -->
+            <div id="header-placeholder"></div>
+            <main class="main-content">
+                <div class="container my-4">
+                    <div class="notifications-container">
+                        <!-- Header -->
+                        <div class="notifications-header">
+                            <div class="header-title">
+                                <h1>Your Notifications</h1>
+                                <p>Manage and review your notifications</p>
+                            </div>
+                            <div id="unreadCount" class="unread-badge">
+                                <i class="fas fa-bell"></i>
+                                <span id="unreadCountNumber">0</span> New
+                            </div>
+                        </div>
+
+                        <!-- Controls - All in one line -->
+                        <div class="notifications-controls">
+                            <div class="filters-section">
+                                <button class="filter-btn active" data-filter="all">
+                                    <i class="fas fa-inbox"></i> All Notifications
+                                </button>
+                                <button class="filter-btn" data-filter="unread">
+                                    <i class="fas fa-envelope"></i> Unread Only
+                                </button>
+
+                                <div id="selectionInfo" class="selection-info" style="display: none;">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span id="selectedCount">0</span> selected
+                                </div>
+                            </div>
+
+                            <div class="actions-section">
+                                <button id="markSelectedBtn" class="action-btn success" disabled>
+                                    <i class="fas fa-check-circle"></i> Mark Selected as Read
+                                </button>
+                                <button id="markAllReadBtn" class="action-btn primary">
+                                    <i class="fas fa-check-square"></i> Mark All as Read
+                                </button>
+
+                                <div class="more-options">
+                                    <button class="more-btn" id="moreOptionsBtn">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="dropdown-menu" id="dropdownMenu">
+                                        <button class="dropdown-item" id="selectAllOption">
+                                            <i class="fas fa-check-double"></i> Select All
+                                        </button>
+                                        <button class="dropdown-item danger" id="deleteAllOption">
+                                            <i class="fas fa-trash"></i> Delete All
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading Skeleton -->
+                        <div id="loadingSkeleton" class="loading-skeleton">
+                            <div class="skeleton-card">
+                                <div class="skeleton-line short"></div>
+                                <div class="skeleton-line medium"></div>
+                                <div class="skeleton-line" style="width: 40%;"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton-line short"></div>
+                                <div class="skeleton-line medium"></div>
+                                <div class="skeleton-line" style="width: 40%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i class="fas fa-bell-slash"></i>
+                            <h3>No notifications found</h3>
+                            <p>You're all caught up! There are no notifications to display.</p>
+                        </div>
+
+                        <!-- Notifications Grid -->
+                        <div id="notificationsGrid" class="notifications-grid" style="display: none;">
+                            <!-- Notifications will be populated here -->
+                        </div>
+
+                        <!-- Pagination -->
+                        <div id="paginationContainer" class="pagination" style="display: none;">
+                            <button id="prevPageBtn" class="page-btn" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+                            <button id="nextPageBtn" class="page-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'notifications';
+    </script>
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (required for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script type="module">
+        // Import utility functions
+        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+
+        class NotificationsManager {
+            constructor() {
+                this.currentPage = 1;
+                this.currentFilter = 'all';
+                this.limit = 10;
+                this.totalPages = 1;
+                this.totalNotifications = 0;
+                this.unreadCount = 0;
+                this.selectedNotifications = new Set();
+                this.notifications = [];
+
+                this.initializeToastr();
+                this.bindEvents();
+                this.loadNotifications();
+                this.loadUnreadCount();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000,
+                    showMethod: "fadeIn",
+                    hideMethod: "fadeOut"
+                };
+            }
+
+            bindEvents() {
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.handleFilterChange(e));
+                });
+
+                // Action buttons
+                document.getElementById('markSelectedBtn').addEventListener('click', () => this.markSelectedAsRead());
+                document.getElementById('markAllReadBtn').addEventListener('click', () => this.markAllAsRead());
+
+                // More options dropdown
+                document.getElementById('moreOptionsBtn').addEventListener('click', (e) => this.toggleDropdown(e));
+                document.getElementById('selectAllOption').addEventListener('click', () => this.selectAll());
+                document.getElementById('deleteAllOption').addEventListener('click', () => this.deleteAllNotifications());
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.more-options')) {
+                        this.hideDropdown();
+                    }
+                });
+
+                // Pagination
+                document.getElementById('prevPageBtn').addEventListener('click', () => this.changePage(-1));
+                document.getElementById('nextPageBtn').addEventListener('click', () => this.changePage(1));
+            }
+
+            toggleDropdown(e) {
+                e.stopPropagation();
+                const dropdown = document.getElementById('dropdownMenu');
+                dropdown.classList.toggle('show');
+            }
+
+            hideDropdown() {
+                const dropdown = document.getElementById('dropdownMenu');
+                dropdown.classList.remove('show');
+            }
+
+            async loadNotifications() {
+                try {
+                    this.showLoading();
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required');
+                        return;
+                    }
+
+                    let url;
+                    if (this.currentFilter === 'unread') {
+                        url = `${BASE_URL}/notifications/unread?page=${this.currentPage}&limit=${this.limit}`;
+                    } else {
+                        url = `${BASE_URL}/notifications/all?page=${this.currentPage}&limit=${this.limit}`;
+                    }
+
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to load notifications: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load notifications');
+                    }
+
+                    this.notifications = data.notifications || [];
+                    this.totalNotifications = data.total || 0;
+                    this.unreadCount = data.unreadCount || 0;
+                    this.totalPages = data.totalPages || 1;
+
+                    this.renderNotifications();
+                    this.updatePagination();
+                    this.updateUnreadCount();
+                    this.clearSelection();
+                    this.hideDropdown();
+
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                    toastr.error('Failed to load notifications. Please try again.');
+                    this.showEmptyState();
+                }
+            }
+
+            async loadUnreadCount() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    const response = await fetch(`${BASE_URL}/notifications/unread-count`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.unreadCount = data.count || 0;
+                            this.updateUnreadCount();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading unread count:', error);
+                }
+            }
+
+            renderNotifications() {
+                const grid = document.getElementById('notificationsGrid');
+                const emptyState = document.getElementById('emptyState');
+                const loadingSkeleton = document.getElementById('loadingSkeleton');
+
+                if (this.notifications.length === 0) {
+                    grid.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    loadingSkeleton.style.display = 'none';
+                    return;
+                }
+
+                grid.style.display = 'grid';
+                emptyState.style.display = 'none';
+                loadingSkeleton.style.display = 'none';
+
+                grid.innerHTML = this.notifications.map(notification => `
+                    <div class="notification-card ${notification.isRead ? '' : 'unread'}" 
+                         data-id="${notification._id}">
+                        <div class="card-content">
+                            <div class="notification-header">
+                                <span class="unread-indicator"></span>
+                                <div class="notification-title">
+                                    <input type="checkbox" class="notification-checkbox" 
+                                           data-id="${notification._id}" 
+                                           ${this.selectedNotifications.has(notification._id) ? 'checked' : ''}>
+                                    ${this.escapeHtml(notification.title || 'Notification')}
+                                </div>
+                                ${notification.priority ? `
+                                    <span class="priority-badge priority-${notification.priority}">
+                                        ${notification.priority}
+                                    </span>
+                                ` : ''}
+                            </div>
+                            <div class="notification-message">
+                                ${this.escapeHtml(notification.message || '')}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="notification-date">
+                                <i class="far fa-clock"></i>
+                                ${this.formatDate(notification.createdAt)}
+                            </div>
+                            <div class="notification-actions">
+                                <button class="btn-icon delete" data-id="${notification._id}" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn-view view-notification" 
+                                        data-id="${notification._id}"
+                                        data-entity-id="${notification.relatedEntity?.id || ''}">
+                                    <span>View</span>
+                                    <i class="fas fa-angle-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Bind events to new elements
+                this.bindCardEvents();
+            }
+
+            bindCardEvents() {
+                // Checkbox selection
+                document.querySelectorAll('.notification-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => this.handleCheckboxChange(e));
+                });
+
+                // Delete single notification
+                document.querySelectorAll('.btn-icon.delete').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const id = e.currentTarget.dataset.id;
+                        this.deleteNotification(id);
+                    });
+                });
+
+                // View notification
+                document.querySelectorAll('.view-notification').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const id = e.currentTarget.dataset.id;
+                        const entityId = e.currentTarget.dataset.entityId;
+                        this.viewNotification(id, entityId);
+                    });
+                });
+            }
+
+            handleCheckboxChange(e) {
+                const id = e.target.dataset.id;
+                if (e.target.checked) {
+                    this.selectedNotifications.add(id);
+                } else {
+                    this.selectedNotifications.delete(id);
+                }
+                this.updateSelectionInfo();
+            }
+
+            selectAll() {
+                const allIds = this.notifications.map(n => n._id);
+                const allSelected = allIds.every(id => this.selectedNotifications.has(id));
+
+                if (allSelected) {
+                    this.selectedNotifications.clear();
+                } else {
+                    allIds.forEach(id => this.selectedNotifications.add(id));
+                }
+
+                this.updateCheckboxes();
+                this.updateSelectionInfo();
+                this.hideDropdown();
+            }
+
+            updateCheckboxes() {
+                document.querySelectorAll('.notification-checkbox').forEach(checkbox => {
+                    checkbox.checked = this.selectedNotifications.has(checkbox.dataset.id);
+                });
+            }
+
+            updateSelectionInfo() {
+                const selectedCount = this.selectedNotifications.size;
+                const selectionInfo = document.getElementById('selectionInfo');
+                const selectedCountSpan = document.getElementById('selectedCount');
+                const markSelectedBtn = document.getElementById('markSelectedBtn');
+
+                selectedCountSpan.textContent = selectedCount;
+
+                if (selectedCount > 0) {
+                    selectionInfo.style.display = 'flex';
+                    markSelectedBtn.disabled = false;
+                } else {
+                    selectionInfo.style.display = 'none';
+                    markSelectedBtn.disabled = true;
+                }
+            }
+
+            clearSelection() {
+                this.selectedNotifications.clear();
+                this.updateSelectionInfo();
+            }
+
+            async markSelectedAsRead() {
+                if (this.selectedNotifications.size === 0) return;
+
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    const promises = Array.from(this.selectedNotifications).map(id =>
+                        fetch(`${BASE_URL}/notifications/${id}/read`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            }
+                        })
+                    );
+
+                    await Promise.all(promises);
+
+                    this.clearSelection();
+                    this.loadNotifications();
+                    this.loadUnreadCount();
+
+                } catch (error) {
+                    console.error('Error marking notifications as read:', error);
+                    toastr.error('Failed to mark notifications as read');
+                }
+            }
+
+            async markAllAsRead() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    const response = await fetch(`${BASE_URL}/notifications/read-all`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        this.loadNotifications();
+                        this.loadUnreadCount();
+                    } else {
+                        toastr.error('Failed to mark all as read');
+                    }
+
+                } catch (error) {
+                    console.error('Error marking all as read:', error);
+                    toastr.error('Failed to mark all as read');
+                }
+            }
+
+            async deleteAllNotifications() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    Swal.fire({
+                        title: 'Delete all notifications?',
+                        text: 'This will permanently delete all your notifications. This action cannot be undone.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, delete all!'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            // Delete all notifications one by one
+                            const allIds = this.notifications.map(n => n._id);
+                            const promises = allIds.map(id =>
+                                fetch(`${BASE_URL}/notifications/${id}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Accept': 'application/json',
+                                        'Authorization': `Bearer ${token}`
+                                    }
+                                })
+                            );
+
+                            await Promise.all(promises);
+                            toastr.success('All notifications deleted');
+
+                            this.clearSelection();
+                            this.loadNotifications();
+                            this.loadUnreadCount();
+                            this.hideDropdown();
+                        }
+                    });
+
+                } catch (error) {
+                    console.error('Error deleting all notifications:', error);
+                    toastr.error('Failed to delete all notifications');
+                }
+            }
+
+            async deleteNotification(id) {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    Swal.fire({
+                        title: 'Delete notification?',
+                        text: 'This action cannot be undone.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            const response = await fetch(`${BASE_URL}/notifications/${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            });
+
+                            if (response.ok) {
+                                toastr.success('Notification deleted');
+                                this.loadNotifications();
+                                this.loadUnreadCount();
+                            } else {
+                                toastr.error('Failed to delete notification');
+                            }
+                        }
+                    });
+
+                } catch (error) {
+                    console.error('Error deleting notification:', error);
+                    toastr.error('Failed to delete notification');
+                }
+            }
+
+            async viewNotification(notificationId, entityId) {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    // Mark as read first
+                    await fetch(`${BASE_URL}/notifications/${notificationId}/read`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    // Redirect to submission details
+                    if (entityId) {
+                        window.location.href = `submission-details.html?id=${entityId}`;
+                    } else {
+                        toastr.info('No submission linked to this notification');
+                    }
+
+                } catch (error) {
+                    console.error('Error viewing notification:', error);
+                    // Still try to redirect if we have entityId
+                    if (entityId) {
+                        window.location.href = `submission-details.html?id=${entityId}`;
+                    }
+                }
+            }
+
+            handleFilterChange(e) {
+                const filter = e.currentTarget.dataset.filter;
+
+                // Update active state
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.currentTarget.classList.add('active');
+
+                // Update filter and reload
+                this.currentFilter = filter;
+                this.currentPage = 1; // Reset to first page
+                this.clearSelection();
+                this.loadNotifications();
+            }
+
+            changePage(direction) {
+                const newPage = this.currentPage + direction;
+                if (newPage >= 1 && newPage <= this.totalPages) {
+                    this.currentPage = newPage;
+                    this.clearSelection();
+                    this.loadNotifications();
+                }
+            }
+
+            updatePagination() {
+                const paginationContainer = document.getElementById('paginationContainer');
+                const currentPageSpan = document.getElementById('currentPage');
+                const totalPagesSpan = document.getElementById('totalPages');
+                const prevBtn = document.getElementById('prevPageBtn');
+                const nextBtn = document.getElementById('nextPageBtn');
+
+                if (this.totalPages > 1) {
+                    paginationContainer.style.display = 'flex';
+                    currentPageSpan.textContent = this.currentPage;
+                    totalPagesSpan.textContent = this.totalPages;
+
+                    prevBtn.disabled = this.currentPage === 1;
+                    nextBtn.disabled = this.currentPage === this.totalPages;
+                } else {
+                    paginationContainer.style.display = 'none';
+                }
+            }
+
+            updateUnreadCount() {
+                const unreadCountElement = document.getElementById('unreadCountNumber');
+                if (unreadCountElement) {
+                    unreadCountElement.textContent = this.unreadCount;
+                }
+            }
+
+            showLoading() {
+                document.getElementById('loadingSkeleton').style.display = 'block';
+                document.getElementById('notificationsGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('paginationContainer').style.display = 'none';
+            }
+
+            showEmptyState() {
+                document.getElementById('loadingSkeleton').style.display = 'none';
+                document.getElementById('notificationsGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('paginationContainer').style.display = 'none';
+            }
+
+            formatDate(dateString) {
+                try {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
+
+                    if (diffMins < 1) return 'Just now';
+                    if (diffMins < 60) return `${diffMins}m ago`;
+                    if (diffHours < 24) return `${diffHours}h ago`;
+                    if (diffDays < 7) return `${diffDays}d ago`;
+
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                } catch (error) {
+                    return dateString;
+                }
+            }
+
+            escapeHtml(str) {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the notifications manager
+        document.addEventListener('DOMContentLoaded', () => {
+            new NotificationsManager();
+        });
+    </script>
+</body>
+
+</html>

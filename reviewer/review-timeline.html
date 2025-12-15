@@ -4,21 +4,18 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Review Timeline</title>
+    <title>Review History Timeline</title>
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
 
     <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
-
-    <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <style>
         :root {
@@ -40,46 +37,64 @@
             --warning-light: rgba(245, 158, 11, 0.1);
             --info: #3b82f6;
             --info-light: rgba(59, 130, 246, 0.1);
+            --border: #e2e8f0;
+            --light: #f8fafc;
+            --primary-light: rgba(255, 122, 24, 0.1);
         }
 
         body {
             background-color: var(--bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Review Stats Card */
-        .stats-card {
+        /* Manuscript Header Card */
+        .manuscript-header-card {
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--card-shadow);
-            padding: 1.5rem;
+            padding: 2rem;
             margin-bottom: 2rem;
             border-left: 4px solid var(--primary);
+            position: relative;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+        .manuscript-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .header-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
             margin-top: 1rem;
         }
 
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             color: var(--muted);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
         }
 
         /* Page title styling */
@@ -290,6 +305,18 @@
             margin-left: 0.5rem;
         }
 
+        .version-badge {
+            display: inline-block;
+            padding: 0.28rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+            background-color: var(--info);
+            color: white;
+        }
+
         .review-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -302,12 +329,6 @@
 
         .review-title i {
             color: var(--primary);
-        }
-
-        .review-comments {
-            margin: 0.75rem 0;
-            color: #374151;
-            line-height: 1.5;
         }
 
         .comments-section {
@@ -331,6 +352,34 @@
         .comments-content {
             color: #111827;
             line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .truncated-text {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            margin-bottom: 0.5rem;
+        }
+
+        .view-more-btn {
+            background: none;
+            border: none;
+            color: var(--info);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: underline;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .view-more-btn:hover {
+            color: #2563eb;
         }
 
         .timeline-date {
@@ -448,38 +497,121 @@
             opacity: 0.5;
         }
 
-        /* Filter controls */
-        .filter-controls {
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
             background: var(--card-bg);
             border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
             padding: 1.5rem;
-            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .filter-select {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: white;
-            color: #374151;
-            font-size: 0.9rem;
-            min-width: 180px;
+        .modal-header h3 {
+            margin: 0;
+            color: #111827;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
+        .modal-header h3 i {
+            color: var(--primary);
         }
 
-        .filter-label {
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1.25rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+
+        .modal-content-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-content-label {
             font-weight: 600;
             color: #111827;
-            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content-label i {
+            color: var(--primary);
+        }
+
+        .modal-content-text {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
         }
 
         /* small responsive tweak */
@@ -501,21 +633,26 @@
                 padding: 0 0.5rem;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
             .back-button-wrap {
                 width: 100%;
             }
 
-            .filter-controls {
-                flex-direction: column;
-                align-items: stretch;
+            .manuscript-header-card {
+                padding: 1.5rem;
             }
 
-            .filter-select {
-                width: 100%;
+            .manuscript-header-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .modal {
+                width: 95%;
+                max-height: 90vh;
             }
         }
     </style>
@@ -542,55 +679,31 @@
                 </div>
 
                 <div class="timeline-wrap">
-                    <!-- Stats Card -->
-                    <div id="statsCard" class="stats-card">
-                        <div class="skeleton" style="height: 24px; width: 50%; margin-bottom: 1rem;"></div>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="skeleton" style="height: 32px; width: 60%; margin: 0 auto 0.5rem;"></div>
-                                <div class="skeleton" style="height: 16px; width: 80%; margin: 0 auto;"></div>
+                    <!-- Manuscript Header Card -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Title skeleton -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+
+                        <!-- Status badge skeleton -->
+                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
+
+                        <!-- Metadata with icon skeletons -->
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
                             </div>
-                            <div class="stat-item">
-                                <div class="skeleton" style="height: 32px; width: 60%; margin: 0 auto 0.5rem;"></div>
-                                <div class="skeleton" style="height: 16px; width: 80%; margin: 0 auto;"></div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="skeleton" style="height: 32px; width: 60%; margin: 0 auto 0.5rem;"></div>
-                                <div class="skeleton" style="height: 16px; width: 80%; margin: 0 auto;"></div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Filter Controls -->
-                    <div class="filter-controls">
-                        <span class="filter-label">Filter by:</span>
-                        <select id="filterRecommendation" class="filter-select">
-                            <option value="">All Recommendations</option>
-                            <option value="accept">Accept</option>
-                            <option value="minor_revision">Minor Revision</option>
-                            <option value="major_revision">Major Revision</option>
-                            <option value="reject">Reject</option>
-                        </select>
-                        <select id="filterStatus" class="filter-select">
-                            <option value="">All Submission Statuses</option>
-                            <option value="submitted">Submitted</option>
-                            <option value="under_review">Under Review</option>
-                            <option value="reviewed">Reviewed</option>
-                            <option value="accepted">Accepted</option>
-                            <option value="rejected">Rejected</option>
-                            <option value="revision_requested">Revision Requested</option>
-                        </select>
-                        <button id="resetFilters" class="btn-secondary">
-                            <i class="fas fa-redo"></i> Reset Filters
-                        </button>
                     </div>
 
                     <!-- Timeline Loading Screen -->
-                    <div id="timelineLoading" class="timeline-loading">
-                        <div class="loading-screen">
-                            <div class="spinner"></div>
-                            <p>Loading review history...</p>
-                        </div>
+                    <div id="timelineLoading" class="loading-screen">
+                        <div class="spinner"></div>
+                        <p>Loading review history...</p>
                     </div>
 
                     <!-- Error Screen -->
@@ -612,10 +725,25 @@
                     <div id="noDataMessage" class="no-data" style="display: none;">
                         <i class="fas fa-history"></i>
                         <h3>No Review History</h3>
-                        <p>You haven't completed any reviews yet.</p>
+                        <p>No review history found for this review.</p>
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Modal for viewing full content -->
+    <div class="modal-overlay" id="contentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-file-alt"></i> Review Details</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated here -->
+            </div>
         </div>
     </div>
 
@@ -631,426 +759,509 @@
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script>
-        // Reusable Loading Functions
-        const LoadingScreen = {
-            showTimelineLoading: function () {
-                document.getElementById('timelineLoading').style.display = 'block';
-                document.getElementById('timelineContainer').style.display = 'none';
-                document.getElementById('noDataMessage').style.display = 'none';
-                document.getElementById('statsCard').style.display = 'block';
-            },
+<script type="module">
+    import { BASE_URL, token } from '../assets/js/utility.js';
 
-            hideTimelineLoading: function () {
-                document.getElementById('timelineLoading').style.display = 'none';
-            },
+    // Reusable Loading Functions
+    const LoadingScreen = {
+        showTimelineLoading: function () {
+            document.getElementById('timelineLoading').style.display = 'block';
+            document.getElementById('timelineContainer').style.display = 'none';
+            document.getElementById('noDataMessage').style.display = 'none';
+            document.getElementById('manuscriptHeader').style.display = 'block';
+        },
 
-            showStatsLoading: function () {
-                // Stats card already shows skeleton by default
-            },
+        hideTimelineLoading: function () {
+            document.getElementById('timelineLoading').style.display = 'none';
+        },
 
-            hideStatsLoading: function () {
-                // Skeleton will be replaced with real data
-            }
-        };
+        showHeaderLoading: function () {
+            // Header already shows skeleton by default
+        },
 
-        const ErrorScreen = {
-            show: function (message, elementId = 'errorScreen') {
-                document.getElementById('errorMessage').textContent = message;
-                document.getElementById(elementId).style.display = 'block';
-                LoadingScreen.hideTimelineLoading();
-                document.getElementById('timelineContainer').style.display = 'none';
-                document.getElementById('noDataMessage').style.display = 'none';
-            },
+        hideHeaderLoading: function () {
+            // Skeleton will be replaced with real data
+        }
+    };
 
-            hide: function (elementId = 'errorScreen') {
-                document.getElementById(elementId).style.display = 'none';
-            }
-        };
+    const ErrorScreen = {
+        show: function (message, elementId = 'errorScreen') {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById(elementId).style.display = 'block';
+            LoadingScreen.hideTimelineLoading();
+            document.getElementById('timelineContainer').style.display = 'none';
+            document.getElementById('noDataMessage').style.display = 'none';
+        },
 
-        // Review Timeline Manager Class
-        class ReviewTimelineManager {
-            constructor() {
-                this.BASE_URL = 'https://fp.247laboratory.net/api/v1';
-                this.token = localStorage.getItem('token') || null;
-                this.completedReviews = [];
-                this.filteredReviews = [];
-                this.userCache = {}; // Cache for user data
+        hide: function (elementId = 'errorScreen') {
+            document.getElementById(elementId).style.display = 'none';
+        }
+    };
 
-                if (!this.token) {
-                    ErrorScreen.show('Authentication required. Please login.');
-                    return;
-                }
+    // Review History Manager Class
+    class ReviewHistoryManager {
+        constructor() {
+            // Use imported values
+            this.BASE_URL = BASE_URL;
+            this.token = token;
 
-                this.initializeToastr();
-                this.bindEvents();
-                this.loadReviewTimeline();
-            }
+            this.reviewId = this.getReviewIdFromURL();
+            this.reviewData = null;
+            this.currentContent = null;
 
-            initializeToastr() {
-                toastr.options = {
-                    closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 5000,
-                    extendedTimeOut: 2000
-                };
+            if (!this.token) {
+                ErrorScreen.show('Authentication required. Please login.');
+                return;
             }
 
-            bindEvents() {
-                // Filter events
-                document.getElementById('filterRecommendation')?.addEventListener('change', () => this.applyFilters());
-                document.getElementById('filterStatus')?.addEventListener('change', () => this.applyFilters());
-                document.getElementById('resetFilters')?.addEventListener('click', () => this.resetFilters());
+            if (!this.reviewId) {
+                ErrorScreen.show('No review ID provided in URL');
+                return;
             }
 
-            async getUserDetails(userId) {
-                if (!userId) return null;
+            this.initializeToastr();
+            this.bindModalEvents();
+            this.loadReviewData();
+        }
 
-                // Check cache first
-                if (this.userCache[userId]) {
-                    return this.userCache[userId];
-                }
+        initializeToastr() {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 5000,
+                extendedTimeOut: 2000
+            };
+        }
 
-                try {
-                    const response = await fetch(`${this.BASE_URL}/user/${userId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
+        bindModalEvents() {
+            // Modal close button
+            const closeModalBtn = document.getElementById('closeModal');
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', () => {
+                    this.closeModal();
+                });
+            }
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success && data.user) {
-                            // Cache the user data
-                            this.userCache[userId] = data.user;
-                            return data.user;
-                        }
+            // Close modal when clicking outside
+            const modalOverlay = document.getElementById('contentModal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        this.closeModal();
                     }
-                } catch (error) {
-                    console.error('Error fetching user details:', error);
-                }
-
-                return null;
+                });
             }
 
-            async loadReviewTimeline() {
-                // Show loading immediately
-                LoadingScreen.showTimelineLoading();
-
-                try {
-                    // Get all completed reviews
-                    const response = await fetch(`${this.BASE_URL}/reviews/history/list`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch review history: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success || !data.completedReviews) {
-                        throw new Error(data.message || 'Failed to load review history data');
-                    }
-
-                    this.completedReviews = data.completedReviews || [];
-                    this.filteredReviews = [...this.completedReviews];
-
-                    // Render stats immediately
-                    this.renderStats();
-
-                    // Then render timeline with user details
-                    await this.renderTimeline();
-
-                } catch (error) {
-                    console.error('Error loading review timeline:', error);
-                    ErrorScreen.show('Failed to load review history. Please try again.');
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.closeModal();
                 }
-            }
+            });
+        }
 
-            renderStats() {
-                const statsCard = document.getElementById('statsCard');
+        getReviewIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
 
-                if (!this.completedReviews || this.completedReviews.length === 0) {
-                    statsCard.innerHTML = `
-                        <h3>Review Statistics</h3>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">Total Reviews</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">Average Score</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">This Month</div>
-                            </div>
-                        </div>
-                    `;
-                    return;
-                }
+        async loadReviewData() {
+            // Show loading immediately
+            LoadingScreen.showTimelineLoading();
 
-                // Calculate statistics
-                const totalReviews = this.completedReviews.length;
-
-                // Calculate average score
-                const totalScore = this.completedReviews.reduce((sum, review) => sum + (review.score || 0), 0);
-                const averageScore = totalReviews > 0 ? Math.round(totalScore / totalReviews) : 0;
-
-                // Count reviews from this month
-                const currentMonth = new Date().getMonth();
-                const currentYear = new Date().getFullYear();
-                const reviewsThisMonth = this.completedReviews.filter(review => {
-                    const reviewDate = new Date(review.submittedAt || review.createdAt);
-                    return reviewDate.getMonth() === currentMonth && reviewDate.getFullYear() === currentYear;
-                }).length;
-
-                // Count recommendations
-                const recommendations = {
-                    accept: this.completedReviews.filter(r => r.recommendation === 'accept').length,
-                    minor_revision: this.completedReviews.filter(r => r.recommendation === 'minor_revision').length,
-                    major_revision: this.completedReviews.filter(r => r.recommendation === 'major_revision').length,
-                    reject: this.completedReviews.filter(r => r.recommendation === 'reject').length
-                };
-
-                statsCard.innerHTML = `
-                    <h3>Review Statistics</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-value">${totalReviews}</div>
-                            <div class="stat-label">Total Reviews</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${averageScore}</div>
-                            <div class="stat-label">Average Score</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${reviewsThisMonth}</div>
-                            <div class="stat-label">This Month</div>
-                        </div>
-                    </div>
-                    <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--muted);">
-                        <strong>Recommendations:</strong> 
-                        ${recommendations.accept} Accept, 
-                        ${recommendations.minor_revision} Minor Revision, 
-                        ${recommendations.major_revision} Major Revision, 
-                        ${recommendations.reject} Reject
-                    </div>
-                `;
-            }
-
-            applyFilters() {
-                const recommendationFilter = document.getElementById('filterRecommendation').value;
-                const statusFilter = document.getElementById('filterStatus').value;
-
-                this.filteredReviews = this.completedReviews.filter(review => {
-                    let matches = true;
-
-                    // Filter by recommendation
-                    if (recommendationFilter && review.recommendation !== recommendationFilter) {
-                        matches = false;
+            try {
+                // Get review data
+                const response = await fetch(`${this.BASE_URL}/reviews/${this.reviewId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
                     }
-
-                    // Filter by submission status
-                    if (statusFilter && review.submissionId?.status !== statusFilter) {
-                        matches = false;
-                    }
-
-                    return matches;
                 });
 
-                // Re-render timeline with filtered data
-                this.renderTimeline();
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `Failed to fetch review data: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success || !data.review) {
+                    throw new Error(data.message || 'Failed to load review data');
+                }
+
+                this.reviewData = data.review;
+
+                // Render manuscript header immediately with real data
+                this.renderManuscriptHeader();
+
+                // Then render the review history timeline
+                this.renderReviewHistory();
+
+            } catch (error) {
+                console.error('Error loading review data:', error);
+                ErrorScreen.show(error.message || 'Failed to load review data. Please try again.');
+                // Still show manuscript header if we have partial data
+                this.renderManuscriptHeader();
             }
+        }
 
-            resetFilters() {
-                document.getElementById('filterRecommendation').value = '';
-                document.getElementById('filterStatus').value = '';
-                this.filteredReviews = [...this.completedReviews];
-                this.renderTimeline();
-            }
+        renderManuscriptHeader() {
+            const manuscriptHeader = document.getElementById('manuscriptHeader');
 
-            async renderTimeline() {
-                const timelineContainer = document.getElementById('timelineContainer');
-                const noDataMessage = document.getElementById('noDataMessage');
-
-                if (!this.filteredReviews || this.filteredReviews.length === 0) {
-                    noDataMessage.style.display = 'block';
-                    timelineContainer.style.display = 'none';
-                    LoadingScreen.hideTimelineLoading();
-                    return;
-                }
-
-                // Sort reviews by submission date (newest first for timeline)
-                const sortedReviews = [...this.filteredReviews].sort((a, b) =>
-                    new Date(b.submittedAt || b.createdAt) - new Date(a.submittedAt || a.createdAt)
-                );
-
-                // Create document fragment for better performance
-                const fragment = document.createDocumentFragment();
-
-                // Process each review item
-                for (let i = 0; i < sortedReviews.length; i++) {
-                    const review = sortedReviews[i];
-                    const timelineItem = await this.createTimelineItem(review, i, sortedReviews.length);
-                    fragment.appendChild(timelineItem);
-                }
-
-                timelineContainer.innerHTML = '';
-                timelineContainer.appendChild(fragment);
-                timelineContainer.style.display = 'block';
-                noDataMessage.style.display = 'none';
-
-                LoadingScreen.hideTimelineLoading();
-            }
-
-            async createTimelineItem(review, index, totalItems) {
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'timeline-item';
-
-                // Format dates
-                const submittedDate = this.formatDate(review.submittedAt || review.createdAt);
-                const createdDate = this.formatDate(review.createdAt);
-
-                // Get user details (reviewer)
-                let reviewerName = 'You';
-                if (review.reviewerId) {
-                    const user = await this.getUserDetails(review.reviewerId);
-                    if (user) {
-                        reviewerName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown Reviewer';
-                    }
-                }
-
-                // Determine badge class based on recommendation
-                let badgeClass = 'badge-pending';
-                let badgeText = 'Pending';
-
-                if (review.recommendation) {
-                    badgeClass = `badge-${review.recommendation}`;
-                    badgeText = this.formatRecommendation(review.recommendation);
-                }
-
-                // Submission info
-                const submissionTitle = review.submissionId?.title || 'Unknown Manuscript';
-                const submissionStatus = review.submissionId?.status || 'unknown';
-
-                timelineItem.innerHTML = `
-                    <div class="card">
-                        <div class="review-title">
-                            <i class="fas fa-file-alt"></i> ${this.escapeHtml(submissionTitle)}
-                            ${review.score ? `<span class="score-display"><i class="fas fa-star"></i> ${review.score}/100</span>` : ''}
+            if (!this.reviewData || !this.reviewData.manuscript) {
+                // Show empty state if no data
+                manuscriptHeader.innerHTML = `
+                    <h1>Unable to load manuscript details</h1>
+                    <span class="header-status-badge">Status: Unknown</span>
+                    <div class="header-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-book-open"></i>
+                            <span>Journal: Unknown</span>
                         </div>
-                        
-                        <span class="review-status-badge ${badgeClass}">
-                            <i class="fas fa-check-circle"></i> ${badgeText}
-                        </span>
-                        
-                        <p class="timeline-date">
-                            <i class="far fa-clock"></i> Submitted on: ${submittedDate}
-                        </p>
-                        
-                        <div class="comments-section">
-                            <div class="comments-label">
-                                <i class="fas fa-comments"></i> Comments to Author
-                            </div>
-                            <div class="comments-content">
-                                ${this.escapeHtml(review.commentsToAuthor || 'No comments provided to author.')}
-                            </div>
-                        </div>
-                        
-                        <div class="comments-section">
-                            <div class="comments-label">
-                                <i class="fas fa-comment-dots"></i> Confidential Comments to Editor
-                            </div>
-                            <div class="comments-content">
-                                ${this.escapeHtml(review.commentsToEditor || 'No confidential comments provided.')}
-                            </div>
-                        </div>
-                        
-                        <div class="submission-status">
-                            <i class="fas fa-info-circle"></i> 
-                            Manuscript Status: ${this.formatStatus(submissionStatus)}
-                        </div>
-                        
-                        <div style="font-size: 0.85rem; color: var(--muted); margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0, 0, 0, 0.05);">
-                            <strong><i class="fas fa-user-check"></i> Reviewed by: ${this.escapeHtml(reviewerName)}</strong>
+                        <div class="meta-item">
+                            <i class="far fa-calendar"></i>
+                            <span>Submitted On: Unknown</span>
                         </div>
                     </div>
                 `;
-
-                return timelineItem;
+                return;
             }
 
-            formatDate(dateString) {
-                try {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                    });
-                } catch (error) {
-                    console.error('Error formatting date:', error);
-                    return dateString;
-                }
+            const manuscript = this.reviewData.manuscript;
+            const formattedDate = this.formatDate(manuscript.createdAt);
+            const statusDisplay = this.capitalizeFirstLetter(manuscript.status);
+            const journalName = manuscript.journal?.title || 'Unknown Journal';
+
+            manuscriptHeader.innerHTML = `
+                <h1>${this.escapeHtml(manuscript.title)}</h1>
+                <span class="header-status-badge">Current Status: ${statusDisplay}</span>
+                <div class="header-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-book-open"></i>
+                        <span>Journal: ${this.escapeHtml(journalName)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="far fa-calendar"></i>
+                        <span>Submitted On: ${formattedDate}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        renderReviewHistory() {
+            const timelineContainer = document.getElementById('timelineContainer');
+            const noDataMessage = document.getElementById('noDataMessage');
+
+            if (!this.reviewData || !this.reviewData.reviewHistory || this.reviewData.reviewHistory.length === 0) {
+                noDataMessage.style.display = 'block';
+                timelineContainer.style.display = 'none';
+                LoadingScreen.hideTimelineLoading();
+                return;
             }
 
-            formatRecommendation(recommendation) {
-                const recommendationMap = {
-                    'accept': 'Accept',
-                    'minor_revision': 'Minor Revision',
-                    'major_revision': 'Major Revision',
-                    'reject': 'Reject'
+            // Sort review history by submittedAt date (newest first for timeline)
+            const sortedHistory = [...this.reviewData.reviewHistory].sort((a, b) =>
+                new Date(b.submittedAt) - new Date(a.submittedAt)
+            );
+
+            // Create document fragment for better performance
+            const fragment = document.createDocumentFragment();
+
+            // Process each review history item
+            for (let i = 0; i < sortedHistory.length; i++) {
+                const reviewItem = sortedHistory[i];
+                const timelineItem = this.createTimelineItem(reviewItem, i, sortedHistory.length);
+                fragment.appendChild(timelineItem);
+            }
+
+            timelineContainer.innerHTML = '';
+            timelineContainer.appendChild(fragment);
+            timelineContainer.style.display = 'block';
+            noDataMessage.style.display = 'none';
+
+            // Bind view more button events after rendering
+            this.bindViewMoreButtons();
+
+            LoadingScreen.hideTimelineLoading();
+        }
+
+        createTimelineItem(reviewItem, index, totalItems) {
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item';
+
+            // Format date
+            const formattedDate = this.formatDate(reviewItem.submittedAt);
+
+            // Process comments for truncated display
+            const { truncated: editorCommentsTruncated, full: editorCommentsFull, showMore: showEditorMore } = this.processTextContent(reviewItem.commentsToEditor || 'No comments provided to editor.');
+            const { truncated: authorCommentsTruncated, full: authorCommentsFull, showMore: showAuthorMore } = this.processTextContent(reviewItem.commentsToAuthor || 'No comments provided to author.');
+
+            // Determine badge class based on recommendation
+            let badgeClass = 'badge-pending';
+            let badgeText = 'Pending';
+            if (reviewItem.recommendation) {
+                badgeClass = `badge-${reviewItem.recommendation}`;
+                badgeText = this.formatRecommendation(reviewItem.recommendation);
+            }
+
+            timelineItem.innerHTML = `
+                <div class="card">
+                    <span class="version-badge">Version ${reviewItem.version}</span>
+                    <span class="review-status-badge ${badgeClass}">
+                        <i class="fas fa-check-circle"></i> ${badgeText}
+                    </span>
+                    
+                    <p class="timeline-date">
+                        <i class="far fa-clock"></i> Submitted on: ${formattedDate}
+                    </p>
+                    
+                    <div class="review-title">
+                        <i class="fas fa-star"></i> Score: ${reviewItem.score || 'Not scored'}
+                    </div>
+                    
+                    <!-- Comments to Author Section -->
+                    <div class="comments-section">
+                        <div class="comments-label">
+                            <i class="fas fa-comments"></i> Comments to Author
+                        </div>
+                        <div class="comments-content">
+                            <div class="truncated-text">
+                                ${authorCommentsTruncated}
+                            </div>
+                            ${showAuthorMore ? `
+                                <button class="view-more-btn" data-type="authorComments">
+                                    <i class="fas fa-eye"></i> View Full
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Comments to Editor Section -->
+                    <div class="comments-section">
+                        <div class="comments-label">
+                            <i class="fas fa-comment-dots"></i> Confidential Comments to Editor
+                        </div>
+                        <div class="comments-content">
+                            <div class="truncated-text">
+                                ${editorCommentsTruncated}
+                            </div>
+                            ${showEditorMore ? `
+                                <button class="view-more-btn" data-type="editorComments">
+                                    <i class="fas fa-eye"></i> View Full
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Store the full content as custom properties on the button elements
+            const authorBtn = timelineItem.querySelector('button[data-type="authorComments"]');
+            if (authorBtn) {
+                authorBtn._fullContent = authorCommentsFull;
+                authorBtn._version = reviewItem.version;
+                authorBtn._type = 'Comments to Author';
+            }
+
+            const editorBtn = timelineItem.querySelector('button[data-type="editorComments"]');
+            if (editorBtn) {
+                editorBtn._fullContent = editorCommentsFull;
+                editorBtn._version = reviewItem.version;
+                editorBtn._type = 'Comments to Editor';
+            }
+
+            return timelineItem;
+        }
+
+        bindViewMoreButtons() {
+            const viewMoreButtons = document.querySelectorAll('.view-more-btn');
+            viewMoreButtons.forEach(button => {
+                // Remove any existing listeners to prevent duplicates
+                button.removeEventListener('click', this.handleViewMoreClick);
+                // Add new listener
+                button.addEventListener('click', this.handleViewMoreClick.bind(this));
+            });
+        }
+
+        handleViewMoreClick(e) {
+            e.preventDefault();
+            const button = e.currentTarget;
+            const version = button._version;
+            const type = button._type;
+            const content = button._fullContent;
+
+            this.viewFullContent(version, type, content);
+        }
+
+        viewFullContent(version, type, content) {
+            this.currentContent = content;
+
+            const modalOverlay = document.getElementById('contentModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            if (!modalOverlay || !modalTitle || !modalBody) {
+                console.error('Modal elements not found');
+                return;
+            }
+
+            modalTitle.innerHTML = `<i class="fas fa-file-alt"></i> Version ${version} - ${type}`;
+
+            modalBody.innerHTML = `
+                <div class="modal-content-section">
+                    <div class="modal-content-label">
+                        <i class="fas ${type === 'Comments to Author' ? 'fa-comments' : 'fa-comment-dots'}"></i>
+                        ${type}
+                    </div>
+                    <div class="modal-content-text">
+                        ${content || '<span style="color: var(--muted);">No content provided.</span>'}
+                    </div>
+                </div>
+            `;
+
+            // Show modal by adding active class
+            modalOverlay.classList.add('active');
+            // Also make sure modal is displayed correctly
+            modalOverlay.style.display = 'flex';
+        }
+
+        closeModal() {
+            const modalOverlay = document.getElementById('contentModal');
+            if (modalOverlay) {
+                modalOverlay.classList.remove('active');
+                // Add a slight delay before hiding to allow fade out transition
+                setTimeout(() => {
+                    modalOverlay.style.display = 'none';
+                }, 300);
+            }
+            this.currentContent = null;
+        }
+
+        processTextContent(text) {
+            if (!text || text.trim() === '') {
+                return {
+                    truncated: '<span style="color: var(--muted);">No content provided.</span>',
+                    full: '<span style="color: var(--muted);">No content provided.</span>',
+                    showMore: false
                 };
-                return recommendationMap[recommendation] || recommendation.charAt(0).toUpperCase() + recommendation.slice(1);
             }
 
-            formatStatus(status) {
-                const statusMap = {
-                    'submitted': 'Submitted',
-                    'under_review': 'Under Review',
-                    'reviewed': 'Reviewed',
-                    'accepted': 'Accepted',
-                    'rejected': 'Rejected',
-                    'revision_requested': 'Revision Requested'
+            // Clean the text - remove extra quotes and escape characters
+            let cleanedText = text;
+            if (cleanedText.startsWith('"') && cleanedText.endsWith('"')) {
+                cleanedText = cleanedText.slice(1, -1);
+            }
+
+            // Replace escaped newlines with actual newlines
+            cleanedText = cleanedText.replace(/\\n/g, '\n');
+            cleanedText = cleanedText.replace(/\\r/g, '\r');
+            cleanedText = cleanedText.replace(/\\t/g, '\t');
+
+            // Escape HTML for display
+            const escapedText = this.escapeHtml(cleanedText);
+
+            // Check if text is longer than 300 characters
+            if (cleanedText.length > 300) {
+                // Create truncated version (first 300 chars)
+                const truncatedText = this.truncateText(cleanedText, 300);
+                return {
+                    truncated: this.escapeHtml(truncatedText) + '...',
+                    full: escapedText,
+                    showMore: true
                 };
-                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
-            }
-
-            escapeHtml(str) {
-                if (!str && str !== 0) return '';
-                return String(str)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
+            } else {
+                return {
+                    truncated: escapedText,
+                    full: escapedText,
+                    showMore: false
+                };
             }
         }
 
-        // Initialize review timeline manager when DOM is loaded
-        let reviewTimelineManager;
+        truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            reviewTimelineManager = new ReviewTimelineManager();
-        });
+            // Find a good breaking point (end of sentence or word)
+            let truncated = text.substring(0, maxLength);
+            const lastSpace = truncated.lastIndexOf(' ');
+            const lastPeriod = truncated.lastIndexOf('.');
+            const lastBreak = Math.max(lastPeriod, lastSpace);
 
-        // Global function for retry button
-        function loadReviewTimeline() {
-            if (reviewTimelineManager) {
-                reviewTimelineManager.loadReviewTimeline();
+            if (lastBreak > maxLength * 0.7) {
+                truncated = truncated.substring(0, lastBreak);
+            }
+
+            return truncated.trim();
+        }
+
+        formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            } catch (error) {
+                console.error('Error formatting date:', error);
+                return dateString;
             }
         }
-    </script>
+
+        formatRecommendation(recommendation) {
+            const recommendationMap = {
+                'accept': 'Accept',
+                'minor_revision': 'Minor Revision',
+                'major_revision': 'Major Revision',
+                'reject': 'Reject'
+            };
+            return recommendationMap[recommendation] || recommendation.charAt(0).toUpperCase() + recommendation.slice(1);
+        }
+
+        escapeHtml(str) {
+            if (!str && str !== 0) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        capitalizeFirstLetter(string) {
+            if (!string) return '';
+            return string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ');
+        }
+    }
+
+    // Initialize review history manager when DOM is loaded
+    let reviewHistoryManager;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Make sure modal is hidden initially
+        const modalOverlay = document.getElementById('contentModal');
+        if (modalOverlay) {
+            modalOverlay.style.display = 'none';
+        }
+
+        reviewHistoryManager = new ReviewHistoryManager();
+
+        // expose to window so HTML onclicks (retry) continue to work
+        window.reviewHistoryManager = reviewHistoryManager;
+        window.loadReviewTimeline = function () {
+            if (window.reviewHistoryManager) {
+                window.reviewHistoryManager.loadReviewData();
+            }
+        };
+    });
+
+    // For safety: also expose a direct load function (used by your retry button if referenced)
+    window.loadReviewTimeline = window.loadReviewTimeline || (() => { });
+</script>
+
 </body>
 
 </html>
