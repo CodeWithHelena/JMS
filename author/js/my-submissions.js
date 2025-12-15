@@ -479,7 +479,7 @@ class MySubmissionsManager {
                     <i class="fas fa-history"></i> Timeline
                 </button>
 
-                <button class="link" data-action="download" data-id="${sub._id}" title="Download file">
+                <button class="link" style="display: none" data-action="download" data-id="${sub._id}" title="Download file">
                     <i class="fas fa-download"></i> Download
                 </button>
 
@@ -600,15 +600,15 @@ class MySubmissionsManager {
 
     getStatusStyle(status) {
         const styles = {
-            'submitted': { bg: '#eff6ff', color: '#2563eb', border: '#bfdbfe' },
+            'submitted': { bg: 'var(--status-submitted-bg)', color: 'var(----status-submitted-color)', border: 'var()' },
             'under_review': { bg: '#fff7ed', color: '#d97706', border: '#fde68a' },
-            'reviewed': { bg: '#f5f3ff', color: '#7c3aed', border: '#ddd6fe' },
-            'accepted': { bg: '#ecfdf5', color: '#059669', border: '#bbf7d0' },
-            'rejected': { bg: '#fff1f2', color: '#dc2626', border: '#fecaca' },
+            'reviewed': { bg: 'var(--status-reviewed-bg)', color: 'var(--status-reviewed-color)', border: 'var()' },
+            'accepted': { bg: 'var(--status-accepted-bg)', color: '(--status-accepted-color)', border: 'var(--)' },
+            'rejected': { bg: 'var(--status-rejected-bg)', color: '(--status-rejected-color)', border: 'var(--)' },
             'revision_requested': { bg: '#fffbeb', color: '#b45309', border: '#fde68a' },
             'revised': { bg: '#f0f9ff', color: '#0369a1', border: '#bfeafe' },
             'awaiting_payment': { bg: '#fffbeb', color: '#b45309', border: '#fde68a' },
-            'published': { bg: '#ecfdf5', color: '#059669', border: '#bbf7d0' }
+            'published': { bg: 'var(--status-published-bg)', color: 'var(--status-published-color)', border: 'var()' }
         };
         const s = styles[status] || { bg: '#f3f4f6', color: '#374151', border: '#e5e7eb' };
         return `background:${s.bg}; color:${s.color}; border:1px solid ${s.border};`;

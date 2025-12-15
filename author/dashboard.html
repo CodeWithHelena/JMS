@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --accent: #4f46e5;
+            --primary: #ff7a18;
+            --primary-light: rgba(255, 122, 24, 0.1);
+            --primary-dark: #e56c0e;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --radius: 12px;
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Welcome Header */
+        .welcome-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius);
+            color: white;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .welcome-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-display {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .stat-card.success {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.info {
+            border-left-color: var(--info);
+        }
+
+        .stat-card.danger {
+            border-left-color: var(--danger);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .stat-icon.info {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .stat-icon.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .stat-icon.primary {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .stat-content {
+            margin-top: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Quick Actions */
+        .quick-actions-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover .action-icon {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .action-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-description {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Recent Activity */
+        .recent-activity-section {
+            margin-bottom: 2rem;
+        }
+
+        .activity-list {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            color: var(--muted);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-all-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .view-all-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* Pending Reviews */
+        .pending-reviews-section {
+            margin-bottom: 2rem;
+        }
+
+        .reviews-list {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+        }
+
+        .review-item {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .review-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .review-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .review-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .review-days {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .review-days.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .review-days.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .review-days.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        /* Charts Section */
+        .charts-section {
+            margin-bottom: 2rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Loading States */
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0 0.5rem;
+            }
+
+            .welcome-header {
+                padding: 1.5rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <!-- Welcome Header -->
+                <!-- <div class="welcome-header">
+                    <h1 id="greeting">Good Morning!</h1>
+                    <p id="dashboardMessage">Welcome back to your Journal Management Dashboard</p>
+                    <div class="date-display">
+                        <i class="far fa-calendar"></i>
+                        <span id="currentDate">Loading...</span>
+                    </div>
+                </div> -->
+
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalSubmissions">0</div>
+                                <div class="stat-label">Total Submissions</div>
+                            </div>
+                            <div class="stat-icon primary">
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span id="submissionsChange">0% this month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card success">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="pendingReviews">0</div>
+                                <div class="stat-label">Pending Reviews</div>
+                            </div>
+                            <div class="stat-icon success">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-change warning">
+                                <i class="fas fa-clock"></i>
+                                <span id="reviewsDue">0 due soon</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card info">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="completedReviews">0</div>
+                                <div class="stat-label">Reviews Completed</div>
+                            </div>
+                            <div class="stat-icon info">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span id="completionRate">0% completion rate</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="avgReviewTime">0</div>
+                                <div class="stat-label">Avg. Review Time</div>
+                            </div>
+                            <div class="stat-icon warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-down"></i>
+                                <span id="timeChange">0% faster</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-bolt"></i> Quick Actions
+                    </h2>
+                    <div class="actions-grid">
+                        <div class="action-card" onclick="window.location.href='editor-submissions.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h3 class="action-title">Manage Submissions</h3>
+                            <p class="action-description">Review and process new manuscript submissions</p>
+                        </div>
+
+                        <div class="action-card" onclick="window.location.href='assign-reviewers.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h3 class="action-title">Assign Reviewers</h3>
+                            <p class="action-description">Assign reviewers to pending submissions</p>
+                        </div>
+
+                        <div class="action-card" onclick="window.location.href='reviews.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3 class="action-title">My Reviews</h3>
+                            <p class="action-description">View and complete assigned reviews</p>
+                        </div>
+
+                        <div class="action-card" onclick="window.location.href='review-timeline.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="action-title">Review History</h3>
+                            <p class="action-description">View your completed review timeline</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two Column Layout -->
+                <div class="two-column-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <!-- Left Column -->
+                    <div>
+                        <!-- Pending Reviews -->
+                        <div class="pending-reviews-section">
+                            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h2 class="section-title">
+                                    <i class="fas fa-clock"></i> Pending Reviews
+                                </h2>
+                                <a href="reviews.html" class="view-all-link">
+                                    View All <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                            <div id="pendingReviewsList" class="reviews-list">
+                                <!-- Pending reviews will be loaded here -->
+                                <div class="loading-screen">
+                                    <div class="spinner"></div>
+                                    <p>Loading pending reviews...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Section -->
+                        <div class="charts-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-chart-bar"></i> Performance Overview
+                            </h2>
+                            <div class="charts-grid">
+                                <div class="chart-card">
+                                    <div class="chart-header">
+                                        <h3 class="chart-title">Monthly Submissions</h3>
+                                    </div>
+                                    <div class="chart-container" id="submissionsChart">
+                                        <canvas id="submissionsChartCanvas"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="chart-card">
+                                    <div class="chart-header">
+                                        <h3 class="chart-title">Review Status Distribution</h3>
+                                    </div>
+                                    <div class="chart-container" id="reviewsChart">
+                                        <canvas id="reviewsChartCanvas"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div>
+                        <!-- Recent Activity -->
+                        <div class="recent-activity-section">
+                            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h2 class="section-title">
+                                    <i class="fas fa-bell"></i> Recent Activity
+                                </h2>
+                                <a href="submission-timeline.html" class="view-all-link">
+                                    View All <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                            <div id="activityList" class="activity-list">
+                                <!-- Activity items will be loaded here -->
+                                <div class="loading-screen">
+                                    <div class="spinner"></div>
+                                    <p>Loading recent activity...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Deadlines -->
+                        <div class="pending-reviews-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-calendar-alt"></i> Upcoming Deadlines
+                            </h2>
+                            <div id="deadlinesList" class="reviews-list">
+                                <!-- Deadlines will be loaded here -->
+                                <div class="loading-screen">
+                                    <div class="spinner"></div>
+                                    <p>Loading deadlines...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'dashboard';
+    </script>
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class DashboardManager {
+            constructor() {
+                this.user = null;
+                this.dashboardData = null;
+                this.charts = {};
+
+                this.initializeToastr();
+                this.initializeCharts();
+                this.loadDashboardData();
+                this.updateDateTime();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            initializeCharts() {
+                // Initialize Chart.js instances
+                this.charts.submissions = this.createSubmissionsChart();
+                this.charts.reviews = this.createReviewsChart();
+            }
+
+            createSubmissionsChart() {
+                const ctx = document.getElementById('submissionsChartCanvas')?.getContext('2d');
+                if (!ctx) return null;
+
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Submissions',
+                            data: [12, 19, 15, 25, 22, 30, 28],
+                            borderColor: 'var(--primary)',
+                            backgroundColor: 'rgba(255, 122, 24, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    color: 'var(--muted)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    color: 'var(--muted)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createReviewsChart() {
+                const ctx = document.getElementById('reviewsChartCanvas')?.getContext('2d');
+                if (!ctx) return null;
+
+                return new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'Pending', 'Overdue'],
+                        datasets: [{
+                            data: [65, 20, 15],
+                            backgroundColor: [
+                                'var(--success)',
+                                'var(--warning)',
+                                'var(--danger)'
+                            ],
+                            borderWidth: 0,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    color: 'var(--muted)',
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateDateTime() {
+                const now = new Date();
+                const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const timeOptions = { hour: '2-digit', minute: '2-digit' };
+
+                document.getElementById('currentDate').textContent =
+                    now.toLocaleDateString('en-US', dateOptions) + ' • ' +
+                    now.toLocaleTimeString('en-US', timeOptions);
+
+                // Update greeting based on time of day
+                const hour = now.getHours();
+                let greeting = 'Good ';
+
+                if (hour < 12) greeting += 'Morning';
+                else if (hour < 18) greeting += 'Afternoon';
+                else greeting += 'Evening';
+
+                document.getElementById('greeting').textContent = greeting + '!';
+
+                // Update every minute
+                setTimeout(() => this.updateDateTime(), 60000);
+            }
+
+            async loadDashboardData() {
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login.');
+                        return;
+                    }
+
+                    // Load user data first
+                    await this.loadUserData();
+
+                    // Then load dashboard statistics
+                    await this.loadDashboardStats();
+
+                    // Load pending reviews
+                    await this.loadPendingReviews();
+
+                    // Load recent activity
+                    await this.loadRecentActivity();
+
+                    // Load deadlines
+                    await this.loadDeadlines();
+
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    toastr.error('Failed to load dashboard data. Please refresh.');
+                }
+            }
+
+            async loadUserData() {
+                try {
+                    const response = await fetch(`${BASE_URL}/user/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.user) {
+                            this.user = data.user;
+                            // Update welcome message with user name
+                            const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
+                            if (userName) {
+                                document.getElementById('dashboardMessage').textContent =
+                                    `Welcome back, ${userName}! Here's your Journal Management Dashboard`;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                }
+            }
+
+            async loadDashboardStats() {
+                try {
+                    // In a real app, you would have a dedicated dashboard API endpoint
+                    // For now, we'll simulate with mock data
+
+                    // Mock data for demonstration
+                    const mockStats = {
+                        totalSubmissions: 142,
+                        submissionsChange: 12,
+                        pendingReviews: 8,
+                        reviewsDue: 3,
+                        completedReviews: 65,
+                        completionRate: 89,
+                        avgReviewTime: 7,
+                        timeChange: 15
+                    };
+
+                    // Update DOM with stats
+                    document.getElementById('totalSubmissions').textContent = mockStats.totalSubmissions;
+                    document.getElementById('submissionsChange').textContent = `+${mockStats.submissionsChange}% this month`;
+                    document.getElementById('pendingReviews').textContent = mockStats.pendingReviews;
+                    document.getElementById('reviewsDue').textContent = `${mockStats.reviewsDue} due soon`;
+                    document.getElementById('completedReviews').textContent = mockStats.completedReviews;
+                    document.getElementById('completionRate').textContent = `${mockStats.completionRate}% completion rate`;
+                    document.getElementById('avgReviewTime').textContent = `${mockStats.avgReviewTime} days`;
+                    document.getElementById('timeChange').textContent = `${mockStats.timeChange}% faster`;
+
+                } catch (error) {
+                    console.error('Error loading dashboard stats:', error);
+                }
+            }
+
+            async loadPendingReviews() {
+                try {
+                    const response = await fetch(`${BASE_URL}/reviews/pending`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const container = document.getElementById('pendingReviewsList');
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch pending reviews: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success || !data.reviews) {
+                        container.innerHTML = `
+                            <div class="no-data" style="text-align: center; padding: 2rem; color: var(--muted);">
+                                <i class="fas fa-check-circle fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>No pending reviews found</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const reviews = data.reviews.slice(0, 5); // Show only 5 most recent
+
+                    if (reviews.length === 0) {
+                        container.innerHTML = `
+                            <div class="no-data" style="text-align: center; padding: 2rem; color: var(--muted);">
+                                <i class="fas fa-check-circle fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>No pending reviews found</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = reviews.map(review => {
+                        const daysLeft = this.calculateDaysLeft(review.dueDate);
+                        let daysClass = 'success';
+                        let daysText = `${daysLeft} days left`;
+
+                        if (daysLeft <= 3) {
+                            daysClass = 'danger';
+                            daysText = `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`;
+                        } else if (daysLeft <= 7) {
+                            daysClass = 'warning';
+                            daysText = `${daysLeft} days left`;
+                        }
+
+                        return `
+                            <div class="review-item" onclick="window.location.href='review-details.html?id=${review._id}'">
+                                <div class="review-header">
+                                    <div>
+                                        <div class="review-title">${this.escapeHtml(review.manuscript?.title || 'Untitled Manuscript')}</div>
+                                        <div class="review-meta">
+                                            <span><i class="far fa-clock"></i> Due: ${this.formatDate(review.dueDate)}</span>
+                                            <span><i class="fas fa-user"></i> ${review.assignedBy?.name || 'Editor'}</span>
+                                        </div>
+                                    </div>
+                                    <span class="review-days ${daysClass}">${daysText}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                } catch (error) {
+                    console.error('Error loading pending reviews:', error);
+                    const container = document.getElementById('pendingReviewsList');
+                    container.innerHTML = `
+                        <div class="error-message" style="text-align: center; padding: 2rem; color: var(--danger);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Failed to load pending reviews</p>
+                        </div>
+                    `;
+                }
+            }
+
+            async loadRecentActivity() {
+                try {
+                    // For now, use mock activity data
+                    // In a real app, you would fetch from an activity API endpoint
+
+                    const mockActivities = [
+                        {
+                            icon: 'fa-file-upload',
+                            text: 'New submission received: "Quantum Computing Advances"',
+                            time: '2 hours ago',
+                            color: 'primary'
+                        },
+                        {
+                            icon: 'fa-user-check',
+                            text: 'Reviewer Dr. Smith accepted review invitation',
+                            time: '5 hours ago',
+                            color: 'success'
+                        },
+                        {
+                            icon: 'fa-star',
+                            text: 'Review completed for "Machine Learning in Medicine"',
+                            time: '1 day ago',
+                            color: 'info'
+                        },
+                        {
+                            icon: 'fa-comments',
+                            text: 'New comment on submission #245',
+                            time: '2 days ago',
+                            color: 'warning'
+                        },
+                        {
+                            icon: 'fa-check-circle',
+                            text: 'Manuscript "AI Ethics Framework" accepted for publication',
+                            time: '3 days ago',
+                            color: 'success'
+                        }
+                    ];
+
+                    const container = document.getElementById('activityList');
+                    container.innerHTML = mockActivities.map(activity => `
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: rgba(255, 122, 24, 0.1); color: var(--primary);">
+                                <i class="fas ${activity.icon}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text">${activity.text}</div>
+                                <div class="activity-time">
+                                    <i class="far fa-clock"></i> ${activity.time}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                } catch (error) {
+                    console.error('Error loading recent activity:', error);
+                }
+            }
+
+            async loadDeadlines() {
+                try {
+                    // Mock deadlines data
+                    const mockDeadlines = [
+                        {
+                            title: 'Review Submission - Quantum Physics',
+                            due: 'Tomorrow',
+                            priority: 'high'
+                        },
+                        {
+                            title: 'Editor Decision - AI Ethics Paper',
+                            due: 'In 3 days',
+                            priority: 'medium'
+                        },
+                        {
+                            title: 'Author Revisions Due - Climate Study',
+                            due: 'Next Week',
+                            priority: 'low'
+                        }
+                    ];
+
+                    const container = document.getElementById('deadlinesList');
+                    container.innerHTML = mockDeadlines.map(deadline => {
+                        let priorityClass = 'success';
+                        if (deadline.priority === 'high') priorityClass = 'danger';
+                        if (deadline.priority === 'medium') priorityClass = 'warning';
+
+                        return `
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div>
+                                        <div class="review-title">${deadline.title}</div>
+                                        <div class="review-meta">
+                                            <span><i class="fas fa-calendar-alt"></i> Due: ${deadline.due}</span>
+                                        </div>
+                                    </div>
+                                    <span class="review-days ${priorityClass}">
+                                        ${deadline.priority.charAt(0).toUpperCase() + deadline.priority.slice(1)} Priority
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                } catch (error) {
+                    console.error('Error loading deadlines:', error);
+                }
+            }
+
+            calculateDaysLeft(dueDate) {
+                if (!dueDate) return 14; // Default 2 weeks
+                const due = new Date(dueDate);
+                const now = new Date();
+                const diffTime = due - now;
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
+
+            formatDate(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                } catch (error) {
+                    return dateString;
+                }
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        let dashboardManager;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            dashboardManager = new DashboardManager();
+        });
+    </script>
+</body>
+
+</html>s

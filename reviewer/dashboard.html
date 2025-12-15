@@ -20,9 +20,9 @@
             --bg: #f4f7fb;
             --card-bg: #ffffff;
             --accent: #4f46e5;
-            --primary: #ff7a18;
+            --primary: var(--primary-color-dark);
             --primary-light: rgba(255, 122, 24, 0.1);
-            --primary-dark: #e56c0e;
+            --primary-dark: var(--primary-color-dark);
             --muted: #6b7280;
             --light: #f8fafc;
             --border: #e2e8f0;
@@ -182,10 +182,54 @@
             font-weight: 500;
         }
 
+        /* Charts and Activity Layout */
+        .charts-activity-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-activity-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Charts Section */
+        .charts-section {
+            margin-bottom: 0;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
         /* Recent Activity */
         .recent-activity-section {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
         }
 
         .section-title {
@@ -207,6 +251,9 @@
             border-radius: var(--radius);
             box-shadow: var(--card-shadow);
             padding: 1.5rem;
+            height: 100%;
+            overflow-y: auto;
+            max-height: 500px;
         }
 
         .activity-item {
@@ -225,8 +272,6 @@
             width: 40px;
             height: 40px;
             border-radius: 8px;
-            background: var(--primary-light);
-            color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -241,6 +286,8 @@
         .activity-text {
             color: #374151;
             margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
 
         .activity-time {
@@ -249,6 +296,45 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .activity-status {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .status-submitted {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .status-under_review {
+            background-color: var(--info-light);
+            color: var(--info);
+        }
+
+        .status-revision_requested {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-accepted {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-published {
+            background-color: #8b5cf6;
+            color: white;
+        }
+
+        .status-awaiting_payment {
+            background-color: var(--warning-light);
+            color: var(--warning);
         }
 
         .view-all-link {
@@ -264,48 +350,6 @@
 
         .view-all-link:hover {
             gap: 0.75rem;
-        }
-
-        /* Charts Section */
-        .charts-section {
-            margin-bottom: 2rem;
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chart-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .chart-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .chart-container {
-            height: 300px;
-            position: relative;
         }
 
         /* Loading States */
@@ -375,8 +419,8 @@
                 font-size: 1.8rem;
             }
 
-            .charts-grid {
-                grid-template-columns: 1fr;
+            .charts-activity-layout {
+                gap: 1rem;
             }
         }
     </style>
@@ -439,12 +483,13 @@
                     </div>
                 </div>
 
-                <!-- Charts Section -->
-                <div class="charts-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-chart-bar"></i> Performance Overview
-                    </h2>
-                    <div class="charts-grid">
+                <!-- Charts and Recent Activity Side by Side -->
+                <div class="charts-activity-layout">
+                    <!-- Left Column: Performance Overview -->
+                    <div class="charts-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-bar"></i> Performance Overview
+                        </h2>
                         <div class="chart-card">
                             <div class="chart-header">
                                 <h3 class="chart-title">Monthly Submissions</h3>
@@ -453,30 +498,21 @@
                                 <canvas id="submissionsChartCanvas"></canvas>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <h3 class="chart-title">Review Status Distribution</h3>
-                            </div>
-                            <div class="chart-container" id="reviewsChart">
-                                <canvas id="reviewsChartCanvas"></canvas>
-                            </div>
+                    <!-- Right Column: Recent Activity -->
+                    <div class="recent-activity-section">
+                        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h2 class="section-title">
+                                <i class="fas fa-bell"></i> Recent Activity
+                            </h2>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="recent-activity-section">
-                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h2 class="section-title">
-                            <i class="fas fa-bell"></i> Recent Activity
-                        </h2>
-                    </div>
-                    <div id="activityList" class="activity-list">
-                        <!-- Activity items will be loaded here -->
-                        <div class="loading-screen">
-                            <div class="spinner"></div>
-                            <p>Loading recent activity...</p>
+                        <div id="activityList" class="activity-list">
+                            <!-- Activity items will be loaded here -->
+                            <div class="loading-screen">
+                                <div class="spinner"></div>
+                                <p>Loading recent activity...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -507,7 +543,7 @@
                 this.token = getAuthToken2();
 
                 this.initializeToastr();
-                this.initializeCharts();
+                this.initializeChart();
                 this.loadDashboardData();
                 this.updateDateTime();
             }
@@ -522,10 +558,9 @@
                 };
             }
 
-            initializeCharts() {
-                // Initialize Chart.js instances
+            initializeChart() {
+                // Initialize only the submissions chart
                 this.charts.submissions = this.createSubmissionsChart();
-                this.charts.reviews = this.createReviewsChart();
             }
 
             createSubmissionsChart() {
@@ -552,6 +587,13 @@
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'var(--primary)',
+                                borderWidth: 1
                             }
                         },
                         scales: {
@@ -562,6 +604,11 @@
                                 },
                                 ticks: {
                                     color: 'var(--muted)'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Number of Submissions',
+                                    color: 'var(--muted)'
                                 }
                             },
                             x: {
@@ -570,44 +617,11 @@
                                 },
                                 ticks: {
                                     color: 'var(--muted)'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            createReviewsChart() {
-                const ctx = document.getElementById('reviewsChartCanvas')?.getContext('2d');
-                if (!ctx) return null;
-
-                return new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completed', 'Pending'],
-                        datasets: [{
-                            data: [65, 20],
-                            backgroundColor: [
-                                'var(--success)',
-                                'var(--warning)'
-                            ],
-                            borderWidth: 0,
-                            hoverOffset: 15
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '70%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    color: 'var(--muted)',
-                                    font: {
-                                        size: 12
-                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Month',
+                                    color: 'var(--muted)'
                                 }
                             }
                         }
@@ -620,19 +634,25 @@
                 const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
-                document.getElementById('currentDate').textContent =
-                    now.toLocaleDateString('en-US', dateOptions) + ' • ' +
-                    now.toLocaleTimeString('en-US', timeOptions);
+                const currentDateElement = document.getElementById('currentDate');
+                if (currentDateElement) {
+                    currentDateElement.textContent =
+                        now.toLocaleDateString('en-US', dateOptions) + ' • ' +
+                        now.toLocaleTimeString('en-US', timeOptions);
+                }
 
                 // Update greeting based on time of day
-                const hour = now.getHours();
-                let greeting = 'Good ';
+                const greetingElement = document.getElementById('greeting');
+                if (greetingElement) {
+                    const hour = now.getHours();
+                    let greeting = 'Good ';
 
-                if (hour < 12) greeting += 'Morning';
-                else if (hour < 18) greeting += 'Afternoon';
-                else greeting += 'Evening';
+                    if (hour < 12) greeting += 'Morning';
+                    else if (hour < 18) greeting += 'Afternoon';
+                    else greeting += 'Evening';
 
-                document.getElementById('greeting').textContent = greeting + '!';
+                    greetingElement.textContent = greeting + '!';
+                }
 
                 // Update every minute
                 setTimeout(() => this.updateDateTime(), 60000);
@@ -674,10 +694,13 @@
                         if (data.success && data.user) {
                             this.user = data.user;
                             // Update welcome message with user name
-                            const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
-                            if (userName) {
-                                document.getElementById('dashboardMessage').textContent =
-                                    `Welcome back, ${userName}! Here's your Journal Management Dashboard`;
+                            const dashboardMessageElement = document.getElementById('dashboardMessage');
+                            if (dashboardMessageElement) {
+                                const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
+                                if (userName) {
+                                    dashboardMessageElement.textContent =
+                                        `Welcome back, ${userName}! Here's your Journal Management Dashboard`;
+                                }
                             }
                         }
                     }
@@ -721,13 +744,6 @@
                             const pendingCount = assignedData.reviews ?
                                 assignedData.reviews.filter(review => review.invitationStatus === 'pending').length : 0;
                             document.getElementById('pendingReviews').textContent = pendingCount;
-
-                            // Update chart with real data
-                            if (this.charts.reviews) {
-                                const completedCount = parseInt(document.getElementById('completedReviews').textContent) || 0;
-                                this.charts.reviews.data.datasets[0].data = [completedCount, pendingCount];
-                                this.charts.reviews.update();
-                            }
                         }
                     }
 
@@ -739,14 +755,23 @@
 
             async loadRecentActivity() {
                 try {
-                    const response = await fetch(`${BASE_URL}/reviews/assigned`, {
+                    const container = document.getElementById('activityList');
+
+                    // Show loading state
+                    container.innerHTML = `
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading recent activity...</p>
+                        </div>
+                    `;
+
+                    // Fetch recent activities
+                    const response = await fetch(`${BASE_URL}/reviews/693a9b15b9fa3a5fce086806`, {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
                             'Accept': 'application/json'
                         }
                     });
-
-                    const container = document.getElementById('activityList');
 
                     if (!response.ok) {
                         throw new Error(`Failed to fetch recent activity: ${response.status}`);
@@ -767,7 +792,7 @@
                     const history = data.review.manuscript.history;
 
                     // Display from most recent (bottom of array) to oldest
-                    const recentActivities = history.slice().reverse().slice(0, 5); // Show only 5 most recent
+                    const recentActivities = history.slice().reverse();
 
                     if (recentActivities.length === 0) {
                         container.innerHTML = `
@@ -780,47 +805,35 @@
                     }
 
                     container.innerHTML = recentActivities.map(activity => {
-                        // Determine icon based on status
-                        let icon = 'fa-bell';
-                        let iconColor = 'var(--primary)';
-
-                        switch (activity.status) {
-                            case 'submitted':
-                                icon = 'fa-file-upload';
-                                break;
-                            case 'under_review':
-                                icon = 'fa-user-check';
-                                break;
-                            case 'revision_requested':
-                                icon = 'fa-edit';
-                                break;
-                            case 'accepted':
-                                icon = 'fa-check-circle';
-                                iconColor = 'var(--success)';
-                                break;
-                            case 'awaiting_payment':
-                                icon = 'fa-money-bill-wave';
-                                break;
-                            case 'published':
-                                icon = 'fa-book';
-                                iconColor = 'var(--info)';
-                                break;
-                        }
-
+                        // Determine icon and status class based on status
+                        const { icon, iconColor, statusClass } = this.getActivityIcon(activity.status);
                         const formattedTime = this.formatTimeAgo(activity.date);
-                        const activityText = activity.comment ?
-                            `${this.getStatusText(activity.status)}: ${this.stripHtml(activity.comment).substring(0, 100)}${this.stripHtml(activity.comment).length > 100 ? '...' : ''}` :
-                            this.getStatusText(activity.status);
+
+                        // Get the activity text
+                        let activityText = '';
+                        const byUser = activity.by ? 'by Editor' : '';
+
+                        if (activity.comment) {
+                            const cleanComment = this.stripHtml(activity.comment);
+                            activityText = `${cleanComment.substring(0, 120)}${cleanComment.length > 120 ? '...' : ''}`;
+                        } else {
+                            activityText = this.getStatusText(activity.status);
+                        }
 
                         return `
                             <div class="activity-item">
-                                <div class="activity-icon" style="background: rgba(255, 122, 24, 0.1); color: ${iconColor};">
+                                <div class="activity-icon" style="background: ${this.getStatusBackgroundColor(activity.status)}; color: ${iconColor};">
                                     <i class="fas ${icon}"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <div class="activity-text">${this.escapeHtml(activityText)}</div>
+                                    <div class="activity-text">
+                                        <span class="activity-status ${statusClass}">
+                                            ${this.getStatusDisplayText(activity.status)}
+                                        </span>
+                                        ${this.escapeHtml(activityText)}
+                                    </div>
                                     <div class="activity-time">
-                                        <i class="far fa-clock"></i> ${formattedTime}
+                                        <i class="far fa-clock"></i> ${formattedTime} ${byUser}
                                     </div>
                                 </div>
                             </div>
@@ -839,16 +852,59 @@
                 }
             }
 
+            getActivityIcon(status) {
+                switch (status) {
+                    case 'submitted':
+                        return { icon: 'fa-file-upload', iconColor: 'var(--primary)', statusClass: 'status-submitted' };
+                    case 'under_review':
+                        return { icon: 'fa-user-check', iconColor: 'var(--info)', statusClass: 'status-under_review' };
+                    case 'revision_requested':
+                        return { icon: 'fa-edit', iconColor: 'var(--warning)', statusClass: 'status-revision_requested' };
+                    case 'accepted':
+                        return { icon: 'fa-check-circle', iconColor: 'var(--success)', statusClass: 'status-accepted' };
+                    case 'awaiting_payment':
+                        return { icon: 'fa-money-bill-wave', iconColor: 'var(--warning)', statusClass: 'status-awaiting_payment' };
+                    case 'published':
+                        return { icon: 'fa-book', iconColor: '#8b5cf6', statusClass: 'status-published' };
+                    default:
+                        return { icon: 'fa-bell', iconColor: 'var(--primary)', statusClass: 'status-submitted' };
+                }
+            }
+
+            getStatusBackgroundColor(status) {
+                switch (status) {
+                    case 'submitted': return 'rgba(255, 122, 24, 0.1)';
+                    case 'under_review': return 'rgba(59, 130, 246, 0.1)';
+                    case 'revision_requested': return 'rgba(245, 158, 11, 0.1)';
+                    case 'accepted': return 'rgba(16, 185, 129, 0.1)';
+                    case 'awaiting_payment': return 'rgba(245, 158, 11, 0.1)';
+                    case 'published': return 'rgba(139, 92, 246, 0.1)';
+                    default: return 'rgba(255, 122, 24, 0.1)';
+                }
+            }
+
+            getStatusDisplayText(status) {
+                const statusMap = {
+                    'submitted': 'SUBMITTED',
+                    'under_review': 'UNDER REVIEW',
+                    'revision_requested': 'REVISION',
+                    'accepted': 'ACCEPTED',
+                    'awaiting_payment': 'PAYMENT',
+                    'published': 'PUBLISHED'
+                };
+                return statusMap[status] || status.toUpperCase();
+            }
+
             getStatusText(status) {
                 const statusMap = {
-                    'submitted': 'Submission',
-                    'under_review': 'Under Review',
-                    'revision_requested': 'Revision Requested',
-                    'accepted': 'Accepted',
-                    'awaiting_payment': 'Awaiting Payment',
-                    'published': 'Published'
+                    'submitted': 'Submission received',
+                    'under_review': 'Manuscript is under review',
+                    'revision_requested': 'Revision requested',
+                    'accepted': 'Manuscript accepted',
+                    'awaiting_payment': 'Awaiting payment for publication',
+                    'published': 'Manuscript published'
                 };
-                return statusMap[status] || status.replace('_', ' ').toUpperCase();
+                return statusMap[status] || status.replace('_', ' ');
             }
 
             formatTimeAgo(dateString) {
@@ -861,36 +917,22 @@
                     const diffDays = Math.floor(diffMs / 86400000);
 
                     if (diffMins < 1) return 'Just now';
-                    if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`;
-                    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+                    if (diffMins < 60) return `${diffMins} min ago`;
+                    if (diffHours < 24) return `${diffHours} hr ago`;
                     if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
 
                     return date.toLocaleDateString('en-US', {
                         month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
+                        day: 'numeric'
                     });
                 } catch (error) {
-                    return dateString;
+                    return 'Recently';
                 }
             }
 
             stripHtml(html) {
                 if (!html) return '';
                 return html.replace(/<[^>]*>/g, '');
-            }
-
-            formatDate(dateString) {
-                try {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                    });
-                } catch (error) {
-                    return dateString;
-                }
             }
 
             escapeHtml(str) {

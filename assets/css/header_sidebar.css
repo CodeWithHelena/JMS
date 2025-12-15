@@ -94,7 +94,7 @@
 
 .sidebar-nav a.active {
     background: var(--active-bg);
-    color: var(--secondary-color);
+    color: var(--primary-color-dark);
     font-weight: 600;
 }
 
@@ -650,7 +650,7 @@
     align-items: center;
 }
 
-.search-input {
+.search-wrap .search-input {
     width: 0;
     opacity: 0;
     padding: 0;

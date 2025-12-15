@@ -22,8 +22,8 @@
     <style>
         /* --- Shared variables (align with editor page) --- */
         :root {
-            --primary: #ff7a18;
-            --primary-dark: #e56c0e;
+            --primary: var(--primary-color-dark);
+            --primary-dark: var(--primary-color-darker);
             --primary-light: rgba(255, 122, 24, 0.1);
             --card-bg: #ffffff;
             --light: #f8fafc;
@@ -83,7 +83,7 @@
 
         /* Buttons (same visual style as editor page) */
         .btn-primary {
-            background: var(--primary);
+            background: var(--lite-primary-color);
             color: white;
             border: none;
             padding: 0.7rem 1rem;
@@ -96,22 +96,25 @@
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
+            background: var(--lite-primary-color);
+            color: white;
             transform: translateY(-2px);
         }
 
         .btn-secondary {
-            background: var(--light);
-            color: var(--muted);
-            border: 1px solid var(--border);
-            padding: 0.65rem 0.9rem;
-            border-radius: 8px;
+            background: var(--bg-white);
+            color: var(--text-light);
+            border: 1.5px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: 700;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
         .btn-secondary:hover {
-            background: #f1f5f9;
+            background: var(--text-light);
+            color: white;
         }
 
         /* --- Custom Select (same structural style as editor page) --- */
@@ -317,15 +320,13 @@
             display: inline-flex;
             gap: 0.5rem;
             align-items: center;
-            color: var(--muted);
+            color: var(--lite-secondary1);
             background: transparent;
             transition: all 0.12s ease;
         }
 
         .action-links .link:hover {
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            color: var(--text-primary);
-            background: #fff;
+            border: 1px solid var(--lite-secondary4);
             transform: translateY(-2px);
         }
 
@@ -341,8 +342,8 @@
         }
 
         .btn-view {
-            background: var(--primary-light);
-            color: var(--primary);
+            background: var(--lite-primary-color);
+            color: white;
             border: 1px solid var(--primary);
             padding: 0.5rem 0.95rem;
             border-radius: 8px;
@@ -351,13 +352,13 @@
             font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             text-decoration: none;
         }
 
         .btn-view:hover {
-            background: var(--primary);
-            color: white;
+            opacity: 0.7;
             transform: translateY(-2px);
         }
 

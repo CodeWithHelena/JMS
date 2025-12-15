@@ -3,39 +3,20 @@
 
 :root {
     --primary-color: rgba(204, 85, 0, 0.12);
-    --secondary-color: #cc5500;
+    --lite-primary-color: #ea6404;
+    --primary-color-dark: #cc5500;
+    --lite-secondary1: #1F77A1;
+    --lite-secondary2: #0A7AB5;
+    --lite-secondary3: #83B4CE;
+    --lite-secondary4: #B7D4E3;
+    --lite-secondary5: #FEFDFD;
+    --lite-secondary6: #EBF2FE;
     --sidebar-width: 260px;
     --sidebar-collapsed-width: 70px;
     --header-height: 70px;
-    
-    --sidebar-bg: #ffffff;
-    --header-bg: #ffffff;
-    --bg-white: #ffffff;
-    --body-bg: #f5f5f5;
-    --text-color: #333333;
-    --text-light: #666666;
-    --border-color: #e0e0e0;
-    --hover-bg: rgba(204, 85, 0, 0.12);
-    --active-bg: rgba(204, 85, 0, 0.15);
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    --transition: all 0.3s ease;
-    --brand: #cc5500;
-    --muted: #6b7280;
-}
-
-:root {
-    /* Primary Colors */
-    --primary: #ff7a18;
-    /* Main brand orange */
-    --primary-light: rgba(255, 122, 24, 0.1);
-    /* Light orange for backgrounds */
-    --primary-dark: #e56c0e;
-    /* Darker orange for hover states */
-    --primary-rgb: 255, 122, 24;
-    /* RGB values for opacity variations */
 
     /* Secondary Colors */
-    --secondary: #4f46e5;
+    --secondary: var(--lite-secondary2);
     /* Indigo for accents */
     --secondary-light: rgba(79, 70, 229, 0.1);
     /* Light indigo */
@@ -49,7 +30,7 @@
     /* Light green */
     --success-dark: #0da271;
     /* Dark green */
-    --success-rgb: 16, 185, 129;
+    --success-rgb: rgb(16, 185, 129);
     /* RGB values */
 
     --danger: #ef4444;
@@ -70,14 +51,92 @@
     --warning-rgb: 245, 158, 11;
     /* RGB values */
 
+    --btn-bg: var(--secondary);
+    --btn-bg-light: rgba(59, 130, 246, 0.1);
+    --btn-color: white;
+
+    --btn-clear-bg: var(--primary-color);
+    --btn-clear-color: var(--primary-color-dark);
+    --btn-clear-border: var(--primary-color-dark);
+
+    --status-submitted-bg: #E0F2FE;
+    --status-submitted-color:  var(--info);
+    --status-submitted-border: ;
+
+    --status-under_review-bg: var(--warning);
+    --status-under_review-color: var(--warning);
+
+    --status-reviewed-bg: var(--primary-color);
+    --status-reviewed-color: var(--lite-primary-color);
+    --status-reviewed-border: var(--lite-primary-color);
+
+    --status-accepted-bg: rgb(196, 254, 235);
+    --status-accepted-color: var(--success);
+    --status-accepted-border: var(--success);
+
+    --status-rejected-bg: #fecaca;
+    --status-rejected-color: #dc2626;
+    --status-rejected-bg: #fecaca;
+
+    --status-revision_requested-bg: var(--primary-light);
+    --status-revision_requested-color: var(--primary-light);
+
+    --status-revised-bg: var(--info);
+    --status-revised-color: var(--info);
+
+    --status-awaiting_payment-bg: var(--warning);
+    --status-awaiting_payment-color: var(--warning);
+
+    --status-published-bg: rgb(66, 250, 189);
+    --status-published-color: #166534;
+    --status-published-border: #166534;
+    
+    --invitation-pending-bg: #FEF9C3;
+    --invitation-pending-color: #92400e;
+
+    --invitation-accepted-bg: #DCFCE7;
+    --invitation-accepted-color: #166534;
+
+
+
     --info: #3b82f6;
-    /* Blue for information */
+        /* Blue for information */
     --info-light: rgba(59, 130, 246, 0.1);
-    /* Light blue */
+        /* Light blue */
     --info-dark: #2563eb;
-    /* Dark blue */
+        /* Dark blue */
     --info-rgb: 59, 130, 246;
-    /* RGB values */
+        /* RGB values */
+    
+    --sidebar-bg: #ffffff;
+    --header-bg: #ffffff;
+    --bg-white: #ffffff;
+    --body-bg: #f5f5f5;
+    --text-color: #333333;
+    --text-light: #666666;
+    --border-color: #e0e0e0;
+    --hover-bg: rgba(204, 85, 0, 0.12);
+    --active-bg: var(--primary-color);
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    --brand: #cc5500;
+    --muted: #6b7280;
+}
+
+:root {
+    /* Primary Colors */
+    --primary: var(--primary-color-dark);
+    /* Main brand orange */
+    --primary-light: var(--primary-color);
+    /* Light orange for backgrounds */
+    --primary-dark: var(--primary-color-dark);
+    /* Darker orange for hover states */
+    --primary-rgb: 255, 122, 24;
+    /* RGB values for opacity variations */
+
+
+
+   
 
     /* Neutral Colors */
     --bg: #f4f7fb;

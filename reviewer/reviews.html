@@ -20,6 +20,9 @@
     <!-- Page-specific CSS -->
     <style>
         /* --- Page container (same as my-submission.html) --- */
+        :root {
+            --primary: 
+        }
         .container.page-title {
             max-width: 1400px;
             margin: 0 auto;
@@ -67,7 +70,7 @@
 
         /* Buttons (same visual style as my-submission page) */
         .btn-primary {
-            background: var(--primary);
+            background: var(--btn-bg);
             color: white;
             border: none;
             padding: 0.7rem 1rem;
@@ -81,15 +84,15 @@
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
+            background: var(--btn-bg);
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
 
         .btn-secondary {
-            background: var(--light);
-            color: var(--text-muted);
-            border: 1px solid var(--border);
+            background: var(--btn-clear-bg);
+            color: var(--btn-clear-color);
+            border: 1px solid var(--primary-color-dark);
             padding: 0.65rem 0.9rem;
             border-radius: var(--radius-md);
             cursor: pointer;
@@ -364,9 +367,9 @@
         }
 
         .btn-view {
-            background: var(--primary-light);
-            color: var(--primary);
-            border: 1px solid var(--primary);
+            background: var(--info-light);
+            color: var(--info-dark);
+            border: 1px solid var(--btn-bg);
             padding: 0.5rem 0.95rem;
             border-radius: var(--radius-md);
             cursor: pointer;
@@ -374,13 +377,15 @@
             font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
+            text-align: center;
             gap: 0.5rem;
             text-decoration: none;
             transition: var(--transition-normal);
         }
 
         .btn-view:hover {
-            background: var(--primary);
+            background: var(--btn-bg);
             color: white;
             transform: translateY(-2px);
         }
@@ -414,9 +419,9 @@
         }
 
         .status-accepted {
-            background: var(--info-light);
-            color: var(--info-dark);
-            border: 1px solid var(--info);
+            background: var(--success-light);
+            color: var(--success-dark);
+            /* border: 1px solid var(--info); */
         }
 
         .status-declined {
@@ -547,9 +552,9 @@
         }
 
         .pagination-btn:hover:not(:disabled) {
-            background: var(--light);
-            border-color: var(--primary);
-            color: var(--primary);
+            background: var(--btn-bg);
+            border-color: var(--btn-bg);
+            color: white;
             transform: translateY(-2px);
         }
 
@@ -559,9 +564,9 @@
         }
 
         .pagination-btn.active {
-            background: var(--primary);
+            background: var(--btn-bg);
             color: white;
-            border-color: var(--primary);
+            border-color: var(--btn-bg);
         }
 
         .pagination-dots {
@@ -744,7 +749,7 @@
                             </div>
                         </div>
 
-                        <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center;">
+                        <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; padding-top: 1.6rem">
                             <button id="applyFilters" class="btn-primary"><i class="fas fa-filter"></i> Apply</button>
                             <button id="clearFilters" class="btn-secondary">Clear</button>
                         </div>
@@ -939,7 +944,7 @@
                         </div>
 
                         <div class="meta-item">
-                            <span class="meta-label">Status:</span>
+                            <span class="meta-label">Submission:</span>
                             <span class="meta-value">
                                 <span class="submission-status ${submissionStatusClass}">${this.escapeHtml(submissionStatusText)}</span>
                             </span>

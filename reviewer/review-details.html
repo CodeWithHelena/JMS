@@ -23,7 +23,7 @@
             --bg: #f4f7fb;
             --card-bg: #ffffff;
             --accent: #4f46e5;
-            --primary: #ff7a18;
+            --primary: var(--primary-color-dark);
             --primary-light: rgba(255, 122, 24, 0.1);
             --primary-dark: #e56c0e;
             --muted: #6b7280;
@@ -413,7 +413,7 @@
         }
 
         .btn-view-document {
-            background: var(--primary);
+            background: var(--btn-bg);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -428,7 +428,7 @@
         }
 
         .btn-view-document:hover {
-            background: var(--primary-dark);
+            background: var(--btn-bg);
             transform: translateY(-2px);
         }
 
@@ -1134,8 +1134,8 @@
 
         /* Review Submitted Message */
         .review-submitted-message {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            border: 2px solid var(--success);
+            background: linear-gradient(135deg, #FEFDFD 0%, #83B4CE 100%);
+            border: 2px solid var(--lite-secondary3);
             border-radius: var(--radius);
             padding: 2rem;
             text-align: center;
@@ -1144,17 +1144,17 @@
 
         .review-submitted-message i {
             font-size: 3rem;
-            color: var(--success);
+            color: var(--lite-secondary1);
             margin-bottom: 1rem;
         }
 
         .review-submitted-message h3 {
-            color: #065f46;
+            color: var(--lite-secondary1);
             margin-bottom: 0.5rem;
         }
 
         .review-submitted-message p {
-            color: #047857;
+            color: var(--lite-secondary1);
             margin-bottom: 0;
         }
 

@@ -25,7 +25,7 @@
             --bg: #f4f7fb;
             --card-bg: #ffffff;
             --accent: #4f46e5;
-            --primary: #ff7a18;
+            --primary: var(--primary-color-dark);
             --muted: #6b7280;
             --line-color: #e6e9f2;
             --dot-color: var(--primary);
@@ -491,7 +491,7 @@
         .search-input {
             flex: 1;
             padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
+            border: 1px solid #d1d5db !important;
             border-radius: 6px;
             font-size: 1rem;
             transition: all 0.3s;
@@ -505,7 +505,7 @@
         }
 
         .search-button {
-            background: var(--primary);
+            background: var(--btn-bg);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -519,7 +519,7 @@
         }
 
         .search-button:hover {
-            background: #e56c0e;
+            background: var(--btn-bg);
             transform: translateY(-2px);
         }
 
