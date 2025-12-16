@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard - Journal Management System</title>
+    <title>Editor Dashboard - Journal Management System</title>
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,6 +34,8 @@
             --warning-light: rgba(245, 158, 11, 0.1);
             --info: #3b82f6;
             --info-light: rgba(59, 130, 246, 0.1);
+            --purple: #8b5cf6;
+            --purple-light: rgba(139, 92, 246, 0.1);
             --radius: 12px;
             --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
             --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
@@ -123,12 +125,12 @@
             border-left-color: var(--warning);
         }
 
-        .stat-card.info {
-            border-left-color: var(--info);
+        .stat-card.purple {
+            border-left-color: var(--purple);
         }
 
-        .stat-card.danger {
-            border-left-color: var(--danger);
+        .stat-card.info {
+            border-left-color: var(--info);
         }
 
         .stat-header {
@@ -158,14 +160,14 @@
             color: var(--warning);
         }
 
+        .stat-icon.purple {
+            background: var(--purple-light);
+            color: var(--purple);
+        }
+
         .stat-icon.info {
             background: var(--info-light);
             color: var(--info);
-        }
-
-        .stat-icon.danger {
-            background: var(--danger-light);
-            color: var(--danger);
         }
 
         .stat-icon.primary {
@@ -189,22 +191,6 @@
             color: var(--muted);
             font-size: 0.95rem;
             font-weight: 500;
-        }
-
-        .stat-change {
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            margin-top: 0.5rem;
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        .stat-change.negative {
-            color: var(--danger);
         }
 
         /* Quick Actions */
@@ -282,163 +268,9 @@
             line-height: 1.5;
         }
 
-        /* Recent Activity */
-        .recent-activity-section {
-            margin-bottom: 2rem;
-        }
-
-        .activity-list {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-text {
-            color: #374151;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-time {
-            color: var(--muted);
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .view-all-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            margin-top: 1rem;
-            transition: all 0.2s;
-        }
-
-        .view-all-link:hover {
-            gap: 0.75rem;
-        }
-
-        /* Pending Reviews */
-        .pending-reviews-section {
-            margin-bottom: 2rem;
-        }
-
-        .reviews-list {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-        }
-
-        .review-item {
-            background: var(--light);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            transition: all 0.2s;
-        }
-
-        .review-item:hover {
-            border-color: var(--primary);
-            transform: translateX(5px);
-        }
-
-        .review-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .review-title {
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 0.25rem;
-        }
-
-        .review-meta {
-            color: var(--muted);
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .review-days {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .review-days.warning {
-            background: var(--warning-light);
-            color: var(--warning);
-        }
-
-        .review-days.danger {
-            background: var(--danger-light);
-            color: var(--danger);
-        }
-
-        .review-days.success {
-            background: var(--success-light);
-            color: var(--success);
-        }
-
         /* Charts Section */
         .charts-section {
             margin-bottom: 2rem;
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         .chart-card {
@@ -536,10 +368,6 @@
             .stat-value {
                 font-size: 1.8rem;
             }
-
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -555,7 +383,7 @@
                 <!-- Welcome Header -->
                 <!-- <div class="welcome-header">
                     <h1 id="greeting">Good Morning!</h1>
-                    <p id="dashboardMessage">Welcome back to your Journal Management Dashboard</p>
+                    <p id="dashboardMessage">Welcome back to your Editor Dashboard</p>
                     <div class="date-display">
                         <i class="far fa-calendar"></i>
                         <span id="currentDate">Loading...</span>
@@ -574,10 +402,16 @@
                                 <i class="fas fa-file-upload"></i>
                             </div>
                         </div>
-                        <div class="stat-content">
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span id="submissionsChange">0% this month</span>
+                    </div>
+
+                    <div class="stat-card info">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalIssues">0</div>
+                                <div class="stat-label">Total Issues</div>
+                            </div>
+                            <div class="stat-icon info">
+                                <i class="fas fa-newspaper"></i>
                             </div>
                         </div>
                     </div>
@@ -585,53 +419,11 @@
                     <div class="stat-card success">
                         <div class="stat-header">
                             <div>
-                                <div class="stat-value" id="pendingReviews">0</div>
-                                <div class="stat-label">Pending Reviews</div>
+                                <div class="stat-value" id="published">0</div>
+                                <div class="stat-label">Published</div>
                             </div>
                             <div class="stat-icon success">
-                                <i class="fas fa-user-check"></i>
-                            </div>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-change warning">
-                                <i class="fas fa-clock"></i>
-                                <span id="reviewsDue">0 due soon</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card info">
-                        <div class="stat-header">
-                            <div>
-                                <div class="stat-value" id="completedReviews">0</div>
-                                <div class="stat-label">Reviews Completed</div>
-                            </div>
-                            <div class="stat-icon info">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span id="completionRate">0% completion rate</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card warning">
-                        <div class="stat-header">
-                            <div>
-                                <div class="stat-value" id="avgReviewTime">0</div>
-                                <div class="stat-label">Avg. Review Time</div>
-                            </div>
-                            <div class="stat-icon warning">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-down"></i>
-                                <span id="timeChange">0% faster</span>
+                                <i class="fas fa-book"></i>
                             </div>
                         </div>
                     </div>
@@ -648,118 +440,38 @@
                                 <i class="fas fa-file-alt"></i>
                             </div>
                             <h3 class="action-title">Manage Submissions</h3>
-                            <p class="action-description">Review and process new manuscript submissions</p>
+                            <p class="action-description">Review and process manuscript submissions</p>
                         </div>
 
-                        <div class="action-card" onclick="window.location.href='assign-reviewers.html'">
+                        <div class="action-card" onclick="window.location.href='view-issues.html'">
                             <div class="action-icon">
-                                <i class="fas fa-user-plus"></i>
+                                <i class="fas fa-newspaper"></i>
                             </div>
-                            <h3 class="action-title">Assign Reviewers</h3>
-                            <p class="action-description">Assign reviewers to pending submissions</p>
+                            <h3 class="action-title">All Issues</h3>
+                            <p class="action-description">View and manage journal issues</p>
                         </div>
 
-                        <div class="action-card" onclick="window.location.href='reviews.html'">
+                        <div class="action-card" onclick="window.location.href='editor-journals.html'">
                             <div class="action-icon">
-                                <i class="fas fa-star"></i>
+                                <i class="fas fa-book-open"></i>
                             </div>
-                            <h3 class="action-title">My Reviews</h3>
-                            <p class="action-description">View and complete assigned reviews</p>
-                        </div>
-
-                        <div class="action-card" onclick="window.location.href='review-timeline.html'">
-                            <div class="action-icon">
-                                <i class="fas fa-history"></i>
-                            </div>
-                            <h3 class="action-title">Review History</h3>
-                            <p class="action-description">View your completed review timeline</p>
+                            <h3 class="action-title">My Journal</h3>
+                            <p class="action-description">Manage your journal settings and details</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Two Column Layout -->
-                <div class="two-column-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
-                    <!-- Left Column -->
-                    <div>
-                        <!-- Pending Reviews -->
-                        <div class="pending-reviews-section">
-                            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                                <h2 class="section-title">
-                                    <i class="fas fa-clock"></i> Pending Reviews
-                                </h2>
-                                <a href="reviews.html" class="view-all-link">
-                                    View All <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
-                            <div id="pendingReviewsList" class="reviews-list">
-                                <!-- Pending reviews will be loaded here -->
-                                <div class="loading-screen">
-                                    <div class="spinner"></div>
-                                    <p>Loading pending reviews...</p>
-                                </div>
-                            </div>
+                <!-- Performance Overview -->
+                <div class="charts-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i> Performance Overview
+                    </h2>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Monthly Submissions</h3>
                         </div>
-
-                        <!-- Charts Section -->
-                        <div class="charts-section">
-                            <h2 class="section-title">
-                                <i class="fas fa-chart-bar"></i> Performance Overview
-                            </h2>
-                            <div class="charts-grid">
-                                <div class="chart-card">
-                                    <div class="chart-header">
-                                        <h3 class="chart-title">Monthly Submissions</h3>
-                                    </div>
-                                    <div class="chart-container" id="submissionsChart">
-                                        <canvas id="submissionsChartCanvas"></canvas>
-                                    </div>
-                                </div>
-
-                                <div class="chart-card">
-                                    <div class="chart-header">
-                                        <h3 class="chart-title">Review Status Distribution</h3>
-                                    </div>
-                                    <div class="chart-container" id="reviewsChart">
-                                        <canvas id="reviewsChartCanvas"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div>
-                        <!-- Recent Activity -->
-                        <div class="recent-activity-section">
-                            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                                <h2 class="section-title">
-                                    <i class="fas fa-bell"></i> Recent Activity
-                                </h2>
-                                <a href="submission-timeline.html" class="view-all-link">
-                                    View All <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
-                            <div id="activityList" class="activity-list">
-                                <!-- Activity items will be loaded here -->
-                                <div class="loading-screen">
-                                    <div class="spinner"></div>
-                                    <p>Loading recent activity...</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Upcoming Deadlines -->
-                        <div class="pending-reviews-section">
-                            <h2 class="section-title">
-                                <i class="fas fa-calendar-alt"></i> Upcoming Deadlines
-                            </h2>
-                            <div id="deadlinesList" class="reviews-list">
-                                <!-- Deadlines will be loaded here -->
-                                <div class="loading-screen">
-                                    <div class="spinner"></div>
-                                    <p>Loading deadlines...</p>
-                                </div>
-                            </div>
+                        <div class="chart-container" id="submissionsChart">
+                            <canvas id="submissionsChartCanvas"></canvas>
                         </div>
                     </div>
                 </div>
@@ -768,7 +480,7 @@
     </div>
     <script>
         window.SIDEBAR_MODULE = 'editor';
-        window.SIDEBAR_ACTIVE_ID = 'dashboard';
+        window.SIDEBAR_ACTIVE_ID = 'editor-dashboard.html';
     </script>
     <!-- layout.js loads partials and wires header+sidebar behaviors -->
     <script src="/assets/js/layout.js"></script>
@@ -780,16 +492,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script type="module">
-        import { BASE_URL, token } from '../assets/js/utility.js';
+        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
 
-        class DashboardManager {
+        class EditorDashboardManager {
             constructor() {
                 this.user = null;
-                this.dashboardData = null;
+                this.journals = [];
+                this.submissions = [];
+                this.issues = [];
                 this.charts = {};
+                this.token = getAuthToken2();
 
                 this.initializeToastr();
-                this.initializeCharts();
+                this.initializeChart();
                 this.loadDashboardData();
                 this.updateDateTime();
             }
@@ -804,10 +519,9 @@
                 };
             }
 
-            initializeCharts() {
-                // Initialize Chart.js instances
+            initializeChart() {
+                // Initialize the submissions chart
                 this.charts.submissions = this.createSubmissionsChart();
-                this.charts.reviews = this.createReviewsChart();
             }
 
             createSubmissionsChart() {
@@ -817,15 +531,20 @@
                 return new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                         datasets: [{
                             label: 'Submissions',
-                            data: [12, 19, 15, 25, 22, 30, 28],
-                            borderColor: 'var(--primary)',
+                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            borderColor: '#ff7a18',
                             backgroundColor: 'rgba(255, 122, 24, 0.1)',
                             borderWidth: 2,
                             fill: true,
-                            tension: 0.4
+                            tension: 0.4,
+                            pointBackgroundColor: '#ff7a18',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
                         }]
                     },
                     options: {
@@ -834,6 +553,20 @@
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'rgba(255, 255, 255, 0.2)',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function (context) {
+                                        return `Submissions: ${context.raw}`;
+                                    }
+                                }
                             }
                         },
                         scales: {
@@ -843,7 +576,13 @@
                                     color: 'rgba(0, 0, 0, 0.05)'
                                 },
                                 ticks: {
-                                    color: 'var(--muted)'
+                                    color: '#6b7280',
+                                    stepSize: 1
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Number of Submissions',
+                                    color: '#6b7280'
                                 }
                             },
                             x: {
@@ -851,46 +590,12 @@
                                     color: 'rgba(0, 0, 0, 0.05)'
                                 },
                                 ticks: {
-                                    color: 'var(--muted)'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            createReviewsChart() {
-                const ctx = document.getElementById('reviewsChartCanvas')?.getContext('2d');
-                if (!ctx) return null;
-
-                return new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completed', 'Pending', 'Overdue'],
-                        datasets: [{
-                            data: [65, 20, 15],
-                            backgroundColor: [
-                                'var(--success)',
-                                'var(--warning)',
-                                'var(--danger)'
-                            ],
-                            borderWidth: 0,
-                            hoverOffset: 15
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '70%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    color: 'var(--muted)',
-                                    font: {
-                                        size: 12
-                                    }
+                                    color: '#6b7280'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Month',
+                                    color: '#6b7280'
                                 }
                             }
                         }
@@ -903,19 +608,25 @@
                 const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
-                document.getElementById('currentDate').textContent =
-                    now.toLocaleDateString('en-US', dateOptions) + ' • ' +
-                    now.toLocaleTimeString('en-US', timeOptions);
+                const currentDateElement = document.getElementById('currentDate');
+                if (currentDateElement) {
+                    currentDateElement.textContent =
+                        now.toLocaleDateString('en-US', dateOptions) + ' • ' +
+                        now.toLocaleTimeString('en-US', timeOptions);
+                }
 
                 // Update greeting based on time of day
-                const hour = now.getHours();
-                let greeting = 'Good ';
+                const greetingElement = document.getElementById('greeting');
+                if (greetingElement) {
+                    const hour = now.getHours();
+                    let greeting = 'Good ';
 
-                if (hour < 12) greeting += 'Morning';
-                else if (hour < 18) greeting += 'Afternoon';
-                else greeting += 'Evening';
+                    if (hour < 12) greeting += 'Morning';
+                    else if (hour < 18) greeting += 'Afternoon';
+                    else greeting += 'Evening';
 
-                document.getElementById('greeting').textContent = greeting + '!';
+                    greetingElement.textContent = greeting + '!';
+                }
 
                 // Update every minute
                 setTimeout(() => this.updateDateTime(), 60000);
@@ -923,7 +634,7 @@
 
             async loadDashboardData() {
                 try {
-                    if (!token) {
+                    if (!this.token) {
                         toastr.error('Authentication required. Please login.');
                         return;
                     }
@@ -931,17 +642,17 @@
                     // Load user data first
                     await this.loadUserData();
 
-                    // Then load dashboard statistics
-                    await this.loadDashboardStats();
+                    // Load journals
+                    await this.loadJournals();
 
-                    // Load pending reviews
-                    await this.loadPendingReviews();
+                    // Load submissions for each journal
+                    await this.loadSubmissions();
 
-                    // Load recent activity
-                    await this.loadRecentActivity();
+                    // Load issues
+                    await this.loadIssues();
 
-                    // Load deadlines
-                    await this.loadDeadlines();
+                    // Update chart with real data
+                    this.updateChartWithData();
 
                 } catch (error) {
                     console.error('Error loading dashboard data:', error);
@@ -953,7 +664,7 @@
                 try {
                     const response = await fetch(`${BASE_URL}/user/me`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`,
+                            'Authorization': `Bearer ${this.token}`,
                             'Accept': 'application/json'
                         }
                     });
@@ -963,10 +674,13 @@
                         if (data.success && data.user) {
                             this.user = data.user;
                             // Update welcome message with user name
-                            const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
-                            if (userName) {
-                                document.getElementById('dashboardMessage').textContent =
-                                    `Welcome back, ${userName}! Here's your Journal Management Dashboard`;
+                            const dashboardMessageElement = document.getElementById('dashboardMessage');
+                            if (dashboardMessageElement) {
+                                const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
+                                if (userName) {
+                                    dashboardMessageElement.textContent =
+                                        `Welcome back, ${userName}! Here's your Editor Dashboard`;
+                                }
                             }
                         }
                     }
@@ -975,244 +689,169 @@
                 }
             }
 
-            async loadDashboardStats() {
+            async loadJournals() {
                 try {
-                    // In a real app, you would have a dedicated dashboard API endpoint
-                    // For now, we'll simulate with mock data
-
-                    // Mock data for demonstration
-                    const mockStats = {
-                        totalSubmissions: 142,
-                        submissionsChange: 12,
-                        pendingReviews: 8,
-                        reviewsDue: 3,
-                        completedReviews: 65,
-                        completionRate: 89,
-                        avgReviewTime: 7,
-                        timeChange: 15
-                    };
-
-                    // Update DOM with stats
-                    document.getElementById('totalSubmissions').textContent = mockStats.totalSubmissions;
-                    document.getElementById('submissionsChange').textContent = `+${mockStats.submissionsChange}% this month`;
-                    document.getElementById('pendingReviews').textContent = mockStats.pendingReviews;
-                    document.getElementById('reviewsDue').textContent = `${mockStats.reviewsDue} due soon`;
-                    document.getElementById('completedReviews').textContent = mockStats.completedReviews;
-                    document.getElementById('completionRate').textContent = `${mockStats.completionRate}% completion rate`;
-                    document.getElementById('avgReviewTime').textContent = `${mockStats.avgReviewTime} days`;
-                    document.getElementById('timeChange').textContent = `${mockStats.timeChange}% faster`;
-
-                } catch (error) {
-                    console.error('Error loading dashboard stats:', error);
-                }
-            }
-
-            async loadPendingReviews() {
-                try {
-                    const response = await fetch(`${BASE_URL}/reviews/pending`, {
+                    const response = await fetch(`${BASE_URL}/editor/journals`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`,
+                            'Authorization': `Bearer ${this.token}`,
                             'Accept': 'application/json'
                         }
                     });
 
-                    const container = document.getElementById('pendingReviewsList');
-
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch pending reviews: ${response.status}`);
+                        throw new Error(`Failed to fetch journals: ${response.status}`);
                     }
 
                     const data = await response.json();
 
-                    if (!data.success || !data.reviews) {
-                        container.innerHTML = `
-                            <div class="no-data" style="text-align: center; padding: 2rem; color: var(--muted);">
-                                <i class="fas fa-check-circle fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
-                                <p>No pending reviews found</p>
-                            </div>
-                        `;
+                    if (!data.success || !data.journals) {
+                        toastr.warning('No journals found.');
                         return;
                     }
 
-                    const reviews = data.reviews.slice(0, 5); // Show only 5 most recent
+                    this.journals = data.journals;
 
-                    if (reviews.length === 0) {
-                        container.innerHTML = `
-                            <div class="no-data" style="text-align: center; padding: 2rem; color: var(--muted);">
-                                <i class="fas fa-check-circle fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
-                                <p>No pending reviews found</p>
-                            </div>
-                        `;
+                } catch (error) {
+                    console.error('Error loading journals:', error);
+                    toastr.error('Failed to load journals.');
+                }
+            }
+
+            async loadSubmissions() {
+                try {
+                    this.submissions = [];
+
+                    // If no journals, return empty
+                    if (!this.journals || this.journals.length === 0) {
                         return;
                     }
 
-                    container.innerHTML = reviews.map(review => {
-                        const daysLeft = this.calculateDaysLeft(review.dueDate);
-                        let daysClass = 'success';
-                        let daysText = `${daysLeft} days left`;
+                    // Load submissions for each journal
+                    for (const journal of this.journals) {
+                        const response = await fetch(`${BASE_URL}/editor/submissions?journalId=${journal._id}`, {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
 
-                        if (daysLeft <= 3) {
-                            daysClass = 'danger';
-                            daysText = `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`;
-                        } else if (daysLeft <= 7) {
-                            daysClass = 'warning';
-                            daysText = `${daysLeft} days left`;
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success && data.submissions) {
+                                // Add journal info to each submission
+                                const submissionsWithJournal = data.submissions.map(sub => ({
+                                    ...sub,
+                                    journalTitle: journal.title
+                                }));
+                                this.submissions = [...this.submissions, ...submissionsWithJournal];
+                            }
                         }
+                    }
 
-                        return `
-                            <div class="review-item" onclick="window.location.href='review-details.html?id=${review._id}'">
-                                <div class="review-header">
-                                    <div>
-                                        <div class="review-title">${this.escapeHtml(review.manuscript?.title || 'Untitled Manuscript')}</div>
-                                        <div class="review-meta">
-                                            <span><i class="far fa-clock"></i> Due: ${this.formatDate(review.dueDate)}</span>
-                                            <span><i class="fas fa-user"></i> ${review.assignedBy?.name || 'Editor'}</span>
-                                        </div>
-                                    </div>
-                                    <span class="review-days ${daysClass}">${daysText}</span>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
+                    // Update stats
+                    this.updateStats();
 
                 } catch (error) {
-                    console.error('Error loading pending reviews:', error);
-                    const container = document.getElementById('pendingReviewsList');
-                    container.innerHTML = `
-                        <div class="error-message" style="text-align: center; padding: 2rem; color: var(--danger);">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>Failed to load pending reviews</p>
-                        </div>
-                    `;
+                    console.error('Error loading submissions:', error);
+                    toastr.error('Failed to load submissions.');
                 }
             }
 
-            async loadRecentActivity() {
+            async loadIssues() {
                 try {
-                    // For now, use mock activity data
-                    // In a real app, you would fetch from an activity API endpoint
-
-                    const mockActivities = [
-                        {
-                            icon: 'fa-file-upload',
-                            text: 'New submission received: "Quantum Computing Advances"',
-                            time: '2 hours ago',
-                            color: 'primary'
-                        },
-                        {
-                            icon: 'fa-user-check',
-                            text: 'Reviewer Dr. Smith accepted review invitation',
-                            time: '5 hours ago',
-                            color: 'success'
-                        },
-                        {
-                            icon: 'fa-star',
-                            text: 'Review completed for "Machine Learning in Medicine"',
-                            time: '1 day ago',
-                            color: 'info'
-                        },
-                        {
-                            icon: 'fa-comments',
-                            text: 'New comment on submission #245',
-                            time: '2 days ago',
-                            color: 'warning'
-                        },
-                        {
-                            icon: 'fa-check-circle',
-                            text: 'Manuscript "AI Ethics Framework" accepted for publication',
-                            time: '3 days ago',
-                            color: 'success'
+                    const response = await fetch(`${BASE_URL}/issues`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
                         }
-                    ];
-
-                    const container = document.getElementById('activityList');
-                    container.innerHTML = mockActivities.map(activity => `
-                        <div class="activity-item">
-                            <div class="activity-icon" style="background: rgba(255, 122, 24, 0.1); color: var(--primary);">
-                                <i class="fas ${activity.icon}"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-text">${activity.text}</div>
-                                <div class="activity-time">
-                                    <i class="far fa-clock"></i> ${activity.time}
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-
-                } catch (error) {
-                    console.error('Error loading recent activity:', error);
-                }
-            }
-
-            async loadDeadlines() {
-                try {
-                    // Mock deadlines data
-                    const mockDeadlines = [
-                        {
-                            title: 'Review Submission - Quantum Physics',
-                            due: 'Tomorrow',
-                            priority: 'high'
-                        },
-                        {
-                            title: 'Editor Decision - AI Ethics Paper',
-                            due: 'In 3 days',
-                            priority: 'medium'
-                        },
-                        {
-                            title: 'Author Revisions Due - Climate Study',
-                            due: 'Next Week',
-                            priority: 'low'
-                        }
-                    ];
-
-                    const container = document.getElementById('deadlinesList');
-                    container.innerHTML = mockDeadlines.map(deadline => {
-                        let priorityClass = 'success';
-                        if (deadline.priority === 'high') priorityClass = 'danger';
-                        if (deadline.priority === 'medium') priorityClass = 'warning';
-
-                        return `
-                            <div class="review-item">
-                                <div class="review-header">
-                                    <div>
-                                        <div class="review-title">${deadline.title}</div>
-                                        <div class="review-meta">
-                                            <span><i class="fas fa-calendar-alt"></i> Due: ${deadline.due}</span>
-                                        </div>
-                                    </div>
-                                    <span class="review-days ${priorityClass}">
-                                        ${deadline.priority.charAt(0).toUpperCase() + deadline.priority.slice(1)} Priority
-                                    </span>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-
-                } catch (error) {
-                    console.error('Error loading deadlines:', error);
-                }
-            }
-
-            calculateDaysLeft(dueDate) {
-                if (!dueDate) return 14; // Default 2 weeks
-                const due = new Date(dueDate);
-                const now = new Date();
-                const diffTime = due - now;
-                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            }
-
-            formatDate(dateString) {
-                try {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
                     });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch issues: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success || !data.issues) {
+                        document.getElementById('totalIssues').textContent = '0';
+                        return;
+                    }
+
+                    this.issues = data.issues;
+
+                    // Update issues count
+                    document.getElementById('totalIssues').textContent = data.total || this.issues.length;
+
                 } catch (error) {
-                    return dateString;
+                    console.error('Error loading issues:', error);
+                    document.getElementById('totalIssues').textContent = '0';
                 }
+            }
+
+            updateStats() {
+                try {
+                    // Total submissions
+                    const totalSubmissions = this.submissions.length;
+                    document.getElementById('totalSubmissions').textContent = totalSubmissions;
+
+                    // Count published submissions
+                    const publishedCount = this.submissions.filter(
+                        submission => submission.status === 'published'
+                    ).length;
+
+                    document.getElementById('published').textContent = publishedCount;
+
+                } catch (error) {
+                    console.error('Error updating stats:', error);
+                }
+            }
+
+            updateChartWithData() {
+                try {
+                    if (!this.charts.submissions || this.submissions.length === 0) {
+                        return;
+                    }
+
+                    // Group submissions by month
+                    const monthlyData = this.groupSubmissionsByMonth();
+
+                    // Update chart data
+                    this.charts.submissions.data.datasets[0].data = monthlyData;
+                    this.charts.submissions.update();
+
+                } catch (error) {
+                    console.error('Error updating chart:', error);
+                }
+            }
+
+            groupSubmissionsByMonth() {
+                // Initialize array with 12 months (0-11)
+                const monthlyCounts = Array(12).fill(0);
+
+                if (!this.submissions || this.submissions.length === 0) {
+                    return monthlyCounts;
+                }
+
+                // Get current year
+                const currentYear = new Date().getFullYear();
+
+                // Count submissions by month
+                this.submissions.forEach(submission => {
+                    try {
+                        const createdAt = new Date(submission.createdAt || submission.updatedAt);
+                        const submissionYear = createdAt.getFullYear();
+
+                        // Only count submissions from current year
+                        if (submissionYear === currentYear) {
+                            const month = createdAt.getMonth(); // 0-11
+                            monthlyCounts[month]++;
+                        }
+                    } catch (error) {
+                        console.error('Error parsing submission date:', error);
+                    }
+                });
+
+                return monthlyCounts;
             }
 
             escapeHtml(str) {
@@ -1227,12 +866,12 @@
         }
 
         // Initialize dashboard when DOM is loaded
-        let dashboardManager;
+        let editorDashboardManager;
 
         document.addEventListener('DOMContentLoaded', function () {
-            dashboardManager = new DashboardManager();
+            editorDashboardManager = new EditorDashboardManager();
         });
     </script>
 </body>
 
-</html>s
+</html>

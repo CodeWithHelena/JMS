@@ -1,33 +1,836 @@
 <!DOCTYPE html>
-<html lang="en" data-module="admin">
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/header_sidebar.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <!-- In each module's HTML file, add this -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard - Journal Management System</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Add admin-specific CSS here -->
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --accent: #4f46e5;
+            --primary: #ff7a18;
+            --primary-light: rgba(255, 122, 24, 0.1);
+            --primary-dark: #e56c0e;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --purple: #8b5cf6;
+            --purple-light: rgba(139, 92, 246, 0.1);
+            --radius: 12px;
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Welcome Header */
+        .welcome-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius);
+            color: white;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .welcome-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-display {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .stat-card.success {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.purple {
+            border-left-color: var(--purple);
+        }
+
+        .stat-card.info {
+            border-left-color: var(--info);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .stat-icon.purple {
+            background: var(--purple-light);
+            color: var(--purple);
+        }
+
+        .stat-icon.info {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .stat-icon.primary {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .stat-content {
+            margin-top: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Quick Actions */
+        .quick-actions-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover .action-icon {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .action-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-description {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Loading States */
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0 0.5rem;
+            }
+
+            .welcome-header {
+                padding: 1.5rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Placeholders for dynamic components -->
-    <div id="header-placeholder"></div>
-    <div id="sidebar-placeholder"></div>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
 
-    <main class="main-content-wrapper">
-        <h1>Admin Dashboard</h1>
-        <!-- Admin-specific content -->
-    </main>
+            <main class="main-content">
+                <!-- Welcome Header -->
+                <!-- <div class="welcome-header">
+                    <h1 id="greeting">Good Morning!</h1>
+                    <p id="dashboardMessage">Welcome back to your Admin Dashboard</p>
+                    <div class="date-display">
+                        <i class="far fa-calendar"></i>
+                        <span id="currentDate">Loading...</span>
+                    </div>
+                </div> -->
 
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalUsers"></div>
+                                <div class="stat-label">Total Users</div>
+                            </div>
+                            <div class="stat-icon primary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card info">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalJournals"></div>
+                                <div class="stat-label">Total Journals</div>
+                            </div>
+                            <div class="stat-icon info">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="pendingApproval"></div>
+                                <div class="stat-label">Pending Approval</div>
+                            </div>
+                            <div class="stat-icon warning">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-bolt"></i> Quick Actions
+                    </h2>
+                    <div class="actions-grid">
+                        <div class="action-card" onclick="window.location.href='users.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <h3 class="action-title">Manage Users</h3>
+                            <p class="action-description">View and manage all system users</p>
+                        </div>
+
+                        <div class="action-card" onclick="window.location.href='journals.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <h3 class="action-title">All Journals</h3>
+                            <p class="action-description">View and manage all journals</p>
+                        </div>
+
+                        <div class="action-card" onclick="window.location.href='pending-reviewers.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <h3 class="action-title">Pending Approval</h3>
+                            <p class="action-description">Review and approve pending reviewers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Overview -->
+                <div class="charts-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i> Performance Overview
+                    </h2>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Monthly User Registration</h3>
+                        </div>
+                        <div class="chart-container" id="userChart">
+                            <canvas id="userChartCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
     <script>
         window.SIDEBAR_MODULE = 'admin';
-        window.SIDEBAR_ACTIVE_ID = 'admin-dashboard';
+        window.SIDEBAR_ACTIVE_ID = 'admin-dashboard.html';
     </script>
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
     <script src="/assets/js/layout.js"></script>
-    
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module">
+        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+
+        class AdminDashboardManager {
+            constructor() {
+                this.user = null;
+                this.users = [];
+                this.journals = [];
+                this.charts = {};
+                this.token = getAuthToken2();
+
+                this.initializeToastr();
+                this.initializeChart();
+                this.loadDashboardData();
+                this.updateDateTime();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            initializeChart() {
+                // Initialize the user registration chart
+                this.charts.users = this.createUserChart();
+            }
+
+            createUserChart() {
+                const ctx = document.getElementById('userChartCanvas')?.getContext('2d');
+                if (!ctx) return null;
+
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'User Registrations',
+                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            borderColor: '#ff7a18',
+                            backgroundColor: 'rgba(255, 122, 24, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#ff7a18',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'rgba(255, 255, 255, 0.2)',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function (context) {
+                                        return `Registrations: ${context.raw}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    color: '#6b7280',
+                                    stepSize: 1
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Number of Users',
+                                    color: '#6b7280'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    color: '#6b7280'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Month',
+                                    color: '#6b7280'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateDateTime() {
+                const now = new Date();
+                const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const timeOptions = { hour: '2-digit', minute: '2-digit' };
+
+                const currentDateElement = document.getElementById('currentDate');
+                if (currentDateElement) {
+                    currentDateElement.textContent =
+                        now.toLocaleDateString('en-US', dateOptions) + ' • ' +
+                        now.toLocaleTimeString('en-US', timeOptions);
+                }
+
+                // Update greeting based on time of day
+                const greetingElement = document.getElementById('greeting');
+                if (greetingElement) {
+                    const hour = now.getHours();
+                    let greeting = 'Good ';
+
+                    if (hour < 12) greeting += 'Morning';
+                    else if (hour < 18) greeting += 'Afternoon';
+                    else greeting += 'Evening';
+
+                    greetingElement.textContent = greeting + '!';
+                }
+
+                // Update every minute
+                setTimeout(() => this.updateDateTime(), 60000);
+            }
+
+            async loadDashboardData() {
+                try {
+                    if (!this.token) {
+                        toastr.error('Authentication required. Please login.');
+                        return;
+                    }
+
+                    // Load user data first
+                    await this.loadUserData();
+
+                    // Load all users
+                    await this.loadUsers();
+
+                    // Load all journals
+                    await this.loadJournals();
+
+                    // Update chart with user registration data
+                    this.updateChartWithUserData();
+
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    toastr.error('Failed to load dashboard data. Please refresh.');
+                }
+            }
+
+            async loadUserData() {
+                try {
+                    const response = await fetch(`${BASE_URL}/user/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.user) {
+                            this.user = data.user;
+                            // Update welcome message with user name
+                            const dashboardMessageElement = document.getElementById('dashboardMessage');
+                            if (dashboardMessageElement) {
+                                const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
+                                if (userName) {
+                                    dashboardMessageElement.textContent =
+                                        `Welcome back, ${userName}! Here's your Admin Dashboard`;
+                                }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                }
+            }
+
+            async loadUsers() {
+                try {
+                    const response = await fetch(`${BASE_URL}/user`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch users: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success || !data.users) {
+                        toastr.warning('No users found.');
+                        return;
+                    }
+
+                    this.users = data.users;
+
+                    // Update user stats
+                    this.updateUserStats();
+
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    toastr.error('Failed to load users.');
+                }
+            }
+
+            async loadJournals() {
+                try {
+                    const response = await fetch(`${BASE_URL}/journal`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success || !data.journals) {
+                        document.getElementById('totalJournals').textContent = '0';
+                        return;
+                    }
+
+                    this.journals = data.journals;
+
+                    // Update journals count
+                    document.getElementById('totalJournals').textContent = data.total || this.journals.length;
+
+                } catch (error) {
+                    console.error('Error loading journals:', error);
+                    document.getElementById('totalJournals').textContent = '0';
+                }
+            }
+
+            updateUserStats() {
+                try {
+                    // Total users count
+                    const totalUsers = this.users.length;
+                    document.getElementById('totalUsers').textContent = totalUsers;
+
+                    // Count pending approvals (Reviewers with isApproved: false)
+                    const pendingApprovalCount = this.users.filter(user =>
+                        user.role === 'Reviewer' && user.isApproved === false
+                    ).length;
+
+                    document.getElementById('pendingApproval').textContent = pendingApprovalCount;
+
+                } catch (error) {
+                    console.error('Error updating user stats:', error);
+                }
+            }
+
+            updateChartWithUserData() {
+                try {
+                    if (!this.charts.users || this.users.length === 0) {
+                        return;
+                    }
+
+                    // Group user registrations by month
+                    const monthlyData = this.groupUsersByRegistrationMonth();
+
+                    // Update chart data
+                    this.charts.users.data.datasets[0].data = monthlyData;
+                    this.charts.users.update();
+
+                } catch (error) {
+                    console.error('Error updating chart:', error);
+                }
+            }
+
+            groupUsersByRegistrationMonth() {
+                // Initialize array with 12 months (0-11)
+                const monthlyCounts = Array(12).fill(0);
+
+                if (!this.users || this.users.length === 0) {
+                    return monthlyCounts;
+                }
+
+                // Get current year
+                const currentYear = new Date().getFullYear();
+
+                // Count users by registration month
+                this.users.forEach(user => {
+                    try {
+                        const createdAt = new Date(user.createdAt);
+                        const userYear = createdAt.getFullYear();
+
+                        // Only count users from current year
+                        if (userYear === currentYear) {
+                            const month = createdAt.getMonth(); // 0-11
+                            monthlyCounts[month]++;
+                        }
+                    } catch (error) {
+                        console.error('Error parsing user registration date:', error);
+                    }
+                });
+
+                return monthlyCounts;
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        let adminDashboardManager;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            adminDashboardManager = new AdminDashboardManager();
+        });
+    </script>
 </body>
 
 </html>

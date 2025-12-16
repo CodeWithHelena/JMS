@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest Issues - Academic Journal Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="home.css">
+    <style>
+        /* Copy ALL the CSS styles from the previous response here */
+        /* Make sure to include everything from the style tag */
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --radius: 8px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: #f8f9fa;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Include ALL CSS from the previous response */
+    </style>
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-book-open"></i>
+                <span class="logo-text">AcademicHub</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="issues.html" class="active">Latest Issues</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons">
+                <a href="signin.html" class="btn btn-outline">Sign In</a>
+                <a href="signup.html" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Issues Header -->
+    <section class="issues-header">
+        <div class="container">
+            <h1>Latest Journal Issues</h1>
+            <p>Browse our collection of published issues across all journals</p>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="search"><i class="fas fa-search"></i> Search</label>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search issues...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="volume"><i class="fas fa-sort-numeric-up"></i> Volume</label>
+                    <select id="volumeFilter" class="filter-select">
+                        <option value="">All Volumes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="year"><i class="fas fa-calendar"></i> Year</label>
+                    <select id="yearFilter" class="filter-select">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="applyFilters()" class="btn btn-primary" style="margin-top: 1.5rem; width: 100%;">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+        </div>
+    </section>
+
+    <!-- Issues List -->
+    <section class="issues-list">
+        <div class="container">
+            <div id="issuesContainer">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading issues...</p>
+                </div>
+            </div>
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">AcademicHub</div>
+                    <p>Advancing knowledge through open access publishing since 2010. We are committed to making scholarly research accessible to everyone.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="issues.html">Latest Issues</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Author Guidelines</a></li>
+                        <li><a href="#">Reviewer Guidelines</a></li>
+                        <li><a href="#">Publication Ethics</a></li>
+                        <li><a href="#">Open Access Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Journals</h4>
+                    <ul>
+                        <li><a href="#">Science & Technology</a></li>
+                        <li><a href="#">Medical Research</a></li>
+                        <li><a href="#">Social Sciences</a></li>
+                        <li><a href="#">Humanities</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 AcademicHub Journal Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active')
+                ? '<i class="fas fa-times"></i>'
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        let currentPage = 1;
+
+        // Load filters on page load
+        document.addEventListener('DOMContentLoaded', async function () {
+            await loadFilters();
+            await loadIssues();
+        });
+
+        async function loadFilters() {
+            try {
+                const response = await fetch('/public/issues/filters');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Populate volume filter
+                    const volumeFilter = document.getElementById('volumeFilter');
+                    if (data.volumes) {
+                        data.volumes.forEach(volume => {
+                            const option = document.createElement('option');
+                            option.value = volume;
+                            option.textContent = `Volume ${volume}`;
+                            volumeFilter.appendChild(option);
+                        });
+                    }
+
+                    // Populate year filter
+                    const yearFilter = document.getElementById('yearFilter');
+                    const currentYear = new Date().getFullYear();
+                    for (let year = currentYear; year >= 2010; year--) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        yearFilter.appendChild(option);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading filters:', error);
+            }
+        }
+
+        async function loadIssues(page = 1) {
+            const issuesContainer = document.getElementById('issuesContainer');
+            const pagination = document.getElementById('pagination');
+
+            try {
+                const search = document.getElementById('searchInput')?.value || '';
+                const volume = document.getElementById('volumeFilter')?.value || '';
+                const year = document.getElementById('yearFilter')?.value || '';
+
+                let url = `/public/issues?limit=6&page=${page}&search=${encodeURIComponent(search)}`;
+                if (volume) url += `&volume=${volume}`;
+                if (year) url += `&year=${year}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.success && data.issues && data.issues.length > 0) {
+                    issuesContainer.innerHTML = data.issues.map(issue => `
+                        <div class="issue-card" style="margin-bottom: 2rem;">
+                            <div class="issue-content">
+                                <div class="issue-meta">
+                                    <span><i class="fas fa-book"></i> ${issue.journalId?.title || 'Journal'}</span>
+                                    <span><i class="fas fa-calendar"></i> ${new Date(issue.publicationDate).toLocaleDateString()}</span>
+                                    <span><i class="fas fa-hashtag"></i> Vol. ${issue.volume || 'N/A'}, Issue ${issue.issueNumber || 'N/A'}</span>
+                                </div>
+                                <h3>${issue.title || 'Untitled Issue'}</h3>
+                                <p>${issue.description || 'No description available.'}</p>
+                                <div class="issue-actions">
+                                    <span><i class="fas fa-file-alt"></i> ${issue.submissions?.length || 0} Papers</span>
+                                    <div>
+                                        ${issue.submissions && issue.submissions.length > 0 ?
+                            `<a href="/public/download/${issue.submissions[0].submissionId}" class="download-btn" target="_blank">
+                                                <i class="fas fa-download"></i> Download Issue
+                                            </a>` :
+                            '<span style="color: var(--gray);"><i class="fas fa-lock"></i> Content Coming Soon</span>'
+                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Update pagination
+                    if (data.totalPages > 1) {
+                        let paginationHTML = '';
+                        if (currentPage > 1) {
+                            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+                        }
+
+                        for (let i = 1; i <= data.totalPages; i++) {
+                            if (i === 1 || i === data.totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                                paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                                paginationHTML += `<span class="page-btn">...</span>`;
+                            }
+                        }
+
+                        if (currentPage < data.totalPages) {
+                            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+                        }
+
+                        pagination.innerHTML = paginationHTML;
+                    } else {
+                        pagination.innerHTML = '';
+                    }
+                } else {
+                    issuesContainer.innerHTML = `
+                        <div class="no-data" style="text-align: center; padding: 3rem;">
+                            <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3>No Issues Found</h3>
+                            <p>Try adjusting your search filters</p>
+                        </div>
+                    `;
+                    pagination.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error loading issues:', error);
+                issuesContainer.innerHTML = `
+                    <div class="error-state" style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                        <h3>Error Loading Issues</h3>
+                        <p>Please try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        function applyFilters() {
+            currentPage = 1;
+            loadIssues(currentPage);
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadIssues(page);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>
