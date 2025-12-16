@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://fp.247laboratory.net/';
+export const API_BASE_URL = 'https://fp.247laboratory.net/';
 const API_ENDPOINTS = {
     EDITORS: 'api/v1/user?role=editor',
     JOURNAL: 'api/v1/journal'

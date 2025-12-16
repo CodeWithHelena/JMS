@@ -33,9 +33,9 @@
             --transition: all 0.3s ease;
 
             /* Primary Colors */
-            --primary: #ff7a18;
+            --primary: var(--lite-primary-color);
             --primary-light: rgba(255, 122, 24, 0.1);
-            --primary-dark: #e56c0e;
+            --primary-dark: var(--lite-primary-color);
             --primary-rgb: 255, 122, 24;
 
             /* Status Colors */
@@ -222,7 +222,7 @@
         }
 
         .action-btn.success {
-            background-color: var(--success);
+            background-color: var(--lite-secondary1);
             color: white;
         }
 
@@ -777,8 +777,8 @@
     </div>
 
     <script>
-        window.SIDEBAR_MODULE = 'author';
-        window.SIDEBAR_ACTIVE_ID = 'notifications';
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'admin-dashboard.html';
     </script>
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (required for toastr) -->
