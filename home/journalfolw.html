@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JournalFlow | Academic Journal Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            
+            /* Updated color scheme */
+            --primary: 25 96% 47%; /* #ea6404 */
+            --lite-primary: #ea6404;
+            --primary-dark: 25 80% 45%; /* #cc5500 */
+            --lite-secondary1: 198 69% 37%; /* #1F77A1 */
+            --lite-secondary2: 199 90% 38%; /* #0A7AB5 */
+            
+            --primary-foreground: 0 0% 100%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 25 96% 47%; /* Updated to primary */
+            --radius: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: hsl(var(--foreground));
+            background-color: hsl(var(--background));
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: hsla(var(--background) / 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid hsl(var(--border));
+            padding: 1rem 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: hsl(var(--primary));
+        }
+
+        .logo i {
+            font-size: 1.75rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: hsl(var(--foreground));
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: hsl(var(--foreground));
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, hsla(var(--primary) / 0.05) 0%, transparent 100%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--lite-secondary1)));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary-dark));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px hsla(var(--primary) / 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: hsl(var(--primary));
+            border: 1px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            background-color: hsl(var(--accent));
+            border-color: hsl(var(--primary));
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Auth buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn-signin {
+            background-color: hsl(var(--primary));
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-signin:hover {
+            background-color: hsl(var(--primary-dark));
+        }
+
+        .btn-register {
+            background-color: transparent;
+            color: hsl(var(--primary));
+            border: 1px solid hsl(var(--primary));
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-register:hover {
+            background-color: hsla(var(--primary) / 0.1);
+        }
+
+        /* Features Section */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: hsl(var(--foreground));
+        }
+
+        .section-title p {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: var(--radius);
+            background-color: hsla(var(--lite-secondary1) / 0.1);
+            color: hsl(var(--lite-secondary1));
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Journals Section */
+        .journals-section {
+            background-color: hsl(var(--secondary));
+            padding: 5rem 0;
+        }
+
+        .journals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .journals-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+        }
+
+        .journals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .journal-card {
+            background-color: hsl(var(--card));
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--border));
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .journal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .journal-header {
+            padding: 1.5rem 1.5rem 0.5rem;
+        }
+
+        .journal-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: hsla(var(--lite-secondary2) / 0.1);
+            color: hsl(var(--lite-secondary2));
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .journal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .journal-issn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .journal-content {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .journal-description {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .journal-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        .detail-label {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .journal-indexing {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .indexing-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .indexing-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .indexing-badge {
+            background-color: hsla(var(--lite-secondary1) / 0.1);
+            color: hsl(var(--lite-secondary1));
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid hsla(var(--lite-secondary1) / 0.2);
+        }
+
+        .journal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid hsl(var(--border));
+            background-color: hsla(var(--muted) / 0.5);
+        }
+
+        .journal-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-active {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .status-inactive {
+            color: #ef4444;
+            font-weight: 500;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, hsl(var(--lite-secondary1)) 0%, hsl(var(--lite-secondary2)) 100%);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        /* Issues Preview Section */
+        .issues-section {
+            padding: 5rem 0;
+            background-color: hsl(var(--background));
+        }
+
+        .issues-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .issue-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid hsl(var(--border));
+            transition: transform 0.3s ease;
+        }
+
+        .issue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .issue-cover {
+            height: 200px;
+            background: linear-gradient(135deg, hsla(var(--primary) / 0.1), hsla(var(--lite-secondary1) / 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: hsl(var(--lite-secondary1));
+            font-size: 4rem;
+        }
+
+        .issue-content {
+            padding: 1.5rem;
+        }
+
+        .issue-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: hsl(var(--foreground));
+        }
+
+        .issue-meta {
+            display: flex;
+            justify-content: space-between;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .issue-description {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 0;
+            text-align: center;
+            background-color: hsl(var(--secondary));
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: hsl(var(--foreground));
+        }
+
+        .cta-content p {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: hsl(var(--card));
+            border-top: 1px solid hsl(var(--border));
+            padding: 3rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: hsl(var(--primary));
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius);
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .social-link:hover {
+            background-color: hsl(var(--primary));
+            color: white;
+        }
+
+        .footer-links h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid hsl(var(--border));
+            text-align: center;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: hsl(var(--background));
+                flex-direction: column;
+                padding: 1.5rem;
+                border-bottom: 1px solid hsl(var(--border));
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .journals-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .journals-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .auth-buttons a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .stagger-delay-1 { animation-delay: 0.1s; }
+        .stagger-delay-2 { animation-delay: 0.2s; }
+        .stagger-delay-3 { animation-delay: 0.3s; }
+        .stagger-delay-4 { animation-delay: 0.4s; }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>JournalFlow</span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#journals">Journals</a>
+                    <a href="#issues">Issues</a>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                    <div class="auth-buttons">
+                        <a href="#" class="btn-signin">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </a>
+                        <a href="#" class="btn-register">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </div>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1>Streamline Your Academic Publishing Workflow</h1>
+                <p>JournalFlow is a comprehensive platform for managing academic journals, submissions, peer reviews, and publications with efficiency and precision.</p>
+                <div class="btn-group">
+                    <a href="#journals" class="btn btn-primary btn-lg">
+                        <i class="fas fa-search"></i> Browse Journals
+                    </a>
+                    <a href="#features" class="btn btn-outline btn-lg">
+                        <i class="fas fa-play-circle"></i> Watch Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Powerful Features for Journal Management</h2>
+                <p>Everything you need to manage the complete publishing lifecycle efficiently</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in stagger-delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Management</h3>
+                    <p>Robust security protocols to protect journal data, submissions, and sensitive information.</p>
+                </div>
+                
+                <div class="feature-card fade-in stagger-delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Advanced Analytics</h3>
+                    <p>Real-time insights on submissions, review times, acceptance rates, and reader engagement.</p>
+                </div>
+                
+                <div class="feature-card fade-in stagger-delay-3">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Collaborative Review</h3>
+                    <p>Streamlined workflow for editors and reviewers to collaborate efficiently on submissions.</p>
+                </div>
+                
+                <div class="feature-card fade-in stagger-delay-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Automated Workflow</h3>
+                    <p>Automated reminders, deadline tracking, and submission status updates for all stakeholders.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Journals Section -->
+    <section id="journals" class="journals-section">
+        <div class="container">
+            <div class="journals-header fade-in">
+                <div>
+                    <h2>Featured Journals</h2>
+                    <p>Discover leading academic journals managed on our platform</p>
+                </div>
+                <a href="#" class="btn btn-outline">
+                    View All Journals <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="journals-grid" id="journalsContainer">
+                <!-- Journals will be loaded dynamically here -->
+            </div>
+            
+            <div class="text-center fade-in">
+                <button id="loadMoreBtn" class="btn btn-primary btn-lg">
+                    <i class="fas fa-eye"></i> View More Journals
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Issues Section -->
+    <section id="issues" class="issues-section">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Latest Journal Issues</h2>
+                <p>Explore recently published issues from our managed journals</p>
+            </div>
+            
+            <div class="issues-preview">
+                <div class="issue-card fade-in">
+                    <div class="issue-cover">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="issue-content">
+                        <h3 class="issue-title">Vol. 12, Issue 3, 2024</h3>
+                        <div class="issue-meta">
+                            <span>Agricultural Management</span>
+                            <span>Sep 2024</span>
+                        </div>
+                        <p class="issue-description">Latest research in sustainable agriculture, crop management, and food security innovations.</p>
+                    </div>
+                </div>
+                
+                <div class="issue-card fade-in stagger-delay-1">
+                    <div class="issue-cover">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <div class="issue-content">
+                        <h3 class="issue-title">Vol. 8, Issue 2, 2024</h3>
+                        <div class="issue-meta">
+                            <span>Medical Sciences</span>
+                            <span>Aug 2024</span>
+                        </div>
+                        <p class="issue-description">Cutting-edge medical research and clinical studies from leading healthcare institutions.</p>
+                    </div>
+                </div>
+                
+                <div class="issue-card fade-in stagger-delay-2">
+                    <div class="issue-cover">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="issue-content">
+                        <h3 class="issue-title">Vol. 15, Issue 4, 2024</h3>
+                        <div class="issue-meta">
+                            <span>Computer Science</span>
+                            <span>Jul 2024</span>
+                        </div>
+                        <p class="issue-description">Advances in AI, machine learning, and software engineering from top researchers.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8 fade-in">
+                <a href="#" class="btn btn-outline btn-lg">
+                    <i class="fas fa-newspaper"></i> Browse All Issues
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Journals Managed</div>
+                </div>
+                
+                <div class="stat-card fade-in stagger-delay-1">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Active Submissions</div>
+                </div>
+                
+                <div class="stat-card fade-in stagger-delay-2">
+                    <div class="stat-number">2K+</div>
+                    <div class="stat-label">Published Articles</div>
+                </div>
+                
+                <div class="stat-card fade-in stagger-delay-3">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Expert Reviewers</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content fade-in">
+                <h2>Ready to Transform Your Journal Management?</h2>
+                <p>Join hundreds of academic institutions and publishers who trust JournalFlow to manage their journals efficiently.</p>
+                <div class="btn-group">
+                    <a href="#" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i> Start Free Trial
+                    </a>
+                    <a href="#" class="btn btn-outline btn-lg">
+                        <i class="fas fa-calendar-alt"></i> Schedule Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <i class="fas fa-book-open"></i>
+                        <span>JournalFlow</span>
+                    </div>
+                    <p class="footer-description">Professional journal management system for academic publishers worldwide.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Platform</h3>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#journals">Journals</a></li>
+                        <li><a href="#issues">Issues</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 JournalFlow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample journal data based on your database schema
+        const journalsData = [
+            {
+                "_id": { "$oid": "693a00707409ad900774e4cc" },
+                "title": "Basic Journal for Agricultural Management",
+                "issn": "3454-345X",
+                "description": "A leading journal publishing high-quality research in agricultural management, sustainable farming practices, and food systems innovation. We publish original research, reviews, and case studies.",
+                "publisher": "Michael Eze",
+                "scope": "Agriculture",
+                "reviewPolicy": "single-blind",
+                "submissionFee": 0,
+                "publicationFee": 15000,
+                "currency": "NGN",
+                "doiPrefix": "10.1212",
+                "indexing": [
+                    {
+                        "name": "Netpro International",
+                        "url": "https://netpro.africa",
+                        "_id": { "$oid": "693a00707409ad900774e4cd" }
+                    },
+                    {
+                        "name": "AGRICOLA",
+                        "url": "https://agricola.nal.usda.gov",
+                        "_id": { "$oid": "693a00707409ad900774e4ce" }
+                    }
+                ],
+                "email": "michaeleze@gmail.com",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d0" },
+                "title": "Journal of Medical Sciences Research",
+                "issn": "2345-6789",
+                "description": "Publishing cutting-edge medical research, clinical trials, and healthcare innovations from around the world. Our journal has a rigorous peer-review process.",
+                "publisher": "Global Health Publications",
+                "scope": "Medical Sciences",
+                "reviewPolicy": "double-blind",
+                "submissionFee": 50,
+                "publicationFee": 2000,
+                "currency": "USD",
+                "doiPrefix": "10.1234",
+                "indexing": [
+                    {
+                        "name": "PubMed",
+                        "url": "https://pubmed.ncbi.nlm.nih.gov",
+                        "_id": { "$oid": "693a00707409ad900774e4d1" }
+                    },
+                    {
+                        "name": "Scopus",
+                        "url": "https://www.scopus.com",
+                        "_id": { "$oid": "693a00707409ad900774e4d2" }
+                    }
+                ],
+                "email": "editor@jmedsci.com",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d3" },
+                "title": "Computer Science Review Quarterly",
+                "issn": "5678-9012",
+                "description": "A comprehensive review journal covering advances in computer science, artificial intelligence, machine learning, and information technology.",
+                "publisher": "Tech Academic Press",
+                "scope": "Computer Science",
+                "reviewPolicy": "open",
+                "submissionFee": 25,
+                "publicationFee": 1200,
+                "currency": "USD",
+                "doiPrefix": "10.5678",
+                "indexing": [
+                    {
+                        "name": "IEEE Xplore",
+                        "url": "https://ieeexplore.ieee.org",
+                        "_id": { "$oid": "693a00707409ad900774e4d4" }
+                    },
+                    {
+                        "name": "ACM Digital Library",
+                        "url": "https://dl.acm.org",
+                        "_id": { "$oid": "693a00707409ad900774e4d5" }
+                    }
+                ],
+                "email": "csr@techacademic.org",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d6" },
+                "title": "Environmental Science & Sustainability",
+                "issn": "9012-3456",
+                "description": "Focusing on environmental science, climate change, sustainability, and ecological conservation research from interdisciplinary perspectives.",
+                "publisher": "Green Earth Publishing",
+                "scope": "Environmental Science",
+                "reviewPolicy": "single-blind",
+                "submissionFee": 30,
+                "publicationFee": 1800,
+                "currency": "EUR",
+                "doiPrefix": "10.7890",
+                "indexing": [
+                    {
+                        "name": "Web of Science",
+                        "url": "https://clarivate.com",
+                        "_id": { "$oid": "693a00707409ad900774e4d7" }
+                    }
+                ],
+                "email": "ess@greenearth.org",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d8" },
+                "title": "Business & Economics Review",
+                "issn": "7890-1234",
+                "description": "A premier journal for business, economics, finance, and management research with global impact and readership.",
+                "publisher": "Global Business Press",
+                "scope": "Business & Economics",
+                "reviewPolicy": "double-blind",
+                "submissionFee": 75,
+                "publicationFee": 2500,
+                "currency": "USD",
+                "doiPrefix": "10.2468",
+                "indexing": [
+                    {
+                        "name": "EBSCO",
+                        "url": "https://www.ebsco.com",
+                        "_id": { "$oid": "693a00707409ad900774e4d9" }
+                    },
+                    {
+                        "name": "ProQuest",
+                        "url": "https://www.proquest.com",
+                        "_id": { "$oid": "693a00707409ad900774e4da" }
+                    }
+                ],
+                "email": "ber@businesspress.com",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4db" },
+                "title": "Engineering Innovations Journal",
+                "issn": "1234-5678",
+                "description": "Publishing innovative engineering research, technological advancements, and applied engineering solutions across all disciplines.",
+                "publisher": "Engineering Society",
+                "scope": "Engineering",
+                "reviewPolicy": "single-blind",
+                "submissionFee": 40,
+                "publicationFee": 1500,
+                "currency": "USD",
+                "doiPrefix": "10.1357",
+                "indexing": [
+                    {
+                        "name": "Engineering Village",
+                        "url": "https://www.engineeringvillage.com",
+                        "_id": { "$oid": "693a00707409ad900774e4dc" }
+                    }
+                ],
+                "email": "eij@engsociety.org",
+                "isActive": false
+            }
+        ];
+
+        // DOM Elements
+        const journalsContainer = document.getElementById('journalsContainer');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.querySelector('.nav-links');
+
+        // Configuration
+        let visibleJournals = 3;
+        const journalsPerLoad = 3;
+
+        // Format currency
+        function formatCurrency(amount, currency) {
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: currency,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            
+            try {
+                return formatter.format(amount);
+            } catch {
+                return `${amount} ${currency}`;
+            }
+        }
+
+        // Format review policy
+        function formatReviewPolicy(policy) {
+            return policy.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join('-');
+        }
+
+        // Create journal card HTML
+        function createJournalCard(journal) {
+            return `
+                <div class="journal-card fade-in">
+                    <div class="journal-header">
+                        <span class="journal-badge">${journal.scope}</span>
+                        <h3 class="journal-title">${journal.title}</h3>
+                        <div class="journal-issn">
+                            <i class="fas fa-globe"></i>
+                            <span>ISSN: ${journal.issn}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="journal-content">
+                        <p class="journal-description">${journal.description}</p>
+                        
+                        <div class="journal-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Publisher:</span>
+                                <span class="detail-value">${journal.publisher}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Review Policy:</span>
+                                <span class="detail-value">${formatReviewPolicy(journal.reviewPolicy)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Publication Fee:</span>
+                                <span class="detail-value">${formatCurrency(journal.publicationFee, journal.currency)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Submission Fee:</span>
+                                <span class="detail-value">${journal.submissionFee === 0 ? 'Free' : formatCurrency(journal.submissionFee, journal.currency)}</span>
+                            </div>
+                        </div>
+                        
+                        ${journal.indexing && journal.indexing.length > 0 ? `
+                            <div class="journal-indexing">
+                                <div class="indexing-label">Indexed In:</div>
+                                <div class="indexing-badges">
+                                    ${journal.indexing.map(index => 
+                                        `<span class="indexing-badge">${index.name}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="journal-footer">
+                        <div class="journal-status">
+                            <i class="fas fa-circle ${journal.isActive ? 'status-active' : 'status-inactive'}"></i>
+                            <span class="${journal.isActive ? 'status-active' : 'status-inactive'}">
+                                ${journal.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="viewJournal('${journal._id.$oid}')">
+                            <i class="fas fa-external-link-alt"></i> View Journal
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render journals
+        function renderJournals() {
+            const journalsToShow = journalsData.slice(0, visibleJournals);
+            journalsContainer.innerHTML = journalsToShow.map(journal => 
+                createJournalCard(journal)
+            ).join('');
+            
+            // Hide or show load more button
+            if (visibleJournals >= journalsData.length) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'inline-flex';
+            }
+        }
+
+        // Load more journals
+        function loadMoreJournals() {
+            loadMoreBtn.classList.add('loading');
+            loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                visibleJournals += journalsPerLoad;
+                renderJournals();
+                loadMoreBtn.classList.remove('loading');
+                loadMoreBtn.innerHTML = '<i class="fas fa-eye"></i> View More Journals';
+                
+                // Scroll to newly loaded journals
+                const newCards = journalsContainer.querySelectorAll('.journal-card');
+                if (newCards.length > 0) {
+                    newCards[newCards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 800);
+        }
+
+        // View journal details
+        window.viewJournal = function(journalId) {
+            const journal = journalsData.find(j => j._id.$oid === journalId);
+            if (journal) {
+                alert(`Viewing: ${journal.title}\n\nPublisher: ${journal.publisher}\nEmail: ${journal.email}\nScope: ${journal.scope}`);
+                // In a real app, you would navigate to a journal detail page
+            }
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                const icon = mobileMenuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Close mobile menu if open
+                    navLinks.classList.remove('active');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                    
+                    // Smooth scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial render
+            renderJournals();
+            
+            // Set up event listeners
+            loadMoreBtn.addEventListener('click', loadMoreJournals);
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            
+            // Observe elements for scroll animations
+            document.querySelectorAll('.section-title, .feature-card, .stat-card, .cta-content, .issue-card').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    navLinks.classList.remove('active');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+            
+            // Add animation to hero on load
+            const heroContent = document.querySelector('.hero-content');
+            heroContent.classList.add('fade-in');
+            
+            // Add click handlers for auth buttons
+            document.querySelector('.btn-signin').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Sign In functionality would open a login modal or redirect to login page.');
+            });
+            
+            document.querySelector('.btn-register').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Register functionality would open a registration form or redirect to signup page.');
+            });
+        });
+    </script>
+</body>
+</html>

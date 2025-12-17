@@ -276,8 +276,9 @@
         }
 
         .btn-view-progress {
-            background: var(--info);
-            color: white;
+            background: var(--primary-color);
+            color: var(--primary);
+            border: var(--primary);
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 6px;
@@ -290,7 +291,8 @@
         }
 
         .btn-view-progress:hover {
-            background: #2563eb;
+            background: var(--primary);
+            color: white;
             transform: translateY(-2px);
         }
 
@@ -558,6 +560,10 @@
             border-color: #9ca3af;
         }
 
+        #publishBtn{
+            margin-top: 1rem;
+        }
+
         /* Timeline Section */
         .timeline-actions {
             margin-bottom: 1.5rem;
@@ -752,13 +758,13 @@
         }
 
         .decision-option input[type="radio"]:checked+label {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            color: var(--primary);
+            background: var(--lite-secondary6);
+            border-color: var(--lite-secondary2);
+            color: var(--lite-secondary2);
         }
 
         .decision-option label:hover {
-            border-color: var(--primary);
+            border-color: var(--lite-secondary2);
         }
 
         .decision-status-message {
@@ -954,7 +960,7 @@
         }
 
         .btn-submit-decision {
-            background: var(--success);
+            background: var(--primary);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -968,7 +974,8 @@
         }
 
         .btn-submit-decision:hover:not(:disabled) {
-            background: #0da271;
+            background: var(--primary);
+            opacity: 0.7;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }

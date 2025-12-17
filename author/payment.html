@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History - Journal Management System</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <style>
+        :root {
+            --primary: var(--lite-primary-color);
+            --primary-light: rgba(255, 122, 24, 0.1);
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+        }
+
+        .payments-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        @media (max-width: 768px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Custom Select Styles */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-header {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .select-header:hover {
+            border-color: var(--primary);
+        }
+
+        .select-header.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .select-header span {
+            color: #374151;
+            font-size: 1rem;
+        }
+
+        .select-header i {
+            color: var(--muted);
+            transition: transform 0.2s;
+        }
+
+        .select-header.active i {
+            transform: rotate(180deg);
+        }
+
+        .select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            margin-top: 0.25rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .select-options.show {
+            display: block;
+            animation: fadeInUp 0.2s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .select-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .select-option:last-child {
+            border-bottom: none;
+        }
+
+        .select-option:hover {
+            background: var(--light);
+        }
+
+        .select-option.selected {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .select-option .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .select-option .status-indicator.all {
+            background: var(--muted);
+        }
+
+        .select-option .status-indicator.success {
+            background: var(--success);
+        }
+
+        .select-option .status-indicator.pending {
+            background: var(--warning);
+        }
+
+        .select-option .status-indicator.failed {
+            background: var(--danger);
+        }
+
+        /* Close dropdown when clicking outside */
+        .select-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 999;
+            display: none;
+        }
+
+        .select-overlay.show {
+            display: block;
+        }
+
+        body.select-open {
+            overflow: hidden;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 1rem;
+            height: fit-content;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        /* Payments Table */
+        .payments-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .payments-table-container {
+            overflow-x: auto;
+        }
+
+        .payments-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .payments-table th {
+            background: var(--light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #111827;
+            border-bottom: 2px solid var(--border);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .payments-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .payments-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .payments-table tr:hover {
+            background: var(--light);
+        }
+
+        /* Submission Title */
+        .submission-title {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .submission-title:hover {
+            color: #e56c0e;
+            text-decoration: underline;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-badge.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-badge.pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-badge.failed {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* Amount Styling */
+        .amount-cell {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .currency-symbol {
+            font-size: 0.9em;
+            margin-right: 0.25rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-view-receipt {
+            background: var(--info);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-view-receipt:hover {
+            background: #2563eb;
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-info {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .page-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: white;
+            color: #374151;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--light);
+            border-color: var(--primary);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .payments-container {
+                padding: 0 0.5rem;
+            }
+
+            .filter-controls {
+                padding: 1rem;
+            }
+
+            .payments-table td,
+            .payments-table th {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-view-receipt {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .payments-table {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="payments-container">
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <h1>Payment History</h1>
+                        <p>View and manage all your publication payments</p>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="filter-controls">
+                        <div class="filter-grid">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Search payments by reference, submission title, or author...">
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="statusFilter">Filter by Status</label>
+                                <div class="custom-select" id="customStatusSelect">
+                                    <div class="select-header" id="selectHeader">
+                                        <span id="selectedOptionText">All Status</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                    <div class="select-options" id="selectOptions">
+                                        <div class="select-option selected" data-value="">
+                                            <div class="status-indicator all"></div>
+                                            <span>All Status</span>
+                                        </div>
+                                        <div class="select-option" data-value="success">
+                                            <div class="status-indicator success"></div>
+                                            <span>Success</span>
+                                        </div>
+                                        <div class="select-option" data-value="pending">
+                                            <div class="status-indicator pending"></div>
+                                            <span>Pending</span>
+                                        </div>
+                                        <div class="select-option" data-value="failed">
+                                            <div class="status-indicator failed"></div>
+                                            <span>Failed</span>
+                                        </div>
+                                    </div>
+                                    <div class="select-overlay" id="selectOverlay"></div>
+                                </div>
+                            </div>
+
+                            <div class="filter-actions">
+                                <button id="applyFiltersBtn" class="btn btn-primary">
+                                    <i class="fas fa-filter"></i> Apply Filters
+                                </button>
+                                <button id="resetFiltersBtn" class="btn btn-secondary">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payments Table -->
+                    <div class="payments-card">
+                        <div class="payments-table-container">
+                            <table class="payments-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Submission</th>
+                                        <th>Payment Method</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsTableBody">
+                                    <!-- Payments will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="loadingState" style="display: none;">
+                            <div style="padding: 3rem; text-align: center;">
+                                <div class="loading-spinner"></div>
+                                <p style="color: var(--muted); margin-top: 1rem;">Loading payments...</p>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i class="fas fa-credit-card"></i>
+                            <h3>No Payments Found</h3>
+                            <p id="emptyStateMessage">No payment records available</p>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div id="pagination" class="pagination" style="display: none;">
+                            <div class="page-info">
+                                Showing <span id="currentRange">0-0</span> of <span id="totalRecords">0</span> payments
+                            </div>
+                            <div class="page-buttons">
+                                <button id="prevPageBtn" class="page-btn" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div id="pageNumbers"></div>
+                                <button id="nextPageBtn" class="page-btn" disabled>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'author';
+        window.SIDEBAR_ACTIVE_ID = 'author-payments';
+    </script>
+
+    <script src="/assets/js/layout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script type="module">
+        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+
+        class PaymentHistoryManager {
+            constructor() {
+                this.currentPage = 1;
+                this.limit = 20;
+                this.totalPages = 1;
+                this.totalRecords = 0;
+                this.searchQuery = '';
+                this.statusFilter = '';
+                this.isLoading = false;
+
+                this.initializeToastr();
+                this.initializeCustomSelect();
+                this.bindEvents();
+                this.loadPayments();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            initializeCustomSelect() {
+                const selectHeader = document.getElementById('selectHeader');
+                const selectOptions = document.getElementById('selectOptions');
+                const selectOverlay = document.getElementById('selectOverlay');
+                const selectOptionsList = selectOptions.querySelectorAll('.select-option');
+
+                // Toggle dropdown
+                selectHeader.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleSelectDropdown();
+                });
+
+                // Handle option selection
+                selectOptionsList.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.selectOption(option);
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                selectOverlay.addEventListener('click', () => {
+                    this.closeSelectDropdown();
+                });
+
+                // Close dropdown when clicking anywhere else
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.custom-select')) {
+                        this.closeSelectDropdown();
+                    }
+                });
+
+                // Close dropdown on ESC key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeSelectDropdown();
+                    }
+                });
+
+                // Initialize keyboard navigation
+                this.initializeKeyboardNavigation(selectOptionsList);
+            }
+
+            initializeKeyboardNavigation(selectOptionsList) {
+                document.addEventListener('keydown', (e) => {
+                    if (!document.getElementById('selectHeader').classList.contains('active')) {
+                        return;
+                    }
+
+                    const currentIndex = Array.from(selectOptionsList).findIndex(opt => opt.classList.contains('selected'));
+
+                    switch (e.key) {
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            const nextIndex = (currentIndex + 1) % selectOptionsList.length;
+                            this.highlightOption(selectOptionsList[nextIndex]);
+                            break;
+
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            const prevIndex = (currentIndex - 1 + selectOptionsList.length) % selectOptionsList.length;
+                            this.highlightOption(selectOptionsList[prevIndex]);
+                            break;
+
+                        case 'Enter':
+                            e.preventDefault();
+                            if (currentIndex >= 0) {
+                                this.selectOption(selectOptionsList[currentIndex]);
+                            }
+                            break;
+
+                        case ' ':
+                            e.preventDefault();
+                            if (currentIndex >= 0) {
+                                this.selectOption(selectOptionsList[currentIndex]);
+                            }
+                            break;
+                    }
+                });
+            }
+
+            highlightOption(optionElement) {
+                const allOptions = document.querySelectorAll('.select-option');
+                allOptions.forEach(opt => opt.classList.remove('selected'));
+                optionElement.classList.add('selected');
+
+                // Scroll into view if needed
+                optionElement.scrollIntoView({ block: 'nearest' });
+            }
+
+            toggleSelectDropdown() {
+                const selectHeader = document.getElementById('selectHeader');
+                const selectOptions = document.getElementById('selectOptions');
+                const selectOverlay = document.getElementById('selectOverlay');
+
+                const isActive = selectHeader.classList.contains('active');
+
+                if (isActive) {
+                    this.closeSelectDropdown();
+                } else {
+                    this.openSelectDropdown();
+                }
+            }
+
+            openSelectDropdown() {
+                const selectHeader = document.getElementById('selectHeader');
+                const selectOptions = document.getElementById('selectOptions');
+                const selectOverlay = document.getElementById('selectOverlay');
+
+                selectHeader.classList.add('active');
+                selectOptions.classList.add('show');
+                selectOverlay.classList.add('show');
+
+                // Add active class to body to prevent scrolling
+                document.body.classList.add('select-open');
+            }
+
+            closeSelectDropdown() {
+                const selectHeader = document.getElementById('selectHeader');
+                const selectOptions = document.getElementById('selectOptions');
+                const selectOverlay = document.getElementById('selectOverlay');
+
+                selectHeader.classList.remove('active');
+                selectOptions.classList.remove('show');
+                selectOverlay.classList.remove('show');
+
+                // Remove active class from body
+                document.body.classList.remove('select-open');
+            }
+
+            selectOption(optionElement) {
+                const value = optionElement.getAttribute('data-value');
+                const text = optionElement.querySelector('span').textContent;
+
+                // Update selected option text
+                document.getElementById('selectedOptionText').textContent = text;
+
+                // Update selected visual state
+                const allOptions = document.querySelectorAll('.select-option');
+                allOptions.forEach(opt => opt.classList.remove('selected'));
+                optionElement.classList.add('selected');
+
+                // Set the selected value
+                this.statusFilter = value;
+
+                // Close dropdown
+                this.closeSelectDropdown();
+            }
+
+            bindEvents() {
+                // Apply filters button
+                document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+                    this.applyFilters();
+                });
+
+                // Reset filters button
+                document.getElementById('resetFiltersBtn').addEventListener('click', () => {
+                    this.resetFilters();
+                });
+
+                // Search input - trigger on Enter key
+                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.applyFilters();
+                    }
+                });
+
+                // Previous page button
+                document.getElementById('prevPageBtn').addEventListener('click', () => {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                        this.loadPayments();
+                    }
+                });
+
+                // Next page button
+                document.getElementById('nextPageBtn').addEventListener('click', () => {
+                    if (this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                        this.loadPayments();
+                    }
+                });
+            }
+
+            applyFilters() {
+                this.searchQuery = document.getElementById('searchInput').value.trim();
+                // this.statusFilter is already set by the custom select
+                this.currentPage = 1;
+                this.loadPayments();
+            }
+
+            resetFilters() {
+                document.getElementById('searchInput').value = '';
+
+                // Reset custom select
+                const allOption = document.querySelector('.select-option[data-value=""]');
+                this.selectOption(allOption);
+
+                this.searchQuery = '';
+                this.statusFilter = '';
+                this.currentPage = 1;
+                this.loadPayments();
+            }
+
+            async loadPayments() {
+                try {
+                    this.showLoading();
+
+                    const token = getAuthToken2();
+                    if (!token) {
+                        throw new Error('Authentication required');
+                    }
+
+                    // Build query parameters
+                    const params = new URLSearchParams({
+                        page: this.currentPage,
+                        limit: this.limit
+                    });
+
+                    if (this.searchQuery) {
+                        params.append('search', this.searchQuery);
+                    }
+
+                    if (this.statusFilter) {
+                        params.append('status', this.statusFilter);
+                    }
+
+                    const response = await fetch(`${BASE_URL}/payments/all?${params.toString()}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to load payments: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.renderPayments(data);
+                    } else {
+                        throw new Error(data.message || 'Failed to load payments');
+                    }
+                } catch (error) {
+                    console.error('Error loading payments:', error);
+                    this.showError(error.message || 'Failed to load payment history');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            renderPayments(data) {
+                this.totalPages = data.totalPages || 1;
+                this.totalRecords = data.totalRecords || 0;
+
+                const payments = data.payments || [];
+                const tableBody = document.getElementById('paymentsTableBody');
+                const emptyState = document.getElementById('emptyState');
+                const emptyStateMessage = document.getElementById('emptyStateMessage');
+                const pagination = document.getElementById('pagination');
+
+                // Clear table
+                tableBody.innerHTML = '';
+
+                if (payments.length === 0) {
+                    // Show empty state
+                    tableBody.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    pagination.style.display = 'none';
+
+                    if (this.searchQuery || this.statusFilter) {
+                        emptyStateMessage.textContent = 'No payments match your filters. Try adjusting your search criteria.';
+                    } else {
+                        emptyStateMessage.textContent = 'You haven\'t made any payments yet.';
+                    }
+                    return;
+                }
+
+                // Hide empty state
+                tableBody.style.display = '';
+                emptyState.style.display = 'none';
+                pagination.style.display = 'flex';
+
+                // Render payments
+                payments.forEach(payment => {
+                    const row = this.createPaymentRow(payment);
+                    tableBody.appendChild(row);
+                });
+
+                // Update pagination
+                this.updatePagination();
+            }
+
+            createPaymentRow(payment) {
+                const row = document.createElement('tr');
+
+                // Format date
+                const paymentDate = new Date(payment.createdAt);
+                const formattedDate = paymentDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                // Truncate submission title
+                const submissionTitle = payment.submission?.title || 'Untitled Manuscript';
+                const truncatedTitle = submissionTitle.length > 50
+                    ? submissionTitle.substring(0, 50) + '...'
+                    : submissionTitle;
+
+                // Determine status
+                let statusText = payment.status || 'pending';
+                let statusClass = 'pending';
+
+                if (statusText === 'success') {
+                    statusClass = 'success';
+                    statusText = 'Success';
+                } else if (statusText === 'failed') {
+                    statusClass = 'failed';
+                    statusText = 'Failed';
+                } else {
+                    statusText = 'Pending';
+                }
+
+                // Format amount
+                const amount = payment.amount || 0;
+                const currency = payment.currency || 'NGN';
+                const formattedAmount = this.formatCurrency(amount, currency);
+
+                // Create row HTML
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight: 500;">${formattedDate}</div>
+                        <div style="font-size: 0.85rem; color: var(--muted);">
+                            ${paymentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                    </td>
+                    <td>
+                        <a href="submission-details.html?id=${payment.submissionId}" 
+                           class="submission-title" 
+                           title="${this.escapeHtml(submissionTitle)}">
+                            ${this.escapeHtml(truncatedTitle)}
+                        </a>
+                        <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">
+                            Ref: ${payment.reference || 'N/A'}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="text-transform: capitalize;">
+                            ${payment.paymentGateway || 'Paystack'}
+                        </div>
+                    </td>
+                    <td class="amount-cell">
+                        ${formattedAmount}
+                    </td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-view-receipt view-receipt-btn" 
+                                    data-payment-id="${payment._id}">
+                                <i class="fas fa-receipt"></i> View Receipt
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                // Add click event for view receipt button
+                const viewReceiptBtn = row.querySelector('.view-receipt-btn');
+                viewReceiptBtn.addEventListener('click', () => {
+                    this.viewReceipt(payment._id);
+                });
+
+                return row;
+            }
+
+            formatCurrency(amount, currency = 'NGN') {
+                // Convert to proper format (assuming amount is in kobo for NGN)
+                let formattedAmount = amount;
+                let currencySymbol = '₦';
+
+                if (currency === 'NGN') {
+                    // Paystack amounts are in kobo
+                    formattedAmount = amount / 100;
+                }
+
+                if (currency === 'USD') {
+                    currencySymbol = '$';
+                } else if (currency === 'EUR') {
+                    currencySymbol = '€';
+                } else if (currency === 'GBP') {
+                    currencySymbol = '£';
+                }
+
+                return `
+                    <span class="currency-symbol">${currencySymbol}</span>
+                    ${formattedAmount.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}
+                `;
+            }
+
+            updatePagination() {
+                const prevPageBtn = document.getElementById('prevPageBtn');
+                const nextPageBtn = document.getElementById('nextPageBtn');
+                const currentRange = document.getElementById('currentRange');
+                const totalRecords = document.getElementById('totalRecords');
+                const pageNumbers = document.getElementById('pageNumbers');
+
+                // Update range info
+                const start = ((this.currentPage - 1) * this.limit) + 1;
+                const end = Math.min(this.currentPage * this.limit, this.totalRecords);
+                currentRange.textContent = `${start}-${end}`;
+                totalRecords.textContent = this.totalRecords;
+
+                // Update button states
+                prevPageBtn.disabled = this.currentPage === 1;
+                nextPageBtn.disabled = this.currentPage === this.totalPages || this.totalPages === 0;
+
+                // Generate page numbers
+                pageNumbers.innerHTML = '';
+
+                // Show limited page numbers (max 5)
+                let startPage = Math.max(1, this.currentPage - 2);
+                let endPage = Math.min(this.totalPages, startPage + 4);
+
+                // Adjust if we're near the end
+                if (endPage - startPage < 4 && startPage > 1) {
+                    startPage = Math.max(1, endPage - 4);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-btn ${i === this.currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.addEventListener('click', () => {
+                        if (i !== this.currentPage) {
+                            this.currentPage = i;
+                            this.loadPayments();
+                        }
+                    });
+                    pageNumbers.appendChild(pageBtn);
+                }
+            }
+
+            viewReceipt(paymentId) {
+                if (!paymentId) {
+                    toastr.error('No payment ID found', 'Error');
+                    return;
+                }
+
+                // Redirect to receipt page
+                window.location.href = `/author/payment-receipt.html?reference=${paymentId}`;
+            }
+
+            showLoading() {
+                this.isLoading = true;
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('paymentsTableBody').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('pagination').style.display = 'none';
+
+                // Disable filter buttons
+                document.getElementById('applyFiltersBtn').disabled = true;
+                document.getElementById('resetFiltersBtn').disabled = true;
+            }
+
+            hideLoading() {
+                this.isLoading = false;
+                document.getElementById('loadingState').style.display = 'none';
+
+                // Re-enable filter buttons
+                document.getElementById('applyFiltersBtn').disabled = false;
+                document.getElementById('resetFiltersBtn').disabled = false;
+            }
+
+            showError(message) {
+                const emptyState = document.getElementById('emptyState');
+                const emptyStateMessage = document.getElementById('emptyStateMessage');
+
+                emptyState.style.display = 'block';
+                emptyStateMessage.textContent = message;
+
+                document.getElementById('paymentsTableBody').style.display = 'none';
+                document.getElementById('pagination').style.display = 'none';
+
+                toastr.error(message, 'Error');
+            }
+
+            escapeHtml(str) {
+                if (str === undefined || str === null) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new PaymentHistoryManager();
+        });
+    </script>
+</body>
+
+</html>

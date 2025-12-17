@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Make Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Paystack Inline -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      button {
+        background: #0b5ed7;
+        color: #fff;
+        border: none;
+        padding: 14px 20px;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .status {
+        margin-top: 15px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Publication Fee Payment</h2>
+      <p>Click below to complete your payment</p>
+
+      <button id="payBtn">Make Payment</button>
+
+      <div class="status" id="status"></div>
+    </div>
+
+    <script>
+      const payBtn = document.getElementById("payBtn");
+      const statusDiv = document.getElementById("status");
+
+      //  Replace with actual submission ID
+      const submissionId = "693f31a9879cdb56b7870ada";
+
+      //  Replace with stored  token from your local sorage
+      const authToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MzdmYjMxYmIwYzcwNTQzNzg0MTZmYyIsInJvbGUiOiJBdXRob3IiLCJpYXQiOjE3NjU0MDkyODUsImV4cCI6MTc2ODAwMTI4NX0.WdjBU2pedQr-ypooKj4LtS8Fu-RDyuaDGjdQqSB3Ta0";
+
+      payBtn.addEventListener("click", async () => {
+        payBtn.disabled = true;
+        statusDiv.innerText = "Initializing payment...";
+
+        try {
+          // 1️⃣ Call INITIATE API
+          const res = await fetch(
+            "https://fp.247laboratory.net/api/v1/payments/initiate",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+              body: JSON.stringify({ submissionId }),
+            }
+          );
+
+          const data = await res.json();
+
+          if (!data.success) {
+            throw new Error(data.message);
+          }
+
+          console.log("PAYSTACK PAYMENT DATA IS: ", data.paymentData);
+
+          const { reference, amount, email, publicKey } = data.paymentData;
+
+          // Open Paystack Modal
+          const handler = PaystackPop.setup({
+            key: publicKey,
+            email,
+            amount,
+            ref: reference,
+            callback: function (response) {
+              statusDiv.innerText = "Verifying payment...";
+
+              // VERIFY PAYMENT
+              verifyPayment(response.reference);
+            },
+            onClose: function () {
+              payBtn.disabled = false;
+              statusDiv.innerText = "Payment cancelled.";
+            },
+          });
+
+          handler.openIframe();
+        } catch (err) {
+          payBtn.disabled = false;
+          statusDiv.innerText = err.message || "Payment initialization failed";
+        }
+      });
+
+      async function verifyPayment(reference) {
+        try {
+          const res = await fetch(
+            `${BASE_URL}/api/v1/payments/verify?trxref=${reference}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+
+          const data = await res.json();
+
+          if (data.success) {
+            statusDiv.innerText = "Payment successful 🎉";
+
+            // You can take your actions here as payment is success full at this piont
+            setTimeout(() => {
+              alert("Pay ment was success successful. take action here?");
+            }, 2000);
+          } else {
+            throw new Error("Verification failed");
+          }
+        } catch (err) {
+          statusDiv.innerText = "Payment verification failed";
+          payBtn.disabled = false;
+        }
+      }
+    </script>
+  </body>
+</html>

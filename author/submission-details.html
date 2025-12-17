@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
     <!-- Header + Sidebar CSS -->
@@ -758,8 +759,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    /* background: rgba(0, 0, 0, 0.75); */
-    background: red;
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(4px);
     z-index: 100000;
 }
@@ -788,6 +788,85 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+/* Add to your existing CSS in submission details page */
+
+/* Payment Modal Specific Styles */
+.payment-modal .modal-content {
+    max-width: 500px;
+}
+
+/* Ensure modal doesn't close on outside click */
+.modal-overlay {
+    pointer-events: auto; /* Prevent clicks from passing through */
+}
+
+/* Disable close on outside click */
+.modal {
+    pointer-events: none;
+}
+
+.modal.active {
+    pointer-events: all;
+}
+
+/* Paystack modal z-index fix */
+.paystack-modal {
+    z-index: 100002 !important; /* Above our modal */
+}
+
+/* Payment Step Spinner */
+.processing-spinner {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Payment Modal Buttons */
+.modal-footer .btn {
+    min-width: 120px;
+}
+
+/* Disable backdrop close */
+.modal-overlay {
+    cursor: default;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Success Actions */
+.success-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+/* View Receipt Button */
+.btn-view-receipt {
+    background: var(--success);
+    color: white;
+}
+
+.btn-view-receipt:hover {
+    background: #0da65c;
+}
+
+/* Payment Status Text */
+.payment-status-text {
+    text-align: center;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    color: var(--muted);
 }
 
 /* Content Modal Specific Styles */
@@ -1175,13 +1254,30 @@
     font-weight: 600;
     color: #111827;
     margin-bottom: 0.5rem;
+
 }
 
-.payment-amount {
-    font-size: 2rem;
-    font-weight: 700;
+.payment-amount {    
+    font-size: 1.5rem;
+    font-weight: 600;
     color: var(--primary);
     margin: 0.5rem 0 1rem;
+}
+
+.currency-symbol {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-right: 0.25rem;
+}
+
+.amount-figure {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.amount-decimals {
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .payment-description {
@@ -1905,9 +2001,9 @@
     </div>
 
     <!-- Payment Modal -->
-    <div id="paymentModal" class="modal" style="display: none;">
+    <div id="paymentModal" class="modal payment-modal">
         <div class="modal-overlay"></div>
-        <div class="modal-content" style="max-width: 500px; margin: auto;">
+        <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
                 <h3><i class="fas fa-credit-card"></i> Complete Payment</h3>
                 <button class="modal-close" id="closePaymentModal">&times;</button>
@@ -1915,12 +2011,18 @@
             <div class="modal-body">
                 <!-- Payment Step 1: Confirmation -->
                 <div id="paymentConfirmationStep" class="payment-step active">
+                    <!-- Update the payment amount section in your modal -->
                     <div class="payment-info">
                         <div class="payment-icon">
                             <i class="fas fa-file-invoice-dollar"></i>
                         </div>
                         <h4>Publication Fee</h4>
-                        <p class="payment-amount">₦15,000.00</p>
+                        <p id="paymentAmount" class="payment-amount">
+                            <!-- Amount will be inserted here dynamically -->
+                            <span class="currency-symbol"></span>
+                            <span class="amount-figure"></span>
+                            <span class="amount-decimals"></span>
+                        </p>
                         <p class="payment-description">
                             Publication fee for manuscript: <strong id="paymentManuscriptTitle"></strong>
                         </p>
@@ -1937,10 +2039,15 @@
                                 <span class="detail-label">Payment Reference:</span>
                                 <span id="paymentReference" class="detail-value">Will be generated</span>
                             </div>
+                            <!-- You can also add a fee breakdown if needed -->
+                            <div class="detail-item">
+                                <span class="detail-label">Fee Type:</span>
+                                <span class="detail-value">Publication Fee</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-
+    
                 <!-- Payment Step 2: Processing -->
                 <div id="paymentProcessingStep" class="payment-step">
                     <div class="payment-processing">
@@ -1948,43 +2055,23 @@
                             <i class="fas fa-spinner fa-spin"></i>
                         </div>
                         <h4>Processing Payment</h4>
-                        <p>Please wait while we initialize your payment...</p>
-                        <div class="processing-status" id="processingStatus">
+                        <p class="payment-status-text" id="processingStatus">
                             Initializing payment gateway...
+                        </p>
+                        <div class="payment-status-text">
+                            <small>Please don't close this window while payment is in progress</small>
                         </div>
                     </div>
                 </div>
-
-                <!-- Payment Step 3: Redirect -->
-                <div id="paymentRedirectStep" class="payment-step">
-                    <div class="payment-redirect">
-                        <div class="redirect-icon">
-                            <i class="fas fa-external-link-alt"></i>
-                        </div>
-                        <h4>Redirecting to Payment Gateway</h4>
-                        <p>You will be redirected to Paystack to complete your payment securely.</p>
-                        <div class="redirect-timer">
-                            Redirecting in <span id="redirectTimer">5</span> seconds...
-                        </div>
-                        <div class="redirect-actions">
-                            <button id="manualRedirectBtn" class="btn-primary">
-                                <i class="fas fa-external-link-alt"></i> <span style="margin-left: 5px;">Proceed to Payment Now</span>
-                            </button>
-                            <button id="cancelRedirectBtn" class="btn-secondary">
-                                Cancel Payment
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment Step 4: Success -->
+    
+                <!-- Payment Step 3: Success -->
                 <div id="paymentSuccessStep" class="payment-step">
                     <div class="payment-success">
                         <div class="success-icon">
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <h4>Payment Successful!</h4>
-                        <p>Your payment has been processed successfully.</p>
+                        <p class="payment-status-text">Your payment has been processed successfully.</p>
                         <div class="success-details">
                             <div class="success-item">
                                 <i class="fas fa-receipt"></i>
@@ -2002,32 +2089,32 @@
                             </div>
                         </div>
                         <div class="success-actions">
-                            <button id="viewReceiptBtn" class="btn-primary">
+                            <button id="viewReceiptBtn" class="btn btn-view-receipt">
                                 <i class="fas fa-receipt"></i> View Receipt
                             </button>
-                            <button id="closeSuccessBtn" class="btn-secondary">
+                            <button id="closeSuccessBtn" class="btn btn-secondary">
                                 <i class="fas fa-check"></i> Done
                             </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Payment Step 5: Error -->
+    
+                <!-- Payment Step 4: Error -->
                 <div id="paymentErrorStep" class="payment-step">
                     <div class="payment-error">
                         <div class="error-icon">
                             <i class="fas fa-exclamation-triangle"></i>
                         </div>
                         <h4>Payment Failed</h4>
-                        <p id="errorMessage">There was an error processing your payment.</p>
+                        <p id="errorMessage" class="payment-status-text">There was an error processing your payment.</p>
                         <div class="error-details" id="errorDetails">
                             <!-- Error details will be shown here -->
                         </div>
                         <div class="error-actions">
-                            <button id="retryPaymentBtn" class="btn-primary">
+                            <button id="retryPaymentBtn" class="btn btn-primary">
                                 <i class="fas fa-redo"></i> Try Again
                             </button>
-                            <button id="closeErrorBtn" class="btn-secondary">
+                            <button id="closeErrorBtn" class="btn btn-secondary">
                                 Cancel
                             </button>
                         </div>
@@ -2035,16 +2122,15 @@
                 </div>
             </div>
             <div class="modal-footer" id="paymentModalFooter">
-                <button id="confirmPaymentBtn" class="btn-primary">
+                <button id="confirmPaymentBtn" class="btn btn-primary">
                     <i class="fas fa-credit-card"></i> Proceed to Payment
                 </button>
-                <button id="cancelPaymentBtn" class="btn-secondary">
+                <button id="cancelPaymentBtn" class="btn btn-secondary">
                     Cancel
                 </button>
             </div>
         </div>
     </div>
-
     <script>
         window.SIDEBAR_MODULE = 'author';
         window.SIDEBAR_ACTIVE_ID = 'view-submission';
@@ -2058,1597 +2144,1275 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Page-specific JavaScript -->
     <script type="module">
-        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+        // submission-details-fixed.js
+            import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
 
-        class AuthorSubmissionDetailsManager {
-            constructor() {
-                this.submissionId = this.getSubmissionIdFromURL();
-                this.submission = null;
-                this.editorialDecision = null;
-                this.reviewerFeedback = null;
-                this.userCache = new Map();
-                this.journalCache = new Map();
-                this.currentModalContent = '';
-                this.currentModalType = '';
-                this.currentModalTitle = '';
-                this.paymentReference = null;
-                this.paymentAuthorizationUrl = null;
-                this.paymentTimer = null;
-                this.currentStep = 'confirmation';
-                this.verificationInterval = null;
+            class AuthorSubmissionDetailsManager {
+                constructor() {
+                    // safe retrieval of submission id
+                    this.submissionId = this.getSubmissionIdFromURL();
+                    this.submission = null;
+                    this.editorialDecision = null;
+                    this.reviewerFeedback = null;
+                    this.userCache = new Map();
+                    this.journalCache = new Map();
+                    this.currentModalContent = '';
+                    this.currentModalType = '';
+                    this.currentModalTitle = '';
+                    this.paymentReference = null;
+                    this.paymentAuthorizationUrl = null;
+                    this.paymentTimer = null;
+                    this.currentStep = 'confirmation';
+                    this.verificationInterval = null;
+                    this.publicationFee = null;
+                    this.currency = 'NGN';
+                    this.paymentData = null;
+                    this.paymentId = null;
+                    this.refreshOnClose = false;
 
-                if (!this.submissionId) {
-                    this.showError('No submission ID provided');
-                    return;
+                    if (!this.submissionId) {
+                        this.showError('No submission ID provided');
+                        return;
+                    }
+
+                    this.initializeToastr();
+                    this.bindEvents();
+                    this.initialize();
                 }
 
-                this.initializeToastr();
-                this.bindEvents();
-                this.initialize();
-            }
-
-            initializeToastr() {
-                toastr.options = {
-                    closeButton: false,
-                    progressBar: false,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000,
-                    extendedTimeOut: 1000
-                };
-            }
-
-            bindEvents() {
-                // View full timeline button
-                document.getElementById('viewFullTimelineBtn')?.addEventListener('click', () => {
-                    window.location.href = `timeline.html?id=${this.submissionId}`;
-                });
-
-                // Resubmit button
-                document.getElementById('resubmitBtn')?.addEventListener('click', () => {
-                    window.location.href = `resubmission.html?id=${this.submissionId}`;
-                });
-
-                // View all reviews button
-                document.getElementById('viewAllReviewsBtn')?.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.location.href = `author-review-details.html?id=${this.submissionId}`;
-                });
-
-                // View all revisions button
-                document.getElementById('viewAllRevisionsBtn')?.addEventListener('click', () => {
-                    window.location.href = `revision-history.html?id=${this.submissionId}`;
-                });
-
-                // Content modal close button
-                document.getElementById('closeContentModal')?.addEventListener('click', () => {
-                    this.closeContentModal();
-                });
-
-                // Close modal when clicking outside
-                document.getElementById('contentModal')?.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('modal-overlay')) {
-                        this.closeContentModal();
+                // Safe getter for URL id
+                getSubmissionIdFromURL() {
+                    try {
+                        const params = new URLSearchParams(window.location.search);
+                        return params.get('id');
+                    } catch (err) {
+                        console.warn('getSubmissionIdFromURL error', err);
+                        return null;
                     }
-                });
+                }
 
-                // Close modal with Escape key
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        this.closeContentModal();
+                initializeToastr() {
+                    if (window.toastr) {
+                        toastr.options = {
+                            closeButton: false,
+                            progressBar: false,
+                            positionClass: "toast-top-right",
+                            timeOut: 3000,
+                            extendedTimeOut: 1000
+                        };
                     }
-                });
+                }
 
-                // Setup edit button with submission ID
-                document.getElementById('editSubmissionBtn')?.addEventListener('click', () => {
-                    if (this.submissionId) {
-                        window.location.href = `/author/edit-submission.html?id=${this.submissionId}`;
-                    } else {
-                        toastr.error('Submission ID not found', 'Error');
-                    }
-                });
+                bindEvents() {
+                    document.getElementById('viewFullTimelineBtn')?.addEventListener('click', () => {
+                        window.location.href = `timeline.html?id=${this.submissionId}`;
+                    });
 
-                // Bind payment events
-                this.bindPaymentEvents();
-            }
+                    document.getElementById('resubmitBtn')?.addEventListener('click', () => {
+                        window.location.href = `resubmission.html?id=${this.submissionId}`;
+                    });
 
-            bindPaymentEvents() {
-                // Make Payment button in status notification
-                document.addEventListener('click', (e) => {
-                    if (e.target.id === 'makePaymentBtn' || e.target.closest('#makePaymentBtn')) {
+                    document.getElementById('viewAllReviewsBtn')?.addEventListener('click', (e) => {
                         e.preventDefault();
-                        e.stopPropagation();
-                        this.openPaymentModal();
-                    }
-                });
-
-                // Payment Modal Events
-                const paymentModal = document.getElementById('paymentModal');
-                const closePaymentModal = document.getElementById('closePaymentModal');
-                const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
-                const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
-                const closeErrorBtn = document.getElementById('closeErrorBtn');
-                const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-                const retryPaymentBtn = document.getElementById('retryPaymentBtn');
-                const viewReceiptBtn = document.getElementById('viewReceiptBtn');
-                const manualRedirectBtn = document.getElementById('manualRedirectBtn');
-                const cancelRedirectBtn = document.getElementById('cancelRedirectBtn');
-
-                if (closePaymentModal) {
-                    closePaymentModal.addEventListener('click', () => this.closePaymentModal());
-                }
-
-                if (cancelPaymentBtn) {
-                    cancelPaymentBtn.addEventListener('click', () => this.closePaymentModal());
-                }
-
-                if (confirmPaymentBtn) {
-                    confirmPaymentBtn.addEventListener('click', () => this.initiatePayment());
-                }
-
-                if (closeErrorBtn) {
-                    closeErrorBtn.addEventListener('click', () => this.closePaymentModal());
-                }
-
-                if (closeSuccessBtn) {
-                    closeSuccessBtn.addEventListener('click', () => this.completePaymentProcess());
-                }
-
-                if (retryPaymentBtn) {
-                    retryPaymentBtn.addEventListener('click', () => this.retryPayment());
-                }
-
-                if (viewReceiptBtn) {
-                    viewReceiptBtn.addEventListener('click', () => this.viewReceipt());
-                }
-
-                if (manualRedirectBtn) {
-                    manualRedirectBtn.addEventListener('click', () => this.redirectToPaymentGateway());
-                }
-
-                if (cancelRedirectBtn) {
-                    cancelRedirectBtn.addEventListener('click', () => this.cancelRedirect());
-                }
-
-                // Close modal when clicking outside
-                if (paymentModal) {
-                    paymentModal.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('modal-overlay')) {
-                            this.closePaymentModal();
-                        }
+                        window.location.href = `author-review-details.html?id=${this.submissionId}`;
                     });
-                }
-            }
 
-            getSubmissionIdFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('id');
-            }
+                    document.getElementById('viewAllRevisionsBtn')?.addEventListener('click', () => {
+                        window.location.href = `revision-history.html?id=${this.submissionId}`;
+                    });
 
-            async initialize() {
-                try {
-                    this.showLoading();
-                    await this.loadMainSubmissionData();
-                    await this.loadReviewDetails();
-                    await this.loadAssignedReviewers();
-                    await this.loadLatestTimelineEvent();
-                    this.hideLoading();
-                    this.showContent();
-                    this.checkAndShowStatusNotification();
-                    this.handleEditButtonVisibility();
-                } catch (error) {
-                    console.error('Error initializing:', error);
-                    this.showError('Failed to load submission details. Please try again.');
-                }
-            }
+                    document.getElementById('closeContentModal')?.addEventListener('click', () => this.closeContentModal());
+                    document.getElementById('contentModal')?.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('modal-overlay')) this.closeContentModal();
+                    });
 
-            async loadMainSubmissionData() {
-                try {
-                    const token = getAuthToken2();
-                    if (!token) throw new Error('Authentication token not found');
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') this.closeContentModal();
+                    });
 
-                    // Fetch main submission data
-                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
+                    document.getElementById('editSubmissionBtn')?.addEventListener('click', () => {
+                        if (this.submissionId) {
+                            window.location.href = `/author/edit-submission.html?id=${this.submissionId}`;
+                        } else {
+                            toastr?.error('Submission ID not found', 'Error');
                         }
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch submission: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to load submission');
-                    }
-
-                    this.submission = data.submission || data;
-
-                    // Get submitter info
-                    const submittedEvent = (this.submission.history || []).find(ev => ev.status === 'submitted');
-                    if (submittedEvent?.by) {
-                        const submitter = await this.getUserDetails(submittedEvent.by);
-                        if (submitter) {
-                            this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
-                            this.submission.submitterEmail = submitter.email;
-                        }
-                    }
-
-                    // Get journal details if journalId is available
-                    if (this.submission.journalId && this.submission.journalId._id) {
-                        const journal = await this.getJournalDetails(this.submission.journalId._id);
-                        if (journal) {
-                            // Merge journal details
-                            this.submission.journalId = {
-                                ...this.submission.journalId,
-                                title: journal.title || this.submission.journalId.title,
-                                issn: journal.issn || this.submission.journalId.issn
-                            };
-                        }
-                    }
-
-                    this.renderManuscriptHeader();
-                    this.renderAbstract();
-                    this.renderAuthors();
-                    this.setupFileActions();
-                    this.renderRevisions();
-
-                } catch (error) {
-                    console.error('Error loading submission data:', error);
-                    throw error;
+                    // Payment bindings
+                    this.bindPaymentEvents();
                 }
-            }
 
-            checkAndShowStatusNotification() {
-                if (!this.submission) return;
+                /* ---------- Payment bindings ---------- */
+                bindPaymentEvents() {
+                    document.addEventListener('click', (e) => {
+                        const t = e.target;
+                        if (!t) return;
+                        if (t.id === 'makePaymentBtn' || (t.closest && t.closest('#makePaymentBtn'))) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.openPaymentModal();
+                        }
+                    });
 
-                const status = (this.submission.currentStatus || this.submission.status || '').toLowerCase();
-                const statusNotification = document.getElementById('statusNotification');
-                const notificationTitle = document.getElementById('notificationTitle');
-                const notificationContent = document.getElementById('notificationContent');
-                const notificationActions = document.getElementById('notificationActions');
-                const notificationIcons = document.getElementById('notificationIcons');
+                    const paymentModal = document.getElementById('paymentModal');
+                    const closePaymentModalBtn = document.getElementById('closePaymentModal');
+                    const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+                    const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+                    const closeErrorBtn = document.getElementById('closeErrorBtn');
+                    const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+                    const retryPaymentBtn = document.getElementById('retryPaymentBtn');
+                    const viewReceiptBtn = document.getElementById('viewReceiptBtn');
 
-                // Hide by default
-                statusNotification.style.display = 'none';
+                    if (closePaymentModalBtn) closePaymentModalBtn.addEventListener('click', () => this.onCloseAfterResult(true));
+                    if (cancelPaymentBtn) cancelPaymentBtn.addEventListener('click', () => this.onCancelPayment());
+                    if (confirmPaymentBtn) confirmPaymentBtn.addEventListener('click', () => this.initiatePayment());
+                    if (closeErrorBtn) closeErrorBtn.addEventListener('click', () => this.onCloseAfterResult());
+                    if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', () => this.onCloseAfterResult());
+                    if (retryPaymentBtn) retryPaymentBtn.addEventListener('click', () => this.retryPayment());
+                    if (viewReceiptBtn) viewReceiptBtn.addEventListener('click', async () => {
+                        await this.viewReceipt();
+                    });
 
-                // Define status messages and configurations
-                const statusConfigs = {
-                    'awaiting_payment': {
-                        title: 'Awaiting Payment',
-                        message: 'Your submission has been approved by the editorial team and is ready for publication. To proceed with the publication process, please complete the payment.',
-                        icon: 'fas fa-credit-card',
-                        iconClass: 'warning',
-                        actions: '<button id="makePaymentBtn" class="btn-payment"><i class="fas fa-credit-card"></i> Make Payment</button>'
-                    },
-                    'rejected': {
-                        title: 'Submission Rejected',
-                        message: 'We regret to inform you that your submission has not been accepted for publication. The editorial team has reviewed your manuscript and determined that it does not meet the journal\'s publication criteria at this time.',
-                        icon: 'fas fa-times-circle',
-                        iconClass: 'danger',
-                        actions: ''
-                    },
-                    'published': {
-                        title: 'Congratulations! Published',
-                        message: 'Great news! Your manuscript has been successfully published. You can now view it in the journal\'s latest issue. Thank you for contributing to our publication.',
-                        icon: 'fas fa-check-circle',
-                        iconClass: 'success',
-                        actions: '<a href="published.html" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> View Published Article</a>'
-                    },
-                    'accepted': {
-                        title: 'Submission Accepted',
-                        message: 'Excellent news! Your submission has been accepted for publication. The editorial team is preparing it for the upcoming issue.',
-                        icon: 'fas fa-check-circle',
-                        iconClass: 'success',
-                        actions: ''
+                    if (paymentModal) {
+                        paymentModal.addEventListener('click', (e) => {
+                            if (e.target.classList.contains('modal-overlay')) {
+                                // intentionally do not close on overlay click when payment in progress
+                                e.stopPropagation();
+                            }
+                        });
                     }
-                };
 
-                const config = statusConfigs[status];
-                if (config) {
-                    // Show notification
-                    statusNotification.className = `status-notification ${status}`;
-                    notificationTitle.textContent = config.title;
-                    notificationContent.innerHTML = `<p>${config.message}</p>`;
-                    notificationActions.innerHTML = config.actions;
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && paymentModal && paymentModal.classList.contains('active')) {
+                            // don't let ESC close the payment modal unexpectedly
+                            e.preventDefault();
+                        }
+                    });
+                }
 
-                    // Set icon
-                    notificationIcons.className = `notification-icon ${config.iconClass}`;
-                    notificationIcons.innerHTML = `<i class="${config.icon}"></i>`;
+                onCancelPayment() {
+                    // allow cancel to close the modal (force)
+                    this.closePaymentModal(true);
+                }
 
+                // Called when closing after success or error - refreshes if flag set
+                onCloseAfterResult(force = false) {
+                    this.closePaymentModal(force);
+                }
+
+                /* ---------- Ensure notification DOM nodes exist ---------- */
+                ensureNotificationNodes() {
+                    const statusNotification = document.getElementById('statusNotification');
+                    if (!statusNotification) return null;
+
+                    // If expected child elements don't exist, create them (so later code can safely reference by id)
+                    const ensure = (id, className = '') => {
+                        let el = document.getElementById(id);
+                        if (!el) {
+                            el = document.createElement('div');
+                            el.id = id;
+                            if (className) el.className = className;
+                            statusNotification.appendChild(el);
+                        }
+                        return el;
+                    };
+
+                    // We expect structure: notificationIcons, notificationTitle, notificationContent, notificationActions
+                    ensure('notificationIcons', 'notification-icon');
+                    ensure('notificationTitle', 'notification-title');
+                    ensure('notificationContent', 'notification-content');
+                    ensure('notificationActions', 'notification-actions');
+
+                    return {
+                        statusNotification,
+                        notificationIcons: document.getElementById('notificationIcons'),
+                        notificationTitle: document.getElementById('notificationTitle'),
+                        notificationContent: document.getElementById('notificationContent'),
+                        notificationActions: document.getElementById('notificationActions')
+                    };
+                }
+
+                showStatusLoading() {
+                    const statusNotification = document.getElementById('statusNotification');
+                    if (!statusNotification) return;
+
+                    // ensure the child nodes we'll write into exist
+                    const nodes = this.ensureNotificationNodes();
+                    if (!nodes) return;
+
+                    statusNotification.className = 'status-notification loading';
                     statusNotification.style.display = 'block';
-                }
-            }
 
-            handleEditButtonVisibility() {
-                if (!this.submission) return;
-
-                const status = (this.submission.currentStatus || this.submission.status || '').toLowerCase();
-                const editButton = document.getElementById('editSubmissionBtn');
-
-                // Statuses where edit button should be hidden
-                const hideEditForStatuses = ['accepted', 'rejected', 'awaiting_payment', 'published'];
-
-                if (!hideEditForStatuses.includes(status)) {
-                    editButton.style.display = 'block';
-                }
-            }
-
-            openPaymentModal() {
-                if (!this.submission) {
-                    toastr.error('Submission data not loaded', 'Error');
-                    return;
+                    // Fill nodes in a safe way
+                    if (nodes.notificationIcons) nodes.notificationIcons.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+                    if (nodes.notificationTitle) nodes.notificationTitle.textContent = 'Loading...';
+                    if (nodes.notificationContent) nodes.notificationContent.innerHTML = `<p>Loading status information...</p>`;
+                    if (nodes.notificationActions) nodes.notificationActions.innerHTML = '';
                 }
 
-                const paymentModal = document.getElementById('paymentModal');
-                const paymentManuscriptTitle = document.getElementById('paymentManuscriptTitle');
-                const paymentJournalName = document.getElementById('paymentJournalName');
-                const paymentSubmissionId = document.getElementById('paymentSubmissionId');
+                /* ---------- Initialization / load ---------- */
+                async initialize() {
+                    try {
+                        this.showStatusLoading();
+                        this.showLoading();
 
-                if (paymentModal && paymentManuscriptTitle && paymentJournalName && paymentSubmissionId) {
-                    // Set payment details
+                        await this.loadMainSubmissionData();
+                        await this.loadReviewDetails();
+                        await this.loadAssignedReviewers();
+                        await this.loadLatestTimelineEvent();
+
+                        this.hideLoading();
+                        this.showContent();
+
+                        // Now render actual notification (safe)
+                        this.checkAndShowStatusNotification();
+
+                        this.handleEditButtonVisibility();
+                    } catch (error) {
+                        console.error('Error initializing:', error);
+                        this.showError('Failed to load submission details. Please try again.');
+                    }
+                }
+
+                async loadMainSubmissionData() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) throw new Error('Authentication token not found');
+
+                        const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch submission: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        if (!data.success) throw new Error(data.message || 'Failed to load submission');
+
+                        this.submission = data.submission || data;
+
+                        // submitter
+                        const submittedEvent = (this.submission.history || []).find(ev => ev.status === 'submitted');
+                        if (submittedEvent?.by) {
+                            const submitter = await this.getUserDetails(submittedEvent.by);
+                            if (submitter) {
+                                this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
+                                this.submission.submitterEmail = submitter.email;
+                            }
+                        }
+
+                        // journal
+                        if (this.submission.journalId && this.submission.journalId._id) {
+                            const journal = await this.getJournalDetails(this.submission.journalId._id);
+                            if (journal) {
+                                this.submission.journalId = {
+                                    ...this.submission.journalId,
+                                    title: journal.title || this.submission.journalId.title,
+                                    issn: journal.issn || this.submission.journalId.issn,
+                                    publicationFee: journal.publicationFee,
+                                    currency: journal.currency
+                                };
+                                this.publicationFee = journal.publicationFee || this.publicationFee;
+                                this.currency = journal.currency || this.currency;
+                            }
+                        }
+
+                        this.renderManuscriptHeader();
+                        this.renderAbstract();
+                        this.renderAuthors();
+                        this.setupFileActions();
+                        this.renderRevisions();
+                    } catch (error) {
+                        console.error('Error loading submission data:', error);
+                        throw error;
+                    }
+                }
+
+                checkAndShowStatusNotification() {
+                    if (!this.submission) return;
+                    const status = (this.submission.currentStatus || this.submission.status || '').toLowerCase();
+                    const nodemap = this.ensureNotificationNodes();
+                    if (!nodemap) return;
+
+                    const { statusNotification, notificationIcons, notificationTitle, notificationContent, notificationActions } = nodemap;
+
+                    // hide by default
+                    if (statusNotification) statusNotification.style.display = 'none';
+
+                    const statusConfigs = {
+                        'awaiting_payment': {
+                            title: 'Awaiting Payment',
+                            message: 'Your submission has been approved and is ready for publication. To continue, complete payment.',
+                            iconHtml: '<i class="fas fa-credit-card"></i>',
+                            iconClass: 'warning',
+                            actionsHtml: '<button id="makePaymentBtn" class="btn-payment"><i class="fas fa-credit-card"></i> Make Payment</button>'
+                        },
+                        'rejected': {
+                            title: 'Submission Rejected',
+                            message: 'We regret to inform you that your submission was not accepted for publication.',
+                            iconHtml: '<i class="fas fa-times-circle"></i>',
+                            iconClass: 'danger',
+                            actionsHtml: ''
+                        },
+                        'published': {
+                            title: 'Published',
+                            message: 'Your manuscript has been published.',
+                            iconHtml: '<i class="fas fa-check-circle"></i>',
+                            iconClass: 'success',
+                            actionsHtml: '<a href="published.html" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> View Published Article</a>'
+                        },
+                        'accepted': {
+                            title: 'Accepted',
+                            message: 'Your submission has been accepted for publication.',
+                            iconHtml: '<i class="fas fa-check-circle"></i>',
+                            iconClass: 'success',
+                            actionsHtml: ''
+                        }
+                    };
+
+                    const config = statusConfigs[status];
+
+                    if (!config) {
+                        if (statusNotification) statusNotification.style.display = 'none';
+                        return;
+                    }
+
+                    if (statusNotification) {
+                        statusNotification.className = `status-notification ${status}`;
+                        statusNotification.style.display = 'block';
+                    }
+                    if (notificationTitle) notificationTitle.textContent = config.title;
+                    if (notificationContent) notificationContent.innerHTML = `<p>${config.message}</p>`;
+                    if (notificationActions) notificationActions.innerHTML = config.actionsHtml || '';
+                    if (notificationIcons) {
+                        notificationIcons.className = `notification-icon ${config.iconClass}`;
+                        notificationIcons.innerHTML = config.iconHtml || '';
+                    }
+                }
+
+                handleEditButtonVisibility() {
+                    if (!this.submission) return;
+                    const status = (this.submission.currentStatus || this.submission.status || '').toLowerCase();
+                    const editButton = document.getElementById('editSubmissionBtn');
+                    const hideEditForStatuses = ['accepted', 'rejected', 'awaiting_payment', 'published'];
+                    if (!editButton) return;
+                    editButton.style.display = hideEditForStatuses.includes(status) ? 'none' : 'block';
+                }
+
+                /* ---------- Payment modal open/close ---------- */
+                openPaymentModal() {
+                    if (!this.submission) {
+                        toastr?.error('Submission data not loaded', 'Error');
+                        return;
+                    }
+
+                    const paymentModal = document.getElementById('paymentModal');
+                    const paymentManuscriptTitle = document.getElementById('paymentManuscriptTitle');
+                    const paymentJournalName = document.getElementById('paymentJournalName');
+                    const paymentSubmissionId = document.getElementById('paymentSubmissionId');
+                    const paymentAmount = document.getElementById('paymentAmount');
+
+                    if (!paymentModal || !paymentManuscriptTitle || !paymentJournalName || !paymentSubmissionId || !paymentAmount) {
+                        console.warn('Payment modal elements missing');
+                        return;
+                    }
+
                     paymentManuscriptTitle.textContent = this.submission.title || 'Untitled Manuscript';
                     paymentJournalName.textContent = this.submission.journalId?.title || 'Unknown Journal';
                     paymentSubmissionId.textContent = this.submissionId;
 
-                    // Reset modal to initial state
+                    const fee = this.publicationFee || 15000;
+                    paymentAmount.innerHTML = this.formatCurrency(fee, this.currency || 'NGN');
+
                     this.resetPaymentModal();
                     this.showPaymentStep('confirmation');
 
-                    // Show modal
-                    paymentModal.style.display = 'flex';
+                    paymentModal.classList.add('active');
+                    document.body.classList.add('modal-open');
                     document.body.style.overflow = 'hidden';
                 }
-            }
 
-            closePaymentModal() {
-                const paymentModal = document.getElementById('paymentModal');
-                if (paymentModal) {
-                    paymentModal.style.display = 'none';
-                    document.body.style.overflow = '';
+                resetPaymentModal() {
+                    this.showPaymentStep('confirmation');
+                    this.currentStep = 'confirmation';
+                    this.paymentReference = null;
+                    this.paymentData = null;
+                    this.paymentId = null;
+                    this.refreshOnClose = false;
 
-                    // Clear any active timers
-                    if (this.paymentTimer) {
-                        clearInterval(this.paymentTimer);
-                        this.paymentTimer = null;
-                    }
-
-                    // Clear verification interval
-                    if (this.verificationInterval) {
-                        clearInterval(this.verificationInterval);
-                        this.verificationInterval = null;
-                    }
-                }
-            }
-
-            resetPaymentModal() {
-                this.showPaymentStep('confirmation');
-                this.currentStep = 'confirmation';
-
-                // Reset UI elements
-                const paymentReference = document.getElementById('paymentReference');
-                const processingStatus = document.getElementById('processingStatus');
-                const successReference = document.getElementById('successReference');
-                const successDate = document.getElementById('successDate');
-                const errorMessage = document.getElementById('errorMessage');
-                const errorDetails = document.getElementById('errorDetails');
-
-                if (paymentReference) paymentReference.textContent = 'N/A';
-                if (processingStatus) processingStatus.textContent = 'Initializing payment gateway...';
-                if (successReference) successReference.textContent = '';
-                if (successDate) successDate.textContent = '';
-                if (errorMessage) errorMessage.textContent = 'There was an error processing your payment.';
-                if (errorDetails) errorDetails.innerHTML = '';
-
-                // Show/hide footer buttons based on step
-                this.updateModalFooter();
-            }
-
-            showPaymentStep(step) {
-                const steps = ['confirmation', 'processing', 'redirect', 'success', 'error'];
-
-                // Hide all steps
-                steps.forEach(stepName => {
-                    const stepElement = document.getElementById(`payment${stepName.charAt(0).toUpperCase() + stepName.slice(1)}Step`);
-                    if (stepElement) {
-                        stepElement.classList.remove('active');
-                    }
-                });
-
-                // Show the requested step
-                const activeStepElement = document.getElementById(`payment${step.charAt(0).toUpperCase() + step.slice(1)}Step`);
-                if (activeStepElement) {
-                    activeStepElement.classList.add('active');
-                }
-
-                this.currentStep = step;
-                this.updateModalFooter();
-            }
-
-            updateModalFooter() {
-                const modalFooter = document.getElementById('paymentModalFooter');
-                const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
-                const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
-
-                if (!modalFooter || !confirmPaymentBtn || !cancelPaymentBtn) return;
-
-                switch (this.currentStep) {
-                    case 'confirmation':
-                        modalFooter.style.display = 'flex';
-                        confirmPaymentBtn.style.display = 'inline-flex';
-                        cancelPaymentBtn.style.display = 'inline-flex';
-                        confirmPaymentBtn.disabled = false;
-                        confirmPaymentBtn.innerHTML = '<i class="fas fa-credit-card"></i> Proceed to Payment';
-                        break;
-
-                    case 'processing':
-                    case 'redirect':
-                        modalFooter.style.display = 'none';
-                        break;
-
-                    case 'success':
-                    case 'error':
-                        modalFooter.style.display = 'none';
-                        break;
-                }
-            }
-
-            async initiatePayment() {
-                try {
-                    const token = getAuthToken2();
-                    if (!token) {
-                        toastr.error('Authentication required. Please login again.', 'Error');
-                        this.showPaymentError('Authentication required');
-                        return;
-                    }
-
-                    // Show processing step
-                    this.showPaymentStep('processing');
-
-                    // Call the payment initiation API
-                    const response = await fetch(`${BASE_URL}/payments/initiate`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            submissionId: this.submissionId
-                        })
-                    });
-
-                    const responseText = await response.text();
-                    let data;
-
-                    try {
-                        data = JSON.parse(responseText);
-                    } catch (e) {
-                        throw new Error('Invalid response from payment server');
-                    }
-
-                    if (!response.ok) {
-                        throw new Error(data.message || `Payment initiation failed: ${response.status}`);
-                    }
-
-                    if (!data.success) {
-                        throw new Error(data.message || 'Payment initiation failed');
-                    }
-
-                    // Store payment details
-                    this.paymentReference = data.reference;
-                    this.paymentAuthorizationUrl = data.authorizationUrl;
-
-                    // Update UI with reference
                     const paymentReference = document.getElementById('paymentReference');
-                    if (paymentReference) {
-                        paymentReference.textContent = data.reference;
+                    const processingStatus = document.getElementById('processingStatus');
+                    const successReference = document.getElementById('successReference');
+                    const successDate = document.getElementById('successDate');
+                    const errorMessage = document.getElementById('errorMessage');
+                    const errorDetails = document.getElementById('errorDetails');
+
+                    if (paymentReference) paymentReference.textContent = 'Will be generated';
+                    if (processingStatus) processingStatus.textContent = 'Initializing payment gateway...';
+                    if (successReference) successReference.textContent = '';
+                    if (successDate) successDate.textContent = '';
+                    if (errorMessage) errorMessage.textContent = 'There was an error processing your payment.';
+                    if (errorDetails) errorDetails.innerHTML = '';
+
+                    this.disableModalClose(false);
+                    this.updateModalFooter();
+                }
+
+                showPaymentStep(step) {
+                    const steps = ['confirmation', 'processing', 'success', 'error'];
+                    steps.forEach(s => {
+                        const el = document.getElementById(`payment${s.charAt(0).toUpperCase() + s.slice(1)}Step`);
+                        if (el) el.classList.remove('active');
+                    });
+                    const activeEl = document.getElementById(`payment${step.charAt(0).toUpperCase() + step.slice(1)}Step`);
+                    if (activeEl) activeEl.classList.add('active');
+                    this.currentStep = step;
+                    this.updateModalFooter();
+                }
+
+                updateModalFooter() {
+                    const modalFooter = document.getElementById('paymentModalFooter');
+                    const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+                    const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+                    if (!modalFooter || !confirmPaymentBtn || !cancelPaymentBtn) return;
+
+                    switch (this.currentStep) {
+                        case 'confirmation':
+                            modalFooter.style.display = 'flex';
+                            confirmPaymentBtn.style.display = 'inline-flex';
+                            cancelPaymentBtn.style.display = 'inline-flex';
+                            confirmPaymentBtn.disabled = false;
+                            cancelPaymentBtn.disabled = false;
+                            confirmPaymentBtn.innerHTML = '<i class="fas fa-credit-card"></i> Proceed to Payment';
+                            break;
+                        case 'processing':
+                            modalFooter.style.display = 'none';
+                            break;
+                        case 'success':
+                        case 'error':
+                            modalFooter.style.display = 'none';
+                            break;
+                    }
+                }
+
+                disableModalClose(disable) {
+                    const closePaymentModal = document.getElementById('closePaymentModal');
+                    const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+                    if (closePaymentModal) {
+                        closePaymentModal.disabled = !!disable;
+                        closePaymentModal.style.opacity = disable ? '0.5' : '1';
+                        closePaymentModal.style.cursor = disable ? 'not-allowed' : 'pointer';
+                    }
+                    if (cancelPaymentBtn) {
+                        cancelPaymentBtn.disabled = !!disable;
+                        cancelPaymentBtn.style.opacity = disable ? '0.5' : '1';
+                        cancelPaymentBtn.style.cursor = disable ? 'not-allowed' : 'pointer';
+                    }
+                }
+
+                /* ---------- Initiate payment ---------- */
+                async initiatePayment() {
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) {
+                            toastr?.error('Authentication required. Please login again.', 'Error');
+                            this.showPaymentError('Authentication required');
+                            return;
+                        }
+
+                        this.showPaymentStep('processing');
+                        this.disableModalClose(true);
+
+                        const payload = { submissionId: this.submissionId };
+                        if (this.publicationFee) {
+                            payload.amount = Number(this.publicationFee) * 100;
+                            payload.currency = this.currency || 'NGN';
+                        }
+
+                        const res = await fetch(`${BASE_URL}/payments/initiate`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const text = await res.text();
+                        let data;
+                        try { data = text ? JSON.parse(text) : {}; } catch (err) { throw new Error('Invalid response from payment server'); }
+
+                        if (!res.ok) throw new Error(data.message || `Payment initiation failed: ${res.status}`);
+                        if (!data.success) throw new Error(data.message || 'Payment initiation failed');
+
+                        const paymentData = data.paymentData || data;
+                        this.paymentData = paymentData;
+
+                        // pick reference & auth url robustly
+                        this.paymentReference = paymentData.reference || paymentData.ref || data.reference || this.paymentReference;
+                        this.paymentAuthorizationUrl = data.authorizationUrl || data.authorization_url || paymentData.authorizationUrl || paymentData.authorization_url || this.paymentAuthorizationUrl;
+
+                        // show reference if available
+                        const paymentReferenceEl = document.getElementById('paymentReference');
+                        if (paymentReferenceEl && this.paymentReference) paymentReferenceEl.textContent = this.paymentReference;
+
+                        // If API provided inline Paystack key & details, open inline
+                        const hasInlineKey = paymentData && (paymentData.key || paymentData.publicKey);
+                        const hasRef = paymentData && (paymentData.reference || paymentData.ref || this.paymentReference);
+
+                        if (hasInlineKey && hasRef) {
+                            paymentData.publicKey = paymentData.publicKey || paymentData.key;
+                            paymentData.reference = paymentData.reference || paymentData.ref || this.paymentReference;
+                            paymentData.amount = paymentData.amount || payload.amount || (this.publicationFee * 100);
+                            paymentData.email = paymentData.email || this.submission?.submitterEmail || '';
+                            this.openPaystackModal(paymentData);
+                            return;
+                        }
+
+                        // else redirect to authorization URL
+                        if (this.paymentAuthorizationUrl) {
+                            window.open(this.paymentAuthorizationUrl, '_blank');
+                            const processingStatus = document.getElementById('processingStatus');
+                            if (processingStatus) processingStatus.textContent = 'Waiting for payment confirmation...';
+                            if (this.paymentReference) this.startPaymentVerification();
+                            return;
+                        }
+
+                        throw new Error('Payment gateway did not return usable payment data.');
+                    } catch (err) {
+                        console.error('initiatePayment error:', err);
+                        this.showPaymentError(err.message || 'Failed to initialize payment');
+                        this.disableModalClose(false);
+                        this.refreshOnClose = true;
+                    }
+                }
+
+                openPaystackModal(paymentData) {
+                    if (!paymentData || !window.PaystackPop) {
+                        this.showPaymentError('Payment gateway not available');
+                        this.disableModalClose(false);
+                        this.refreshOnClose = true;
+                        return;
                     }
 
                     const processingStatus = document.getElementById('processingStatus');
-                    if (processingStatus) {
-                        processingStatus.textContent = 'Payment initialized successfully. Redirecting...';
-                    }
+                    if (processingStatus) processingStatus.textContent = 'Opening payment popup...';
 
-                    // Immediately redirect to Paystack after a brief delay
-                    setTimeout(() => {
-                        if (this.paymentAuthorizationUrl) {
-                            // Open payment gateway in new tab
-                            window.open(this.paymentAuthorizationUrl, '_blank');
+                    const publicKey = paymentData.publicKey || paymentData.key;
+                    const amount = Number(paymentData.amount) || (this.publicationFee * 100);
+                    const email = paymentData.email || this.submission?.submitterEmail || '';
+                    const reference = paymentData.reference || paymentData.ref || this.paymentReference;
 
-                            // Start polling for payment verification
-                            this.startPaymentVerification();
+                    if (reference) this.paymentReference = reference;
 
-                            // Show processing state while waiting for payment
-                            if (processingStatus) {
-                                processingStatus.textContent = 'Waiting for payment confirmation...';
-                            }
-                        }
-                    }, 1000);
-
-                } catch (error) {
-                    console.error('Error initiating payment:', error);
-                    this.showPaymentError(error.message || 'Failed to initialize payment');
-                }
-            }
-
-            // const paystackCall = async (){
-
-            // }
-
-
-            // Remove the redirectToPaymentGateway method since we're redirecting immediately
-            // Remove the startRedirectTimer method since we don't have a redirect step anymore
-            // Remove the cancelRedirect method since we don't have a redirect step anymore
-
-            // Update the bindPaymentEvents method to remove redirect-related event listeners:
-            bindPaymentEvents() {
-                // Make Payment button in status notification
-                document.addEventListener('click', (e) => {
-                    if (e.target.id === 'makePaymentBtn' || e.target.closest('#makePaymentBtn')) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.openPaymentModal();
-                    }
-                });
-
-                // Payment Modal Events
-                const paymentModal = document.getElementById('paymentModal');
-                const closePaymentModal = document.getElementById('closePaymentModal');
-                const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
-                const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
-                const closeErrorBtn = document.getElementById('closeErrorBtn');
-                const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-                const retryPaymentBtn = document.getElementById('retryPaymentBtn');
-                const viewReceiptBtn = document.getElementById('viewReceiptBtn');
-
-                if (closePaymentModal) {
-                    closePaymentModal.addEventListener('click', () => this.closePaymentModal());
-                }
-
-                if (cancelPaymentBtn) {
-                    cancelPaymentBtn.addEventListener('click', () => this.closePaymentModal());
-                }
-
-                if (confirmPaymentBtn) {
-                    confirmPaymentBtn.addEventListener('click', () => this.initiatePayment());
-                }
-
-                if (closeErrorBtn) {
-                    closeErrorBtn.addEventListener('click', () => this.closePaymentModal());
-                }
-
-                if (closeSuccessBtn) {
-                    closeSuccessBtn.addEventListener('click', () => this.completePaymentProcess());
-                }
-
-                if (retryPaymentBtn) {
-                    retryPaymentBtn.addEventListener('click', () => this.retryPayment());
-                }
-
-                if (viewReceiptBtn) {
-                    viewReceiptBtn.addEventListener('click', () => this.viewReceipt());
-                }
-
-                // Close modal when clicking outside
-                if (paymentModal) {
-                    paymentModal.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('modal-overlay')) {
-                            this.closePaymentModal();
-                        }
-                    });
-                }
-            }
-
-            startRedirectTimer() {
-                let countdown = 5;
-                const redirectTimer = document.getElementById('redirectTimer');
-
-                if (redirectTimer) {
-                    redirectTimer.textContent = countdown;
-                }
-
-                this.paymentTimer = setInterval(() => {
-                    countdown--;
-
-                    if (redirectTimer) {
-                        redirectTimer.textContent = countdown;
-                    }
-
-                    if (countdown <= 0) {
-                        clearInterval(this.paymentTimer);
-                        this.redirectToPaymentGateway();
-                    }
-                }, 1000);
-            }
-
-            redirectToPaymentGateway() {
-                if (this.paymentAuthorizationUrl) {
-                    // Clear timer if still running
-                    if (this.paymentTimer) {
-                        clearInterval(this.paymentTimer);
-                        this.paymentTimer = null;
-                    }
-
-                    // Open payment gateway in new tab
-                    window.open(this.paymentAuthorizationUrl, '_blank');
-
-                    // Start polling for payment verification
-                    this.startPaymentVerification();
-                }
-            }
-
-            cancelRedirect() {
-                if (this.paymentTimer) {
-                    clearInterval(this.paymentTimer);
-                    this.paymentTimer = null;
-                }
-                this.closePaymentModal();
-            }
-
-            startPaymentVerification() {
-                // Poll for payment verification every 5 seconds
-                this.verificationInterval = setInterval(async () => {
-                    await this.checkPaymentStatus();
-                }, 5000);
-
-                // Also check immediately
-                setTimeout(() => {
-                    this.checkPaymentStatus();
-                }, 1000);
-            }
-
-            async checkPaymentStatus() {
-                if (!this.paymentReference) return;
-
-                try {
-                    const token = getAuthToken2();
-                    if (!token) return;
-
-                    const response = await fetch(`${BASE_URL}/payments/verify?reference=${this.paymentReference}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) return;
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        // Payment successful
-                        clearInterval(this.verificationInterval);
-                        this.showPaymentSuccess(data);
-                    } else if (data.error && data.error.code === 'invalid_Key') {
-                        // Still waiting for payment
-                        console.log('Payment verification pending...');
-                    } else {
-                        // Payment failed
-                        clearInterval(this.verificationInterval);
-                        this.showPaymentError(data.message || 'Payment verification failed');
-                    }
-                } catch (error) {
-                    console.error('Error checking payment status:', error);
-                    // Don't show error here, just log it
-                }
-            }
-
-            showPaymentSuccess(paymentData) {
-                this.showPaymentStep('success');
-
-                // Update success details
-                const successReference = document.getElementById('successReference');
-                const successDate = document.getElementById('successDate');
-
-                if (successReference) {
-                    successReference.textContent = this.paymentReference;
-                }
-
-                if (successDate) {
-                    successDate.textContent = new Date().toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                    });
-                }
-            }
-
-            showPaymentError(errorMessage, errorDetails = '') {
-                this.showPaymentStep('error');
-
-                const errorMessageEl = document.getElementById('errorMessage');
-                const errorDetailsEl = document.getElementById('errorDetails');
-
-                if (errorMessageEl) {
-                    errorMessageEl.textContent = errorMessage;
-                }
-
-                if (errorDetailsEl && errorDetails) {
-                    errorDetailsEl.innerHTML = `<p>${this.escapeHtml(errorDetails)}</p>`;
-                }
-            }
-
-            completePaymentProcess() {
-                this.closePaymentModal();
-
-                // Refresh the submission data to update status
-                setTimeout(async () => {
                     try {
-                        await this.loadMainSubmissionData();
-                        this.checkAndShowStatusNotification();
-                        toastr.success('Payment completed successfully!');
-                    } catch (error) {
-                        console.error('Error refreshing submission data:', error);
-                    }
-                }, 500);
-            }
-
-            retryPayment() {
-                this.resetPaymentModal();
-            }
-
-            async viewReceipt() {
-                if (!this.paymentReference) {
-                    toastr.error('No payment reference found', 'Error');
-                    return;
-                }
-
-                try {
-                    // Open receipt in new tab
-                    window.open(`/author/payment-receipt.html?reference=${this.paymentReference}`, '_blank');
-
-                    // Also close the modal
-                    this.completePaymentProcess();
-                } catch (error) {
-                    console.error('Error viewing receipt:', error);
-                    toastr.error('Failed to open receipt', 'Error');
-                }
-            }
-
-            async getUserDetails(userId) {
-                if (!userId) return null;
-                if (this.userCache.has(userId)) return this.userCache.get(userId);
-
-                try {
-                    const token = getAuthToken2();
-                    if (!token) return null;
-                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.warn(`Failed to fetch user ${userId}: ${response.status}`);
-                        return null;
-                    }
-
-                    const data = await response.json();
-                    if (!data.success) return null;
-
-                    const user = data.user || data;
-                    if (!user) return null;
-                    this.userCache.set(userId, user);
-                    return user;
-                } catch (error) {
-                    console.error(`Error fetching user ${userId}:`, error);
-                    return null;
-                }
-            }
-
-            async getJournalDetails(journalId) {
-                if (!journalId) return null;
-                if (this.journalCache.has(journalId)) return this.journalCache.get(journalId);
-
-                try {
-                    const token = getAuthToken2();
-                    if (!token) return null;
-                    const response = await fetch(`${BASE_URL}/journal/${journalId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.warn(`Failed to fetch journal ${journalId}: ${response.status}`);
-                        return null;
-                    }
-
-                    const data = await response.json();
-                    if (!data.success) return null;
-
-                    const journal = data.journal || data;
-                    if (!journal) return null;
-                    this.journalCache.set(journalId, journal);
-                    return journal;
-                } catch (error) {
-                    console.error(`Error fetching journal ${journalId}:`, error);
-                    return null;
-                }
-            }
-
-            renderManuscriptHeader() {
-                const header = document.getElementById('manuscriptHeader');
-                if (!header || !this.submission) return;
-
-                const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
-                const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
-                const statusDisplay = this.formatStatus(statusToDisplay);
-
-                // Get journal name and ISSN
-                const journalName = this.submission.journalId?.title || this.submission.journalTitle || 'Unknown Journal';
-                const journalISSN = this.submission.journalId?.issn || 'N/A';
-                const submittedByName = this.submission.submitterName || 'Unknown';
-
-                header.innerHTML = `
-                    <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
-                    <span class="header-status-badge">${this.escapeHtml(statusDisplay)}</span>
-                    <div class="header-meta">
-                        <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
-                        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
-                        <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
-                        <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
-                    </div>
-                `;
-            }
-
-            renderAbstract() {
-                const abstractSection = document.getElementById('abstractSection');
-                const abstractContent = document.getElementById('abstractContent');
-
-                if (!abstractSection || !abstractContent || !this.submission) return;
-
-                const abstract = this.submission.abstract || '';
-                if (abstract && abstract.trim() !== '') {
-                    abstractSection.style.display = 'block';
-
-                    // Process abstract for display
-                    const processedAbstract = this.processContentForDisplay(abstract);
-                    const isAbstractLong = processedAbstract.plainText.length > 300;
-                    const abstractPreview = isAbstractLong ?
-                        processedAbstract.plainText.substring(0, 300) + '...' :
-                        processedAbstract.plainText;
-                    const abstractDisplayHtml = isAbstractLong ?
-                        this.processContentForDisplay(abstractPreview).displayHtml :
-                        processedAbstract.displayHtml;
-
-                    abstractContent.innerHTML = `
-                        <div class="abstract-text ${isAbstractLong ? 'truncated' : ''}">
-                            ${abstractDisplayHtml}
-                        </div>
-                        ${isAbstractLong ? `
-                            <a class="view-more-link" onclick="authorManager.showFullContent('${this.escapeHtml(processedAbstract.displayHtml)}', 'abstract', 'Abstract')">
-                                <i class="fas fa-eye"></i> View full abstract
-                            </a>
-                        ` : ''}
-                    `;
-                } else {
-                    abstractSection.style.display = 'none';
-                }
-            }
-
-            renderAuthors() {
-                const authorsList = document.getElementById('authorsList');
-                if (!authorsList || !this.submission) return;
-
-                const authors = this.submission.authors || [];
-                if (authors.length === 0) {
-                    authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
-                    return;
-                }
-
-                authorsList.innerHTML = authors.map(author => `
-                    <div class="author-item">
-                        <div class="author-name">${this.escapeHtml(author.name)}</div>
-                        <div class="author-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(author.email)}</div>
-                    </div>
-                `).join('');
-            }
-
-            renderRevisions() {
-                const revisionsSection = document.getElementById('revisionsSection');
-                const revisionsContainer = document.getElementById('revisionsContainer');
-                const viewAllRevisionsBtn = document.getElementById('viewAllRevisionsBtn');
-
-                if (!revisionsSection || !revisionsContainer || !this.submission) return;
-
-                const status = this.submission.status || '';
-                const revisions = this.submission.revisions || [];
-
-                // Don't show section if status is "submitted" or no revisions
-                if (status === 'submitted' || revisions.length === 0) {
-                    revisionsSection.style.display = 'none';
-                    return;
-                }
-
-                revisionsSection.style.display = 'block';
-
-                // Show view all button if there are revisions
-                if (viewAllRevisionsBtn && revisions.length > 0) {
-                    viewAllRevisionsBtn.style.display = 'inline-flex';
-                }
-
-                if (revisions.length === 0) {
-                    revisionsContainer.innerHTML = `
-                        <div class="no-revisions">
-                            <i class="fas fa-history"></i>
-                            <h3>No Revisions Available</h3>
-                            <p>No revisions have been submitted for this manuscript.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Sort revisions by version (newest first)
-                const sortedRevisions = [...revisions].sort((a, b) => b.version - a.version);
-
-                let revisionsHTML = '<div class="revisions-grid">';
-
-                sortedRevisions.forEach(revision => {
-                    const version = revision.version || 1;
-                    const coverLetter = revision.coverLetter || '';
-                    const changesSummary = revision.changesSummary || '';
-                    const submittedAt = this.formatDate(revision.submittedAt || revision.createdAt, true);
-                    const fileUrl = this.buildFileUrl(revision.file?.url || revision.file);
-                    const fileName = revision.file?.originalName || `Revision_${version}.pdf`;
-
-                    // Process cover letter
-                    const processedCoverLetter = this.processContentForDisplay(coverLetter);
-                    const isCoverLetterLong = processedCoverLetter.plainText.length > 100;
-                    const coverLetterPreview = isCoverLetterLong ?
-                        processedCoverLetter.plainText.substring(0, 100) + '...' :
-                        processedCoverLetter.plainText;
-                    const coverLetterDisplayHtml = isCoverLetterLong ?
-                        this.processContentForDisplay(coverLetterPreview).displayHtml :
-                        processedCoverLetter.displayHtml;
-
-                    // Process changes summary
-                    const processedChangesSummary = this.processContentForDisplay(changesSummary);
-                    const isChangesSummaryLong = processedChangesSummary.plainText.length > 100;
-                    const changesSummaryPreview = isChangesSummaryLong ?
-                        processedChangesSummary.plainText.substring(0, 100) + '...' :
-                        processedChangesSummary.plainText;
-                    const changesSummaryDisplayHtml = isChangesSummaryLong ?
-                        this.processContentForDisplay(changesSummaryPreview).displayHtml :
-                        processedChangesSummary.displayHtml;
-
-                    revisionsHTML += `
-                        <div class="revision-card">
-                            <div class="revision-header">
-                                <div class="revision-title">
-                                    <i class="fas fa-file-edit"></i> Revision ${version}
-                                </div>
-                                <span class="revision-version">v${version}</span>
-                            </div>
-                            
-                            <div class="revision-content">
-                                <!-- Cover Letter -->
-                                <div class="revision-item">
-                                    <div class="revision-label">
-                                        <i class="fas fa-envelope"></i> Cover Letter
-                                    </div>
-                                    <div class="revision-text ${isCoverLetterLong ? 'truncated' : ''}">
-                                        ${coverLetterDisplayHtml}
-                                    </div>
-                                    ${isCoverLetterLong ? `
-                                        <a class="view-more-link" onclick="authorManager.showFullContent('${this.escapeHtml(processedCoverLetter.displayHtml)}', 'cover-letter', 'Cover Letter - Revision ${version}')">
-                                            <i class="fas fa-eye"></i> View full cover letter
-                                        </a>
-                                    ` : ''}
-                                </div>
-                                
-                                <!-- Changes Summary -->
-                                <div class="revision-item">
-                                    <div class="revision-label">
-                                        <i class="fas fa-list-check"></i> Changes Summary
-                                    </div>
-                                    <div class="revision-text ${isChangesSummaryLong ? 'truncated' : ''}">
-                                        ${changesSummaryDisplayHtml}
-                                    </div>
-                                    ${isChangesSummaryLong ? `
-                                        <a class="view-more-link" onclick="authorManager.showFullContent('${this.escapeHtml(processedChangesSummary.displayHtml)}', 'changes-summary', 'Changes Summary - Revision ${version}')">
-                                            <i class="fas fa-eye"></i> View full changes summary
-                                        </a>
-                                    ` : ''}
-                                </div>
-                                
-                                <!-- Meta Information -->
-                                <div class="revision-meta">
-                                    <div class="revision-date">
-                                        <i class="far fa-calendar"></i> Submitted on: ${submittedAt}
-                                    </div>
-                                    ${fileUrl ? `
-                                        <a href="${fileUrl}" target="_blank" class="view-document-btn">
-                                            <i class="fas fa-file-pdf"></i> View Document
-                                        </a>
-                                    ` : '<span class="score-empty">No document</span>'}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                revisionsHTML += '</div>';
-                revisionsContainer.innerHTML = revisionsHTML;
-            }
-
-            processContentForDisplay(content) {
-                if (!content || content.trim() === '') {
-                    return {
-                        plainText: '',
-                        displayHtml: '<span class="score-empty">No content</span>'
-                    };
-                }
-
-                // Sanitize HTML but preserve formatting
-                const sanitizedHtml = this.sanitizeHTML(content);
-
-                // Create plain text version for length checking
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = sanitizedHtml;
-                const plainText = tempDiv.textContent || tempDiv.innerText || '';
-
-                return {
-                    plainText: plainText,
-                    displayHtml: sanitizedHtml
-                };
-            }
-
-            sanitizeHTML(html) {
-                if (!html) return '';
-
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-
-                // Remove script tags and other dangerous elements
-                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
-                scripts.forEach(script => script.remove());
-
-                // Allow safe HTML tags
-                const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-
-                // Process all elements
-                const allElements = tempDiv.querySelectorAll('*');
-                allElements.forEach(el => {
-                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
-                        // Replace disallowed tags with their text content
-                        const text = document.createTextNode(el.textContent);
-                        el.parentNode.replaceChild(text, el);
-                    }
-                });
-
-                // Return sanitized HTML
-                return tempDiv.innerHTML.trim() || html;
-            }
-
-            showFullContent(contentHtml, contentType, title) {
-                this.currentModalContent = contentHtml;
-                this.currentModalType = contentType;
-                this.currentModalTitle = title;
-
-                const modal = document.getElementById('contentModal');
-                const modalTitle = document.getElementById('contentModalTitle');
-                const modalType = document.getElementById('contentModalType');
-                const contentDisplay = document.getElementById('contentDisplay');
-
-                if (!modal || !modalTitle || !modalType || !contentDisplay) return;
-
-                // Set modal title and type
-                modalTitle.textContent = title;
-
-                const typeMap = {
-                    'cover-letter': 'Cover Letter',
-                    'changes-summary': 'Changes Summary',
-                    'abstract': 'Abstract',
-                    'timeline-comment': 'Timeline Comment'
-                };
-
-                modalType.textContent = typeMap[contentType] || 'Content';
-
-                // Display the content with proper formatting
-                contentDisplay.innerHTML = `
-                    <div class="content-display">
-                        ${contentHtml || '<div class="empty">No content available</div>'}
-                    </div>
-                `;
-
-                // Show modal
-                modal.style.display = 'flex';
-
-                // Prevent page scrolling
-                document.body.style.overflow = 'hidden';
-            }
-
-            closeContentModal() {
-                const modal = document.getElementById('contentModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = '';
-                    this.currentModalContent = '';
-                    this.currentModalType = '';
-                    this.currentModalTitle = '';
-                }
-            }
-
-            async loadAssignedReviewers() {
-                const assignedReviewersSection = document.getElementById('assignedReviewersSection');
-                const assignedReviewersContainer = document.getElementById('assignedReviewers');
-                const reviewersCount = document.getElementById('reviewersCount');
-
-                if (!assignedReviewersSection || !assignedReviewersContainer || !this.submission) return;
-
-                const assignedReviewers = this.submission.assignedReviewers || [];
-
-                if (assignedReviewers.length === 0) {
-                    assignedReviewersSection.style.display = 'none';
-                    return;
-                }
-
-                assignedReviewersSection.style.display = 'block';
-                if (reviewersCount) reviewersCount.textContent = assignedReviewers.length;
-
-                // Load reviewer details
-                const reviewerPromises = assignedReviewers.map(async (assignment) => {
-                    const reviewerId = assignment.reviewerId;
-                    if (!reviewerId) return null;
-
-                    const user = await this.getUserDetails(reviewerId);
-                    if (!user) return null;
-
-                    return {
-                        ...assignment,
-                        name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown Reviewer',
-                        email: user.email || '',
-                        hasReviewed: assignment.hasReviewed || false
-                    };
-                });
-
-                const reviewers = (await Promise.all(reviewerPromises)).filter(Boolean);
-
-                if (reviewers.length === 0) {
-                    assignedReviewersContainer.innerHTML = `
-                        <div class="no-reviewers">
-                            <i class="fas fa-user-slash"></i>
-                            <p>No reviewers information available</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                assignedReviewersContainer.innerHTML = reviewers.map(reviewer => `
-                    <div class="reviewer-card">
-                        <div class="reviewer-name">${this.escapeHtml(reviewer.name)}</div>
-                        <div class="reviewer-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(reviewer.email)}</div>
-                        <div class="reviewer-status">
-                            <span class="status-indicator ${reviewer.hasReviewed ? 'completed' : 'pending'}"></span>
-                            ${reviewer.hasReviewed ? 'Review completed' : 'Review pending'}
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            setupFileActions() {
-                const viewBtn = document.getElementById('viewDocumentBtn');
-                const downloadBtn = document.getElementById('downloadBtn');
-
-                if (!viewBtn || !downloadBtn || !this.submission) return;
-
-                const fileUrl = this.submission.file?.url || this.submission.file;
-                if (!fileUrl) {
-                    viewBtn.disabled = true;
-                    downloadBtn.disabled = true;
-                    viewBtn.innerHTML = '<i class="fas fa-eye"></i> No Document Available';
-                    downloadBtn.innerHTML = '<i class="fas fa-download"></i> No Document Available';
-                    return;
-                }
-
-                const resolvedUrl = this.buildFileUrl(fileUrl);
-                const fileName = this.submission.file?.originalName || this.submission.title || 'manuscript';
-
-                viewBtn.addEventListener('click', () => {
-                    window.open(resolvedUrl, '_blank');
-                });
-
-                downloadBtn.addEventListener('click', () => {
-                    const link = document.createElement('a');
-                    link.href = resolvedUrl;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                });
-            }
-
-            buildFileUrl(filePath) {
-                if (!filePath) return null;
-                try {
-                    // If it's already a full URL
-                    const url = new URL(filePath);
-                    return url.toString();
-                } catch {
-                    // If it's a relative path, prepend base URL
-                    return `${BASE_URL.replace('/api/v1', '')}${filePath}`;
-                }
-            }
-
-            async loadReviewDetails() {
-                try {
-                    const token = getAuthToken2();
-                    if (!token) return;
-
-                    const response = await fetch(`${BASE_URL}/submissions/details/${this.submissionId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.warn('Failed to fetch review details:', response.status);
-                        return;
-                    }
-
-                    const data = await response.json();
-                    if (!data.success) return;
-
-                    this.editorialDecision = data.editorialDecision || null;
-                    this.reviewerFeedback = data.reviewerFeedback || null;
-
-                    // Show review details section
-                    const reviewDetailsSection = document.getElementById('reviewDetailsSection');
-                    const viewAllReviewsBtn = document.getElementById('viewAllReviewsBtn');
-
-                    if (reviewDetailsSection) {
-                        reviewDetailsSection.style.display = 'block';
-
-                        // Show view all button
-                        if (viewAllReviewsBtn) {
-                            viewAllReviewsBtn.style.display = 'inline-flex';
-                        }
-
-                        // Revision count
-                        const revisionCount = data.submission?.revisionCount || this.submission?.revisionCount || 0;
-                        document.getElementById('rvCount').textContent = revisionCount;
-
-                        // Editorial decision
-                        const editorialDecisionCard = document.getElementById('editorialDecisionCard');
-                        if (this.editorialDecision && editorialDecisionCard) {
-                            editorialDecisionCard.style.display = 'block';
-
-                            const decisionText = this.formatDecision(this.editorialDecision.decision);
-                            const commentText = this.stripHtml(this.editorialDecision.comment || '');
-
-                            // Check if text needs truncation for 146px height (approx 100-120 chars)
-                            const maxCharsForHeight = 120;
-                            const isLongComment = commentText.length > maxCharsForHeight;
-                            const commentPreview = isLongComment ?
-                                commentText.substring(0, maxCharsForHeight) + '...' :
-                                commentText;
-
-                            const editorialDecisionDiv = document.getElementById('editorialDecision');
-                            editorialDecisionDiv.innerHTML = `
-                    <div class="detail-content">
-                        <strong style="display:block; margin-bottom: 0.5rem;">${decisionText}</strong>
-                        <div class="detail-value ${isLongComment ? 'truncated' : ''}">${this.escapeHtml(commentPreview)}</div>
-                    </div>
-                `;
-
-                            // Add view more button if comment is long
-                            if (isLongComment) {
-                                const viewMoreBtn = document.createElement('button');
-                                viewMoreBtn.className = 'view-more-btn';
-                                viewMoreBtn.innerHTML = '<i class="fas fa-eye"></i> View in review details';
-                                viewMoreBtn.addEventListener('click', (e) => {
-                                    e.preventDefault();
-                                    window.location.href = `author-review-details.html?id=${this.submissionId}`;
-                                });
-
-                                editorialDecisionDiv.appendChild(viewMoreBtn);
-                            }
-                        }
-
-                        // Reviewer feedback
-                        const reviewerFeedbackCard = document.getElementById('reviewerFeedbackCard');
-                        if (this.reviewerFeedback && reviewerFeedbackCard) {
-                            reviewerFeedbackCard.style.display = 'block';
-
-                            const reviewerFeedbackDiv = document.getElementById('reviewerFeedback');
-
-                            if (this.reviewerFeedback.available && this.reviewerFeedback.reviews && this.reviewerFeedback.reviews.length > 0) {
-                                const review = this.reviewerFeedback.reviews[0]; // Show first review
-                                const recommendation = this.formatDecision(review.recommendation);
-                                const score = review.score || 'N/A';
-                                const date = this.formatDate(review.submittedAt, true); // Date only
-
-                                // Check if we need to show review comment
-                                let reviewComment = '';
-                                let isLongReview = false;
-
-                                if (review.comment) {
-                                    const commentText = this.stripHtml(review.comment);
-                                    const maxCharsForHeight = 80; // Less space due to score and date
-                                    isLongReview = commentText.length > maxCharsForHeight;
-                                    reviewComment = isLongReview ?
-                                        commentText.substring(0, maxCharsForHeight) + '...' :
-                                        commentText;
+                        const handler = PaystackPop.setup({
+                            key: publicKey,
+                            email: email,
+                            amount: amount,
+                            ref: reference,
+                            metadata: paymentData.metadata || {},
+                            callback: (response) => {
+                                console.log('Paystack callback response:', response);
+                                const processingStatusAfter = document.getElementById('processingStatus');
+                                if (processingStatusAfter) processingStatusAfter.textContent = 'Verifying payment...';
+
+                                const ref = response.reference || response.trxref || response.tx_ref || response.ref;
+                                if (ref) {
+                                    this.paymentReference = ref;
+                                    this.verifyPayment(ref);
+                                } else {
+                                    this.showPaymentError('No reference returned by Paystack');
+                                    this.disableModalClose(false);
+                                    this.refreshOnClose = true;
                                 }
-
-                                reviewerFeedbackDiv.innerHTML = `
-                        <div class="detail-content">
-                            <strong style="display:block; margin-bottom: 0.25rem;">${recommendation}</strong>
-                            ${reviewComment ? `<div class="detail-value ${isLongReview ? 'truncated' : ''}" style="margin-bottom: 0.5rem;">${this.escapeHtml(reviewComment)}</div>` : ''}
-                            <div style="color: var(--muted); font-size: 0.9rem;">
-                                Score: ${score}% • ${date}
-                            </div>
-                        </div>
-                    `;
-
-                                // Add view more button if review comment is long
-                                if (isLongReview) {
-                                    const viewMoreBtn = document.createElement('button');
-                                    viewMoreBtn.className = 'view-more-btn';
-                                    viewMoreBtn.innerHTML = '<i class="fas fa-eye"></i> View in review details';
-                                    viewMoreBtn.addEventListener('click', (e) => {
-                                        e.preventDefault();
-                                        window.location.href = `author-review-details.html?id=${this.submissionId}`;
-                                    });
-
-                                    reviewerFeedbackDiv.appendChild(viewMoreBtn);
+                            },
+                            onClose: () => {
+                                console.log('Paystack modal closed by user');
+                                this.disableModalClose(false);
+                                if (this.currentStep === 'processing') {
+                                    this.showPaymentStep('confirmation');
+                                    const processingStatusEl = document.getElementById('processingStatus');
+                                    if (processingStatusEl) processingStatusEl.textContent = 'Initializing payment gateway...';
+                                    toastr?.info('Payment cancelled. You can try again.');
                                 }
-                            } else {
-                                reviewerFeedbackDiv.innerHTML = `
-                        <div class="detail-content">
-                            <div class="detail-value">No reviewer feedback available</div>
-                        </div>
-                    `;
                             }
-                        }
-                    }
-
-                    // Show revised section if status is revised
-                    const status = this.submission?.currentStatus || this.submission?.status || '';
-                    const revisedSection = document.getElementById('revisedSection');
-
-                    if (status === 'revised' && revisedSection) {
-                        revisedSection.style.display = 'block';
-                        const revisionCount = data.submission?.revisionCount || this.submission?.revisionCount || 0;
-                        document.getElementById('totalRevisions').textContent = revisionCount;
-                        document.getElementById('revisionCountDisplay').textContent = `${revisionCount} revision${revisionCount !== 1 ? 's' : ''}`;
-
-                        // Get latest revision date
-                        const latestRevision = this.submission.revisions?.[0]?.createdAt ||
-                            this.submission.updatedAt ||
-                            this.submission.createdAt;
-                        if (latestRevision) {
-                            document.getElementById('latestRevision').textContent = this.formatDate(latestRevision, true);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading review details:', error);
-                }
-            }
-
-            async loadLatestTimelineEvent() {
-                try {
-                    const token = getAuthToken2();
-                    if (!token) return;
-
-                    // Use history from main submission data if available
-                    if (this.submission?.history && this.submission.history.length > 0) {
-                        const latestEvent = this.submission.history[0];
-                        await this.renderLatestTimelineEvent(latestEvent);
-                        return;
-                    }
-
-                    // Fallback to history endpoint
-                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.warn(`Failed to fetch timeline: ${response.status}`);
-                        this.renderTimeline([]);
-                        return;
-                    }
-
-                    const data = await response.json();
-                    const timelineData = data.submission || data;
-                    const history = timelineData.history || [];
-
-                    const latestEvent = history.length > 0 ? history[0] : null;
-                    if (latestEvent) {
-                        await this.renderLatestTimelineEvent(latestEvent);
-                    } else {
-                        this.renderTimeline([]);
-                    }
-                } catch (error) {
-                    console.error('Error loading timeline data:', error);
-                    this.renderTimeline([]);
-                }
-            }
-
-            async renderLatestTimelineEvent(event) {
-                const timelineContainer = document.getElementById('recentTimeline');
-                if (!timelineContainer) return;
-
-                let updatedBy = 'System';
-                if (event.by) {
-                    const user = await this.getUserDetails(event.by);
-                    if (user) {
-                        updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
-                    }
-                }
-
-                // Process comment for display
-                const processedComment = this.processContentForDisplay(event.comment || 'No comment provided');
-                const isCommentLong = processedComment.plainText.length > 150;
-                const commentPreview = isCommentLong ?
-                    processedComment.plainText.substring(0, 150) + '...' :
-                    processedComment.plainText;
-                const commentDisplayHtml = isCommentLong ?
-                    this.processContentForDisplay(commentPreview).displayHtml :
-                    processedComment.displayHtml;
-
-                timelineContainer.innerHTML = `
-                    <div class="timeline-item">
-                        <div class="card">
-                            <span class="status-badge" style="${this.getStatusStyle(event.status)}">
-                                ${this.formatStatus(event.status)}
-                            </span>
-                            <p class="timeline-comment">
-                                ${commentDisplayHtml}
-                                ${isCommentLong ? `
-                                    <a class="view-more-link" style="display: inline-block; margin-left: 0.5rem;" 
-                                       onclick="authorManager.showFullContent('${this.escapeHtml(processedComment.displayHtml)}', 'timeline-comment', 'Timeline Comment - ${this.formatStatus(event.status)}')">
-                                        <i class="fas fa-eye"></i> View full comment
-                                    </a>
-                                ` : ''}
-                            </p>
-                            <p class="timeline-date"><i class="far fa-clock"></i> ${this.formatDate(event.date)}</p>
-                            <div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong></div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            getStatusStyle(status) {
-                const colors = {
-                    'submitted': 'background-color: #3b82f6; color: white;',
-                    'under_review': 'background-color: #f59e0b; color: white;',
-                    'reviewed': 'background-color: #8b5cf6; color: white;',
-                    'accepted': 'background-color: #10b981; color: white;',
-                    'rejected': 'background-color: #ef4444; color: white;',
-                    'revised': 'background-color: #8b5cf6; color: white;',
-                    'awaiting_payment': 'background-color: #f59e0b; color: white;',
-                    'published': 'background-color: #10b981; color: white;',
-                    'accept': 'background-color: #10b981; color: white;',
-                    'reject': 'background-color: #ef4444; color: white;',
-                    'minor_revision': 'background-color: #f59e0b; color: white;',
-                    'major_revision': 'background-color: #f59e0b; color: white;'
-                };
-                return colors[status] || 'background-color: #6b7280; color: white;';
-            }
-
-            formatDecision(decision) {
-                const decisionMap = {
-                    'accept': 'Accepted',
-                    'reject': 'Rejected',
-                    'minor_revision': 'Minor Revision Required',
-                    'major_revision': 'Major Revision Required'
-                };
-                return decisionMap[decision] || (decision.charAt(0).toUpperCase() + decision.slice(1)).replace(/_/g, ' ');
-            }
-
-            formatStatus(status) {
-                if (!status) return '';
-                const statusMap = {
-                    'submitted': 'Submitted',
-                    'under_review': 'Under Review',
-                    'reviewed': 'Reviewed',
-                    'accepted': 'Accepted',
-                    'rejected': 'Rejected',
-                    'revised': 'Revised',
-                    'awaiting_payment': 'Awaiting Payment',
-                    'published': 'Published',
-                    'minor_revision': 'Minor Revision',
-                    'major_revision': 'Major Revision',
-                    'revision_requested': 'Revision Requested'
-                };
-                return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
-            }
-
-            formatDate(dateString, dateOnly = false) {
-                try {
-                    if (!dateString) return '';
-                    const date = new Date(dateString);
-                    if (dateOnly) {
-                        return date.toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
                         });
+
+                        handler.openIframe();
+                    } catch (err) {
+                        console.error('Paystack open error:', err);
+                        this.showPaymentError('Failed to open payment popup');
+                        this.disableModalClose(false);
+                        this.refreshOnClose = true;
                     }
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
+                }
+
+                async verifyPayment(reference) {
+                    if (!reference) {
+                        this.showPaymentError('No payment reference provided');
+                        this.disableModalClose(false);
+                        this.refreshOnClose = true;
+                        return;
+                    }
+
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) {
+                            this.showPaymentError('Authentication required for verification');
+                            this.refreshOnClose = true;
+                            return;
+                        }
+
+                        this.showPaymentStep('processing');
+                        const processingStatus = document.getElementById('processingStatus');
+                        if (processingStatus) processingStatus.textContent = 'Finalizing payment...';
+
+                        // robust verify url using trxref
+                        const base = String(BASE_URL).replace(/\/+$/, '');
+                        const verifyBase = base.includes('/api/v1') ? base : `${base}/api/v1`;
+                        const verifyUrl = `${verifyBase}/payments/verify?trxref=${encodeURIComponent(reference)}`;
+                        console.log('verifyPayment ->', verifyUrl);
+
+                        const res = await fetch(verifyUrl, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        const text = await res.text();
+                        let data;
+                        try { data = text ? JSON.parse(text) : {}; } catch (err) { throw new Error('Invalid verification response from server'); }
+
+                        if (!res.ok) throw new Error(data.message || `Verification failed: ${res.status}`);
+
+                        if (data.success) {
+                            // capture DB id if backend returned it
+                            this.paymentId = null;
+                            if (data.payment && data.payment._id) this.paymentId = data.payment._id;
+                            else if (data._id) this.paymentId = data._id;
+                            else if (data.paymentId) this.paymentId = data.paymentId;
+                            else if (data.data && data.data._id) this.paymentId = data.data._id;
+
+                            console.log('Payment verified. reference=', reference, 'paymentId=', this.paymentId);
+
+                            this.paymentData = data;
+                            this.paymentReference = reference;
+                            this.showPaymentSuccess(data);
+
+                            if (this.verificationInterval) {
+                                clearInterval(this.verificationInterval);
+                                this.verificationInterval = null;
+                            }
+
+                            this.disableModalClose(false);
+                            this.refreshOnClose = true;
+                        } else {
+                            const msg = data.message || 'Payment verification failed';
+                            this.showPaymentError(msg, JSON.stringify(data));
+                            this.disableModalClose(false);
+                            this.refreshOnClose = true;
+                        }
+                    } catch (err) {
+                        console.error('verifyPayment error:', err);
+                        this.showPaymentError(err.message || 'Payment verification failed');
+                        this.disableModalClose(false);
+                        this.refreshOnClose = true;
+                    }
+                }
+
+                startPaymentVerification() {
+                    if (!this.paymentReference) return;
+                    if (this.verificationInterval) clearInterval(this.verificationInterval);
+                    this.verificationInterval = setInterval(async () => {
+                        try {
+                            await this.checkPaymentStatus();
+                        } catch (e) {
+                            console.error('polling error', e);
+                        }
+                    }, 5000);
+                    setTimeout(() => this.checkPaymentStatus(), 1000);
+                }
+
+                async checkPaymentStatus() {
+                    if (!this.paymentReference) return;
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) return;
+
+                        // Use trxref parameter for polling too
+                        const base = String(BASE_URL).replace(/\/+$/, '');
+                        const verifyBase = base.includes('/api/v1') ? base : `${base}/api/v1`;
+                        const verifyUrl = `${verifyBase}/payments/verify?trxref=${encodeURIComponent(this.paymentReference)}`;
+
+                        const res = await fetch(verifyUrl, {
+                            method: 'GET',
+                            headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+                        });
+
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        if (data.success) {
+                            clearInterval(this.verificationInterval);
+                            this.showPaymentSuccess(data);
+                            this.refreshOnClose = true;
+                        } else {
+                            console.log('verification pending or failed', data);
+                        }
+                    } catch (err) {
+                        console.error('checkPaymentStatus error:', err);
+                    }
+                }
+
+                showPaymentSuccess(paymentData) {
+                    this.showPaymentStep('success');
+                    const successReference = document.getElementById('successReference');
+                    const successDate = document.getElementById('successDate');
+                    if (successReference) successReference.textContent = this.paymentReference || (paymentData.reference || paymentData.ref || '');
+                    if (successDate) successDate.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+                    this.paymentData = paymentData;
+                    this.refreshOnClose = true;
+                }
+
+                showPaymentError(errorMessage, errorDetails = '') {
+                    this.showPaymentStep('error');
+                    const errorMessageEl = document.getElementById('errorMessage');
+                    const errorDetailsEl = document.getElementById('errorDetails');
+                    if (errorMessageEl) errorMessageEl.textContent = errorMessage;
+                    if (errorDetailsEl && errorDetails) errorDetailsEl.innerHTML = `<p>${this.escapeHtml(errorDetails)}</p>`;
+                    this.refreshOnClose = true;
+                }
+
+                closePaymentModal(forceClose = false) {
+                    const paymentModal = document.getElementById('paymentModal');
+                    if (!paymentModal) return;
+
+                    if (this.currentStep === 'processing' && !forceClose) {
+                        toastr?.warning('Please complete or cancel the payment process');
+                        return;
+                    }
+
+                    paymentModal.classList.remove('active');
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+
+                    // reset state so the modal can be re-opened without page reload
+                    this.resetPaymentModal();
+
+                    if (this.paymentTimer) { clearInterval(this.paymentTimer); this.paymentTimer = null; }
+                    if (this.verificationInterval) { clearInterval(this.verificationInterval); this.verificationInterval = null; }
+
+                    if (this.refreshOnClose) {
+                        setTimeout(() => window.location.reload(), 300);
+                    }
+                }
+
+                completePaymentProcess() {
+                    this.closePaymentModal(true);
+                }
+
+                retryPayment() {
+                    this.resetPaymentModal();
+                    this.showPaymentStep('confirmation');
+                }
+
+                async viewReceipt() {
+                    try {
+                        if (this.paymentId) {
+                            window.open(`/author/payment-receipt.html?id=${encodeURIComponent(this.paymentId)}`, '_blank');
+                            this.closePaymentModal(true);
+                            return;
+                        }
+
+                        if (!this.paymentReference) {
+                            toastr?.error('No payment reference found', 'Error');
+                            return;
+                        }
+
+                        const token = getAuthToken2();
+                        if (!token) {
+                            toastr?.error('Authentication required', 'Error');
+                            return;
+                        }
+
+                        const base = String(BASE_URL).replace(/\/+$/, '');
+                        const verifyBase = base.includes('/api/v1') ? base : `${base}/api/v1`;
+                        const verifyUrl = `${verifyBase}/payments/verify?trxref=${encodeURIComponent(this.paymentReference)}`;
+                        console.log('Fetching payment record for receipt ->', verifyUrl);
+
+                        const res = await fetch(verifyUrl, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+                        const text = await res.text();
+                        let data;
+                        try { data = text ? JSON.parse(text) : {}; } catch (err) { throw new Error('Invalid response while fetching payment record'); }
+
+                        if (!res.ok || !data.success) {
+                            const msg = data?.message || `Failed to fetch payment record (${res.status})`;
+                            throw new Error(msg);
+                        }
+
+                        const paymentId = data.payment?._id || data._id || data.paymentId || (data.data && data.data._id) || null;
+                        if (!paymentId) throw new Error('Payment record id not found in verification response');
+
+                        this.paymentId = paymentId;
+                        window.open(`/author/payment-receipt.html?id=${encodeURIComponent(paymentId)}`, '_blank');
+                        this.closePaymentModal(true);
+                    } catch (error) {
+                        console.error('viewReceipt error:', error);
+                        toastr?.error(error.message || 'Failed to open receipt', 'Error');
+                    }
+                }
+
+                /* ---------- User/journal helpers and rendering ---------- */
+                async getUserDetails(userId) {
+                    if (!userId) return null;
+                    if (this.userCache.has(userId)) return this.userCache.get(userId);
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) return null;
+                        const response = await fetch(`${BASE_URL}/user/${userId}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+                        if (!response.ok) { console.warn(`Failed to fetch user ${userId}: ${response.status}`); return null; }
+                        const data = await response.json();
+                        if (!data.success) return null;
+                        const user = data.user || data;
+                        this.userCache.set(userId, user);
+                        return user;
+                    } catch (error) {
+                        console.error(`Error fetching user ${userId}:`, error);
+                        return null;
+                    }
+                }
+
+                async getJournalDetails(journalId) {
+                    if (!journalId) return null;
+                    if (this.journalCache.has(journalId)) {
+                        const journal = this.journalCache.get(journalId);
+                        this.publicationFee = journal.publicationFee || this.publicationFee || 15000;
+                        this.currency = journal.currency || this.currency || 'NGN';
+                        return journal;
+                    }
+                    try {
+                        const token = getAuthToken2();
+                        if (!token) return null;
+                        const response = await fetch(`${BASE_URL}/journal/${journalId}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+                        if (!response.ok) { console.warn(`Failed to fetch journal ${journalId}: ${response.status}`); return null; }
+                        const data = await response.json();
+                        if (!data.success) return null;
+                        const journal = data.journal || data;
+                        this.journalCache.set(journalId, journal);
+                        this.publicationFee = journal.publicationFee || this.publicationFee || 15000;
+                        this.currency = journal.currency || this.currency || 'NGN';
+                        return journal;
+                    } catch (error) {
+                        console.error(`Error fetching journal ${journalId}:`, error);
+                        return null;
+                    }
+                }
+
+                renderManuscriptHeader() {
+                    const header = document.getElementById('manuscriptHeader');
+                    if (!header || !this.submission) return;
+                    const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
+                    const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
+                    const statusDisplay = this.formatStatus(statusToDisplay);
+                    const journalName = this.submission.journalId?.title || this.submission.journalTitle || 'Unknown Journal';
+                    const journalISSN = this.submission.journalId?.issn || 'N/A';
+                    const submittedByName = this.submission.submitterName || 'Unknown';
+                    header.innerHTML = `
+            <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
+            <span class="header-status-badge">${this.escapeHtml(statusDisplay)}</span>
+            <div class="header-meta">
+                <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
+                <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
+                <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
+                <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
+            </div>
+        `;
+                }
+
+                renderAbstract() {
+                    const abstractSection = document.getElementById('abstractSection');
+                    const abstractContent = document.getElementById('abstractContent');
+                    if (!abstractSection || !abstractContent || !this.submission) return;
+                    const abstract = this.submission.abstract || '';
+                    if (abstract && abstract.trim() !== '') {
+                        abstractSection.style.display = 'block';
+                        const processedAbstract = this.processContentForDisplay(abstract);
+                        const isAbstractLong = processedAbstract.plainText.length > 300;
+                        const abstractPreview = isAbstractLong ? processedAbstract.plainText.substring(0, 300) + '...' : processedAbstract.plainText;
+                        const abstractDisplayHtml = isAbstractLong ? this.processContentForDisplay(abstractPreview).displayHtml : processedAbstract.displayHtml;
+                        abstractContent.innerHTML = `
+                <div class="abstract-text ${isAbstractLong ? 'truncated' : ''}">${abstractDisplayHtml}</div>
+                ${isAbstractLong ? `<a class="view-more-link" onclick="authorManager.showFullContent('${this.escapeHtml(processedAbstract.displayHtml)}', 'abstract', 'Abstract')"><i class="fas fa-eye"></i> View full abstract</a>` : ''}
+            `;
+                    } else {
+                        abstractSection.style.display = 'none';
+                    }
+                }
+
+                renderAuthors() {
+                    const authorsList = document.getElementById('authorsList');
+                    if (!authorsList || !this.submission) return;
+                    const authors = this.submission.authors || [];
+                    if (authors.length === 0) {
+                        authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
+                        return;
+                    }
+                    authorsList.innerHTML = authors.map(author => `
+            <div class="author-item"><div class="author-name">${this.escapeHtml(author.name)}</div><div class="author-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(author.email)}</div></div>
+        `).join('');
+                }
+
+                renderRevisions() {
+                    const revisionsSection = document.getElementById('revisionsSection');
+                    const revisionsContainer = document.getElementById('revisionsContainer');
+                    const viewAllRevisionsBtn = document.getElementById('viewAllRevisionsBtn');
+                    if (!revisionsSection || !revisionsContainer || !this.submission) return;
+                    const status = this.submission.status || '';
+                    const revisions = this.submission.revisions || [];
+                    if (status === 'submitted' || revisions.length === 0) { revisionsSection.style.display = 'none'; return; }
+                    revisionsSection.style.display = 'block';
+                    if (viewAllRevisionsBtn && revisions.length > 0) viewAllRevisionsBtn.style.display = 'inline-flex';
+                    if (revisions.length === 0) {
+                        revisionsContainer.innerHTML = `<div class="no-revisions"><i class="fas fa-history"></i><h3>No Revisions Available</h3><p>No revisions have been submitted for this manuscript.</p></div>`;
+                        return;
+                    }
+                    const sortedRevisions = [...revisions].sort((a, b) => (b.version || 0) - (a.version || 0));
+                    let revisionsHTML = '<div class="revisions-grid">';
+                    sortedRevisions.forEach(revision => {
+                        const version = revision.version || 1;
+                        const coverLetter = revision.coverLetter || '';
+                        const changesSummary = revision.changesSummary || '';
+                        const submittedAt = this.formatDate(revision.submittedAt || revision.createdAt, true);
+                        const fileUrl = this.buildFileUrl(revision.file?.url || revision.file);
+                        const processedCoverLetter = this.processContentForDisplay(coverLetter);
+                        const isCoverLetterLong = processedCoverLetter.plainText.length > 100;
+                        const coverLetterDisplayHtml = isCoverLetterLong ? this.processContentForDisplay(processedCoverLetter.plainText.substring(0, 100) + '...').displayHtml : processedCoverLetter.displayHtml;
+                        const processedChangesSummary = this.processContentForDisplay(changesSummary);
+                        const isChangesSummaryLong = processedChangesSummary.plainText.length > 100;
+                        const changesSummaryDisplayHtml = isChangesSummaryLong ? this.processContentForDisplay(processedChangesSummary.plainText.substring(0, 100) + '...').displayHtml : processedChangesSummary.displayHtml;
+                        revisionsHTML += `
+                <div class="revision-card">
+                    <div class="revision-header">
+                        <div class="revision-title"><i class="fas fa-file-edit"></i> Revision ${version}</div>
+                        <span class="revision-version">v${version}</span>
+                    </div>
+                    <div class="revision-content">
+                        <div class="revision-item">
+                            <div class="revision-label"><i class="fas fa-envelope"></i> Cover Letter</div>
+                            <div class="revision-text ${isCoverLetterLong ? 'truncated' : ''}">${coverLetterDisplayHtml}</div>
+                            ${isCoverLetterLong ? `<a class="view-more-link" onclick="authorManager.showFullContent('${this.escapeHtml(processedCoverLetter.displayHtml)}', 'cover-letter', 'Cover Letter - Revision ${version}')"><i class="fas fa-eye"></i> View full cover letter</a>` : ''}
+                        </div>
+                        <div class="revision-item">
+                            <div class="revision-label"><i class="fas fa-list-check"></i> Changes Summary</div>
+                            <div class="revision-text ${isChangesSummaryLong ? 'truncated' : ''}">${changesSummaryDisplayHtml}</div>
+                            ${isChangesSummaryLong ? `<a class="view-more-link" onclick="authorManager.showFullContent('${this.escapeHtml(processedChangesSummary.displayHtml)}', 'changes-summary', 'Changes Summary - Revision ${version}')"><i class="fas fa-eye"></i> View full changes summary</a>` : ''}
+                        </div>
+                        <div class="revision-meta">
+                            <div class="revision-date"><i class="far fa-calendar"></i> Submitted on: ${submittedAt}</div>
+                            ${fileUrl ? `<a href="${fileUrl}" target="_blank" class="view-document-btn"><i class="fas fa-file-pdf"></i> View Document</a>` : '<span class="score-empty">No document</span>'}
+                        </div>
+                    </div>
+                </div>
+            `;
                     });
-                } catch (error) {
-                    return dateString;
+                    revisionsHTML += '</div>';
+                    revisionsContainer.innerHTML = revisionsHTML;
                 }
-            }
 
-            stripHtml(html) {
-                if (!html) return '';
-                const div = document.createElement('div');
-                div.innerHTML = html;
-                return div.textContent || div.innerText || '';
-            }
-
-            renderTimeline(events) {
-                const timelineContainer = document.getElementById('recentTimeline');
-                if (!timelineContainer) return;
-
-                if (events.length === 0) {
-                    timelineContainer.innerHTML = '<div style="color: var(--muted); text-align: center; padding: 2rem;">No timeline events found</div>';
+                processContentForDisplay(content) {
+                    if (!content || content.trim() === '') return { plainText: '', displayHtml: '<span class="score-empty">No content</span>' };
+                    const sanitizedHtml = this.sanitizeHTML(content);
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = sanitizedHtml;
+                    const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                    return { plainText, displayHtml: sanitizedHtml };
                 }
+
+                sanitizeHTML(html) {
+                    if (!html) return '';
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
+                    scripts.forEach(s => s.remove());
+                    const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a'];
+                    const allElements = tempDiv.querySelectorAll('*');
+                    allElements.forEach(el => {
+                        if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                            const text = document.createTextNode(el.textContent);
+                            el.parentNode.replaceChild(text, el);
+                        } else {
+                            if (el.tagName.toLowerCase() === 'a') {
+                                const href = el.getAttribute('href');
+                                el.removeAttribute('target'); el.removeAttribute('rel');
+                                if (href && (/^https?:\/\//i.test(href) || href.startsWith('/'))) {
+                                    el.setAttribute('href', href); el.setAttribute('target', '_blank'); el.setAttribute('rel', 'noopener noreferrer');
+                                } else el.removeAttribute('href');
+                            } else {
+                                const attrs = Array.from(el.attributes); attrs.forEach(a => el.removeAttribute(a.name));
+                            }
+                        }
+                    });
+                    return tempDiv.innerHTML.trim() || html;
+                }
+
+                showFullContent(contentHtml, contentType, title) {
+                    this.currentModalContent = contentHtml;
+                    this.currentModalType = contentType;
+                    this.currentModalTitle = title;
+                    const modal = document.getElementById('contentModal');
+                    const modalTitle = document.getElementById('contentModalTitle');
+                    const modalType = document.getElementById('contentModalType');
+                    const contentDisplay = document.getElementById('contentDisplay');
+                    if (!modal || !modalTitle || !modalType || !contentDisplay) return;
+                    modalTitle.textContent = title;
+                    const typeMap = { 'cover-letter': 'Cover Letter', 'changes-summary': 'Changes Summary', 'abstract': 'Abstract', 'timeline-comment': 'Timeline Comment' };
+                    modalType.textContent = typeMap[contentType] || 'Content';
+                    contentDisplay.innerHTML = `<div class="content-display">${contentHtml || '<div class="empty">No content available</div>'}</div>`;
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+
+                closeContentModal() {
+                    const modal = document.getElementById('contentModal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = '';
+                        this.currentModalContent = '';
+                        this.currentModalType = '';
+                        this.currentModalTitle = '';
+                    }
+                }
+
+                async loadAssignedReviewers() {
+                    const assignedReviewersSection = document.getElementById('assignedReviewersSection');
+                    const assignedReviewersContainer = document.getElementById('assignedReviewers');
+                    const reviewersCount = document.getElementById('reviewersCount');
+                    if (!assignedReviewersSection || !assignedReviewersContainer || !this.submission) return;
+                    const assignedReviewers = this.submission.assignedReviewers || [];
+                    if (assignedReviewers.length === 0) { assignedReviewersSection.style.display = 'none'; return; }
+                    assignedReviewersSection.style.display = 'block';
+                    if (reviewersCount) reviewersCount.textContent = assignedReviewers.length;
+                    const reviewerPromises = assignedReviewers.map(async (assignment) => {
+                        const reviewerId = assignment.reviewerId; if (!reviewerId) return null;
+                        const user = await this.getUserDetails(reviewerId); if (!user) return null;
+                        return { ...assignment, name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown Reviewer', email: user.email || '', hasReviewed: assignment.hasReviewed || false };
+                    });
+                    const reviewers = (await Promise.all(reviewerPromises)).filter(Boolean);
+                    if (reviewers.length === 0) {
+                        assignedReviewersContainer.innerHTML = `<div class="no-reviewers"><i class="fas fa-user-slash"></i><p>No reviewers information available</p></div>`;
+                        return;
+                    }
+                    assignedReviewersContainer.innerHTML = reviewers.map(reviewer => `
+            <div class="reviewer-card">
+                <div class="reviewer-name">${this.escapeHtml(reviewer.name)}</div>
+                <div class="reviewer-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(reviewer.email)}</div>
+                <div class="reviewer-status"><span class="status-indicator ${reviewer.hasReviewed ? 'completed' : 'pending'}"></span>${reviewer.hasReviewed ? 'Review completed' : 'Review pending'}</div>
+            </div>
+        `).join('');
+                }
+
+                setupFileActions() {
+                    const viewBtn = document.getElementById('viewDocumentBtn');
+                    const downloadBtn = document.getElementById('downloadBtn');
+                    if (!viewBtn || !downloadBtn || !this.submission) return;
+                    const fileUrl = this.submission.file?.url || this.submission.file;
+                    if (!fileUrl) {
+                        viewBtn.disabled = true; downloadBtn.disabled = true;
+                        viewBtn.innerHTML = '<i class="fas fa-eye"></i> No Document Available';
+                        downloadBtn.innerHTML = '<i class="fas fa-download"></i> No Document Available';
+                        return;
+                    }
+                    const resolvedUrl = this.buildFileUrl(fileUrl);
+                    const fileName = this.submission.file?.originalName || this.submission.title || 'manuscript';
+                    viewBtn.addEventListener('click', () => window.open(resolvedUrl, '_blank'));
+                    downloadBtn.addEventListener('click', () => {
+                        const link = document.createElement('a'); link.href = resolvedUrl; link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    });
+                }
+
+                buildFileUrl(filePath) {
+                    if (!filePath) return null;
+                    try {
+                        const url = new URL(filePath);
+                        return url.toString();
+                    } catch {
+                        return `${BASE_URL.replace('/api/v1', '')}${filePath}`;
+                    }
+                }
+
+                async loadReviewDetails() {
+                    try {
+                        const token = getAuthToken2(); if (!token) return;
+                        const response = await fetch(`${BASE_URL}/submissions/details/${this.submissionId}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+                        if (!response.ok) { console.warn('Failed to fetch review details:', response.status); return; }
+                        const data = await response.json(); if (!data.success) return;
+                        this.editorialDecision = data.editorialDecision || null;
+                        this.reviewerFeedback = data.reviewerFeedback || null;
+                        const reviewDetailsSection = document.getElementById('reviewDetailsSection');
+                        const viewAllReviewsBtn = document.getElementById('viewAllReviewsBtn');
+                        if (reviewDetailsSection) {
+                            reviewDetailsSection.style.display = 'block';
+                            if (viewAllReviewsBtn) viewAllReviewsBtn.style.display = 'inline-flex';
+                            const revisionCount = data.submission?.revisionCount || this.submission?.revisionCount || 0;
+                            const rvCountEl = document.getElementById('rvCount');
+                            if (rvCountEl) rvCountEl.textContent = revisionCount;
+                            const editorialDecisionCard = document.getElementById('editorialDecisionCard');
+                            if (this.editorialDecision && editorialDecisionCard) {
+                                editorialDecisionCard.style.display = 'block';
+                                const decisionText = this.formatDecision(this.editorialDecision.decision);
+                                const commentText = this.stripHtml(this.editorialDecision.comment || '');
+                                const maxCharsForHeight = 120;
+                                const isLongComment = commentText.length > maxCharsForHeight;
+                                const commentPreview = isLongComment ? commentText.substring(0, maxCharsForHeight) + '...' : commentText;
+                                const editorialDecisionDiv = document.getElementById('editorialDecision');
+                                if (editorialDecisionDiv) {
+                                    editorialDecisionDiv.innerHTML = `<div class="detail-content"><strong style="display:block; margin-bottom: 0.5rem;">${decisionText}</strong><div class="detail-value ${isLongComment ? 'truncated' : ''}">${this.escapeHtml(commentPreview)}</div></div>`;
+                                    if (isLongComment) {
+                                        const viewMoreBtn = document.createElement('button'); viewMoreBtn.className = 'view-more-btn'; viewMoreBtn.innerHTML = '<i class="fas fa-eye"></i> View in review details';
+                                        viewMoreBtn.addEventListener('click', (e) => { e.preventDefault(); window.location.href = `author-review-details.html?id=${this.submissionId}`; });
+                                        editorialDecisionDiv.appendChild(viewMoreBtn);
+                                    }
+                                }
+                            }
+                            const reviewerFeedbackCard = document.getElementById('reviewerFeedbackCard');
+                            if (this.reviewerFeedback && reviewerFeedbackCard) {
+                                reviewerFeedbackCard.style.display = 'block';
+                                const reviewerFeedbackDiv = document.getElementById('reviewerFeedback');
+                                if (this.reviewerFeedback.available && this.reviewerFeedback.reviews && this.reviewerFeedback.reviews.length > 0) {
+                                    const review = this.reviewerFeedback.reviews[0];
+                                    const recommendation = this.formatDecision(review.recommendation);
+                                    const score = review.score || 'N/A';
+                                    const date = this.formatDate(review.submittedAt, true);
+                                    let reviewComment = ''; let isLongReview = false;
+                                    if (review.comment) {
+                                        const commentText = this.stripHtml(review.comment);
+                                        const maxCharsForHeight = 80;
+                                        isLongReview = commentText.length > maxCharsForHeight;
+                                        reviewComment = isLongReview ? commentText.substring(0, maxCharsForHeight) + '...' : commentText;
+                                    }
+                                    if (reviewerFeedbackDiv) {
+                                        reviewerFeedbackDiv.innerHTML = `<div class="detail-content"><strong style="display:block; margin-bottom: 0.25rem;">${recommendation}</strong>${reviewComment ? `<div class="detail-value ${isLongReview ? 'truncated' : ''}" style="margin-bottom: 0.5rem;">${this.escapeHtml(reviewComment)}</div>` : ''}<div style="color: var(--muted); font-size: 0.9rem;">Score: ${score}% • ${date}</div></div>`;
+                                        if (isLongReview) {
+                                            const viewMoreBtn = document.createElement('button'); viewMoreBtn.className = 'view-more-btn'; viewMoreBtn.innerHTML = '<i class="fas fa-eye"></i> View in review details';
+                                            viewMoreBtn.addEventListener('click', (e) => { e.preventDefault(); window.location.href = `author-review-details.html?id=${this.submissionId}`; });
+                                            reviewerFeedbackDiv.appendChild(viewMoreBtn);
+                                        }
+                                    }
+                                } else if (reviewerFeedbackDiv) {
+                                    reviewerFeedbackDiv.innerHTML = `<div class="detail-content"><div class="detail-value">No reviewer feedback available</div></div>`;
+                                }
+                            }
+                        }
+                        const status = this.submission?.currentStatus || this.submission?.status || '';
+                        const revisedSection = document.getElementById('revisedSection');
+                        if (status === 'revised' && revisedSection) {
+                            revisedSection.style.display = 'block';
+                            const revisionCount = data.submission?.revisionCount || this.submission?.revisionCount || 0;
+                            document.getElementById('totalRevisions').textContent = revisionCount;
+                            document.getElementById('revisionCountDisplay').textContent = `${revisionCount} revision${revisionCount !== 1 ? 's' : ''}`;
+                            const latestRevision = this.submission.revisions?.[0]?.createdAt || this.submission.updatedAt || this.submission.createdAt;
+                            if (latestRevision) document.getElementById('latestRevision').textContent = this.formatDate(latestRevision, true);
+                        }
+                    } catch (error) {
+                        console.error('Error loading review details:', error);
+                    }
+                }
+
+                async loadLatestTimelineEvent() {
+                    try {
+                        const token = getAuthToken2(); if (!token) return;
+                        if (this.submission?.history && this.submission.history.length > 0) {
+                            const latestEvent = this.submission.history[0];
+                            await this.renderLatestTimelineEvent(latestEvent);
+                            return;
+                        }
+                        const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+                        if (!response.ok) { console.warn(`Failed to fetch timeline: ${response.status}`); this.renderTimeline([]); return; }
+                        const data = await response.json();
+                        const timelineData = data.submission || data;
+                        const history = timelineData.history || [];
+                        const latestEvent = history.length > 0 ? history[0] : null;
+                        if (latestEvent) await this.renderLatestTimelineEvent(latestEvent); else this.renderTimeline([]);
+                    } catch (error) { console.error('Error loading timeline data:', error); this.renderTimeline([]); }
+                }
+
+                async renderLatestTimelineEvent(event) {
+                    const timelineContainer = document.getElementById('recentTimeline'); if (!timelineContainer) return;
+                    let updatedBy = 'System';
+                    if (event.by) {
+                        const user = await this.getUserDetails(event.by);
+                        if (user) updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+                    }
+                    const processedComment = this.processContentForDisplay(event.comment || 'No comment provided');
+                    const isCommentLong = processedComment.plainText.length > 150;
+                    const commentPreview = isCommentLong ? processedComment.plainText.substring(0, 150) + '...' : processedComment.plainText;
+                    const commentDisplayHtml = isCommentLong ? this.processContentForDisplay(commentPreview).displayHtml : processedComment.displayHtml;
+                    timelineContainer.innerHTML = `
+            <div class="timeline-item">
+                <div class="card">
+                    <span class="status-badge" style="${this.getStatusStyle(event.status)}">${this.formatStatus(event.status)}</span>
+                    <p class="timeline-comment">${commentDisplayHtml}${isCommentLong ? `<a class="view-more-link" style="display:inline-block;margin-left:0.5rem;" onclick="authorManager.showFullContent('${this.escapeHtml(processedComment.displayHtml)}','timeline-comment','Timeline Comment - ${this.formatStatus(event.status)}')"><i class="fas fa-eye"></i> View full comment</a>` : ''}</p>
+                    <p class="timeline-date"><i class="far fa-clock"></i> ${this.formatDate(event.date)}</p>
+                    <div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong></div>
+                </div>
+            </div>
+        `;
+                }
+
+                getStatusStyle(status) {
+                    const colors = {
+                        'submitted': 'background-color: #3b82f6; color: white;',
+                        'under_review': 'background-color: #f59e0b; color: white;',
+                        'reviewed': 'background-color: #8b5cf6; color: white;',
+                        'accepted': 'background-color: #10b981; color: white;',
+                        'rejected': 'background-color: #ef4444; color: white;',
+                        'revised': 'background-color: #8b5cf6; color: white;',
+                        'awaiting_payment': 'background-color: #f59e0b; color: white;',
+                        'published': 'background-color: #10b981; color: white;'
+                    };
+                    return colors[status] || 'background-color: #6b7280; color: white;';
+                }
+
+                formatDecision(decision) {
+                    if (!decision) return '';
+                    const decisionMap = { 'accept': 'Accepted', 'reject': 'Rejected', 'minor_revision': 'Minor Revision Required', 'major_revision': 'Major Revision Required' };
+                    return decisionMap[decision] || (decision.charAt(0).toUpperCase() + decision.slice(1)).replace(/_/g, ' ');
+                }
+
+                formatStatus(status) {
+                    if (!status) return '';
+                    const statusMap = { 'submitted': 'Submitted', 'under_review': 'Under Review', 'reviewed': 'Reviewed', 'accepted': 'Accepted', 'rejected': 'Rejected', 'revised': 'Revised', 'awaiting_payment': 'Awaiting Payment', 'published': 'Published', 'minor_revision': 'Minor Revision', 'major_revision': 'Major Revision', 'revision_requested': 'Revision Requested' };
+                    return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
+                }
+
+                formatDate(dateString, dateOnly = false) {
+                    try { if (!dateString) return ''; const date = new Date(dateString); if (dateOnly) return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (error) { return dateString; }
+                }
+
+                stripHtml(html) { if (!html) return ''; const div = document.createElement('div'); div.innerHTML = html; return div.textContent || div.innerText || ''; }
+                renderTimeline(events) { const timelineContainer = document.getElementById('recentTimeline'); if (!timelineContainer) return; if (!events || events.length === 0) timelineContainer.innerHTML = '<div style="color: var(--muted); text-align: center; padding: 2rem;">No timeline events found</div>'; }
+                showLoading() { const ls = document.getElementById('loadingScreen'); const es = document.getElementById('errorScreen'); const cc = document.getElementById('contentContainer'); if (ls) ls.style.display = 'block'; if (es) es.style.display = 'none'; if (cc) cc.style.display = 'none'; }
+                hideLoading() { const ls = document.getElementById('loadingScreen'); if (ls) ls.style.display = 'none'; }
+                showContent() { const cc = document.getElementById('contentContainer'); if (cc) cc.style.display = 'block'; }
+                showError(message) { const ls = document.getElementById('loadingScreen'); const es = document.getElementById('errorScreen'); const cc = document.getElementById('contentContainer'); if (ls) ls.style.display = 'none'; if (es) es.style.display = 'block'; if (cc) cc.style.display = 'none'; const errMsg = document.getElementById('errorMessage'); if (errMsg) errMsg.textContent = message; }
+                escapeHtml(str) { if (str === undefined || str === null) return ''; return String(str).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", "&#39;"); }
             }
 
-            showLoading() {
-                document.getElementById('loadingScreen').style.display = 'block';
-                document.getElementById('errorScreen').style.display = 'none';
-                document.getElementById('contentContainer').style.display = 'none';
-            }
+            /* init */
+            document.addEventListener('DOMContentLoaded', () => {
+                const authorManager = new AuthorSubmissionDetailsManager();
+                window.authorManager = authorManager;
+            });
 
-            hideLoading() {
-                document.getElementById('loadingScreen').style.display = 'none';
-            }
-
-            showContent() {
-                document.getElementById('contentContainer').style.display = 'block';
-            }
-
-            showError(message) {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('errorScreen').style.display = 'block';
-                document.getElementById('errorMessage').textContent = message;
-            }
-
-            escapeHtml(str) {
-                if (str === undefined || str === null) return '';
-                return String(str)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
-            }
-        }
-
-        // Initialize the manager when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const authorManager = new AuthorSubmissionDetailsManager();
-            window.authorManager = authorManager; // Make it globally accessible for onclick handlers
-        });
     </script>
 </body>
 <style>

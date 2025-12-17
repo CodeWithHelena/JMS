@@ -63,7 +63,7 @@
  }
 
  .logo-text {
-     font-family: 'Playfair Display', serif;
+     /* font-family: 'Playfair Display', serif; */
      font-size: 1.8rem;
      font-weight: 700;
      color: var(--primary);
@@ -503,7 +503,7 @@
 
  /* Footer */
  footer {
-     background: var(--primary);
+     background: var(--primary-color-dark);
      color: white;
      padding: 4rem 0 2rem;
  }
@@ -536,7 +536,7 @@
  }
 
  .footer-links a {
-     color: #bdc3c7;
+     color: white;
      text-decoration: none;
      transition: var(--transition);
  }
@@ -565,6 +565,10 @@
      transition: var(--transition);
  }
 
+ .footer-about p{
+    color: white;
+ }
+
  .social-links a:hover {
      background: var(--secondary);
      transform: translateY(-3px);
@@ -574,7 +578,11 @@
      text-align: center;
      padding-top: 2rem;
      border-top: 1px solid rgba(255, 255, 255, 0.1);
-     color: #bdc3c7;
+     color: white;
+ }
+
+ .footer-bottom p{
+    color: white
  }
 
  /* Animations */

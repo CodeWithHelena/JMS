@@ -373,12 +373,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Add user button click
     addUserBtn.addEventListener('click', () => {
-        Swal.fire({
-            title: 'Add New User',
-            text: 'This feature is coming soon!',
-            icon: 'info',
-            confirmButtonColor: '#cc5500'
-        });
+        window.location.href = 'create-user.html';
     });
 
     // Clear all filters
