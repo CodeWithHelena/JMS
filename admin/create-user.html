@@ -22,7 +22,7 @@
 </head>
 <style>
     :root {
-        --primary-color: rgba(204, 85, 0, 0.12);
+        --primary-color: var(--secondary-color);
         --secondary-color: var(--lite-primary-color);
         --sidebar-width: 260px;
         --sidebar-collapsed-width: 70px;
@@ -55,6 +55,10 @@
         background-color: var(--body-bg);
         color: var(--text-color);
         min-height: 100vh;
+    }
+    .sidebar {
+    width: var(--sidebar-width);
+    background: var(--secondary-color) !important;
     }
 
     .create-user-container {

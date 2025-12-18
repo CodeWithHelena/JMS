@@ -4,238 +4,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Academic Journal Hub</title>
+    <title>About Us | JournalFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
-        /* Copy ALL the CSS styles from the previous response here */
-        /* Same CSS as index.html */
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+
+            /* Updated color scheme */
+            --primary: 25 96% 47%;
+            /* #ea6404 */
+            --lite-primary: #ea6404;
+            --primary-dark: 25 80% 45%;
+            /* #cc5500 */
+            --lite-secondary1: 198 69% 37%;
+            /* #1F77A1 */
+            --lite-secondary2: 199 90% 38%;
+            /* #0A7AB5 */
+
+            --primary-foreground: 0 0% 100%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 25 96% 47%;
+            /* Updated to primary */
+            --radius: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: hsl(var(--foreground));
+            background-color: hsl(var(--background));
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: hsla(var(--background) / 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid hsl(var(--border));
+            padding: 1rem 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: hsl(var(--primary));
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        /* Section headings */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: hsl(var(--foreground));
+        }
+
+        .section-header p {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Timeline (paired layout) */
+        .timeline {
+            max-width: 920px;
+            margin: 3rem auto 0;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* Each row contains two boxes and the center icon (reduced center width) */
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 1fr 64px 1fr;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+        }
+
+        /* horizontal connector line that sits behind the circle */
+        .timeline-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 2px;
+            background-color: hsl(var(--border));
+            z-index: 1;
+            /* sits above boxes' default layer but below the icon */
+        }
+
+        .timeline-box {
+            padding: 1.5rem;
+            background-color: hsl(var(--card));
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--border));
+            box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 2;
+            /* keep boxes above connector where they overlap */
+        }
+
+        .timeline-box h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: hsl(var(--foreground));
+        }
+
+        .timeline-box p {
+            color: hsl(var(--muted-foreground));
+            line-height: 1.6;
+        }
+
+        /* smaller circle in the middle */
+        .timeline-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: hsl(var(--primary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            margin: 0 auto;
+            position: relative;
+            z-index: 3;
+            /* sit above the connector */
+        }
+
+        /* Empty placeholder for uneven rows */
+        .timeline-empty {
+            height: 1px;
+            background: transparent;
+        }
+
+        /* Slight lift so icon overlaps line neatly */
+        .timeline-row .timeline-icon {
+            transform: translateY(-2px);
+        }
+
+        /* Responsive: stack on smaller screens */
+        @media (max-width: 768px) {
+            .timeline {
+                margin-left: 0;
+            }
+
+            .timeline-row {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-row::before {
+                left: 30px;
+                right: 30px;
+            }
+
+            .timeline-row .timeline-icon {
+                transform: translateY(0);
+                justify-self: center;
+                margin: 0.75rem 0;
+            }
+
+            .timeline-row .timeline-box {
+                width: 100%;
+            }
+        }
+
+        /* Misc */
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- Header & Navigation -->
+    <!-- Header -->
     <header>
-        <div class="container nav-container">
-            <a href="index.html" class="logo">
-                <i class="fas fa-book-open"></i>
-                <span class="logo-text">Journal Flow</span>
-            </a>
-
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <nav>
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="issues.html">Latest Issues</a></li>
-                    <li><a href="about.html" class="active">About Us</a></li>
-                    <li><a href="contact.html">Contact Us</a></li>
-                </ul>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>JournalFlow</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#">Features</a>
+                </div>
             </nav>
-
-            <div class="auth-buttons">
-                <a href="signin.html" class="btn btn-outline">Sign In</a>
-                <a href="signup.html" class="btn btn-primary">Sign Up</a>
-            </div>
         </div>
     </header>
 
-    <!-- Page Header -->
-    <section class="page-header">
+    <!-- Page Hero -->
+    <section class="page-hero">
         <div class="container">
-            <h1>About Journal Flow</h1>
-            <p>Advancing knowledge through open access publishing since 2010</p>
-        </div>
-    </section>
-
-    <!-- Page Content -->
-    <section class="page-content">
-        <div class="container">
-            <div class="content-card">
-                <h2 style="margin-bottom: 2rem;">Our Mission</h2>
-                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
-                    At Journal Flow, we believe that knowledge should be freely accessible to everyone, everywhere.
-                    Our mission is to democratize academic publishing by providing a platform where researchers
-                    can share their discoveries without barriers, while maintaining the highest standards of
-                    peer review and academic integrity.
-                </p>
-
-                <div class="stats-grid" style="margin: 3rem 0;">
-                    <div class="stat-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label">University Partners</div>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-award"></i>
-                        <div class="stat-number">250+</div>
-                        <div class="stat-label">Awards & Recognition</div>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-language"></i>
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Languages Supported</div>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-rocket"></i>
-                        <div class="stat-number">99.9%</div>
-                        <div class="stat-label">Uptime Guarantee</div>
-                    </div>
-                </div>
-
-                <h2 style="margin: 3rem 0 1.5rem;">Our Values</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-lock-open"></i>
-                        </div>
-                        <h3>Open Access</h3>
-                        <p>All published content is freely available to read, download, and share.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-balance-scale"></i>
-                        </div>
-                        <h3>Academic Integrity</h3>
-                        <p>Rigorous peer review and strict ethical guidelines ensure quality.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-globe-americas"></i>
-                        </div>
-                        <h3>Global Reach</h3>
-                        <p>We connect researchers from over 120 countries worldwide.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-card" style="margin-top: 2rem;">
-                <h2 style="margin-bottom: 2rem;">Our Leadership Team</h2>
-                <div class="team-grid">
-                    <div class="team-member">
-                        <div class="member-avatar">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <h3>Dr. Sarah Johnson</h3>
-                        <p style="color: var(--secondary); margin-bottom: 1rem;">Chief Editor</p>
-                        <p>Former Professor at Stanford University with 20+ years in academic publishing.</p>
-                    </div>
-                    <div class="team-member">
-                        <div class="member-avatar">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <h3>Prof. Michael Chen</h3>
-                        <p style="color: var(--secondary); margin-bottom: 1rem;">Technical Director</p>
-                        <p>PhD in Computer Science, specializing in digital publishing platforms.</p>
-                    </div>
-                    <div class="team-member">
-                        <div class="member-avatar">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <h3>Dr. Elena Rodriguez</h3>
-                        <p style="color: var(--secondary); margin-bottom: 1rem;">Operations Head</p>
-                        <p>Expert in open access policy and international academic standards.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-card" style="margin-top: 2rem;">
-                <h2 style="margin-bottom: 2rem;">Our History</h2>
-                <div style="position: relative; padding-left: 2rem; border-left: 3px solid var(--secondary); margin-left: 1rem;">
-                    <div style="margin-bottom: 2rem; position: relative;">
-                        <div style="position: absolute; left: -2.5rem; top: 0; width: 1.5rem; height: 1.5rem; background: var(--secondary); border-radius: 50%;"></div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">2010 - Foundation</h3>
-                        <p>Journal Flow was founded by a group of researchers frustrated with traditional publishing barriers.</p>
-                    </div>
-                    <div style="margin-bottom: 2rem; position: relative;">
-                        <div style="position: absolute; left: -2.5rem; top: 0; width: 1.5rem; height: 1.5rem; background: var(--secondary); border-radius: 50%;"></div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">2014 - Expansion</h3>
-                        <p>Launched our first international partnerships and expanded to 50+ journals across disciplines.</p>
-                    </div>
-                    <div style="margin-bottom: 2rem; position: relative;">
-                        <div style="position: absolute; left: -2.5rem; top: 0; width: 1.5rem; height: 1.5rem; background: var(--secondary); border-radius: 50%;"></div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">2018 - Innovation</h3>
-                        <p>Introduced AI-powered peer review matching and automated publishing workflows.</p>
-                    </div>
-                    <div style="position: relative;">
-                        <div style="position: absolute; left: -2.5rem; top: 0; width: 1.5rem; height: 1.5rem; background: var(--secondary); border-radius: 50%;"></div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">2023 - Present</h3>
-                        <p>Serving researchers from 120+ countries with 15,000+ published papers and growing.</p>
-                    </div>
-                </div>
+            <div class="section-header fade-in">
+                <h2>Why Choose Us</h2>
+                <p>Key milestones in our mission to transform academic publishing</p>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
+    <!-- Timeline -->
+    <section class="about-section">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <div class="footer-logo">Journal Flow</div>
-                    <p>Advancing knowledge through open access publishing since 2010. We are committed to making scholarly research accessible to everyone.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+            <div class="timeline">
+                <!-- Row 1: Indexing + Peer reviewed with icon centered -->
+                <div class="timeline-row fade-in">
+                    <div class="timeline-box">
+                        <h3>Indexing</h3>
+                        <p><strong>FedponekIJRD</strong> is indexed in Google Scholar, Index Copernicus, Slideshare, Scribd, Academia, ResearchGate and many more.</p>
+                    </div>
+
+                    <div class="timeline-icon" aria-hidden="true">
+                        <i class="fas fa-globe"></i>
+                    </div>
+
+                    <div class="timeline-box">
+                        <h3>Peer Reviewed</h3>
+                        <p>An international, peer-reviewed, open access journal with a rigorous review process and a streamlined publishing workflow.</p>
                     </div>
                 </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="issues.html">Latest Issues</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
-                    </ul>
+
+                <!-- Row 2: e-Certificate + Global Expansion -->
+                <div class="timeline-row fade-in">
+                    <div class="timeline-box">
+                        <h3>e-Certificate</h3>
+                        <p>Provides individual eCertificates to each author, ensuring formal recognition of their authorship and contribution to published work.</p>
+                    </div>
+
+                    <div class="timeline-icon" aria-hidden="true">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+
+                    <div class="timeline-box">
+                        <h3>Global Expansion</h3>
+                        <p>Expanded to serve publishers and researchers in 30+ countries, broadening our academic collaboration network.</p>
+                    </div>
                 </div>
-                <div class="footer-links">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="#">Author Guidelines</a></li>
-                        <li><a href="#">Reviewer Guidelines</a></li>
-                        <li><a href="#">Publication Ethics</a></li>
-                        <li><a href="#">Open Access Policy</a></li>
-                    </ul>
+
+                <!-- Row 3: AI Integration centered with empty box to the right -->
+                <div class="timeline-row fade-in">
+                    <div class="timeline-box">
+                        <h3>AI Integration</h3>
+                        <p>Introduced AI-powered tools for manuscript screening, reviewer matching, and workflow automation to improve speed and quality.</p>
+                    </div>
+
+                    <div class="timeline-icon" aria-hidden="true">
+                        <i class="fas fa-robot"></i>
+                    </div>
+
+                    <div class="timeline-empty"></div>
                 </div>
-                <div class="footer-links">
-                    <h4>Journals</h4>
-                    <ul>
-                        <li><a href="#">Science & Technology</a></li>
-                        <li><a href="#">Medical Research</a></li>
-                        <li><a href="#">Social Sciences</a></li>
-                        <li><a href="#">Humanities</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Journal Flow Journal Management System. All rights reserved.</p>
+
             </div>
         </div>
-    </footer>
+    </section>
 
     <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('active')
-                ? '<i class="fas fa-times"></i>'
-                : '<i class="fas fa-bars"></i>';
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            }
+        // simple intersection observer to add fade-in when in view
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('fade-in');
+                });
+            }, observerOptions);
+            document.querySelectorAll('.timeline-row').forEach(el => observer.observe(el));
         });
     </script>
 </body>

@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Journals | JournalFlow - Academic Journal Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+     :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    /* === NEW MAIN BRAND COLORS === */
+    --primary: 243 50% 22%;        /* #1F1B51 */
+    --primary-dark: 243 55% 18%;   /* darker #1F1B51 */
+    --primary-light: 243 50% 96%;
+
+    --lite-secondary1: 205 78% 35%; /* #0E6BA7 */
+    --lite-secondary2: 195 100% 50%; /* #00BFFF */
+
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --ring: 243 50% 22%; /* matches primary */
+    --radius: 0.5rem;
+}
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: hsl(var(--foreground));
+            background-color: hsl(var(--background));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: hsla(var(--background) / 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid hsl(var(--border));
+            padding: 1rem 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: hsl(var(--primary));
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.75rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: hsl(var(--foreground));
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: hsl(var(--foreground));
+            cursor: pointer;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, hsla(var(--primary) / 0.05) 0%, transparent 100%);
+            padding: 3rem 0;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: hsl(var(--foreground));
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 800px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary-dark));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px hsla(var(--primary) / 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: hsl(var(--primary));
+            border: 1px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            background-color: hsl(var(--accent));
+            border-color: hsl(var(--primary));
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        /* Auth buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn-signin {
+            background-color: hsl(var(--primary));
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-signin:hover {
+            background-color: hsl(var(--primary-dark));
+        }
+
+        .btn-register {
+            background-color: transparent;
+            color: hsl(var(--primary));
+            border: 1px solid hsl(var(--primary));
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-register:hover {
+            background-color: hsla(var(--primary) / 0.1);
+        }
+
+        /* Custom Select Styles */
+        .page-controls {
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsla(var(--primary) / 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: hsl(var(--muted-foreground));
+        }
+
+        .custom-select {
+            position: relative;
+            min-width: 180px;
+        }
+
+        .select-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.625rem 1rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            background-color: hsl(var(--background));
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .select-header:hover {
+            border-color: hsl(var(--primary));
+        }
+
+        .select-header.active {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsla(var(--primary) / 0.1);
+        }
+
+        .select-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: hsl(var(--foreground));
+        }
+
+        .select-label .placeholder {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .select-chevron {
+            transition: transform 0.2s;
+        }
+
+        .select-header.active .select-chevron {
+            transform: rotate(180deg);
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: calc(100% + 0.25rem);
+            left: 0;
+            right: 0;
+            background-color: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 50;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .select-dropdown.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .select-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .select-option:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        .select-option.selected {
+            background-color: hsla(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            font-weight: 500;
+        }
+
+        .select-option.selected .checkmark {
+            display: block;
+        }
+
+        .select-option .checkmark {
+            display: none;
+            color: hsl(var(--primary));
+        }
+
+        .stats-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        .active-filter {
+            background-color: hsl(var(--primary));
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .active-filter i {
+            cursor: pointer;
+            font-size: 0.625rem;
+            padding-left: 0.25rem;
+        }
+
+        /* Journals Grid */
+        .journals-container {
+            padding: 2rem 0 4rem;
+            flex-grow: 1;
+        }
+
+        .journals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .journal-card {
+            background-color: hsl(var(--card));
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--border));
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .journal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .journal-header {
+            padding: 1.5rem 1.5rem 0.5rem;
+        }
+
+        .journal-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: hsla(var(--lite-secondary2) / 0.1);
+            color: hsl(var(--lite-secondary2));
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .journal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            color: hsl(var(--foreground));
+        }
+
+        .journal-issn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .journal-content {
+            padding: 0 1.5rem 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .journal-description {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .journal-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        .detail-label {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .journal-indexing {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .indexing-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .indexing-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .indexing-badge {
+            background-color: hsla(var(--lite-secondary1) / 0.1);
+            color: hsl(var(--lite-secondary1));
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid hsla(var(--lite-secondary1) / 0.2);
+        }
+
+        .journal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid hsl(var(--border));
+            background-color: hsla(var(--muted) / 0.5);
+            margin-top: auto;
+        }
+
+        .journal-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-active {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .status-inactive {
+            color: #ef4444;
+            font-weight: 500;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius);
+            background-color: transparent;
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover {
+            background-color: hsl(var(--accent));
+            border-color: hsl(var(--primary));
+        }
+
+        .pagination-btn.active {
+            background-color: hsl(var(--primary));
+            color: white;
+            border-color: hsl(var(--primary));
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn:disabled:hover {
+            background-color: transparent;
+            border-color: hsl(var(--border));
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: hsl(var(--foreground));
+        }
+
+        .empty-state p {
+            color: hsl(var(--muted-foreground));
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: hsl(var(--card));
+            border-top: 1px solid hsl(var(--border));
+            padding: 3rem 0 2rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: hsl(var(--primary));
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius);
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .social-link:hover {
+            background-color: hsl(var(--primary));
+            color: white;
+        }
+
+        .footer-links h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid hsl(var(--border));
+            text-align: center;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: hsl(var(--background));
+                flex-direction: column;
+                padding: 1.5rem;
+                border-bottom: 1px solid hsl(var(--border));
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .journals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-group {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box,
+            .custom-select {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .auth-buttons a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .journals-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .stagger-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .stagger-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .stagger-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>JournalFlow</span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="index.html#features">Features</a>
+                    <a href="index.html#journals">Journals</a>
+                    <a href="issues.html">Issues</a>
+                    <a href="about.html">About</a>
+                    <a href="#contact">Contact</a>
+                    <div class="auth-buttons">
+                        <a href="../login.html" class="btn-signin" style="color:white">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </a>
+                        <a href="../register.html" class="btn-register">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </div>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="fade-in">
+                <h1 class="page-title">All Academic Journals</h1>
+                <p class="page-subtitle">Browse and explore all academic journals managed on the JournalFlow platform. Filter by subject, review policy, or status to find the journals relevant to your research.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Controls -->
+    <section class="page-controls">
+        <div class="container">
+            <div class="filter-group">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search journals by title, publisher, or scope...">
+                </div>
+
+                <!-- Custom Select for Scope -->
+                <div class="custom-select" id="scopeSelect">
+                    <div class="select-header">
+                        <div class="select-label">
+                            <i class="fas fa-tags"></i>
+                            <span class="select-value" data-placeholder="All Scopes">All Scopes</span>
+                        </div>
+                        <i class="fas fa-chevron-down select-chevron"></i>
+                    </div>
+                    <div class="select-dropdown">
+                        <div class="select-option" data-value="">All Scopes</div>
+                        <div class="select-option" data-value="Agriculture">Agriculture</div>
+                        <div class="select-option" data-value="Medical Sciences">Medical Sciences</div>
+                        <div class="select-option" data-value="Computer Science">Computer Science</div>
+                        <div class="select-option" data-value="Environmental Science">Environmental Science</div>
+                        <div class="select-option" data-value="Business & Economics">Business & Economics</div>
+                        <div class="select-option" data-value="Engineering">Engineering</div>
+                        <div class="select-option" data-value="Psychology">Psychology</div>
+                        <div class="select-option" data-value="Chemical Engineering">Chemical Engineering</div>
+                    </div>
+                </div>
+
+                <!-- Custom Select for Status -->
+                <div class="custom-select" id="statusSelect">
+                    <div class="select-header">
+                        <div class="select-label">
+                            <i class="fas fa-circle"></i>
+                            <span class="select-value" data-placeholder="All Statuses">All Statuses</span>
+                        </div>
+                        <i class="fas fa-chevron-down select-chevron"></i>
+                    </div>
+                    <div class="select-dropdown">
+                        <div class="select-option" data-value="">All Statuses</div>
+                        <div class="select-option" data-value="active">Active</div>
+                        <div class="select-option" data-value="inactive">Inactive</div>
+                    </div>
+                </div>
+
+                <!-- Custom Select for Review Policy -->
+                <div class="custom-select" id="reviewSelect">
+                    <div class="select-header">
+                        <div class="select-label">
+                            <i class="fas fa-eye"></i>
+                            <span class="select-value" data-placeholder="All Review Policies">All Review Policies</span>
+                        </div>
+                        <i class="fas fa-chevron-down select-chevron"></i>
+                    </div>
+                    <div class="select-dropdown">
+                        <div class="select-option" data-value="">All Review Policies</div>
+                        <div class="select-option" data-value="single-blind">Single-Blind</div>
+                        <div class="select-option" data-value="double-blind">Double-Blind</div>
+                        <div class="select-option" data-value="open">Open</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-info">
+                <span id="resultsCount">Loading journals...</span>
+                <div id="activeFilters" style="display: none;">
+                    <span class="active-filter">
+                        Filter: <span id="filterText"></span>
+                        <i class="fas fa-times" onclick="clearFilters()"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Journals Container -->
+    <main class="journals-container">
+        <div class="container">
+            <div id="journalsGrid" class="journals-grid">
+                <!-- Journals will be loaded dynamically here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-book-open"></i>
+                <h3>No journals found</h3>
+                <p>Try adjusting your search or filter to find what you're looking for.</p>
+                <button class="btn btn-outline" onclick="clearFilters()">
+                    <i class="fas fa-filter"></i> Clear All Filters
+                </button>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination">
+                <!-- Pagination will be generated dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <i class="fas fa-book-open"></i>
+                        <span>JournalFlow</span>
+                    </div>
+                    <p class="footer-description">Professional journal management system for academic publishers worldwide.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Platform</h3>
+                    <ul>
+                        <li><a href="index.html#features">Features</a></li>
+                        <li><a href="all-journals.html">Journals</a></li>
+                        <li><a href="issues.html">Issues</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 JournalFlow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample journal data based on your database schema
+        const journalsData = [
+            {
+                "_id": { "$oid": "693a00707409ad900774e4cc" },
+                "title": "Basic Journal for Agricultural Management",
+                "issn": "3454-345X",
+                "description": "A leading journal publishing high-quality research in agricultural management, sustainable farming practices, and food systems innovation. We publish original research, reviews, and case studies.",
+                "publisher": "Michael Eze",
+                "scope": "Agriculture",
+                "reviewPolicy": "single-blind",
+                "submissionFee": 0,
+                "publicationFee": 15000,
+                "currency": "NGN",
+                "doiPrefix": "10.1212",
+                "indexing": [
+                    {
+                        "name": "Netpro International",
+                        "url": "https://netpro.africa",
+                        "_id": { "$oid": "693a00707409ad900774e4cd" }
+                    },
+                    {
+                        "name": "AGRICOLA",
+                        "url": "https://agricola.nal.usda.gov",
+                        "_id": { "$oid": "693a00707409ad900774e4ce" }
+                    }
+                ],
+                "email": "michaeleze@gmail.com",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d0" },
+                "title": "Journal of Medical Sciences Research",
+                "issn": "2345-6789",
+                "description": "Publishing cutting-edge medical research, clinical trials, and healthcare innovations from around the world. Our journal has a rigorous peer-review process.",
+                "publisher": "Global Health Publications",
+                "scope": "Medical Sciences",
+                "reviewPolicy": "double-blind",
+                "submissionFee": 50,
+                "publicationFee": 2000,
+                "currency": "USD",
+                "doiPrefix": "10.1234",
+                "indexing": [
+                    {
+                        "name": "PubMed",
+                        "url": "https://pubmed.ncbi.nlm.nih.gov",
+                        "_id": { "$oid": "693a00707409ad900774e4d1" }
+                    },
+                    {
+                        "name": "Scopus",
+                        "url": "https://www.scopus.com",
+                        "_id": { "$oid": "693a00707409ad900774e4d2" }
+                    }
+                ],
+                "email": "editor@jmedsci.com",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d3" },
+                "title": "Computer Science Review Quarterly",
+                "issn": "5678-9012",
+                "description": "A comprehensive review journal covering advances in computer science, artificial intelligence, machine learning, and information technology.",
+                "publisher": "Tech Academic Press",
+                "scope": "Computer Science",
+                "reviewPolicy": "open",
+                "submissionFee": 25,
+                "publicationFee": 1200,
+                "currency": "USD",
+                "doiPrefix": "10.5678",
+                "indexing": [
+                    {
+                        "name": "IEEE Xplore",
+                        "url": "https://ieeexplore.ieee.org",
+                        "_id": { "$oid": "693a00707409ad900774e4d4" }
+                    },
+                    {
+                        "name": "ACM Digital Library",
+                        "url": "https://dl.acm.org",
+                        "_id": { "$oid": "693a00707409ad900774e4d5" }
+                    }
+                ],
+                "email": "csr@techacademic.org",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d6" },
+                "title": "Environmental Science & Sustainability",
+                "issn": "9012-3456",
+                "description": "Focusing on environmental science, climate change, sustainability, and ecological conservation research from interdisciplinary perspectives.",
+                "publisher": "Green Earth Publishing",
+                "scope": "Environmental Science",
+                "reviewPolicy": "single-blind",
+                "submissionFee": 30,
+                "publicationFee": 1800,
+                "currency": "EUR",
+                "doiPrefix": "10.7890",
+                "indexing": [
+                    {
+                        "name": "Web of Science",
+                        "url": "https://clarivate.com",
+                        "_id": { "$oid": "693a00707409ad900774e4d7" }
+                    }
+                ],
+                "email": "ess@greenearth.org",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4d8" },
+                "title": "Business & Economics Review",
+                "issn": "7890-1234",
+                "description": "A premier journal for business, economics, finance, and management research with global impact and readership.",
+                "publisher": "Global Business Press",
+                "scope": "Business & Economics",
+                "reviewPolicy": "double-blind",
+                "submissionFee": 75,
+                "publicationFee": 2500,
+                "currency": "USD",
+                "doiPrefix": "10.2468",
+                "indexing": [
+                    {
+                        "name": "EBSCO",
+                        "url": "https://www.ebsco.com",
+                        "_id": { "$oid": "693a00707409ad900774e4d9" }
+                    },
+                    {
+                        "name": "ProQuest",
+                        "url": "https://www.proquest.com",
+                        "_id": { "$oid": "693a00707409ad900774e4da" }
+                    }
+                ],
+                "email": "ber@businesspress.com",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4db" },
+                "title": "Engineering Innovations Journal",
+                "issn": "1234-5678",
+                "description": "Publishing innovative engineering research, technological advancements, and applied engineering solutions across all disciplines.",
+                "publisher": "Engineering Society",
+                "scope": "Engineering",
+                "reviewPolicy": "single-blind",
+                "submissionFee": 40,
+                "publicationFee": 1500,
+                "currency": "USD",
+                "doiPrefix": "10.1357",
+                "indexing": [
+                    {
+                        "name": "Engineering Village",
+                        "url": "https://www.engineeringvillage.com",
+                        "_id": { "$oid": "693a00707409ad900774e4dc" }
+                    }
+                ],
+                "email": "eij@engsociety.org",
+                "isActive": false
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4dd" },
+                "title": "Psychology Today Review",
+                "issn": "3456-7890",
+                "description": "Interdisciplinary journal covering clinical psychology, cognitive science, neuroscience, and behavioral research.",
+                "publisher": "Mind & Behavior Press",
+                "scope": "Psychology",
+                "reviewPolicy": "double-blind",
+                "submissionFee": 35,
+                "publicationFee": 1600,
+                "currency": "USD",
+                "doiPrefix": "10.5555",
+                "indexing": [
+                    {
+                        "name": "PsycINFO",
+                        "url": "https://www.apa.org",
+                        "_id": { "$oid": "693a00707409ad900774e4de" }
+                    }
+                ],
+                "email": "psychology@mindbehavior.org",
+                "isActive": true
+            },
+            {
+                "_id": { "$oid": "693a00707409ad900774e4df" },
+                "title": "Chemical Engineering Advances",
+                "issn": "4567-8901",
+                "description": "Dedicated to publishing research in chemical engineering, process technology, and material sciences.",
+                "publisher": "Chemical Society",
+                "scope": "Chemical Engineering",
+                "reviewPolicy": "single-blind",
+                "submissionFee": 45,
+                "publicationFee": 1750,
+                "currency": "USD",
+                "doiPrefix": "10.6666",
+                "indexing": [
+                    {
+                        "name": "CAS",
+                        "url": "https://www.cas.org",
+                        "_id": { "$oid": "693a00707409ad900774e4e0" }
+                    }
+                ],
+                "email": "cea@chemsociety.org",
+                "isActive": true
+            }
+        ];
+
+        // DOM Elements
+        const journalsGrid = document.getElementById('journalsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const resultsCount = document.getElementById('resultsCount');
+        const activeFilters = document.getElementById('activeFilters');
+        const filterText = document.getElementById('filterText');
+        const emptyState = document.getElementById('emptyState');
+        const pagination = document.getElementById('pagination');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.querySelector('.nav-links');
+
+        // Custom Select Elements
+        const scopeSelect = document.getElementById('scopeSelect');
+        const statusSelect = document.getElementById('statusSelect');
+        const reviewSelect = document.getElementById('reviewSelect');
+
+        // Filter state
+        let currentFilters = {
+            search: '',
+            scope: '',
+            status: '',
+            review: ''
+        };
+
+        // Pagination Configuration
+        let currentPage = 1;
+        const journalsPerPage = 6;
+        let filteredJournals = [...journalsData];
+
+        // Format currency
+        function formatCurrency(amount, currency) {
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: currency,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            try {
+                return formatter.format(amount);
+            } catch {
+                return `${amount} ${currency}`;
+            }
+        }
+
+        // Format review policy
+        function formatReviewPolicy(policy) {
+            return policy.split('-').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join('-');
+        }
+
+        // Create journal card HTML
+        function createJournalCard(journal) {
+            return `
+                <div class="journal-card fade-in">
+                    <div class="journal-header">
+                        <span class="journal-badge">${journal.scope}</span>
+                        <h3 class="journal-title">${journal.title}</h3>
+                        <div class="journal-issn">
+                            <i class="fas fa-globe"></i>
+                            <span>ISSN: ${journal.issn}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="journal-content">
+                        <p class="journal-description">${journal.description}</p>
+                        
+                        <div class="journal-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Publisher:</span>
+                                <span class="detail-value">${journal.publisher}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Review Policy:</span>
+                                <span class="detail-value">${formatReviewPolicy(journal.reviewPolicy)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Publication Fee:</span>
+                                <span class="detail-value">${formatCurrency(journal.publicationFee, journal.currency)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Submission Fee:</span>
+                                <span class="detail-value">${journal.submissionFee === 0 ? 'Free' : formatCurrency(journal.submissionFee, journal.currency)}</span>
+                            </div>
+                        </div>
+                        
+                        ${journal.indexing && journal.indexing.length > 0 ? `
+                            <div class="journal-indexing">
+                                <div class="indexing-label">Indexed In:</div>
+                                <div class="indexing-badges">
+                                    ${journal.indexing.map(index =>
+                `<span class="indexing-badge">${index.name}</span>`
+            ).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="journal-footer">
+                        <div class="journal-status">
+                            <i class="fas fa-circle ${journal.isActive ? 'status-active' : 'status-inactive'}"></i>
+                            <span class="${journal.isActive ? 'status-active' : 'status-inactive'}">
+                                ${journal.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="viewJournal('${journal._id.$oid}')">
+                            <i class="fas fa-external-link-alt"></i> View Details
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Custom Select Class
+        class CustomSelect {
+            constructor(element) {
+                this.element = element;
+                this.header = element.querySelector('.select-header');
+                this.valueElement = element.querySelector('.select-value');
+                this.dropdown = element.querySelector('.select-dropdown');
+                this.options = element.querySelectorAll('.select-option');
+                this.selectedValue = '';
+                this.placeholder = this.valueElement.getAttribute('data-placeholder');
+
+                this.init();
+            }
+
+            init() {
+                // Toggle dropdown
+                this.header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggle();
+                });
+
+                // Handle option selection
+                this.options.forEach(option => {
+                    option.addEventListener('click', () => {
+                        this.select(option.getAttribute('data-value'), option.textContent);
+                        this.close();
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', () => {
+                    this.close();
+                });
+
+                // Prevent dropdown from closing when clicking inside
+                this.dropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+
+            toggle() {
+                if (this.dropdown.classList.contains('active')) {
+                    this.close();
+                } else {
+                    this.open();
+                }
+            }
+
+            open() {
+                this.closeAllSelects();
+                this.header.classList.add('active');
+                this.dropdown.classList.add('active');
+                this.element.style.zIndex = '60';
+
+                // Mark selected option
+                this.options.forEach(option => {
+                    option.classList.remove('selected');
+                    if (option.getAttribute('data-value') === this.selectedValue) {
+                        option.classList.add('selected');
+                    }
+                });
+            }
+
+            close() {
+                this.header.classList.remove('active');
+                this.dropdown.classList.remove('active');
+                this.element.style.zIndex = '';
+            }
+
+            select(value, displayText) {
+                this.selectedValue = value;
+
+                if (value === '') {
+                    this.valueElement.textContent = this.placeholder;
+                    this.valueElement.classList.add('placeholder');
+                } else {
+                    this.valueElement.textContent = displayText;
+                    this.valueElement.classList.remove('placeholder');
+                }
+
+                // Update selected state
+                this.options.forEach(option => {
+                    option.classList.remove('selected');
+                    if (option.getAttribute('data-value') === value) {
+                        option.classList.add('selected');
+                    }
+                });
+            }
+
+            getValue() {
+                return this.selectedValue;
+            }
+
+            reset() {
+                this.select('', this.placeholder);
+            }
+
+            closeAllSelects() {
+                document.querySelectorAll('.custom-select').forEach(select => {
+                    const header = select.querySelector('.select-header');
+                    const dropdown = select.querySelector('.select-dropdown');
+                    header.classList.remove('active');
+                    dropdown.classList.remove('active');
+                    select.style.zIndex = '';
+                });
+            }
+        }
+
+        // Initialize custom selects
+        let scopeCustomSelect, statusCustomSelect, reviewCustomSelect;
+
+        // Filter journals
+        function filterJournals() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const scope = scopeCustomSelect.getValue();
+            const status = statusCustomSelect.getValue();
+            const review = reviewCustomSelect.getValue();
+
+            // Update current filters
+            currentFilters = {
+                search: searchTerm,
+                scope: scope,
+                status: status,
+                review: review
+            };
+
+            filteredJournals = journalsData.filter(journal => {
+                // Search filter
+                const matchesSearch = searchTerm === '' ||
+                    journal.title.toLowerCase().includes(searchTerm) ||
+                    journal.publisher.toLowerCase().includes(searchTerm) ||
+                    journal.scope.toLowerCase().includes(searchTerm) ||
+                    journal.description.toLowerCase().includes(searchTerm);
+
+                // Scope filter
+                const matchesScope = scope === '' || journal.scope === scope;
+
+                // Status filter
+                let matchesStatus = true;
+                if (status === 'active') {
+                    matchesStatus = journal.isActive === true;
+                } else if (status === 'inactive') {
+                    matchesStatus = journal.isActive === false;
+                }
+
+                // Review policy filter
+                const matchesReview = review === '' || journal.reviewPolicy === review;
+
+                return matchesSearch && matchesScope && matchesStatus && matchesReview;
+            });
+
+            // Update active filters display
+            updateActiveFiltersDisplay();
+
+            // Reset to first page
+            currentPage = 1;
+
+            // Render results
+            renderJournals();
+        }
+
+        // Update active filters display
+        function updateActiveFiltersDisplay() {
+            const filters = [];
+
+            if (currentFilters.search) {
+                filters.push(`Search: "${currentFilters.search}"`);
+            }
+            if (currentFilters.scope) {
+                filters.push(`Scope: ${currentFilters.scope}`);
+            }
+            if (currentFilters.status) {
+                filters.push(`Status: ${currentFilters.status === 'active' ? 'Active' : 'Inactive'}`);
+            }
+            if (currentFilters.review) {
+                filters.push(`Review: ${formatReviewPolicy(currentFilters.review)}`);
+            }
+
+            if (filters.length > 0) {
+                filterText.textContent = filters.join(', ');
+                activeFilters.style.display = 'block';
+            } else {
+                activeFilters.style.display = 'none';
+            }
+        }
+
+        // Clear all filters
+        window.clearFilters = function () {
+            searchInput.value = '';
+            scopeCustomSelect.reset();
+            statusCustomSelect.reset();
+            reviewCustomSelect.reset();
+            filterJournals();
+        }
+
+        // Render journals
+        function renderJournals() {
+            // Calculate pagination
+            const totalPages = Math.ceil(filteredJournals.length / journalsPerPage);
+            const startIndex = (currentPage - 1) * journalsPerPage;
+            const endIndex = startIndex + journalsPerPage;
+            const journalsToShow = filteredJournals.slice(startIndex, endIndex);
+
+            // Update results count
+            const start = Math.min(startIndex + 1, filteredJournals.length);
+            const end = Math.min(endIndex, filteredJournals.length);
+            resultsCount.textContent = filteredJournals.length > 0
+                ? `Showing ${start}-${end} of ${filteredJournals.length} journals`
+                : `No journals found`;
+
+            // Show/hide empty state
+            if (filteredJournals.length === 0) {
+                journalsGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                pagination.style.display = 'none';
+            } else {
+                journalsGrid.style.display = 'grid';
+                emptyState.style.display = 'none';
+                pagination.style.display = 'flex';
+
+                // Clear and render journal cards with animation delay
+                journalsGrid.innerHTML = '';
+                journalsToShow.forEach((journal, index) => {
+                    const card = document.createElement('div');
+                    card.innerHTML = createJournalCard(journal);
+                    const cardElement = card.firstElementChild;
+
+                    // Add staggered animation
+                    cardElement.style.animationDelay = `${index * 0.1}s`;
+                    cardElement.classList.add('fade-in');
+
+                    journalsGrid.appendChild(cardElement);
+                });
+
+                // Render pagination
+                renderPagination(totalPages);
+            }
+        }
+
+        // Render pagination
+        function renderPagination(totalPages) {
+            let paginationHTML = '';
+
+            // Previous button
+            paginationHTML += `
+                <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            // Adjust if we're at the end
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            // Next button
+            paginationHTML += `
+                <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // Change page
+        window.changePage = function (page) {
+            if (page < 1 || page > Math.ceil(filteredJournals.length / journalsPerPage)) return;
+
+            currentPage = page;
+            renderJournals();
+
+            // Scroll to top of journals grid
+            journalsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // View journal details
+        window.viewJournal = function (journalId) {
+            const journal = journalsData.find(j => j._id.$oid === journalId);
+            if (journal) {
+                // In a real app, you would navigate to a journal detail page
+                // For now, show an alert with details
+                alert(`Journal Details:\n\nTitle: ${journal.title}\nPublisher: ${journal.publisher}\nISSN: ${journal.issn}\nScope: ${journal.scope}\nEmail: ${journal.email}\nStatus: ${journal.isActive ? 'Active' : 'Inactive'}`);
+            }
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize custom selects
+            scopeCustomSelect = new CustomSelect(scopeSelect);
+            statusCustomSelect = new CustomSelect(statusSelect);
+            reviewCustomSelect = new CustomSelect(reviewSelect);
+
+            // Initial render
+            filterJournals();
+
+            // Set up event listeners
+            searchInput.addEventListener('input', filterJournals);
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.custom-select')) {
+                    scopeCustomSelect.closeAllSelects();
+                }
+            });
+
+            // Listen for changes in custom selects
+            [scopeSelect, statusSelect, reviewSelect].forEach(select => {
+                select.addEventListener('change', filterJournals);
+            });
+
+            // Create a custom event for select changes
+            function triggerSelectChange() {
+                filterJournals();
+            }
+
+            // Override select method to trigger change
+            const originalSelect = CustomSelect.prototype.select;
+            CustomSelect.prototype.select = function (value, displayText) {
+                originalSelect.call(this, value, displayText);
+                triggerSelectChange();
+            };
+
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    navLinks.classList.remove('active');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            // Add animation to page header
+            const pageHeader = document.querySelector('.page-header .fade-in');
+            pageHeader.classList.add('fade-in');
+        });
+    </script>
+</body>
+
+</html>

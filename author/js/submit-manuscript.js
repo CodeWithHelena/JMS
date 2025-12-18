@@ -1,4 +1,7 @@
-// submit-manuscript2.js
+// submit-manuscript2.js (fixed)
+// - Fix 1: ensure submit button keeps a background while disabled/submitting
+// - Fix 2: ensure files added via drag-and-drop are assigned to the file input so FormData includes them
+
 document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------
     // Config: base URL and token
@@ -182,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Shows the added authors at the top with an X to remove
         addedAuthorsList.innerHTML = '';
         if (authorsAdded.length === 0) {
-            // no authors - show nothing (or a subtle hint if desired)
+            // no authors - show nothing
             return;
         }
 
@@ -218,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // simple HTML escape helper
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>"'`=\/]/g, function (s) {
+        return str.replace(/[&<>\"'`=\/]/g, function (s) {
             return ({
                 '&': '&amp;',
                 '<': '&lt;',
@@ -310,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // -------------------------------
     // FILE UPLOAD: preview + remove (no validation triggered by remove)
+    // Fix: ensure drag/drop files are assigned to the file input so submit sees them
     // -------------------------------
     const fileUploadArea = document.getElementById('fileUploadArea');
     const manuscriptFile = document.getElementById('manuscriptFile');
@@ -357,6 +361,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         fileError.style.display = 'none';
 
+        // IMPORTANT: assign the dropped file to the hidden input so FormData will include it
+        try {
+            // Use DataTransfer to programmatically set input.files
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            manuscriptFile.files = dt.files;
+        } catch (err) {
+            // DataTransfer may not be supported in some legacy browsers, but most modern browsers support it.
+            console.warn('Could not programmatically set manuscriptFile.files', err);
+            // fallback: keep manuscriptFile.value cleared but continue to show preview (submit may still fail in old browsers)
+        }
+
         filePreview.innerHTML = `
             <div class="file-preview-item">
                 <div class="file-preview-name">
@@ -376,15 +392,52 @@ document.addEventListener('DOMContentLoaded', function () {
                 evt.preventDefault();
                 evt.stopPropagation();
                 filePreview.style.display = 'none';
-                manuscriptFile.value = '';
+                // clear both the visual input and the programmatic file list
+                try {
+                    manuscriptFile.value = '';
+                    // also clear files object to be safe
+                    manuscriptFile.files = new DataTransfer().files;
+                } catch (e) {
+                    manuscriptFile.value = '';
+                }
             });
         }
     }
 
     // -------------------------------
     // FORM SUBMISSION (with toastr and sweetalert)
+    // Fix: keep background while disabled by managing inline styles during submission
     // -------------------------------
     const submitBtn = document.getElementById('submitBtn');
+
+    function setSubmitting(isSubmitting) {
+        if (isSubmitting) {
+            // store original state
+            submitBtn.dataset.origText = submitBtn.textContent;
+            submitBtn.dataset.origDisabled = submitBtn.disabled ? '1' : '0';
+            submitBtn.dataset.origBg = submitBtn.style.backgroundColor || '';
+            submitBtn.dataset.origColor = submitBtn.style.color || '';
+
+            // compute a reliable background color (fallback if CSS var not defined)
+            const bg = getComputedStyle(document.documentElement).getPropertyValue('--primary-color') || '#cc5500';
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            // force a visible background when disabled
+            submitBtn.style.backgroundColor = bg.trim();
+            submitBtn.style.color = '#ffffff';
+            submitBtn.style.opacity = '0.95';
+            submitBtn.setAttribute('aria-busy', 'true');
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.textContent = submitBtn.dataset.origText || 'Submit';
+            // restore original inline styles
+            submitBtn.style.backgroundColor = submitBtn.dataset.origBg || '';
+            submitBtn.style.color = submitBtn.dataset.origColor || '';
+            submitBtn.style.opacity = '';
+            submitBtn.removeAttribute('aria-busy');
+        }
+    }
 
     document.getElementById('submissionForm').addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -453,8 +506,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // All validation passed — prepare FormData and submit
         try {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            setSubmitting(true);
 
             const formData = new FormData();
             formData.append('title', titleVal);
@@ -494,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // Success
                 const message = (respJson && (respJson.message || 'Manuscript submitted successfully')) || 'Manuscript submitted successfully';
-                
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -509,8 +561,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Submit error', err);
             toastr.error('An error occurred while submitting. Please try again.');
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit';
+            setSubmitting(false);
         }
     });
 
@@ -519,19 +570,24 @@ document.addEventListener('DOMContentLoaded', function () {
         // Reset journal selection
         selectedJournal.value = '';
         selectHeader.querySelector('.select-placeholder').textContent = 'Select a journal';
-        
+
         // Reset manuscript title
         document.getElementById('manuscriptTitle').value = '';
-        
+
         // Reset abstract editor
         quill.setText('');
         document.getElementById('abstractContent').value = '';
-        
+
         // Reset file upload
-        manuscriptFile.value = '';
+        try {
+            manuscriptFile.value = '';
+            manuscriptFile.files = new DataTransfer().files;
+        } catch (e) {
+            manuscriptFile.value = '';
+        }
         filePreview.style.display = 'none';
         fileError.style.display = 'none';
-        
+
         // Reset authors - clear added authors and input area
         authorsAdded = [];
         renderAddedAuthors();

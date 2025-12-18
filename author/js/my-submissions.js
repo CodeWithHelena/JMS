@@ -1,7 +1,6 @@
 // js/my-submissions.js
-// Uses the server endpoints you confirmed:
+// Uses the server endpoint:
 //  - GET /submissions/my-submissions?page=1&limit=...
-//  - GET /journal?page=1&limit=...
 //
 // Make sure this file is loaded as a normal script (not module).
 
@@ -14,10 +13,8 @@ class MySubmissionsManager {
         this.totalItems = 0;
         this.totalPages = 0;
 
-        this.journals = [];
         this.filteredSubmissions = [];
         this.currentFilters = {
-            journalId: 'all',
             status: 'all',
             isPaid: 'all',
             search: '',
@@ -44,7 +41,6 @@ class MySubmissionsManager {
     init() {
         this.initToastr();
         this.injectFilterControls();
-        this.loadJournals(); // populate journal filter
         this.fetchAndRender(1); // initial page
         this.bindGlobalEvents();
     }
@@ -84,25 +80,6 @@ class MySubmissionsManager {
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label">Filter by Journal</label>
-                    <div class="custom-select with-search" id="journalFilter">
-                        <input type="hidden" id="selectedJournalId" value="all">
-                        <div class="select-header">
-                            <span class="selected-text placeholder">All Journals</span>
-                            <i class="fas fa-chevron-down select-arrow"></i>
-                        </div>
-                        <div class="select-dropdown">
-                            <div class="select-search">
-                                <i class="fas fa-search"></i>
-                                <input type="text" class="select-search-input" placeholder="Search journals...">
-                                <button type="button" class="clear-search-btn" style="display:none;"><i class="fas fa-times"></i></button>
-                            </div>
-                            <div class="select-options" id="journalOptions"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="filter-group">
                     <label class="filter-label">Filter by Status</label>
                     <div class="custom-select" id="statusFilter">
                         <input type="hidden" id="selectedStatus" value="all">
@@ -134,7 +111,7 @@ class MySubmissionsManager {
                     </div>
                 </div>
 
-                <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center;">
+                <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; padding-top:1.7rem;">
                     <button id="applyFilters" class="btn-primary"><i class="fas fa-filter"></i> Apply</button>
                     <button id="clearFilters" class="btn-secondary">Clear</button>
                 </div>
@@ -208,7 +185,7 @@ class MySubmissionsManager {
                 if (!container.contains(e.target)) container.classList.remove('open');
             });
 
-            // search within the journal dropdown
+            // search logic is only applied if a .select-search-input exists (kept generic)
             const searchInput = container.querySelector('.select-search-input');
             const clearBtn = container.querySelector('.clear-search-btn');
             if (searchInput) {
@@ -233,75 +210,7 @@ class MySubmissionsManager {
         });
     }
 
-    async loadJournals() {
-        // call the endpoint you confirmed: /journal?page=1&limit=10
-        try {
-            const token = localStorage.getItem('token');
-            const url = `${BASE_API}/journal/shallow`;
-            const resp = await fetch(url, {
-                headers: { 'Accept': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
-            });
-
-            if (!resp.ok) {
-                console.warn('Journals endpoint returned', resp.status);
-                // show empty list gracefully
-                this.journals = [{ id:'all', title:'All Journals', issn: '' }];
-                this.populateJournalOptions();
-                return;
-            }
-
-            const data = await resp.json();
-            // some servers return { success:true, journals: [...] } or { success:true, data: [...] } or { success:true, results: [...] }
-            let list = [];
-            if (Array.isArray(data.journals)) list = data.journals;
-            else if (Array.isArray(data.data)) list = data.data;
-            else if (Array.isArray(data.results)) list = data.results;
-            else if (Array.isArray(data)) list = data;
-            else list = [];
-
-            // map into simplified structure for the select
-            this.journals = [{ id: 'all', title: 'All Journals', issn: '' }, ...list.map(j => ({
-                id: j._id || j.id || j._id,
-                title: j.title || j.name || 'Untitled Journal',
-                issn: j.issn || ''
-            }))];
-
-            this.populateJournalOptions();
-
-        } catch (err) {
-            console.error('Could not load journals', err);
-            this.journals = [{ id:'all', title:'All Journals', issn: '' }];
-            this.populateJournalOptions();
-        }
-    }
-
-    populateJournalOptions() {
-        const container = document.getElementById('journalOptions');
-        if (!container) return;
-        container.innerHTML = this.journals.map(j => `
-            <div class="select-option" data-id="${this.escapeHtml(String(j.id))}">
-                <div class="option-title" style="font-weight:600;">${this.escapeHtml(j.title)}</div>
-                ${j.issn ? `<div style="font-size:0.85rem; color:var(--muted)"><i class="fas fa-hashtag"></i> ${this.escapeHtml(j.issn)}</div>` : ''}
-            </div>
-        `).join('');
-
-        // click handler for selecting journal
-        container.addEventListener('click', (e) => {
-            const opt = e.target.closest('.select-option');
-            if (!opt) return;
-            const id = opt.getAttribute('data-id');
-            const titleEl = opt.querySelector('.option-title');
-            const title = titleEl ? titleEl.textContent.trim() : opt.textContent.trim();
-            const header = document.querySelector('#journalFilter .selected-text');
-            if (header) { header.textContent = title; header.classList.remove('placeholder'); }
-            const hidden = document.getElementById('selectedJournalId');
-            hidden.value = id;
-            this.currentFilters.journalId = id;
-            document.getElementById('journalFilter').classList.remove('open');
-        });
-    }
-
-    // Fetch submissions from backend (uses your confirmed endpoint)
+    // Fetch submissions from backend (uses /submissions/my-submissions)
     async fetchAndRender(page = 1) {
         const grid = document.getElementById('cardsGrid');
         if (grid) {
@@ -321,7 +230,7 @@ class MySubmissionsManager {
                 return;
             }
 
-            // Build query params based on filters - backend filtering (your request)
+            // Build query params based on filters - backend filtering
             const params = new URLSearchParams();
             params.set('page', page);
             params.set('limit', this.limit);
@@ -329,7 +238,6 @@ class MySubmissionsManager {
             params.set('sortOrder', this.currentFilters.sortOrder || 'desc');
 
             if (this.currentFilters.status && this.currentFilters.status !== 'all') params.set('status', this.currentFilters.status);
-            if (this.currentFilters.journalId && this.currentFilters.journalId !== 'all') params.set('journalId', this.currentFilters.journalId);
             if (this.currentFilters.search) params.set('search', this.currentFilters.search);
             if (this.currentFilters.isPaid && this.currentFilters.isPaid !== 'all') params.set('isPaid', this.currentFilters.isPaid === 'paid' ? 'true' : 'false');
             if (this.currentFilters.dateFrom) params.set('dateFrom', this.currentFilters.dateFrom);
@@ -443,78 +351,77 @@ class MySubmissionsManager {
     }
 
     createCardElement(sub) {
-    const article = document.createElement('article');
-    article.className = 'submission-card';
+        const article = document.createElement('article');
+        article.className = 'submission-card';
 
-    const statusText = this.userFriendlyStatus(sub.status);
-    const statusStyle = this.getStatusStyle(sub.status);
+        const statusText = this.userFriendlyStatus(sub.status);
+        const statusStyle = this.getStatusStyle(sub.status);
 
-    const title = sub.title || 'Untitled';
-    const journalTitle = (sub.journalId && (sub.journalId.title || sub.journalId)) || 'Unknown Journal';
-    const authors = Array.isArray(sub.authors) ? sub.authors : [];
-    // show "Resubmit" when status is either 'revised' OR 'revision_requested'
-    const isResubmit = ['revised', 'revision_requested'].includes(String(sub.status));
+        const title = sub.title || 'Untitled';
+        const journalTitle = (sub.journalId && (sub.journalId.title || sub.journalId)) || 'Unknown Journal';
+        const authors = Array.isArray(sub.authors) ? sub.authors : [];
+        // show "Resubmit" when status is either 'revised' OR 'revision_requested'
+        const isResubmit = ['revised', 'revision_requested'].includes(String(sub.status));
 
-    article.innerHTML = `
-        <div class="status-badge" style="${statusStyle}">${this.escapeHtml(statusText)}</div>
+        article.innerHTML = `
+            <div class="status-badge" style="${statusStyle}">${this.escapeHtml(statusText)}</div>
 
-        <div class="card-header">
-            <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 80))}</div>
-            <div class="card-sub" title="${this.escapeHtml(journalTitle)}">
-                <i class="fas fa-book"></i>
-                <span>${this.escapeHtml(this.truncate(journalTitle, 50))}</span>
-            </div>
-        </div>
-
-        <div class="card-content">
-            <div>
-                <div style="font-weight:600; font-size:0.95rem; margin-bottom:0.25rem;">Authors</div>
-                <div class="authors">
-                    ${authors.length ? authors.map(a => `<span class="author">${this.escapeHtml(a.name)}</span>`).join('') : '<div style="color:var(--muted)">No authors listed</div>'}
+            <div class="card-header">
+                <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 80))}</div>
+                <div class="card-sub" title="${this.escapeHtml(journalTitle)}">
+                    <i class="fas fa-book"></i>
+                    <span>${this.escapeHtml(this.truncate(journalTitle, 50))}</span>
                 </div>
             </div>
 
-            <div class="action-links">
-                <button class="link" data-action="timeline" data-id="${sub._id}" title="View timeline">
-                    <i class="fas fa-history"></i> Timeline
-                </button>
+            <div class="card-content">
+                <div>
+                    <div style="font-weight:600; font-size:0.95rem; margin-bottom:0.25rem;">Authors</div>
+                    <div class="authors">
+                        ${authors.length ? authors.map(a => `<span class="author">${this.escapeHtml(a.name)}</span>`).join('') : '<div style="color:var(--muted)">No authors listed</div>'}
+                    </div>
+                </div>
 
-                <button class="link" style="display: none" data-action="download" data-id="${sub._id}" title="Download file">
-                    <i class="fas fa-download"></i> Download
-                </button>
+                <div class="action-links">
+                    <button class="link" data-action="timeline" data-id="${sub._id}" title="View timeline">
+                        <i class="fas fa-history"></i> Timeline
+                    </button>
 
-                ${isResubmit
-                    ? `<button class="link" data-action="resubmit" data-id="${sub._id}" title="Resubmit"><i class="fas fa-redo"></i> Resubmit</button>`
-                    : `<button class="link" data-action="edit" data-id="${sub._id}" title="Edit"><i class="fas fa-pen"></i> Edit</button>`
-                }
+                    <button class="link" style="display: none" data-action="download" data-id="${sub._id}" title="Download file">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+
+                    ${isResubmit
+                        ? `<button class="link" data-action="resubmit" data-id="${sub._id}" title="Resubmit"><i class="fas fa-redo"></i> Resubmit</button>`
+                        : `<button class="link" data-action="edit" data-id="${sub._id}" title="Edit"><i class="fas fa-pen"></i> Edit</button>`
+                    }
+                </div>
             </div>
-        </div>
 
-        <div class="card-footer">
-            <a class="btn-view" href="submission-details.html?id=${sub._id}" title="View details">
-                <i class="fas fa-eye"></i> View Details
-            </a>
+            <div class="card-footer">
+                <a class="btn-view" href="submission-details.html?id=${sub._id}" title="View details">
+                    <i class="fas fa-eye"></i> View Details
+                </a>
 
-            <div class="submitted-date">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Submitted: ${this.formatDate(sub.createdAt)}</span>
+                <div class="submitted-date">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Submitted: ${this.formatDate(sub.createdAt)}</span>
+                </div>
             </div>
-        </div>
-    `;
+        `;
 
-    // attach handlers
-    article.querySelectorAll('[data-action]').forEach(btn => {
-        const act = btn.getAttribute('data-action');
-        const id = btn.getAttribute('data-id');
-        if (act === 'download') btn.addEventListener('click', e => { e.preventDefault(); this.downloadFile(id); });
-        if (act === 'timeline') btn.addEventListener('click', e => { e.preventDefault(); this.goToTimeline(id); });
-        if (act === 'edit') btn.addEventListener('click', e => { e.preventDefault(); this.edit(id); });
-        if (act === 'resubmit') btn.addEventListener('click', e => { e.preventDefault(); this.resubmit(id); });
-    });
+        // attach handlers
+        article.querySelectorAll('[data-action]').forEach(btn => {
+            const act = btn.getAttribute('data-action');
+            const id = btn.getAttribute('data-id');
+            if (act === 'download') btn.addEventListener('click', e => { e.preventDefault(); this.downloadFile(id); });
+            if (act === 'timeline') btn.addEventListener('click', e => { e.preventDefault(); this.goToTimeline(id); });
+            if (act === 'edit') btn.addEventListener('click', e => { e.preventDefault(); this.edit(id); });
+            if (act === 'resubmit') btn.addEventListener('click', e => { e.preventDefault(); this.resubmit(id); });
+        });
 
-    return article;
-}
-
+        return article;
+    }
 
     async downloadFile(subId) {
         try {
@@ -556,9 +463,6 @@ class MySubmissionsManager {
         const searchEl = document.getElementById('filterSearch');
         if (searchEl) this.currentFilters.search = searchEl.value.trim();
 
-        const journalHidden = document.getElementById('selectedJournalId');
-        if (journalHidden) this.currentFilters.journalId = journalHidden.value || 'all';
-
         const statusHidden = document.getElementById('selectedStatus');
         if (statusHidden) this.currentFilters.status = statusHidden.value || 'all';
 
@@ -569,14 +473,12 @@ class MySubmissionsManager {
     }
 
     clearFilters() {
-        this.currentFilters = { journalId: 'all', status: 'all', isPaid: 'all', search: '', dateFrom: '', dateTo: '', sortOrder: 'desc' };
+        this.currentFilters = { status: 'all', isPaid: 'all', search: '', dateFrom: '', dateTo: '', sortOrder: 'desc' };
 
         const searchEl = document.getElementById('filterSearch'); if (searchEl) { searchEl.value = ''; }
-        const journalHeader = document.querySelector('#journalFilter .selected-text'); if (journalHeader) { journalHeader.textContent = 'All Journals'; journalHeader.classList.add('placeholder'); }
         const statusHeader = document.querySelector('#statusFilter .selected-text'); if (statusHeader) { statusHeader.textContent = 'All Statuses'; statusHeader.classList.add('placeholder'); }
         const paidHeader = document.querySelector('#paidFilter .selected-text'); if (paidHeader) { paidHeader.textContent = 'All'; paidHeader.classList.add('placeholder'); }
 
-        document.getElementById('selectedJournalId').value = 'all';
         document.getElementById('selectedStatus').value = 'all';
         document.getElementById('selectedPaid').value = 'all';
 

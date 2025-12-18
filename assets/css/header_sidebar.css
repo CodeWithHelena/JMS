@@ -2,7 +2,7 @@
 /* Sidebar */
 .sidebar {
     width: var(--sidebar-width);
-    background: var(--sidebar-bg);
+    background: var(--secondary-color);
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
@@ -32,12 +32,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgb(111, 110, 110);
     height: var(--header-height);
 }
 
 .sidebar-logo img {
-    max-width: 140px;
+    max-width: 100px;
     height: auto;
 }
 
@@ -74,7 +74,7 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px;
-    color: var(--text-color);
+    color: white;
     text-decoration: none;
     border-radius: 8px;
     transition: var(--transition);
@@ -94,7 +94,7 @@
 
 .sidebar-nav a.active {
     background: var(--active-bg);
-    color: var(--primary-color-dark);
+    color: white;
     font-weight: 600;
 }
 
@@ -118,7 +118,7 @@
 /* footer */
 .sidebar-footer {
     padding: 12px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid rgb(111, 110, 110);
 }
 
 .logout-btn {
@@ -127,7 +127,7 @@
     padding: 10px;
     border-radius: 8px;
     text-decoration: none;
-    color: var(--text-color);
+    color: white;
     background: transparent;
 }
 
@@ -150,7 +150,7 @@
     cursor: pointer;
     padding: 10px 16px;
     border-radius: 8px;
-    color: var(--text-color);
+    color: white;
     background: transparent;
     border: none;
     font: inherit;
@@ -190,7 +190,7 @@
     padding-left: 0;
     margin: 0;
     width: 100%;
-    background: var(--sidebar-bg);
+    background: transparent !important;
 }
 
 .dropdown-menu.show {
@@ -873,7 +873,7 @@
 
 /* sizing and smooth transition */
 .sidebar-logo img {
-    max-width: 140px;
+    max-width: 60px;
     height: auto;
     transition: width .18s ease, opacity .18s ease;
 }

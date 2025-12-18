@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment History - Journal Management System</title>
+    <title>Payment History - FedponekIJRD</title>
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
@@ -559,7 +559,7 @@
                         <div class="filter-grid">
                             <div class="search-box">
                                 <i class="fas fa-search"></i>
-                                <input type="text" id="searchInput" placeholder="Search payments by reference, submission title, or author...">
+                                <input type="text" id="searchInput" placeholder="Search payments by reference">
                             </div>
 
                             <div class="filter-group">
@@ -1023,84 +1023,117 @@
                     statusText = 'Pending';
                 }
 
-                // Format amount
-                const amount = payment.amount || 0;
-                const currency = payment.currency || 'NGN';
-                const formattedAmount = this.formatCurrency(amount, currency);
+                // Determine payment method (unchanged)
+                const meta = payment.metadata || {};
+                const paymentMethodRaw =
+                    (meta.authorization && meta.authorization.channel) ||
+                    meta.channel ||
+                    payment.authorization?.channel ||
+                    payment.paymentGateway ||
+                    'N/A';
+                const paymentMethod = String(paymentMethodRaw).toLowerCase() === 'n/a' ? 'N/A' : this.capitalize(String(paymentMethodRaw));
 
-                // Create row HTML
+                // Format amount correctly (unchanged)
+                let amountMajor = 0;
+                if (meta.amount !== undefined && meta.amount !== null && !isNaN(Number(meta.amount))) {
+                    let a = Number(meta.amount);
+                    if (a > 100000) a = a / 100;
+                    amountMajor = a;
+                } else if (payment.amount !== undefined && payment.amount !== null && !isNaN(Number(payment.amount))) {
+                    let a = Number(payment.amount);
+                    if (a > 100000) a = a / 100;
+                    amountMajor = a;
+                } else {
+                    amountMajor = 0;
+                }
+                const currency = payment.currency || meta.currency || 'NGN';
+                const formattedAmount = this.formatCurrencyMajor(amountMajor, currency);
+
+                // IMPORTANT: always pass the payment _id as the "reference" value expected by the receipt page
+                const receiptId = payment._id || '';
+
                 row.innerHTML = `
-                    <td>
-                        <div style="font-weight: 500;">${formattedDate}</div>
-                        <div style="font-size: 0.85rem; color: var(--muted);">
-                            ${paymentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </div>
-                    </td>
-                    <td>
-                        <a href="submission-details.html?id=${payment.submissionId}" 
-                           class="submission-title" 
-                           title="${this.escapeHtml(submissionTitle)}">
-                            ${this.escapeHtml(truncatedTitle)}
-                        </a>
-                        <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">
-                            Ref: ${payment.reference || 'N/A'}
-                        </div>
-                    </td>
-                    <td>
-                        <div style="text-transform: capitalize;">
-                            ${payment.paymentGateway || 'Paystack'}
-                        </div>
-                    </td>
-                    <td class="amount-cell">
-                        ${formattedAmount}
-                    </td>
-                    <td>
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                    </td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-view-receipt view-receipt-btn" 
-                                    data-payment-id="${payment._id}">
-                                <i class="fas fa-receipt"></i> View Receipt
-                            </button>
-                        </div>
-                    </td>
-                `;
+        <td>
+            <div style="font-weight: 500;">${formattedDate}</div>
+            <div style="font-size: 0.85rem; color: var(--muted);">
+                ${paymentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </div>
+        </td>
+        <td>
+            <a href="submission-details.html?id=${this.escapeHtml(payment.submissionId || '')}" 
+               class="submission-title" 
+               title="${this.escapeHtml(submissionTitle)}">
+                ${this.escapeHtml(truncatedTitle)}
+            </a>
+            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">
+                Ref: ${this.escapeHtml(payment.reference || meta.reference || 'N/A')}
+            </div>
+        </td>
+        <td>
+            <div style="text-transform: capitalize;">
+                ${this.escapeHtml(paymentMethod)}
+            </div>
+        </td>
+        <td class="amount-cell">
+            ${formattedAmount}
+        </td>
+        <td>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+        </td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-view-receipt view-receipt-btn" 
+                        data-payment-id="${this.escapeHtml(receiptId)}">
+                    <i class="fas fa-receipt"></i> View Receipt
+                </button>
+            </div>
+        </td>
+    `;
 
-                // Add click event for view receipt button
+                // Use the payment _id (data-payment-id) when opening receipt
                 const viewReceiptBtn = row.querySelector('.view-receipt-btn');
                 viewReceiptBtn.addEventListener('click', () => {
-                    this.viewReceipt(payment._id);
+                    const id = viewReceiptBtn.getAttribute('data-payment-id');
+                    this.viewReceipt(id);
                 });
 
                 return row;
             }
 
-            formatCurrency(amount, currency = 'NGN') {
-                // Convert to proper format (assuming amount is in kobo for NGN)
-                let formattedAmount = amount;
-                let currencySymbol = '₦';
-
-                if (currency === 'NGN') {
-                    // Paystack amounts are in kobo
-                    formattedAmount = amount / 100;
+            viewReceipt(reference) {
+                if (!reference) {
+                    toastr.error('No payment id found', 'Error');
+                    return;
                 }
 
-                if (currency === 'USD') {
-                    currencySymbol = '$';
-                } else if (currency === 'EUR') {
-                    currencySymbol = '€';
-                } else if (currency === 'GBP') {
-                    currencySymbol = '£';
+                // Receipt page expects ?reference=<payment._id>
+                window.location.href = `/author/payment-receipt.html?reference=${encodeURIComponent(reference)}`;
+            }
+
+
+            viewReceipt(reference) {
+                if (!reference) {
+                    toastr.error('No payment reference found', 'Error');
+                    return;
                 }
 
-                return `
-                    <span class="currency-symbol">${currencySymbol}</span>
-                    ${formattedAmount.toLocaleString(undefined, {
+                // Use encodeURIComponent and pass reference param — receipt page expects ?reference=...
+                window.location.href = `/author/payment-receipt.html?reference=${encodeURIComponent(reference)}`;
+            }
+
+
+            // Format currency from major unit (Naira) passed in amountMajor
+            formatCurrencyMajor(amountMajor, currency = 'NGN') {
+                if (amountMajor === null || amountMajor === undefined || isNaN(Number(amountMajor))) {
+                    return `<span class="currency-symbol">₦</span>0.00`;
+                }
+
+                const symbol = currency === 'NGN' ? '₦' : (currency === 'USD' ? '$' : '');
+                const str = Number(amountMajor).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
-                })}
-                `;
+                });
+                return `<span class="currency-symbol">${symbol}</span>${str}`;
             }
 
             updatePagination() {
@@ -1146,14 +1179,14 @@
                 }
             }
 
-            viewReceipt(paymentId) {
-                if (!paymentId) {
-                    toastr.error('No payment ID found', 'Error');
+            viewReceipt(reference) {
+                if (!reference) {
+                    toastr.error('No payment reference found', 'Error');
                     return;
                 }
 
-                // Redirect to receipt page
-                window.location.href = `/author/payment-receipt.html?reference=${paymentId}`;
+                // Redirect to receipt page by reference (this matches the receipt endpoint)
+                window.location.href = `/author/payment-receipt.html?reference=${encodeURIComponent(reference)}`;
             }
 
             showLoading() {
@@ -1199,6 +1232,11 @@
                     .replaceAll('"', '&quot;')
                     .replaceAll("'", '&#39;');
             }
+
+            capitalize(s) {
+                if (!s) return s;
+                return String(s).charAt(0).toUpperCase() + String(s).slice(1);
+            }
         }
 
         // Initialize when DOM is loaded
@@ -1206,6 +1244,7 @@
             new PaymentHistoryManager();
         });
     </script>
+
 </body>
 
 </html>

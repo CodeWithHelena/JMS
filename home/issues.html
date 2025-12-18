@@ -1,1244 +1,1561 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Latest Issues - Academic Journal Hub</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="../assets/css/style.css">
-
+    <title>Latest Issues | JournalFlow</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    />
     <style>
-        :root {
-            --bg: #f4f7fb;
-            --card-bg: #ffffff;
-            --accent: var(--primary-color-dark);
-            --primary: var(--lite-primary-color);
-            --muted: #6b7280;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --radius: 12px;
-            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
-            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
-            --success: #10b981;
-        }
+:root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0
-        }
+    /* === NEW MAIN BRAND COLORS === */
+    --primary: 243 50% 22%;        /* #1F1B51 */
+    --primary-dark: 243 55% 18%;   /* darker #1F1B51 */
+    --primary-light: 243 50% 96%;
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: #111827;
-            background: var(--bg)
-        }
+    --lite-secondary1: 205 78% 35%; /* #0E6BA7 */
+    --lite-secondary2: 195 100% 50%; /* #00BFFF */
 
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px
-        }
+    --primary-foreground: 0 0% 100%;
 
-         /* Header & Navigation */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background-color: hsla(var(--background) / 0.95);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid hsl(var(--border));
-            padding: 1rem 0;
-        }
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: hsl(var(--primary));
-        }
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-        .logo i {
-            font-size: 1.75rem;
-        }
+    --destructive: 0 84.2% 60.2%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
 
+    --ring: 243 50% 22%; /* matches primary */
+    --radius: 0.5rem;
+}
+
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        line-height: 1.6;
+        color: hsl(var(--foreground));
+        background-color: hsl(var(--background));
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      /* Header & Navigation */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background-color: hsla(var(--background) / 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid hsl(var(--border));
+        padding: 1rem 0;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: hsl(var(--primary));
+      }
+
+      .logo i {
+        font-size: 1.75rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: hsl(var(--foreground));
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: hsl(var(--primary));
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: hsl(var(--foreground));
+        cursor: pointer;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: var(--radius);
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 1rem;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background-color: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+      }
+
+      .btn-primary:hover {
+        background-color: hsl(var(--primary-dark));
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px hsla(var(--primary) / 0.3);
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        color: hsl(var(--primary));
+        border: 1px solid hsl(var(--border));
+      }
+
+      .btn-outline:hover {
+        background-color: hsl(var(--accent));
+        border-color: hsl(var(--primary));
+      }
+
+      .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.125rem;
+      }
+
+      /* Auth buttons */
+      .auth-buttons {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .btn-signin {
+        background-color: hsl(var(--primary));
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: var(--radius);
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .btn-signin:hover {
+        background-color: hsl(var(--primary-dark));
+      }
+
+      .btn-register {
+        background-color: transparent;
+        color: hsl(var(--primary));
+        border: 1px solid hsl(var(--primary));
+        padding: 0.5rem 1.5rem;
+        border-radius: var(--radius);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .btn-register:hover {
+        background-color: hsla(var(--primary) / 0.1);
+      }
+
+      /* Page Hero */
+      .page-hero {
+        padding: 5rem 0 3rem;
+        background: linear-gradient(
+          135deg,
+          hsla(var(--primary) / 0.05) 0%,
+          transparent 100%
+        );
+        text-align: center;
+      }
+
+      .page-hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .page-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(
+          to right,
+          hsl(var(--primary)),
+          hsl(var(--lite-secondary1))
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .page-hero p {
+        font-size: 1.25rem;
+        color: hsl(var(--muted-foreground));
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        margin-bottom: 2rem;
+        font-size: 0.875rem;
+        color: hsl(var(--muted-foreground));
+      }
+
+      .breadcrumb a {
+        color: hsl(var(--primary));
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      /* Filters Section */
+      .filters-section {
+        background-color: hsl(var(--card));
+        border-radius: var(--radius);
+        padding: 2rem;
+        border: 1px solid hsl(var(--border));
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        margin-top: -2rem;
+        position: relative;
+        z-index: 10;
+      }
+
+      .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .filter-group label {
+        font-weight: 500;
+        color: hsl(var(--foreground));
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .search-box {
+        position: relative;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 3rem;
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius);
+        font-family: "Inter", sans-serif;
+        font-size: 0.875rem;
+        transition: border-color 0.2s;
+      }
+
+      .search-box input:focus {
+        outline: none;
+        border-color: hsl(var(--primary));
+        box-shadow: 0 0 0 3px hsla(var(--primary) / 0.1);
+      }
+
+      .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: hsl(var(--muted-foreground));
+      }
+
+      /* Custom Dropdown */
+      .custom-dropdown {
+        position: relative;
+        width: 100%;
+      }
+
+      .dropdown-toggle {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius);
+        background-color: hsl(var(--background));
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+        transition: border-color 0.2s;
+      }
+
+      .dropdown-toggle:hover {
+        border-color: hsl(var(--primary));
+      }
+
+      .dropdown-toggle.active {
+        border-color: hsl(var(--primary));
+        box-shadow: 0 0 0 3px hsla(var(--primary) / 0.1);
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: hsl(var(--background));
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius);
+        margin-top: 0.25rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+      }
+
+      .dropdown-menu.show {
+        display: block;
+      }
+
+      .dropdown-search {
+        padding: 0.75rem;
+        border-bottom: 1px solid hsl(var(--border));
+      }
+
+      .dropdown-search input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid hsl(var(--border));
+        border-radius: calc(var(--radius) - 0.25rem);
+        font-size: 0.875rem;
+      }
+
+      .dropdown-search input:focus {
+        outline: none;
+        border-color: hsl(var(--primary));
+      }
+
+      .dropdown-item {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-bottom: 1px solid hsla(var(--border) / 0.5);
+        font-size: 0.875rem;
+      }
+
+      .dropdown-item:last-child {
+        border-bottom: none;
+      }
+
+      .dropdown-item:hover {
+        background-color: hsl(var(--accent));
+      }
+
+      .dropdown-item.selected {
+        background-color: hsla(var(--primary) / 0.1);
+        color: hsl(var(--primary));
+        font-weight: 500;
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid hsl(var(--border));
+      }
+
+      /* Issues Grid */
+      .issues-section {
+        padding: 3rem 0 5rem;
+      }
+
+      .issues-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .issue-card {
+        background-color: hsl(var(--card));
+        border-radius: var(--radius);
+        border: 1px solid hsl(var(--border));
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .issue-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        border-color: hsl(var(--primary));
+      }
+
+      .issue-header {
+        background: linear-gradient(
+          135deg,
+          hsl(var(--lite-secondary1)) 0%,
+          hsl(var(--lite-secondary2)) 100%
+        );
+        color: white;
+        padding: 1.5rem;
+      }
+
+      .journal-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .issue-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.875rem;
+        opacity: 0.9;
+      }
+
+      .issue-content {
+        padding: 1.5rem;
+      }
+
+      .issue-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: hsl(var(--muted-foreground));
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+
+      .issue-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+        color: hsl(var(--foreground));
+      }
+
+      .issue-abstract {
+        color: hsl(var(--muted-foreground));
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        max-height: 120px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .issue-abstract::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: hsl(var(--card));
+        padding-left: 1rem;
+      }
+
+      .authors-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .authors-label {
+        font-size: 0.875rem;
+        color: hsl(var(--muted-foreground));
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      .authors-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .author-tag {
+        background-color: hsla(var(--lite-secondary1) / 0.1);
+        color: hsl(var(--lite-secondary1));
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid hsla(var(--lite-secondary1) / 0.2);
+      }
+
+      .issue-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid hsl(var(--border));
+      }
+
+      .more-papers {
+        color: hsl(var(--primary));
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      /* Loading States */
+      .loading {
+        text-align: center;
+        padding: 3rem;
+        color: hsl(var(--muted-foreground));
+        grid-column: 1 / -1;
+      }
+
+      .loading i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: hsl(var(--primary));
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .no-data {
+        text-align: center;
+        padding: 3rem;
+        color: hsl(var(--muted-foreground));
+        grid-column: 1 / -1;
+      }
+
+      .no-data i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: hsl(var(--muted-foreground));
+        opacity: 0.5;
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 3rem;
+        padding: 2rem 0;
+      }
+
+      .page-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid hsl(var(--border));
+        background-color: hsl(var(--background));
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+      }
+
+      .page-btn:hover {
+        border-color: hsl(var(--primary));
+        background-color: hsla(var(--primary) / 0.1);
+      }
+
+      .page-btn.active {
+        background-color: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        border-color: hsl(var(--primary));
+      }
+
+      /* Global Loader */
+      .global-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: hsla(var(--background) / 0.8);
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+      }
+
+      .global-loader.hidden {
+        display: none;
+      }
+
+      .loader-box {
+        background: hsl(var(--card));
+        padding: 1.5rem 2rem;
+        border-radius: var(--radius);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        font-weight: 600;
+        color: hsl(var(--foreground));
+      }
+
+      .loader-box i {
+        font-size: 1.5rem;
+        animation: spin 1s linear infinite;
+      }
+
+      /* Footer */
+      footer {
+        background-color: hsl(var(--card));
+        border-top: 1px solid hsl(var(--border));
+        padding: 3rem 0 2rem;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+        margin-bottom: 2rem;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: hsl(var(--primary));
+        margin-bottom: 1rem;
+      }
+
+      .footer-description {
+        color: hsl(var(--muted-foreground));
+        margin-bottom: 1.5rem;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: var(--radius);
+        background-color: hsl(var(--secondary));
+        color: hsl(var(--foreground));
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+
+      .social-link:hover {
+        background-color: hsl(var(--primary));
+        color: white;
+      }
+
+      .footer-links h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+      }
+
+      .footer-links ul {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 0.75rem;
+      }
+
+      .footer-links a {
+        color: hsl(var(--muted-foreground));
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .footer-links a:hover {
+        color: hsl(var(--primary));
+      }
+
+      .footer-bottom {
+        padding-top: 2rem;
+        border-top: 1px solid hsl(var(--border));
+        text-align: center;
+        color: hsl(var(--muted-foreground));
+        font-size: 0.875rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
         .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background-color: hsl(var(--background));
+          flex-direction: column;
+          padding: 1.5rem;
+          border-bottom: 1px solid hsl(var(--border));
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        .nav-links a {
-            text-decoration: none;
-            color: hsl(var(--foreground));
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: hsl(var(--primary));
+        .nav-links.active {
+          display: flex;
         }
 
         .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: hsl(var(--foreground));
-            cursor: pointer;
+          display: block;
         }
 
-        /* Hero Section */
-        .hero {
-            padding: 5rem 0;
-            background: linear-gradient(135deg, hsla(var(--primary) / 0.05) 0%, transparent 100%);
-        }
-
-        .hero-content {
-            max-width: 800px;
-            text-align: center;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--lite-secondary1)));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: hsl(var(--muted-foreground));
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            border-radius: var(--radius);
-            font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 1rem;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background-color: hsl(var(--primary));
-            color: hsl(var(--primary-foreground));
-        }
-
-        .btn-primary:hover {
-            background-color: hsl(var(--primary-dark));
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px hsla(var(--primary) / 0.3);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: hsl(var(--primary));
-            border: 1px solid hsl(var(--border));
-        }
-
-        .btn-outline:hover {
-            background-color: hsl(var(--accent));
-            border-color: hsl(var(--primary));
-        }
-
-        .btn-lg {
-            padding: 1rem 2rem;
-            font-size: 1.125rem;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* Auth buttons */
-        .auth-buttons {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .btn-signin {
-            background-color: hsl(var(--primary));
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: var(--radius);
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-
-        .btn-signin:hover {
-            background-color: hsl(var(--primary-dark));
-        }
-
-        .btn-register {
-            background-color: transparent;
-            color: hsl(var(--primary));
-            border: 1px solid hsl(var(--primary));
-            padding: 0.5rem 1.5rem;
-            border-radius: var(--radius);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-register:hover {
-            background-color: hsla(var(--primary) / 0.1);
-        }
-
-        /* Features Section */
-        .section {
-            padding: 5rem 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: hsl(var(--foreground));
-        }
-
-        .section-title p {
-            font-size: 1.125rem;
-            color: hsl(var(--muted-foreground));
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-
-        
-
-        /* header spacer */
-        main {
-            padding-top: 120px
-        }
-
-        /* Issues Header */
-        .issues-header {
-            background: linear-gradient(135deg, var(--accent), #6366f1);
-            color: white;
-            padding: 6rem 0 3rem;
-            text-align: center
-        }
-
-        .issues-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            margin-bottom: 1rem
-        }
-
-        .issues-header p {
-            opacity: .9
-        }
-
-        /* Filters */
-        .filters-section {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            margin: -3rem auto 3rem;
-            max-width: 1400px;
-            position: relative;
-            z-index: 2
+        .page-hero h1 {
+          font-size: 2.5rem;
         }
 
         .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: .5rem
-        }
-
-        .filter-group label {
-            font-weight: 500;
-            color: #374151;
-            display: flex;
-            align-items: center;
-            gap: .5rem
-        }
-
-        /* Custom dropdown */
-        .custom-dropdown {
-            position: relative;
-            width: 100%
-        }
-
-        .dropdown-toggle {
-            width: 100%;
-            padding: .8rem 1rem;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            background: white;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center
-        }
-
-        .dropdown-toggle:hover {
-            border-color: var(--accent)
-        }
-
-        .dropdown-toggle.active {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1)
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: white;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            margin-top: .5rem;
-            box-shadow: var(--card-shadow);
-            z-index: 1000;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none
-        }
-
-        .dropdown-menu.show {
-            display: block
-        }
-
-        .dropdown-search {
-            padding: .75rem 1rem;
-            border-bottom: 1px solid var(--border)
-        }
-
-        .dropdown-search input {
-            width: 100%;
-            padding: .5rem;
-            border: 1px solid var(--border);
-            border-radius: 6px
-        }
-
-        .dropdown-item {
-            padding: .75rem 1rem;
-            cursor: pointer;
-            transition: all .2s;
-            border-bottom: 1px solid var(--border)
-        }
-
-        .dropdown-item:last-child {
-            border-bottom: none
-        }
-
-        .dropdown-item:hover {
-            background: var(--light)
-        }
-
-        .dropdown-item.selected {
-            background: rgba(59, 130, 246, 0.08);
-            color: var(--accent);
-            font-weight: 500
-        }
-
-        .search-box {
-            position: relative
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: .8rem 1rem 0.8rem 3rem;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            font-family: 'Poppins', sans-serif
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1)
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted)
+          grid-template-columns: 1fr;
         }
 
         .filter-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            justify-content: flex-end
+          flex-direction: column;
         }
 
-        /* Issues grid */
+        .filter-actions .btn {
+          width: 100%;
+        }
+
         .issues-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            padding: 2rem 0
+          grid-template-columns: 1fr;
         }
 
-        @media (max-width:1200px) {
-            .issues-grid {
-                grid-template-columns: repeat(2, 1fr)
-            }
+        .auth-buttons {
+          flex-direction: column;
+          width: 100%;
         }
 
-        @media (max-width:768px) {
-            .issues-grid {
-                grid-template-columns: 1fr
-            }
+        .auth-buttons a {
+          width: 100%;
+          text-align: center;
         }
+      }
 
-        .issue-journal-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-            transition: all .3s;
-            border: 1px solid var(--border)
+      @media (max-width: 1024px) {
+        .page-hero h1 {
+          font-size: 3rem;
         }
+      }
 
-        .issue-journal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-shadow-hover);
-            border-color: var(--accent)
+      /* Animation */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-
-        .journal-header {
-            background:  var(--lite-secondary1);
-            color: white;
-            padding: 1.5rem
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        .journal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: .5rem
-        }
-
-        .journal-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: .9rem;
-            opacity: .9
-        }
-
-        .issue-content {
-            padding: 1.5rem
-        }
-
-        .issue-date {
-            color: var(--muted);
-            font-size: .9rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: .5rem
-        }
-
-        .issue-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 1rem;
-            line-height: 1.4
-        }
-
-        .issue-abstract {
-            color: var(--muted);
-            font-size: .95rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-            max-height: 120px;
-            overflow: hidden;
-            position: relative
-        }
-
-        .issue-abstract::after {
-            content: '...';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: var(--card-bg);
-            padding-left: 1rem
-        }
-
-        .authors-section {
-            margin-bottom: 1.5rem
-        }
-
-        .authors-label {
-            font-size: .9rem;
-            color: var(--muted);
-            margin-bottom: .5rem;
-            display: block
-        }
-
-        .authors-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: .5rem
-        }
-
-        .author-tag {
-            background: var(--light);
-            color: #374151;
-            padding: .25rem .75rem;
-            border-radius: 20px;
-            font-size: .8rem;
-            font-weight: 500;
-            border: 1px solid var(--border)
-        }
-
-        .issue-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center
-        }
-
-        .download-btn {
-            background: var(--primary-color-dark);
-            color: white;
-            padding: .6rem 1.2rem;
-            border-radius: var(--radius);
-            text-decoration: none;
-            font-size: .9rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem
-        }
-
-        /* Loading & no-data */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--muted);
-            grid-column: 1/-1
-        }
-
-        .loading i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: var(--accent);
-            animation: spin 1s linear infinite
-        }
-
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg)
-            }
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 3rem;
-            color: var(--muted);
-            grid-column: 1/-1
-        }
-
-        .no-data i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: .5
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: .5rem;
-            margin-top: 3rem;
-            padding: 2rem 0
-        }
-
-        .page-btn {
-            padding: .5rem 1rem;
-            border: 2px solid var(--border);
-            background: white;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 500
-        }
-
-        .page-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent)
-        }
-
-        /* Footer */
-        footer {
-            background: var(--lite-secondary1);
-            color: white;
-            padding: 4rem 0 2rem
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem
-        }
-
-        .footer-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: white
-        }
-
-        .footer-links h4 {
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem
-        }
-
-        .footer-links a {
-            color: #d1d5db;
-            text-decoration: none;
-            transition: all .3s
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #9ca3af
-        }
-
-        /* Responsive small */
-        @media (max-width:768px) {
-            .mobile-menu-btn {
-                display: block
-            }
-
-            .nav-links {
-                position: fixed;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background: white;
-                flex-direction: column;
-                padding: 2rem;
-                box-shadow: var(--card-shadow);
-                transform: translateY(-100%);
-                opacity: 0;
-                visibility: hidden;
-                transition: all .3s
-            }
-
-            .nav-links.active {
-                transform: translateY(0);
-                opacity: 1;
-                visibility: visible
-            }
-
-            .issues-header {
-                padding: 6rem 0 3rem
-            }
-
-            .filters-section {
-                margin: -2rem auto 2rem;
-                padding: 1.5rem
-            }
-
-            .filters-grid {
-                grid-template-columns: 1fr
-            }
-
-            .filter-actions {
-                flex-direction: column
-            }
-
-            .filter-actions .btn {
-                width: 100%
-            }
-        }
-
-        @media (max-width:480px) {
-            .logo-text {
-                font-size: 1.5rem
-            }
-
-            .journal-header {
-                padding: 1rem
-            }
-
-            .issue-content {
-                padding: 1rem
-            }
-        }
-
-        /* Global loader overlay */
-        .global-loader {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.75);
-            z-index: 2000;
-            -webkit-backdrop-filter: blur(3px);
-            backdrop-filter: blur(3px)
-        }
-
-        .global-loader.hidden {
-            display: none
-        }
-
-        .loader-box {
-            background: white;
-            padding: 1.25rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            display: flex;
-            gap: .75rem;
-            align-items: center;
-            font-weight: 600;
-            color: #111827
-        }
-
-        .loader-box i {
-            font-size: 1.6rem;
-            animation: spin 1s linear infinite
-        }
+      .fade-in {
+        animation: fadeIn 0.6s ease forwards;
+      }
     </style>
-</head>
-
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header>
-        <div class="container">
-            <nav class="navbar">
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <span>JournalFlow</span>
-                </div>
-    
-                <div class="nav-links">
-                    <a href="#features">Features</a>
-                    <a href="#journals">Journals</a>
-                    <a href="#issues">Issues</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
-                    <div class="auth-buttons">
-                        <a href="#" class="btn-signin">
-                            <i class="fas fa-sign-in-alt"></i> Sign In
-                        </a>
-                        <a href="#" class="btn-register">
-                            <i class="fas fa-user-plus"></i> Register
-                        </a>
-                    </div>
-                </div>
-    
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </nav>
-        </div>
+      <div class="container">
+        <nav class="navbar">
+          <div class="logo">
+            <i class="fas fa-book-open"></i>
+            <span>JournalFlow</span>
+          </div>
+
+          <div class="nav-links">
+            <a href="journalfolw.html">Home</a>
+            <a href="#features">Features</a>
+            <a href="journal.html">Journals</a>
+            <a href="issues.html" class="active">Issues</a>
+            <a href="about.html">About</a>
+            <a href="#contact">Contact</a>
+            <div class="auth-buttons">
+              <a href="../login.html" class="btn-signin" style="color: white">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+              </a>
+              <a href="../register.html" class="btn-register">
+                <i class="fas fa-user-plus"></i> Register
+              </a>
+            </div>
+          </div>
+
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+          </button>
+        </nav>
+      </div>
     </header>
 
-    <main>
-        <!-- Issues Header -->
-        <section class="issues-header">
-            <div class="container">
-                <h1>Latest Journal Issues</h1>
-                <p>Browse our collection of published issues across all journals</p>
+    <!-- Page Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb fade-in">
+          <a href="index.html">Home</a> / <span>Latest Issues</span>
+        </div>
+        <div class="page-hero-content fade-in">
+          <h1>Latest Journal Issues</h1>
+          <p>
+            Browse our collection of published issues across all academic
+            journals. Discover cutting-edge research and scholarly articles.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="container">
+      <div class="filters-section fade-in">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="searchInput"
+              ><i class="fas fa-search"></i> Search</label
+            >
+            <div class="search-box">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search issues, titles, or abstracts..."
+              />
+              <i class="fas fa-search"></i>
             </div>
-        </section>
+          </div>
 
-        <!-- Filters -->
-        <section class="filters-section">
-            <div class="container">
-                <div class="filters-grid">
-                    <div class="filter-group">
-                        <label for="search"><i class="fas fa-search"></i> Search</label>
-                        <div class="search-box">
-                            <input type="text" id="searchInput" placeholder="Search issues, titles, or abstracts...">
-                            <i class="fas fa-search"></i>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <label><i class="fas fa-sort-numeric-up"></i> Volume</label>
-                        <div class="custom-dropdown" id="volumeDropdown">
-                            <div class="dropdown-toggle" onclick="toggleDropdown('volume')">
-                                <span id="volumeText">All Volumes</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="dropdown-menu" id="volumeMenu">
-                                <div class="dropdown-search">
-                                    <input type="text" placeholder="Search volumes..." oninput="filterDropdown('volume', this.value)">
-                                </div>
-                                <div class="dropdown-item" onclick="selectDropdownItem('volume', '', 'All Volumes')">All Volumes</div>
-                                <!-- populate volumes here -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <label><i class="fas fa-hashtag"></i> Issue Number</label>
-                        <div class="custom-dropdown" id="issueDropdown">
-                            <div class="dropdown-toggle" onclick="toggleDropdown('issue')">
-                                <span id="issueText">All Issues</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="dropdown-menu" id="issueMenu">
-                                <div class="dropdown-search">
-                                    <input type="text" placeholder="Search issues..." oninput="filterDropdown('issue', this.value)">
-                                </div>
-                                <div class="dropdown-item" onclick="selectDropdownItem('issue', '', 'All Issues')">All Issues</div>
-                                <!-- populate issues here -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <label><i class="fas fa-calendar"></i> Publication Year</label>
-                        <div class="custom-dropdown" id="yearDropdown">
-                            <div class="dropdown-toggle" onclick="toggleDropdown('year')">
-                                <span id="yearText">All Years</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="dropdown-menu" id="yearMenu">
-                                <div class="dropdown-search">
-                                    <input type="text" placeholder="Search years..." oninput="filterDropdown('year', this.value)">
-                                </div>
-                                <div class="dropdown-item" onclick="selectDropdownItem('year', '', 'All Years')">All Years</div>
-                                <!-- populate years here -->
-                            </div>
-                        </div>
-                    </div>
+          <div class="filter-group">
+            <label><i class="fas fa-sort-numeric-up"></i> Volume</label>
+            <div class="custom-dropdown" id="volumeDropdown">
+              <div class="dropdown-toggle" onclick="toggleDropdown('volume')">
+                <span id="volumeText">All Volumes</span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="dropdown-menu" id="volumeMenu">
+                <div class="dropdown-search">
+                  <input
+                    type="text"
+                    placeholder="Search volumes..."
+                    oninput="filterDropdown('volume', this.value)"
+                  />
                 </div>
-
-                <div class="filter-actions">
-                    <button onclick="applyFilters()" class="btn btn-primary">
-                        <i class="fas fa-filter"></i> Apply Filters
-                    </button>
-                    <button onclick="clearFilters()" class="btn btn-outline">
-                        <i class="fas fa-times"></i> Clear Filters
-                    </button>
+                <div
+                  class="dropdown-item selected"
+                  onclick="selectDropdownItem('volume', '', 'All Volumes')"
+                >
+                  All Volumes
                 </div>
+                <!-- Volumes will be populated dynamically -->
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Issues list -->
-        <section class="container">
-            <div class="issues-grid" id="issuesGrid">
+          <div class="filter-group">
+            <label><i class="fas fa-hashtag"></i> Issue Number</label>
+            <div class="custom-dropdown" id="issueDropdown">
+              <div class="dropdown-toggle" onclick="toggleDropdown('issue')">
+                <span id="issueText">All Issues</span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="dropdown-menu" id="issueMenu">
+                <div class="dropdown-search">
+                  <input
+                    type="text"
+                    placeholder="Search issues..."
+                    oninput="filterDropdown('issue', this.value)"
+                  />
+                </div>
+                <div
+                  class="dropdown-item selected"
+                  onclick="selectDropdownItem('issue', '', 'All Issues')"
+                >
+                  All Issues
+                </div>
+                <!-- Issues will be populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label><i class="fas fa-calendar"></i> Publication Year</label>
+            <div class="custom-dropdown" id="yearDropdown">
+              <div class="dropdown-toggle" onclick="toggleDropdown('year')">
+                <span id="yearText">All Years</span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="dropdown-menu" id="yearMenu">
+                <div class="dropdown-search">
+                  <input
+                    type="text"
+                    placeholder="Search years..."
+                    oninput="filterDropdown('year', this.value)"
+                  />
+                </div>
+                <div
+                  class="dropdown-item selected"
+                  onclick="selectDropdownItem('year', '', 'All Years')"
+                >
+                  All Years
+                </div>
+                <!-- Years will be populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-actions">
+          <button onclick="applyFilters()" class="btn btn-primary">
+            <i class="fas fa-filter"></i> Apply Filters
+          </button>
+          <button onclick="clearFilters()" class="btn btn-outline">
+            <i class="fas fa-times"></i> Clear Filters
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Issues Grid -->
+    <section class="issues-section container">
+      <div class="issues-grid" id="issuesGrid">
+        <div class="loading">
+          <i class="fas fa-spinner"></i>
+          <p>Loading issues...</p>
+        </div>
+      </div>
+      <div id="pagination" class="pagination"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-about">
+            <div class="footer-logo">
+              <i class="fas fa-book-open"></i>
+              <span>JournalFlow</span>
+            </div>
+            <p class="footer-description">
+              Professional journal management system for academic publishers
+              worldwide.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-link"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+              <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+              <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+
+          <div class="footer-links">
+            <h3>Platform</h3>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#journals">Journals</a></li>
+              <li><a href="issues.html">Issues</a></li>
+              <li><a href="#">API Documentation</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-links">
+            <h3>Company</h3>
+            <ul>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-links">
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+              <li><a href="#">Cookie Policy</a></li>
+              <li><a href="#">GDPR</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2024 JournalFlow. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Global Loader -->
+    <div id="globalLoader" class="global-loader hidden">
+      <div class="loader-box">
+        <i class="fas fa-spinner"></i>
+        <div>Loading...</div>
+      </div>
+    </div>
+
+    <script>
+      // Configuration
+      const BASE_URL = "https://fp.247laboratory.net/api/v1"; // Update this with your actual API base URL
+      const ITEMS_PER_PAGE = 9;
+
+      // State management
+      let currentPage = 1;
+      let allIssues = [];
+      let filterOptions = {
+        volumes: new Set(),
+        issues: new Set(),
+        years: new Set(),
+      };
+      let selectedFilters = {
+        search: "",
+        volume: "",
+        issueNumber: "",
+        year: "",
+      };
+
+      // DOM Elements
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const navLinks = document.querySelector(".nav-links");
+      const globalLoader = document.getElementById("globalLoader");
+
+      // Mobile menu toggle
+      mobileMenuBtn.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+        const icon = mobileMenuBtn.querySelector("i");
+        icon.classList.toggle("fa-bars");
+        icon.classList.toggle("fa-times");
+      });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+          navLinks.classList.remove("active");
+          const icon = mobileMenuBtn.querySelector("i");
+          icon.classList.remove("fa-times");
+          icon.classList.add("fa-bars");
+        }
+      });
+
+      // Loader functions
+      function showLoading() {
+        globalLoader.classList.remove("hidden");
+      }
+
+      function hideLoading() {
+        globalLoader.classList.add("hidden");
+      }
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          showLoading();
+          await loadAllIssues();
+          await loadIssues();
+        } finally {
+          hideLoading();
+        }
+      });
+
+      // Fetch all issues for filter dropdowns
+      async function loadAllIssues() {
+        try {
+          const url = `${BASE_URL}/public/issues?limit=100&page=1`;
+          const res = await fetch(url);
+          const data = await res.json();
+
+          if (data.success && data.issues) {
+            allIssues = data.issues;
+
+            // Extract filter options
+            data.issues.forEach((issue) => {
+              if (issue.volume) filterOptions.volumes.add(issue.volume);
+              if (issue.issueNumber)
+                filterOptions.issues.add(issue.issueNumber);
+              if (issue.publicationDate) {
+                const year = new Date(issue.publicationDate).getFullYear();
+                filterOptions.years.add(year);
+              }
+            });
+
+            // Populate dropdowns
+            populateDropdown(
+              "volume",
+              Array.from(filterOptions.volumes).sort((a, b) => a - b)
+            );
+            populateDropdown(
+              "issue",
+              Array.from(filterOptions.issues).sort((a, b) => a - b)
+            );
+            populateDropdown(
+              "year",
+              Array.from(filterOptions.years).sort((a, b) => b - a)
+            );
+          }
+        } catch (err) {
+          console.error("Error loading all issues:", err);
+          showNotification("Error loading filter options", "error");
+        }
+      }
+
+      function populateDropdown(type, items) {
+        const menu = document.getElementById(`${type}Menu`);
+        items.forEach((item) => {
+          const text =
+            type === "year"
+              ? String(item)
+              : type === "volume"
+              ? `Volume ${item}`
+              : `Issue ${item}`;
+          const value = String(item);
+
+          const div = document.createElement("div");
+          div.className = "dropdown-item";
+          div.textContent = text;
+          div.onclick = () => selectDropdownItem(type, value, text);
+          menu.appendChild(div);
+        });
+      }
+
+      // Dropdown functionality
+      function toggleDropdown(type) {
+        const menu = document.getElementById(`${type}Menu`);
+        const toggle = document.querySelector(
+          `#${type}Dropdown .dropdown-toggle`
+        );
+
+        // Close other dropdowns
+        document.querySelectorAll(".dropdown-menu").forEach((m) => {
+          if (m !== menu) m.classList.remove("show");
+        });
+        document.querySelectorAll(".dropdown-toggle").forEach((t) => {
+          if (t !== toggle) t.classList.remove("active");
+        });
+
+        // Toggle current dropdown
+        menu.classList.toggle("show");
+        toggle.classList.toggle("active");
+      }
+
+      function filterDropdown(type, searchTerm) {
+        const menu = document.getElementById(`${type}Menu`);
+        const items = menu.querySelectorAll(".dropdown-item");
+        const search = searchTerm.toLowerCase();
+
+        items.forEach((item) => {
+          const text = item.textContent.toLowerCase();
+          item.style.display = text.includes(search) ? "block" : "none";
+        });
+      }
+
+      async function selectDropdownItem(type, value, text) {
+        document.getElementById(`${type}Text`).textContent = text;
+
+        // Update selected filters
+        if (type === "volume") selectedFilters.volume = value;
+        if (type === "issue") selectedFilters.issueNumber = value;
+        if (type === "year") selectedFilters.year = value;
+
+        // Update visual selection
+        const menu = document.getElementById(`${type}Menu`);
+        menu.querySelectorAll(".dropdown-item").forEach((item) => {
+          item.classList.remove("selected");
+        });
+
+        const selectedItem = Array.from(
+          menu.querySelectorAll(".dropdown-item")
+        ).find((item) => item.textContent === text);
+        if (selectedItem) selectedItem.classList.add("selected");
+
+        // Close dropdown
+        menu.classList.remove("show");
+        document
+          .querySelector(`#${type}Dropdown .dropdown-toggle`)
+          .classList.remove("active");
+
+        // Reload issues
+        currentPage = 1;
+        try {
+          showLoading();
+          await loadIssues(currentPage);
+        } finally {
+          hideLoading();
+        }
+      }
+
+      // Load issues with pagination
+      async function loadIssues(page = 1) {
+        const issuesGrid = document.getElementById("issuesGrid");
+        const pagination = document.getElementById("pagination");
+
+        // Show loading state
+        issuesGrid.innerHTML = `
                 <div class="loading">
                     <i class="fas fa-spinner"></i>
                     <p>Loading issues...</p>
                 </div>
-            </div>
-            <div id="pagination" class="pagination"></div>
-        </section>
-    </main>
+            `;
+        pagination.innerHTML = "";
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <div class="footer-logo">AcademicHub</div>
-                    <p>Advancing knowledge through open access publishing since 2010. We are committed to making scholarly research accessible to everyone.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+        try {
+          // Build query parameters
+          const params = new URLSearchParams();
+          params.append("limit", ITEMS_PER_PAGE.toString());
+          params.append("page", page.toString());
+
+          if (selectedFilters.search)
+            params.append("search", selectedFilters.search);
+          if (selectedFilters.volume)
+            params.append("volume", selectedFilters.volume);
+          if (selectedFilters.issueNumber)
+            params.append("issueNumber", selectedFilters.issueNumber);
+          if (selectedFilters.year) params.append("year", selectedFilters.year);
+
+          const url = `${BASE_URL}/public/issues?${params.toString()}`;
+          const res = await fetch(url);
+          const data = await res.json();
+
+          if (data.success && data.issues && data.issues.length > 0) {
+            renderIssues(data.issues);
+            renderPagination(page, data.totalPages || 1);
+          } else {
+            showNoData();
+          }
+        } catch (err) {
+          console.error("Error loading issues:", err);
+          showError();
+        }
+      }
+
+      function renderIssues(issues) {
+        const issuesGrid = document.getElementById("issuesGrid");
+
+        if (issues.length === 0) {
+          showNoData();
+          return;
+        }
+
+        const issuesHTML = issues
+          .map((issue) => {
+            const firstSubmission = issue.submissions?.[0];
+            const pubDate = issue.publicationDate
+              ? new Date(issue.publicationDate).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : "Not published";
+
+            const abstract = stripHtml(
+              firstSubmission?.abstract ||
+                issue.title ||
+                "No abstract available."
+            );
+            const authors = firstSubmission?.authors || [];
+            const authorsHTML =
+              authors.length > 0
+                ? `
+                    <div class="authors-section">
+                        <span class="authors-label">Authors:</span>
+                        <div class="authors-tags">
+                            ${authors
+                              .slice(0, 3)
+                              .map(
+                                (a) =>
+                                  `<span class="author-tag">${
+                                    a.name || "Anonymous"
+                                  }</span>`
+                              )
+                              .join("")}
+                            ${
+                              authors.length > 3
+                                ? `<span class="author-tag">+${
+                                    authors.length - 3
+                                  } more</span>`
+                                : ""
+                            }
+                        </div>
                     </div>
-                </div>
+                `
+                : "";
 
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="issues.html">Latest Issues</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
-                    </ul>
-                </div>
+            const downloadBtn = firstSubmission?.file
+              ? `
+                    <a href="${BASE_URL}/public/download/${firstSubmission._id}" class="btn btn-primary btn-sm" target="_blank">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                `
+              : "";
 
-                <div class="footer-links">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="#">Author Guidelines</a></li>
-                        <li><a href="#">Reviewer Guidelines</a></li>
-                        <li><a href="#">Publication Ethics</a></li>
-                        <li><a href="#">Open Access Policy</a></li>
-                    </ul>
-                </div>
+            const morePapers =
+              issue.submissions?.length > 1
+                ? `<span class="more-papers">+${
+                    issue.submissions.length - 1
+                  } more papers</span>`
+                : "";
 
-                <div class="footer-links">
-                    <h4>Journals</h4>
-                    <ul>
-                        <li><a href="#">Science & Technology</a></li>
-                        <li><a href="#">Medical Research</a></li>
-                        <li><a href="#">Social Sciences</a></li>
-                        <li><a href="#">Humanities</a></li>
-                    </ul>
-                </div>
-            </div>
+            return `
+                    <div class="issue-card fade-in">
+                        <div class="issue-header">
+                            <div class="journal-title">${
+                              issue.journal?.title || "Journal"
+                            }</div>
+                            <div class="issue-meta">
+                                <span><i class="fas fa-hashtag"></i> Vol. ${
+                                  issue.volume || "N/A"
+                                }, Issue ${issue.issueNumber || "N/A"}</span>
+                            </div>
+                        </div>
+                        <div class="issue-content">
+                            <div class="issue-date">
+                                <i class="far fa-calendar"></i> ${pubDate}
+                            </div>
+                            <h3 class="issue-title">${
+                              firstSubmission?.title ||
+                              issue.title ||
+                              "Untitled"
+                            }</h3>
+                            <div class="issue-abstract">${abstract}</div>
+                            ${authorsHTML}
+                            <div class="issue-actions">
+                                ${downloadBtn}
+                                ${morePapers}
+                            </div>
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
 
-            <div class="footer-bottom">
-                <p>&copy; 2024 AcademicHub Journal Management System. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        issuesGrid.innerHTML = issuesHTML;
+      }
 
-    <!-- Global loading overlay -->
-    <div id="globalLoader" class="global-loader hidden" aria-hidden="true">
-        <div class="loader-box">
-            <i class="fas fa-spinner"></i>
-            <div>Loading…</div>
-        </div>
-    </div>
+      function stripHtml(html) {
+        if (!html) return "";
+        const stripped = html.replace(/<[^>]*>/g, "");
+        return stripped.length > 200
+          ? stripped.substring(0, 200) + "..."
+          : stripped;
+      }
 
-    <script type="module">
-        // NOTE: ensure /assets/js/utility.js exports BASE_URL or set BASE_URL here for local dev
-        import { BASE_URL } from '/assets/js/utility.js';
+      function renderPagination(current, total) {
+        const pagination = document.getElementById("pagination");
 
-        // mobile menu
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        if (!total || total <= 1) {
+          pagination.innerHTML = "";
+          return;
+        }
+
+        let html = "";
+
+        // Previous button
+        if (current > 1) {
+          html += `<button class="page-btn" onclick="changePage(${
+            current - 1
+          })">
+                    <i class="fas fa-chevron-left"></i>
+                </button>`;
+        }
+
+        // Page numbers
+        for (let i = 1; i <= total; i++) {
+          if (
+            i === 1 ||
+            i === total ||
+            (i >= current - 1 && i <= current + 1)
+          ) {
+            html += `<button class="page-btn ${
+              i === current ? "active" : ""
+            }" onclick="changePage(${i})">${i}</button>`;
+          } else if (i === current - 2 || i === current + 2) {
+            html += `<span class="page-btn">...</span>`;
+          }
+        }
+
+        // Next button
+        if (current < total) {
+          html += `<button class="page-btn" onclick="changePage(${
+            current + 1
+          })">
+                    <i class="fas fa-chevron-right"></i>
+                </button>`;
+        }
+
+        pagination.innerHTML = html;
+      }
+
+      // Filter functions
+      function applyFilters() {
+        const searchInput = document.getElementById("searchInput");
+        selectedFilters.search = searchInput.value.trim();
+        currentPage = 1;
+
+        try {
+          showLoading();
+          loadIssues(currentPage);
+        } finally {
+          hideLoading();
+        }
+      }
+
+      function clearFilters() {
+        // Reset filter inputs
+        document.getElementById("searchInput").value = "";
+        document.getElementById("volumeText").textContent = "All Volumes";
+        document.getElementById("issueText").textContent = "All Issues";
+        document.getElementById("yearText").textContent = "All Years";
+
+        // Reset selected filters
+        selectedFilters = { search: "", volume: "", issueNumber: "", year: "" };
+
+        // Reset dropdown selections
+        document.querySelectorAll(".dropdown-item").forEach((item) => {
+          item.classList.remove("selected");
         });
 
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.nav-links') && !mobileMenuBtn.contains(e.target)) {
-                navLinks.classList.remove('active');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        });
+        // Re-select "All" options
+        document
+          .querySelectorAll(".dropdown-menu .dropdown-item:first-child")
+          .forEach((item) => {
+            item.classList.add("selected");
+          });
 
-        // state
-        let currentPage = 1;
-        let allIssues = [];
-        let filterOptions = { volumes: new Set(), issues: new Set(), years: new Set() };
-        let selectedFilters = { search: '', volume: '', issueNumber: '', year: '' };
-
-        const globalLoader = document.getElementById('globalLoader');
-        function showLoading() { globalLoader.classList.remove('hidden'); globalLoader.setAttribute('aria-hidden', 'false'); }
-        function hideLoading() { globalLoader.classList.add('hidden'); globalLoader.setAttribute('aria-hidden', 'true'); }
-
-        // initial load
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                showLoading();
-                await loadAllIssues();
-                await loadIssues();
-            } finally {
-                hideLoading();
-            }
-        });
-
-        // fetch full set for dropdowns
-        async function loadAllIssues() {
-            try {
-                const url = `${BASE_URL}/public/issues?limit=100&page=1`;
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.success && data.issues) {
-                    allIssues = data.issues;
-                    data.issues.forEach(issue => {
-                        if (issue.volume) filterOptions.volumes.add(issue.volume);
-                        if (issue.issueNumber) filterOptions.issues.add(issue.issueNumber);
-                        if (issue.publicationDate) {
-                            const year = new Date(issue.publicationDate).getFullYear();
-                            filterOptions.years.add(year);
-                        }
-                    });
-                    populateDropdown('volume', Array.from(filterOptions.volumes).sort((a, b) => a - b));
-                    populateDropdown('issue', Array.from(filterOptions.issues).sort((a, b) => a - b));
-                    populateDropdown('year', Array.from(filterOptions.years).sort((a, b) => b - a));
-                }
-            } catch (err) {
-                console.error('Error loading all issues:', err);
-            }
+        // Reload issues
+        currentPage = 1;
+        try {
+          showLoading();
+          loadIssues(currentPage);
+        } finally {
+          hideLoading();
         }
+      }
 
-        function populateDropdown(type, items) {
-            const menu = document.getElementById(`${type}Menu`);
-            // avoid re-populating duplicates
-            const existing = Array.from(menu.querySelectorAll('.dropdown-item')).map(d => d.textContent);
-            items.forEach(item => {
-                const text = type === 'year' ? String(item) : (type === 'volume' ? `Volume ${item}` : `Issue ${item}`);
-                if (!existing.includes(text)) {
-                    const div = document.createElement('div');
-                    div.className = 'dropdown-item';
-                    div.textContent = text;
-                    div.onclick = () => selectDropdownItem(type, String(item), text);
-                    menu.appendChild(div);
-                }
-            });
+      function changePage(page) {
+        currentPage = page;
+        try {
+          showLoading();
+          loadIssues(page);
+        } finally {
+          hideLoading();
         }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
 
-        function toggleDropdown(type) {
-            const menu = document.getElementById(`${type}Menu`);
-            const toggle = document.querySelector(`#${type}Dropdown .dropdown-toggle`);
-            document.querySelectorAll('.dropdown-menu').forEach(m => { if (m !== menu) m.classList.remove('show'); });
-            document.querySelectorAll('.dropdown-toggle').forEach(t => { if (t !== toggle) t.classList.remove('active'); });
-            menu.classList.toggle('show');
-            toggle.classList.toggle('active');
+      // Error and empty states
+      function showNoData() {
+        const issuesGrid = document.getElementById("issuesGrid");
+        issuesGrid.innerHTML = `
+                <div class="no-data fade-in">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>No Issues Found</h3>
+                    <p>Try adjusting your search filters</p>
+                    <button onclick="clearFilters()" class="btn btn-outline" style="margin-top: 1rem;">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+            `;
+        document.getElementById("pagination").innerHTML = "";
+      }
+
+      function showError() {
+        const issuesGrid = document.getElementById("issuesGrid");
+        issuesGrid.innerHTML = `
+                <div class="no-data fade-in">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Issues</h3>
+                    <p>Please try again later</p>
+                    <button onclick="loadIssues()" class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+        document.getElementById("pagination").innerHTML = "";
+      }
+
+      // Close dropdowns when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".custom-dropdown")) {
+          document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+            menu.classList.remove("show");
+          });
+          document.querySelectorAll(".dropdown-toggle").forEach((toggle) => {
+            toggle.classList.remove("active");
+          });
         }
+      });
 
-        function filterDropdown(type, searchTerm) {
-            const menu = document.getElementById(`${type}Menu`);
-            const items = menu.querySelectorAll('.dropdown-item');
-            const q = (searchTerm || '').toLowerCase();
-            items.forEach(item => {
-                item.style.display = item.textContent.toLowerCase().includes(q) ? 'block' : 'none';
-            });
-        }
+      // Utility function for notifications
+      function showNotification(message, type = "info") {
+        // You can implement a toast notification system here
+        console.log(`${type.toUpperCase()}: ${message}`);
+      }
 
-        // selecting an item applies immediately and shows loader
-        async function selectDropdownItem(type, value, text) {
-            document.getElementById(`${type}Text`).textContent = text;
-            document.getElementById(`${type}Menu`).classList.remove('show');
-            document.querySelector(`#${type}Dropdown .dropdown-toggle`).classList.remove('active');
-
-            if (type === 'volume') selectedFilters.volume = value || '';
-            if (type === 'issue') selectedFilters.issueNumber = value || '';
-            if (type === 'year') selectedFilters.year = value || '';
-
-            // update selected state visuals
-            const menu = document.getElementById(`${type}Menu`);
-            menu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
-            Array.from(menu.querySelectorAll('.dropdown-item')).find(it => it.textContent === text)?.classList.add('selected');
-
-            currentPage = 1;
-            try {
-                showLoading();
-                await loadIssues(currentPage);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function loadIssues(page = 1) {
-            const issuesGrid = document.getElementById('issuesGrid');
-            const pagination = document.getElementById('pagination');
-
-            // show local loading placeholder while fetch happens
-            issuesGrid.innerHTML = `<div class="loading"><i class="fas fa-spinner"></i><p>Loading issues...</p></div>`;
-            pagination.innerHTML = '';
-
-            try {
-                // Build params from selectedFilters; search is applied from selectedFilters.search
-                const params = new URLSearchParams();
-                params.append('limit', '9');
-                params.append('page', String(page));
-                if (selectedFilters.search) params.append('search', selectedFilters.search);
-                if (selectedFilters.volume) params.append('volume', selectedFilters.volume);
-                if (selectedFilters.issueNumber) params.append('issueNumber', selectedFilters.issueNumber);
-                if (selectedFilters.year) params.append('year', selectedFilters.year);
-
-                const url = `${BASE_URL}/public/issues?${params.toString()}`;
-                const res = await fetch(url);
-                const data = await res.json();
-
-                if (data.success && data.issues && data.issues.length > 0) {
-                    renderIssues(data.issues);
-                    renderPagination(data.page || page, data.totalPages || 1);
-                } else {
-                    showNoData();
-                }
-            } catch (err) {
-                console.error('Error loading issues:', err);
-                showError();
-            }
-        }
-
-        function renderIssues(issues) {
-            const issuesGrid = document.getElementById('issuesGrid');
-            const issuesHTML = issues.map(issue => {
-                const firstSubmission = issue.submissions?.[0];
-                const pubDate = issue.publicationDate ? new Date(issue.publicationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
-                const abstract = stripHtml(firstSubmission?.abstract || issue.title || 'No abstract available.');
-                const authorsHTML = (firstSubmission?.authors || []).map(a => `<span class="author-tag">${a.name}</span>`).join('');
-                return `
-          <div class="issue-journal-card">
-            <div class="journal-header">
-              <div class="journal-title">${issue.journal?.title || 'Journal'}</div>
-              <div class="journal-meta">
-                <span><i class="fas fa-hashtag"></i> Vol. ${issue.volume || 'N/A'}, Issue ${issue.issueNumber || 'N/A'}</span>
-              </div>
-            </div>
-            <div class="issue-content">
-              <div class="issue-date">
-                <i class="far fa-calendar"></i> ${pubDate}
-              </div>
-              <h3 class="issue-title">${firstSubmission?.title || issue.title || 'Untitled'}</h3>
-              <div class="issue-abstract">${abstract}</div>
-              ${firstSubmission?.authors ? `<div class="authors-section"><span class="authors-label">Authors:</span><div class="authors-tags">${authorsHTML}</div></div>` : ''}
-              <div class="issue-actions">
-                ${firstSubmission?.file ? `<a href="${BASE_URL}/public/download/${firstSubmission._id}" class="download-btn" target="_blank"><i class="fas fa-download"></i> Download</a>` : ''}
-                ${issue.submissions?.length > 1 ? `<span class="more-papers">+${issue.submissions.length - 1} more papers</span>` : ''}
-              </div>
-            </div>
-          </div>
-        `;
-            }).join('');
-            issuesGrid.innerHTML = issuesHTML;
-        }
-
-        function stripHtml(html) {
-            if (!html) return '';
-            const stripped = html.replace(/<[^>]*>/g, '');
-            return stripped.length > 200 ? stripped.substring(0, 200) + '...' : stripped;
-        }
-
-        function renderPagination(current, total) {
-            const pagination = document.getElementById('pagination');
-            if (!total || total <= 1) { pagination.innerHTML = ''; return; }
-            let html = '';
-            if (current > 1) {
-                html += `<button class="page-btn" onclick="changePage(${current - 1})"><i class="fas fa-chevron-left"></i></button>`;
-            }
-            for (let i = 1; i <= total; i++) {
-                if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) {
-                    html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-                } else if (i === current - 2 || i === current + 2) {
-                    html += `<span class="page-btn">...</span>`;
-                }
-            }
-            if (current < total) {
-                html += `<button class="page-btn" onclick="changePage(${current + 1})"><i class="fas fa-chevron-right"></i></button>`;
-            }
-            pagination.innerHTML = html;
-        }
-
-        function applyFilters() {
-            // read search input and update selectedFilters.search
-            const searchVal = document.getElementById('searchInput').value.trim();
-            selectedFilters.search = searchVal;
-            currentPage = 1;
-            showLoading();
-            loadIssues(currentPage).finally(() => hideLoading());
-        }
-
-        function clearFilters() {
-            // clear DOM
-            document.getElementById('searchInput').value = '';
-            document.getElementById('volumeText').textContent = 'All Volumes';
-            document.getElementById('issueText').textContent = 'All Issues';
-            document.getElementById('yearText').textContent = 'All Years';
-
-            // clear selectedFilters state
-            selectedFilters = { search: '', volume: '', issueNumber: '', year: '' };
-
-            // clear selected visuals
-            document.querySelectorAll('.dropdown-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            // mark first items (All ...) as selected if desired
-            Array.from(document.querySelectorAll('.dropdown-item')).find(d => /(All Volumes|All Issues|All Years)/.test(d.textContent))?.classList.add('selected');
-
-            currentPage = 1;
-            showLoading();
-            loadIssues(currentPage).finally(() => hideLoading());
-        }
-
-        function changePage(page) {
-            currentPage = page;
-            showLoading();
-            loadIssues(page).finally(() => hideLoading());
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showNoData() {
-            const issuesGrid = document.getElementById('issuesGrid');
-            issuesGrid.innerHTML = `
-        <div class="no-data">
-          <i class="fas fa-newspaper"></i>
-          <h3>No Issues Found</h3>
-          <p>Try adjusting your search filters</p>
-        </div>
-      `;
-            document.getElementById('pagination').innerHTML = '';
-        }
-
-        function showError() {
-            const issuesGrid = document.getElementById('issuesGrid');
-            issuesGrid.innerHTML = `
-        <div class="no-data">
-          <i class="fas fa-exclamation-triangle"></i>
-          <h3>Error Loading Issues</h3>
-          <p>Please try again later</p>
-          <button onclick="loadIssues()" class="btn btn-primary" style="margin-top:1rem;"><i class="fas fa-redo"></i> Try Again</button>
-        </div>
-      `;
-            document.getElementById('pagination').innerHTML = '';
-        }
-
-        // close dropdowns when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.custom-dropdown')) {
-                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
-                document.querySelectorAll('.dropdown-toggle').forEach(toggle => toggle.classList.remove('active'));
-            }
-        });
-
-        // Export functions globally (so inline onclick in HTML keeps working)
-        window.applyFilters = applyFilters;
-        window.clearFilters = clearFilters;
-        window.changePage = changePage;
-        window.toggleDropdown = toggleDropdown;
-        window.filterDropdown = filterDropdown;
-        window.selectDropdownItem = selectDropdownItem;
+      // Make functions globally available
+      window.applyFilters = applyFilters;
+      window.clearFilters = clearFilters;
+      window.changePage = changePage;
+      window.toggleDropdown = toggleDropdown;
+      window.filterDropdown = filterDropdown;
+      window.selectDropdownItem = selectDropdownItem;
     </script>
-</body>
-
+  </body>
 </html>

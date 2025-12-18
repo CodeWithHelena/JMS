@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JournalFlow | Academic Journal Management System</title>
+    <title>Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
-        :root {
-            --background: 0 0% 100%;
-            --foreground: 222.2 84% 4.9%;
-            --card: 0 0% 100%;
-            --card-foreground: 222.2 84% 4.9%;
-            
-            /* Updated color scheme */
-            --primary: 25 96% 47%; /* #ea6404 */
-            --lite-primary: #ea6404;
-            --primary-dark: 25 80% 45%; /* #cc5500 */
-            --lite-secondary1: 198 69% 37%; /* #1F77A1 */
-            --lite-secondary2: 199 90% 38%; /* #0A7AB5 */
-            
-            --primary-foreground: 0 0% 100%;
-            --secondary: 210 40% 96.1%;
-            --secondary-foreground: 222.2 47.4% 11.2%;
-            --muted: 210 40% 96.1%;
-            --muted-foreground: 215.4 16.3% 46.9%;
-            --accent: 210 40% 96.1%;
-            --accent-foreground: 222.2 47.4% 11.2%;
-            --destructive: 0 84.2% 60.2%;
-            --border: 214.3 31.8% 91.4%;
-            --input: 214.3 31.8% 91.4%;
-            --ring: 25 96% 47%; /* Updated to primary */
-            --radius: 0.5rem;
-        }
+     :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    /* === NEW MAIN BRAND COLORS === */
+    --primary: 243 50% 22%;        /* #1F1B51 */
+    --primary-dark: 243 55% 18%;   /* darker #1F1B51 */
+    --primary-light: 243 50% 96%;
+
+    --lite-secondary1: 205 78% 35%; /* #0E6BA7 */
+    --lite-secondary2: 195 100% 50%; /* #00BFFF */
+
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --ring: 243 50% 22%; /* matches primary */
+    --radius: 0.5rem;
+}
+
 
         * {
             margin: 0;
@@ -200,8 +207,8 @@
         }
 
         .btn-signin {
-            background-color: hsl(var(--primary));
-            color: white;
+            background-color: #cc5500 !important;
+            color: ;
             padding: 0.5rem 1.5rem;
             border-radius: var(--radius);
             text-decoration: none;
@@ -746,21 +753,21 @@
         <div class="container">
             <nav class="navbar">
                 <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <span>JournalFlow</span>
+                   <img src="../assets/img/logo.png" alt="" width="70px">
+                    <span>FedponekIJRD</span>
                 </div>
                 
                 <div class="nav-links">
                     <a href="#features">Features</a>
-                    <a href="#journals">Journals</a>
-                    <a href="#issues">Issues</a>
-                    <a href="#about">About</a>
+                    <a href="journals.html">Journals</a>
+                    <a href="issues.html">Issues</a>
+                    <a href="about.html">About</a>
                     <a href="#contact">Contact</a>
                     <div class="auth-buttons">
-                        <a href="#" class="btn-signin">
-                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        <a href="../login.html" class="btn-signin" style="background: #1F1B51 !important; color: white">
+                            <i class="fas fa-sign-in-alt" ></i> Sign In
                         </a>
-                        <a href="#" class="btn-register">
+                        <a href="../register.html" class="btn-register">
                             <i class="fas fa-user-plus"></i> Register
                         </a>
                     </div>
@@ -777,8 +784,8 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content fade-in">
-                <h1>Streamline Your Academic Publishing Workflow</h1>
-                <p>JournalFlow is a comprehensive platform for managing academic journals, submissions, peer reviews, and publications with efficiency and precision.</p>
+                <h1>International Journal of Research Innovation and Development</h1>
+                <p>An open access peer-reviewed international journal for scientists and engineers involved in research to publish high quality and refereed papers.</p>
                 <div class="btn-group">
                     <a href="#journals" class="btn btn-primary btn-lg">
                         <i class="fas fa-search"></i> Browse Journals
@@ -795,41 +802,41 @@
     <section id="features" class="section">
         <div class="container">
             <div class="section-title fade-in">
-                <h2>Powerful Features for Journal Management</h2>
+                <h2>Powerful Features</h2>
                 <p>Everything you need to manage the complete publishing lifecycle efficiently</p>
             </div>
             
             <div class="features-grid">
                 <div class="feature-card fade-in stagger-delay-1">
                     <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
+                        <i class="fas fa-globe"></i>
                     </div>
-                    <h3>Secure Management</h3>
-                    <p>Robust security protocols to protect journal data, submissions, and sensitive information.</p>
+                    <h3>Global Indexing</h3>
+                    <p>All published papers will index with ResearchGate, Semantic Scholar, Scribd, Google Scholar.</p>
                 </div>
                 
                 <div class="feature-card fade-in stagger-delay-2">
                     <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
+                        <i class="fas fa-user-check"></i>
                     </div>
-                    <h3>Advanced Analytics</h3>
-                    <p>Real-time insights on submissions, review times, acceptance rates, and reader engagement.</p>
+                    <h3>Peer Review</h3>
+                    <p>Publishes high-quality, peer-reviewed research with open access for global readers.</p>
                 </div>
                 
                 <div class="feature-card fade-in stagger-delay-3">
                     <div class="feature-icon">
-                        <i class="fas fa-users"></i>
+                    <i class="fas fa-file-signature"></i>
                     </div>
-                    <h3>Collaborative Review</h3>
-                    <p>Streamlined workflow for editors and reviewers to collaborate efficiently on submissions.</p>
+                    <h3>Submission Tracking</h3>
+                    <p>Author’s IJISRT login panel to track the status of the paper.</p>
                 </div>
                 
                 <div class="feature-card fade-in stagger-delay-4">
                     <div class="feature-icon">
-                        <i class="fas fa-robot"></i>
+                        <i class="fas fa-award"></i>
                     </div>
-                    <h3>Automated Workflow</h3>
-                    <p>Automated reminders, deadline tracking, and submission status updates for all stakeholders.</p>
+                    <h3>Author Benefits</h3>
+                    <p>Provides eCertificates, full paper access, and prompt author support services.</p>
                 </div>
             </div>
         </div>
@@ -853,9 +860,9 @@
             </div>
             
             <div class="text-center fade-in">
-                <button id="loadMoreBtn" class="btn btn-primary btn-lg">
+                <a href="journal.html"><button id="loadMoreBtn" class="btn btn-primary btn-lg">
                     <i class="fas fa-eye"></i> View More Journals
-                </button>
+                </button></a>
             </div>
         </div>
     </section>
@@ -955,7 +962,7 @@
                 <p>Join hundreds of academic institutions and publishers who trust JournalFlow to manage their journals efficiently.</p>
                 <div class="btn-group">
                     <a href="#" class="btn btn-primary btn-lg">
-                        <i class="fas fa-rocket"></i> Start Free Trial
+                        <i class="fas fa-rocket"></i> Get Started Now
                     </a>
                     <a href="#" class="btn btn-outline btn-lg">
                         <i class="fas fa-calendar-alt"></i> Schedule Demo
@@ -1405,16 +1412,6 @@
             const heroContent = document.querySelector('.hero-content');
             heroContent.classList.add('fade-in');
             
-            // Add click handlers for auth buttons
-            document.querySelector('.btn-signin').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Sign In functionality would open a login modal or redirect to login page.');
-            });
-            
-            document.querySelector('.btn-register').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Register functionality would open a registration form or redirect to signup page.');
-            });
         });
     </script>
 </body>

@@ -587,25 +587,6 @@
                         <input type="text" id="searchInput" class="search-input" placeholder="Search by title, abstract, authors...">
                     </div>
 
-                    <div class="filter-group">
-                        <label class="filter-label">Filter by Journal</label>
-                        <div class="custom-select with-search" id="journalFilter">
-                            <input type="hidden" id="selectedJournalId" value="all">
-                            <div class="select-header">
-                                <span class="selected-text placeholder">All Journals</span>
-                                <i class="fas fa-chevron-down select-arrow"></i>
-                            </div>
-                            <div class="select-dropdown">
-                                <div class="select-search">
-                                    <i class="fas fa-search"></i>
-                                    <input type="text" class="select-search-input" placeholder="Search journals...">
-                                    <button type="button" class="clear-search-btn" style="display:none;"><i class="fas fa-times"></i></button>
-                                </div>
-                                <div class="select-options" id="journalOptions"></div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; margin-top: 25px;">
                         <button id="applyFilters" class="btn-primary"><i class="fas fa-filter"></i> Apply</button>
                         <button id="clearFilters" class="btn-secondary">Clear</button>
@@ -655,10 +636,8 @@
                 this.totalItems = 0;
                 this.totalPages = 0;
 
-                this.journals = [];
                 this.currentFilters = {
-                    search: '',
-                    journalId: 'all'
+                    search: ''
                 };
 
                 this.init();
@@ -667,7 +646,6 @@
             init() {
                 this.initToastr();
                 this.bindEvents();
-                this.loadJournals(); // Load journals for filter
                 this.fetchAndRender(1); // Initial load with status=published
             }
 
@@ -700,14 +678,8 @@
 
                 // Clear filters button
                 document.getElementById('clearFilters')?.addEventListener('click', () => {
-                    this.currentFilters = { search: '', journalId: 'all' };
+                    this.currentFilters = { search: '' };
                     document.getElementById('searchInput').value = '';
-                    const journalHeader = document.querySelector('#journalFilter .selected-text');
-                    if (journalHeader) {
-                        journalHeader.textContent = 'All Journals';
-                        journalHeader.classList.add('placeholder');
-                    }
-                    document.getElementById('selectedJournalId').value = 'all';
                     this.currentPage = 1;
                     this.fetchAndRender(1);
                 });
@@ -744,134 +716,11 @@
                         return;
                     }
                 });
-
-                // Setup custom select toggles
-                this.setupSelectToggles();
-            }
-
-            setupSelectToggles() {
-                const journalContainer = document.getElementById('journalFilter');
-                if (!journalContainer) return;
-
-                const header = journalContainer.querySelector('.select-header');
-                const dropdown = journalContainer.querySelector('.select-dropdown');
-                const searchInput = journalContainer.querySelector('.select-search-input');
-                const clearBtn = journalContainer.querySelector('.clear-search-btn');
-
-                header.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    journalContainer.classList.toggle('open');
-                    if (journalContainer.classList.contains('open') && searchInput) {
-                        setTimeout(() => searchInput.focus(), 50);
-                    }
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!journalContainer.contains(e.target)) {
-                        journalContainer.classList.remove('open');
-                    }
-                });
-
-                // Search in journal dropdown
-                if (searchInput) {
-                    searchInput.addEventListener('input', () => {
-                        const query = searchInput.value.trim().toLowerCase();
-                        if (clearBtn) clearBtn.style.display = query ? 'flex' : 'none';
-
-                        const options = journalContainer.querySelectorAll('.select-option');
-                        options.forEach(opt => {
-                            const text = opt.textContent.toLowerCase();
-                            opt.style.display = text.includes(query) ? '' : 'none';
-                        });
-                    });
-
-                    if (clearBtn) {
-                        clearBtn.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            searchInput.value = '';
-                            clearBtn.style.display = 'none';
-                            searchInput.focus();
-                            journalContainer.querySelectorAll('.select-option').forEach(opt => opt.style.display = '');
-                        });
-                    }
-                }
-
-                // Handle journal selection
-                document.getElementById('journalOptions')?.addEventListener('click', (e) => {
-                    const option = e.target.closest('.select-option');
-                    if (!option) return;
-
-                    const journalId = option.dataset.id;
-                    const title = option.querySelector('.option-title')?.textContent.trim() || option.textContent.trim();
-
-                    const header = document.querySelector('#journalFilter .selected-text');
-                    if (header) {
-                        header.textContent = title;
-                        header.classList.remove('placeholder');
-                    }
-
-                    document.getElementById('selectedJournalId').value = journalId;
-                    this.currentFilters.journalId = journalId;
-                    journalContainer.classList.remove('open');
-                });
-            }
-
-            async loadJournals() {
-                try {
-                    const response = await fetch(`${BASE_URL}/journal/shallow`, {
-                        headers: {
-                            Accept: 'application/json',
-                            ...(token ? { Authorization: `Bearer ${token}` } : {})
-                        }
-                    });
-
-                    if (!response.ok) {
-                        console.warn('Journals endpoint failed:', response.status);
-                        this.journals = [{ id: 'all', title: 'All Journals', issn: '' }];
-                        this.populateJournalOptions();
-                        return;
-                    }
-
-                    const data = await response.json();
-                    let list = [];
-
-                    if (Array.isArray(data.journals)) list = data.journals;
-                    else if (Array.isArray(data.data)) list = data.data;
-                    else if (Array.isArray(data.results)) list = data.results;
-                    else if (Array.isArray(data)) list = data;
-
-                    this.journals = [
-                        { id: 'all', title: 'All Journals', issn: '' },
-                        ...list.map(j => ({
-                            id: j._id || j.id || j._id,
-                            title: j.title || j.name || 'Untitled Journal',
-                            issn: j.issn || ''
-                        }))
-                    ];
-
-                    this.populateJournalOptions();
-                } catch (err) {
-                    console.error('Could not load journals', err);
-                    this.journals = [{ id: 'all', title: 'All Journals', issn: '' }];
-                    this.populateJournalOptions();
-                }
-            }
-
-            populateJournalOptions() {
-                const container = document.getElementById('journalOptions');
-                if (!container) return;
-
-                container.innerHTML = this.journals.map(j => `
-                    <div class="select-option" data-id="${this.escapeHtml(String(j.id))}">
-                        <div class="option-title" style="font-weight:600;">${this.escapeHtml(j.title)}</div>
-                        ${j.issn ? `<div style="font-size:0.85rem; color:var(--text-light)"><i class="fas fa-hashtag"></i> ${this.escapeHtml(j.issn)}</div>` : ''}
-                    </div>
-                `).join('');
             }
 
             async fetchAndRender(page = 1) {
                 const grid = document.getElementById('cardsGrid');
-                grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
+                if (grid) grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
 
                 try {
                     const params = new URLSearchParams({
@@ -886,11 +735,7 @@
                         params.set('search', this.currentFilters.search);
                     }
 
-                    if (this.currentFilters.journalId && this.currentFilters.journalId !== 'all') {
-                        params.set('journalId', this.currentFilters.journalId);
-                    }
-
-                    const response = await fetch(`${BASE_URL}/submissions/my-submissions?${params}`, {
+                    const response = await fetch(`${BASE_URL}/submissions/my-submissions?${params.toString()}`, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                             Accept: 'application/json'
@@ -930,20 +775,15 @@
                 article.className = 'submission-card';
 
                 const title = sub.title || 'Untitled';
-                const journalTitle = (sub.journalId && (sub.journalId.title || sub.journalId)) || 'Unknown Journal';
                 const authors = Array.isArray(sub.authors) ? sub.authors : [];
 
                 article.innerHTML = `
                     <div class="status-badge">Published</div>
-
+    
                     <div class="card-header">
                         <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 80))}</div>
-                        <div class="card-sub" title="${this.escapeHtml(journalTitle)}">
-                            <i class="fas fa-book"></i>
-                            <span>${this.escapeHtml(this.truncate(journalTitle, 50))}</span>
-                        </div>
                     </div>
-
+    
                     <div class="card-content">
                         <div>
                             <div style="font-weight:600; font-size:0.95rem; margin-bottom:0.25rem;">Authors</div>
@@ -951,23 +791,23 @@
                                 ${authors.length ? authors.map(a => `<span class="author">${this.escapeHtml(a.name)}</span>`).join('') : '<div style="color:var(--text-light)">No authors listed</div>'}
                             </div>
                         </div>
-
+    
                         <div class="action-links">
                             <button class="link" data-action="download" data-id="${sub._id}" title="Download published manuscript">
                                 <i class="fas fa-download"></i> Download
                             </button>
-
+    
                             <button class="link" data-action="view" data-id="${sub._id}" title="View publication details">
                                 <i class="fas fa-external-link-alt"></i> View Publication
                             </button>
                         </div>
                     </div>
-
+    
                     <div class="card-footer">
                         <a class="btn-view" href="submission-details.html?id=${sub._id}" title="View details">
                             <i class="fas fa-eye"></i> View Details
                         </a>
-
+    
                         <div class="published-date">
                             <i class="fas fa-calendar-alt"></i>
                             <span>Published: ${this.formatDate(sub.updatedAt || sub.createdAt)}</span>
@@ -982,22 +822,18 @@
                 const paginationContainer = document.getElementById('paginationContainer');
                 if (!paginationContainer) return;
 
-                // Always show pagination even if only one page
                 let html = '';
 
                 if (this.totalPages <= 1) {
-                    // Single page - show only info
                     html = `
                         <div class="pagination-info">
                             Showing ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
                         </div>
                     `;
                 } else {
-                    // Multiple pages - show full pagination
                     const startItem = ((this.currentPage - 1) * this.limit) + 1;
                     const endItem = Math.min(this.currentPage * this.limit, this.totalItems);
 
-                    // Previous button
                     html += `
                         <button class="page-btn prev-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
                                 ${this.currentPage === 1 ? 'disabled' : ''}>
@@ -1005,7 +841,6 @@
                         </button>
                     `;
 
-                    // Page numbers
                     const maxVisiblePages = 5;
                     let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
                     let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
@@ -1014,7 +849,6 @@
                         startPage = Math.max(1, endPage - maxVisiblePages + 1);
                     }
 
-                    // Always show first page
                     if (startPage > 1) {
                         html += `
                             <button class="page-btn" data-page="1">1</button>
@@ -1030,7 +864,6 @@
                         `;
                     }
 
-                    // Always show last page
                     if (endPage < this.totalPages) {
                         html += `
                             ${endPage < this.totalPages - 1 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
@@ -1038,7 +871,6 @@
                         `;
                     }
 
-                    // Next button
                     html += `
                         <button class="page-btn next-btn ${this.currentPage === this.totalPages ? 'disabled' : ''}" 
                                 ${this.currentPage === this.totalPages ? 'disabled' : ''}>
@@ -1046,7 +878,6 @@
                         </button>
                     `;
 
-                    // Add page info
                     html += `
                         <div class="pagination-info">
                             Showing ${startItem}-${endItem} of ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
@@ -1108,7 +939,6 @@
                         <p>${message}</p>
                     </div>
                 `;
-                // Still show pagination even if empty
                 this.renderPagination();
             }
 
@@ -1138,6 +968,7 @@
         // Initialize manager globally
         window.publishedManager = new PublishedManuscriptsManager();
     </script>
+
 </body>
 
 </html>

@@ -2538,6 +2538,33 @@ body.modal-open {
                     document.body.style.overflow = 'hidden';
                 }
 
+                // inside the class
+                formatCurrency(amount, currency = 'NGN') {
+                    // defensive
+                    if (amount === undefined || amount === null || isNaN(Number(amount))) {
+                        return `<span class="currency-symbol">₦</span><span class="amount-figure">0</span><span class="amount-decimals">.00</span>`;
+                    }
+
+                    // ensure numeric and two decimals
+                    const numeric = Number(amount);
+                    const formatted = numeric.toFixed(2);
+                    const [whole, decimals] = formatted.split('.');
+
+                    let currencySymbol = '₦';
+                    if (String(currency).toUpperCase() === 'USD') currencySymbol = '$';
+                    if (String(currency).toUpperCase() === 'EUR') currencySymbol = '€';
+                    if (String(currency).toUpperCase() === 'GBP') currencySymbol = '£';
+
+                    const wholeFormatted = parseInt(whole, 10).toLocaleString();
+
+                    return `
+                    <span class="currency-symbol">${currencySymbol}</span>
+                    <span class="amount-figure">${wholeFormatted}</span>
+                    <span class="amount-decimals">.${decimals}</span>
+                `;
+                }
+
+
                 resetPaymentModal() {
                     this.showPaymentStep('confirmation');
                     this.currentStep = 'confirmation';
@@ -2928,7 +2955,7 @@ body.modal-open {
                 async viewReceipt() {
                     try {
                         if (this.paymentId) {
-                            window.open(`/author/payment-receipt.html?id=${encodeURIComponent(this.paymentId)}`, '_blank');
+                            window.open(`payment-receipt.html?reference=${encodeURIComponent(this.paymentId)}`);
                             this.closePaymentModal(true);
                             return;
                         }
