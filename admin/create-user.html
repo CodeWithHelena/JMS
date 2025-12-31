@@ -38,7 +38,7 @@
         --active-bg: rgba(204, 85, 0, 0.15);
         --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         --transition: all 0.3s ease;
-        --brand: #cc5500;
+        --brand: var(--secondary-color);
         --muted: #6b7280;
         --success: #10b981;
         --error: #ef4444;
@@ -58,7 +58,7 @@
     }
     .sidebar {
     width: var(--sidebar-width);
-    background: var(--secondary-color) !important;
+    background-color: #1F1B51 !important;
     }
 
     .create-user-container {
@@ -77,7 +77,7 @@
     .back-btn {
         display: inline-flex;
         align-items: center;
-        color: var(--brand);
+        color: white;
         text-decoration: none;
         font-weight: 600;
         margin-right: 20px;
@@ -89,7 +89,8 @@
     }
 
     .back-btn:hover {
-        background-color: var(--hover-bg);
+        border: 1px solid var(--border-color);
+        
     }
 
     .back-btn i {

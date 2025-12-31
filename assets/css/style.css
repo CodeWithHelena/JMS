@@ -17,6 +17,8 @@
     --sidebar-collapsed-width: 70px;
     --header-height: 70px;
 
+    --badge-status: #fb8a33;
+
     /* Secondary Colors */
     --secondary: var(--lite-secondary2);
     /* Indigo for accents */

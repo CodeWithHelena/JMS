@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,36 +7,46 @@
     <title>About Us</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+
+    <link rel="stylesheet" href="style.css">
+
     <style>
         :root {
-            --background: 0 0% 100%;
-            --foreground: 222.2 84% 4.9%;
-            --card: 0 0% 100%;
-            --card-foreground: 222.2 84% 4.9%;
+            --background: #ffffff;
+            --foreground: #030712;
+            --card: #ffffff;
+            --card-foreground: #030712;
 
-            /* Updated color scheme */
-            --primary: 25 96% 47%;
-            /* #ea6404 */
-            --lite-primary: #ea6404;
-            --primary-dark: 25 80% 45%;
-            /* #cc5500 */
-            --lite-secondary1: 198 69% 37%;
-            /* #1F77A1 */
-            --lite-secondary2: 199 90% 38%;
-            /* #0A7AB5 */
+            /* === NEW MAIN BRAND COLORS === */
+            --primary: #1F1B51;
+            /* hsl(243 50% 22%) */
+            --primary-dark: #17133D;
+            /* hsl(243 55% 18%) - darker #1F1B51 */
+            --primary-light: #F5F4FE;
+            /* hsl(243 50% 96%) */
 
-            --primary-foreground: 0 0% 100%;
-            --secondary: 210 40% 96.1%;
-            --secondary-foreground: 222.2 47.4% 11.2%;
-            --muted: 210 40% 96.1%;
-            --muted-foreground: 215.4 16.3% 46.9%;
-            --accent: 210 40% 96.1%;
-            --accent-foreground: 222.2 47.4% 11.2%;
-            --destructive: 0 84.2% 60.2%;
-            --border: 214.3 31.8% 91.4%;
-            --input: 214.3 31.8% 91.4%;
-            --ring: 25 96% 47%;
-            /* Updated to primary */
+            --lite-secondary1: #0E6BA7;
+            /* hsl(205 78% 35%) */
+            --lite-secondary2: #00BFFF;
+            /* hsl(195 100% 50%) */
+
+            --primary-foreground: #ffffff;
+
+            --secondary: #f1f5f9;
+            --secondary-foreground: #0f172a;
+
+            --muted: #f1f5f9;
+            --muted-foreground: #64748b;
+
+            --accent: #f1f5f9;
+            --accent-foreground: #0f172a;
+
+            --destructive: #ef4444;
+            --border: #e2e8f0;
+            --input: #e2e8f0;
+
+            --ring: #1F1B51;
+            /* matches primary */
             --radius: 0.5rem;
         }
 
@@ -50,8 +59,8 @@
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            color: hsl(var(--foreground));
-            background-color: hsl(var(--background));
+            color: var(--foreground);
+            background-color: var(--background);
         }
 
         .container {
@@ -66,9 +75,9 @@
             position: sticky;
             top: 0;
             z-index: 50;
-            background-color: hsla(var(--background) / 0.95);
+            background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(8px);
-            border-bottom: 1px solid hsl(var(--border));
+            border-bottom: 1px solid var(--border);
             padding: 1rem 0;
         }
 
@@ -84,7 +93,7 @@
             gap: 0.75rem;
             font-weight: 700;
             font-size: 1.5rem;
-            color: hsl(var(--primary));
+            color: var(--primary);
         }
 
         .logo i {
@@ -99,13 +108,13 @@
 
         .nav-links a {
             text-decoration: none;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
             font-weight: 500;
             transition: color 0.2s;
         }
 
         .nav-links a:hover {
-            color: hsl(var(--primary));
+            color: var(--primary);
         }
 
         .mobile-menu-btn {
@@ -113,7 +122,7 @@
             background: none;
             border: none;
             font-size: 1.5rem;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
             cursor: pointer;
         }
 
@@ -134,25 +143,25 @@
         }
 
         .btn-primary {
-            background-color: hsl(var(--primary));
-            color: hsl(var(--primary-foreground));
+            background-color: var(--primary);
+            color: var(--primary-foreground);
         }
 
         .btn-primary:hover {
-            background-color: hsl(var(--primary-dark));
+            background-color: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px hsla(var(--primary) / 0.3);
+            box-shadow: 0 10px 25px -5px rgba(31, 27, 81, 0.3);
         }
 
         .btn-outline {
             background-color: transparent;
-            color: hsl(var(--primary));
-            border: 1px solid hsl(var(--border));
+            color: var(--primary);
+            border: 1px solid var(--border);
         }
 
         .btn-outline:hover {
-            background-color: hsl(var(--accent));
-            border-color: hsl(var(--primary));
+            background-color: var(--accent);
+            border-color: var(--primary);
         }
 
         .btn-lg {
@@ -168,7 +177,7 @@
         }
 
         .btn-signin {
-            background-color: hsl(var(--primary));
+            background-color: var(--primary);
             color: white;
             padding: 0.5rem 1.5rem;
             border-radius: var(--radius);
@@ -178,13 +187,13 @@
         }
 
         .btn-signin:hover {
-            background-color: hsl(var(--primary-dark));
+            background-color: var(--primary-dark);
         }
 
         .btn-register {
             background-color: transparent;
-            color: hsl(var(--primary));
-            border: 1px solid hsl(var(--primary));
+            color: var(--primary);
+            border: 1px solid var(--primary);
             padding: 0.5rem 1.5rem;
             border-radius: var(--radius);
             text-decoration: none;
@@ -193,13 +202,13 @@
         }
 
         .btn-register:hover {
-            background-color: hsla(var(--primary) / 0.1);
+            background-color: rgba(31, 27, 81, 0.1);
         }
 
         /* Page Hero */
         .page-hero {
             padding: 5rem 0 3rem;
-            background: linear-gradient(135deg, hsla(var(--primary) / 0.05) 0%, transparent 100%);
+            background: linear-gradient(135deg, rgba(31, 27, 81, 0.05) 0%, transparent 100%);
         }
 
         .page-hero-content {
@@ -213,7 +222,7 @@
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--lite-secondary1)));
+            background: linear-gradient(to right, var(--primary), var(--lite-secondary1));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -221,7 +230,7 @@
 
         .page-hero p {
             font-size: 1.25rem;
-            color: hsl(var(--muted-foreground));
+            color: var(--muted-foreground);
             margin-bottom: 2rem;
             max-width: 600px;
             margin-left: auto;
@@ -232,11 +241,11 @@
         .breadcrumb {
             margin-bottom: 2rem;
             font-size: 0.875rem;
-            color: hsl(var(--muted-foreground));
+            color: var(--muted-foreground);
         }
 
         .breadcrumb a {
-            color: hsl(var(--primary));
+            color: var(--primary);
             text-decoration: none;
         }
 
@@ -258,12 +267,12 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
         }
 
         .section-header p {
             font-size: 1.125rem;
-            color: hsl(var(--muted-foreground));
+            color: var(--muted-foreground);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -278,10 +287,10 @@
 
         .mission-card,
         .vision-card {
-            background-color: hsl(var(--card));
+            background-color: var(--card);
             border-radius: var(--radius);
             padding: 2.5rem;
-            border: 1px solid hsl(var(--border));
+            border: 1px solid var(--border);
             transition: all 0.3s ease;
         }
 
@@ -298,8 +307,8 @@
             width: 4rem;
             height: 4rem;
             border-radius: var(--radius);
-            background-color: hsla(var(--lite-secondary1) / 0.1);
-            color: hsl(var(--lite-secondary1));
+            background-color: rgba(14, 107, 167, 0.1);
+            color: var(--lite-secondary1);
             margin-bottom: 1.5rem;
             font-size: 1.75rem;
         }
@@ -309,7 +318,7 @@
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 1rem;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
         }
 
         /* Values */
@@ -321,10 +330,10 @@
         }
 
         .value-card {
-            background-color: hsl(var(--card));
+            background-color: var(--card);
             border-radius: var(--radius);
             padding: 2rem;
-            border: 1px solid hsl(var(--border));
+            border: 1px solid var(--border);
             transition: all 0.3s ease;
             text-align: center;
         }
@@ -341,8 +350,8 @@
             width: 3.5rem;
             height: 3.5rem;
             border-radius: 50%;
-            background-color: hsla(var(--primary) / 0.1);
-            color: hsl(var(--primary));
+            background-color: rgba(31, 27, 81, 0.1);
+            color: var(--primary);
             margin-bottom: 1.5rem;
             font-size: 1.5rem;
         }
@@ -351,12 +360,12 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
         }
 
         /* Team Section */
         .team-section {
-            background-color: hsl(var(--secondary));
+            background-color: var(--secondary);
             padding: 5rem 0;
         }
 
@@ -368,10 +377,10 @@
         }
 
         .team-card {
-            background-color: hsl(var(--card));
+            background-color: var(--card);
             border-radius: var(--radius);
             overflow: hidden;
-            border: 1px solid hsl(var(--border));
+            border: 1px solid var(--border);
             transition: all 0.3s ease;
         }
 
@@ -382,11 +391,11 @@
 
         .team-image {
             height: 250px;
-            background: linear-gradient(135deg, hsla(var(--primary) / 0.1), hsla(var(--lite-secondary1) / 0.1));
+            background: linear-gradient(135deg, rgba(31, 27, 81, 0.1), rgba(14, 107, 167, 0.1));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: hsl(var(--lite-secondary1));
+            color: var(--lite-secondary1);
             font-size: 4rem;
         }
 
@@ -398,18 +407,18 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
         }
 
         .team-role {
-            color: hsl(var(--primary));
+            color: var(--primary);
             font-weight: 500;
             margin-bottom: 1rem;
             font-size: 0.875rem;
         }
 
         .team-bio {
-            color: hsl(var(--muted-foreground));
+            color: var(--muted-foreground);
             font-size: 0.95rem;
             line-height: 1.5;
         }
@@ -417,7 +426,7 @@
         /* Stats Section */
         .stats-section {
             padding: 5rem 0;
-            background: linear-gradient(135deg, hsl(var(--lite-secondary1)) 0%, hsl(var(--lite-secondary2)) 100%);
+            background: linear-gradient(135deg, var(--lite-secondary1) 0%, var(--lite-secondary2) 100%);
             color: white;
         }
 
@@ -444,12 +453,13 @@
         }
 
         /* Timeline */
-        
+
         /* Timeline (paired layout) */
-        .timeline-wrapper{
-            background-color: hsl(var(--secondary));
+        .timeline-wrapper {
+            background-color: var(--secondary);
             padding: 0 0 3rem;
         }
+
         .timeline {
             max-width: 920px;
             margin: 3rem auto 0;
@@ -474,16 +484,16 @@
             right: 0;
             top: 50%;
             height: 2px;
-            background-color: hsl(var(--border));
+            background-color: var(--border);
             z-index: 1;
             /* sits above boxes' default layer but below the icon */
         }
 
         .timeline-box {
             padding: 1.5rem;
-            background-color: hsl(var(--card));
+            background-color: var(--card);
             border-radius: var(--radius);
-            border: 1px solid hsl(var(--border));
+            border: 1px solid var(--border);
             box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.08);
             position: relative;
             z-index: 2;
@@ -494,11 +504,11 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
         }
 
         .timeline-box p {
-            color: hsl(var(--muted-foreground));
+            color: var(--muted-foreground);
             line-height: 1.6;
         }
 
@@ -507,7 +517,7 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background-color: hsl(var(--primary));
+            background-color: var(--primary);
             color: white;
             display: flex;
             align-items: center;
@@ -578,7 +588,7 @@
         .cta-section {
             padding: 5rem 0;
             text-align: center;
-            background-color: hsl(var(--secondary));
+            background-color: var(--secondary);
         }
 
         .cta-content {
@@ -590,97 +600,13 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            color: hsl(var(--foreground));
+            color: var(--foreground);
         }
 
         .cta-content p {
             font-size: 1.125rem;
-            color: hsl(var(--muted-foreground));
+            color: var(--muted-foreground);
             margin-bottom: 2rem;
-        }
-
-        /* Footer */
-        footer {
-            background-color: hsl(var(--card));
-            border-top: 1px solid hsl(var(--border));
-            padding: 3rem 0 2rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: hsl(var(--primary));
-            margin-bottom: 1rem;
-        }
-
-        .footer-description {
-            color: hsl(var(--muted-foreground));
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: var(--radius);
-            background-color: hsl(var(--secondary));
-            color: hsl(var(--foreground));
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .social-link:hover {
-            background-color: hsl(var(--primary));
-            color: white;
-        }
-
-        .footer-links h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.75rem;
-        }
-
-        .footer-links a {
-            color: hsl(var(--muted-foreground));
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: hsl(var(--primary));
-        }
-
-        .footer-bottom {
-            padding-top: 2rem;
-            border-top: 1px solid hsl(var(--border));
-            text-align: center;
-            color: hsl(var(--muted-foreground));
-            font-size: 0.875rem;
         }
 
         /* Responsive Design */
@@ -691,10 +617,10 @@
                 top: 100%;
                 left: 0;
                 right: 0;
-                background-color: hsl(var(--background));
+                background-color: var(--background);
                 flex-direction: column;
                 padding: 1.5rem;
-                border-bottom: 1px solid hsl(var(--border));
+                border-bottom: 1px solid var(--border);
                 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             }
 
@@ -792,36 +718,9 @@
 
 <body>
     <!-- Header -->
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <span>JournalFlow</span>
-                </div>
-
-                <div class="nav-links">
-                    <a href="#">Features</a>
-                    <a href="#journals">Journals</a>
-                    <a href="issues.html">Issues</a>
-                    <a href="about.html">About</a>
-                    <a href="#contact">Contact</a>
-                    <div class="auth-buttons">
-                        <a href="../login.html" class="btn-signin">
-                            <i class="fas fa-sign-in-alt"></i> Sign In
-                        </a>
-                        <a href="../register.html" class="btn-register">
-                            <i class="fas fa-user-plus"></i> Register
-                        </a>
-                    </div>
-                </div>
-
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </nav>
-        </div>
+    <header id="header">
     </header>
+    <script src="js/header.js"></script>
 
     <!-- Page Hero -->
     <section class="page-hero">
@@ -841,11 +740,11 @@
                 <p>Founded by academic publishers and technologists, JournalFlow was born from a shared vision to simplify the complex world of scholarly publishing.</p>
             </div>
 
-            <div class="content-card fade-in stagger-delay-1" style="max-width: 800px; margin: 0 auto; padding: 2rem; background-color: hsl(var(--card)); border-radius: var(--radius); border: 1px solid hsl(var(--border));">
-                <p style="font-size: 1.125rem; line-height: 1.7; color: hsl(var(--muted-foreground)); margin-bottom: 1.5rem;">
+            <div class="content-card fade-in stagger-delay-1" style="max-width: 800px; margin: 0 auto; padding: 2rem; background-color: var(--card); border-radius: var(--radius); border: 1px solid var(--border);">
+                <p style="font-size: 1.125rem; line-height: 1.7; color: var(--muted-foreground); margin-bottom: 1.5rem;">
                     Fedponek International Journal of Research, Innovation and Development is an open access peer-reviewed international journal for scientists and engineers involved in research to publish high quality and refereed papers. Papers reporting original research or extended versions of already published conference/journal papers are all welcome. Papers for publication are selected through peer review to ensure originality, relevance, and readability. The journal ensures a wide indexing policy to make published papers highly visible to the scientific community.
                 </p>
-                <p style="font-size: 1.125rem; line-height: 1.7; color: hsl(var(--muted-foreground));">
+                <p style="font-size: 1.125rem; line-height: 1.7; color: var(--muted-foreground);">
                     We help our authors in advance research in different branches like Computer Science, Electronics & Communication, Electrical Engineering, Mechanical Engineering and Information Technology etc. and in science fields by providing world-class information and innovative tools that help them make critical decisions, enhance productivity and improve outcomes.
                 </p>
             </div>
@@ -853,7 +752,7 @@
     </section>
 
     <!-- Mission & Vision -->
-    <section class="about-section" style="background-color: hsl(var(--secondary));">
+    <section class="about-section" style="background-color: var(--secondary);">
         <div class="container">
             <div class="section-header fade-in">
                 <h2>Our Mission & Vision</h2>
@@ -866,7 +765,7 @@
                         <i class="fas fa-bullseye"></i>
                     </div>
                     <h3>Our Mission</h3>
-                    <p style="color: hsl(var(--muted-foreground)); line-height: 1.7;">
+                    <p style="color: var(--muted-foreground); line-height: 1.7;">
                         The motive of <strong>FedponekIJRD</strong> aside providing open access platform, is to make genuine contribution in the field of multidiscipline research bringing the genuine, driving edge Scientific, and Technical & Crucial data to its readers. thus, powering a ceaseless cycle of research, discovery and applications in field of multidiscipline exploration.
                     </p>
                 </div>
@@ -876,7 +775,7 @@
                         <i class="fas fa-globe"></i>
                     </div>
                     <h3>Scope</h3>
-                    <p style="color: hsl(var(--muted-foreground)); line-height: 1.7;">
+                    <p style="color: var(--muted-foreground); line-height: 1.7;">
                         A field where lot of research and study is required. The IJISRT primarily focuses on providing a platform to the researchers of various engineering streams where high level of teaching and learning is encouraged. Self created theories, researches; practical/theoretical work, application based reports/studies are welcomed in order to add contribution to the better understanding of technical challenges.
                     </p>
                 </div>
@@ -898,7 +797,7 @@
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <h3>Academic Integrity</h3>
-                    <p style="color: hsl(var(--muted-foreground));">We uphold the highest standards of scholarly rigor, transparency, and ethical publishing practices.</p>
+                    <p style="color: var(--muted-foreground);">We uphold the highest standards of scholarly rigor, transparency, and ethical publishing practices.</p>
                 </div>
 
                 <div class="value-card fade-in stagger-delay-1">
@@ -906,7 +805,7 @@
                         <i class="fas fa-users"></i>
                     </div>
                     <h3>Collaboration</h3>
-                    <p style="color: hsl(var(--muted-foreground));">We believe great research happens through teamwork and shared knowledge across disciplines.</p>
+                    <p style="color: var(--muted-foreground);">We believe great research happens through teamwork and shared knowledge across disciplines.</p>
                 </div>
 
                 <div class="value-card fade-in stagger-delay-2">
@@ -914,7 +813,7 @@
                         <i class="fas fa-rocket"></i>
                     </div>
                     <h3>Innovation</h3>
-                    <p style="color: hsl(var(--muted-foreground));">We continuously evolve our platform to meet the changing needs of the academic community.</p>
+                    <p style="color: var(--muted-foreground);">We continuously evolve our platform to meet the changing needs of the academic community.</p>
                 </div>
 
                 <div class="value-card fade-in stagger-delay-3">
@@ -922,7 +821,7 @@
                         <i class="fas fa-shield-alt"></i>
                     </div>
                     <h3>Security</h3>
-                    <p style="color: hsl(var(--muted-foreground));">We protect research data and intellectual property with enterprise-grade security measures.</p>
+                    <p style="color: var(--muted-foreground);">We protect research data and intellectual property with enterprise-grade security measures.</p>
                 </div>
             </div>
         </div>
@@ -943,50 +842,50 @@
                             <h3>Indexing</h3>
                             <p><strong>FedponekIJRD</strong> is indexed in Google Scholar, Index Copernicus, Slideshare, Scribd, Academia, ResearchGate and many more.</p>
                         </div>
-                
+
                         <div class="timeline-icon" aria-hidden="true">
                             <i class="fas fa-globe"></i>
                         </div>
-                
+
                         <div class="timeline-box">
                             <h3>Peer Reviewed</h3>
                             <p>An international, peer-reviewed, open access journal with a rigorous review process and a streamlined publishing workflow.</p>
                         </div>
                     </div>
-                
+
                     <!-- Row 2: e-Certificate + Global Expansion -->
                     <div class="timeline-row fade-in">
                         <div class="timeline-box">
                             <h3>e-Certificate</h3>
                             <p>Provides individual eCertificates to each author, ensuring formal recognition of their authorship and contribution to published work.</p>
                         </div>
-                
+
                         <div class="timeline-icon" aria-hidden="true">
                             <i class="fas fa-certificate"></i>
                         </div>
-                
+
                         <div class="timeline-box">
                             <h3>Online Submission</h3>
                             <p>Authors can submit their papers at any time through the online submission system, ensuring a convenient and uninterrupted submission process</p>
                         </div>
                     </div>
-                
+
                     <!-- Row 3: AI Integration centered with empty box to the right -->
                     <div class="timeline-row fade-in">
                         <div class="timeline-box">
                             <h3>Timely Response</h3>
-                            <p>Author’s queries are be resolved within 24 hours of time</p>
+                            <p>Author's queries are be resolved within 24 hours of time</p>
                         </div>
-                
+
                         <div class="timeline-icon" aria-hidden="true">
                             <i class="fas fa-robot"></i>
                         </div>
-                            <div class="timeline-box">
-                                <h3>Timely Response</h3>
-                                <p>Authors can download their full length paper at any time, allowing easy access to their work whenever needed.</p>
-                            </div>
+                        <div class="timeline-box">
+                            <h3>Timely Response</h3>
+                            <p>Authors can download their full length paper at any time, allowing easy access to their work whenever needed.</p>
+                        </div>
                     </div>
-                
+
                 </div>
             </div>
         </div>
@@ -1094,59 +993,10 @@
     </section> -->
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <div class="footer-logo">
-                        <img src="../assets/img/logo.png" alt="" width="60px">
-                        <span>FedponekIJRD</span>
-                    </div>
-                    <p class="footer-description">An open access peer-reviewed international journal for scientists and engineers involved in research to publish high quality and refereed papers.</p>
-                    <!-- <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-                    </div> -->
-                </div>
+    <footer id="footer">
 
-                <div class="footer-links">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#features">Home</a></li>
-                        <li><a href="#journals">About</a></li>
-                        <li><a href="#issues">Contact</a></li>
-                        <!-- <li><a href="#">API Documentation</a></li> -->
-                    </ul>
-                </div>
-
-                <div class="footer-links">
-                    <h3>Company</h3>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-links">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Cookie Policy</a></li>
-                        <li><a href="#">GDPR</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2025 FedponekIJRD. All rights reserved.</p>
-            </div>
-        </div>
     </footer>
+    <script src="js/footer.js"></script>
 
     <script>
         // DOM Elements

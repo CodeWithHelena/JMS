@@ -1901,7 +1901,7 @@
                     const coverLetter = latestRevision.coverLetter || '';
                     const changesSummary = latestRevision.changesSummary || '';
                     const submittedAt = this.formatDate(latestRevision.submittedAt || latestRevision.createdAt, true);
-                    const fileUrl = this.buildFileUrl(latestRevision.file?.url || latestRevision.file);
+                    const fileUrl = "https://fp.247laboratory.net" + (latestRevision.file?.url || latestRevision.file);
                     const fileName = latestRevision.file?.originalName || `Revision_${version}.pdf`;
 
                     // Process cover letter
@@ -2079,7 +2079,7 @@
                     if (!this.review?.manuscript?.file) return;
 
                     const file = this.review.manuscript.file;
-                    const fileUrl = `${BASE_URL}${file.url}`;
+                    const fileUrl = `https://fp.247laboratory.net${file.url}`;
                     const originalName = file.originalName || 'Unknown file';
 
                     fileName.textContent = originalName;
@@ -2523,18 +2523,18 @@
 
                 getStatusStyle(status) {
                     const colors = {
-                        'submitted': 'background-color: #3b82f6; color: white;',
-                        'under_review': 'background-color: #f59e0b; color: white;',
-                        'reviewed': 'background-color: #8b5cf6; color: white;',
-                        'accepted': 'background-color: #10b981; color: white;',
-                        'rejected': 'background-color: #ef4444; color: white;',
-                        'revised': 'background-color: #8b5cf6; color: white;',
-                        'awaiting_payment': 'background-color: #f59e0b; color: white;',
-                        'published': 'background-color: #10b981; color: white;',
-                        'accept': 'background-color: #10b981; color: white;',
-                        'reject': 'background-color: #ef4444; color: white;',
-                        'minor_revision': 'background-color: #f59e0b; color: white;',
-                        'major_revision': 'background-color: #f59e0b; color: white;'
+                        'submitted': 'background-color: var(--badge-status); color: white;',
+                        'under_review': 'background-color: var(--badge-status); color: white;',
+                        'reviewed': 'background-color: var(--badge-status); color: white;',
+                        'accepted': 'background-color: var(--badge-status); color: white;',
+                        'rejected': 'background-color: var(--badge-status); color: white;',
+                        'revised': 'background-color: var(--badge-status); color: white;',
+                        'awaiting_payment': 'background-color: var(--badge-status); color: white;',
+                        'published': 'background-color: var(--badge-status); color: white;',
+                        'accept': 'background-color: var(--badge-status); color: white;',
+                        'reject': 'background-color: var(--badge-status); color: white;',
+                        'minor_revision': 'background-color: var(--badge-status); color: white;',
+                        'major_revision': 'background-color: var(--badge-status); color: white;'
                     };
                     return colors[status] || 'background-color: #6b7280; color: white;';
                 }

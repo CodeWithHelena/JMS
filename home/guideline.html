@@ -4,9 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Author Guidelines | JournalFlow</title>
+    <title>Author Guidelines</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"> 
+
+    <link rel="stylesheet" href="style.css">
     <style>
         /*
       ====== Color variables (use hex like you requested) ======
@@ -214,7 +216,7 @@
         /* Duties grid */
         .duties-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.25rem;
         }
 
@@ -544,26 +546,22 @@
                 transform: none;
             }
         }
+        .auth-buttons a{
+      padding: .8rem !important;
+      border-radius: 10px;
+    }
+    .nav-links a {
+      padding: .8rem !important;
+      border-radius: 10px;
+    }
     </style>
 </head>
 
 <body>
     <!-- Header (not sticky) -->
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <a class="logo" href="index.html"><i class="fas fa-book-open"></i><span>JournalFlow</span></a>
-                <div class="nav-links">
-                    <a href="index.html#features">Features</a>
-                    <a href="all-journals.html">Journals</a>
-                    <a href="issues.html">Issues</a>
-                    <a href="guideline.html">Guidelines</a>
-                    <a href="about.html">About</a>
-                </div>
-                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
-            </nav>
-        </div>
+    <header id="header">
     </header>
+    <script src="js/header.js"></script>
 
     <!-- Page Header -->
     <section class="page-header">
@@ -750,7 +748,7 @@
                     <div class="guidelines-header">
                         <h2>Author Submission Guidelines</h2>
                         <p>Authors should submit carefully proofread papers using the official template. This speeds processing and improves publication quality. Acceptance or rejection notifications will be sent to authors.</p>
-                        <a class="template-download" href="#"><i class="fas fa-download"></i> Download Paper Template (.docx)</a>
+                        <!-- <a class="template-download" href="#"><i class="fas fa-download"></i> Download Paper Template (.docx)</a> -->
                     </div>
 
                     <h3 style="font-size:1.1rem;font-weight:600;color:var(--foreground);margin:1.5rem 0">Accepted Contribution Categories</h3>
@@ -821,41 +819,10 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div>
-                    <div class="footer-logo"><i class="fas fa-book-open"></i><span>JournalFlow</span></div>
-                    <p class="footer-description">Professional journal management system for publishers and researchers.</p>
-                </div>
-                <div>
-                    <h4>Platform</h4>
-                    <ul style="list-style:none;padding-left:0;color:var(--muted-foreground)">
-                        <li><a href="index.html#features">Features</a></li>
-                        <li><a href="all-journals.html">Journals</a></li>
-                        <li><a href="guideline.html">Author Guidelines</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Company</h4>
-                    <ul style="list-style:none;padding-left:0;color:var(--muted-foreground)">
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Legal</h4>
-                    <ul style="list-style:none;padding-left:0;color:var(--muted-foreground)">
-                        <li><a href="#">Privacy</a></li>
-                        <li><a href="#">Terms</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div style="text-align:center;margin-top:1rem;color:var(--muted-foreground)">&copy; 2025 JournalFlow. All rights reserved.</div>
-        </div>
+    <footer id="footer">
+    
     </footer>
+    <script src="js/footer.js"></script>
 
     <script>
         // Mobile menu toggle
