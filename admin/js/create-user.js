@@ -1,13 +1,8 @@
 // API Configuration
-const API_BASE_URL = 'https://fp.247laboratory.net/';
+import { BASE_URL, token } from '/assets/js/utility.js';
 const API_ENDPOINTS = {
-    CREATE_USER: 'api/v1/auth/register-editor'
+    CREATE_USER: '/auth/register-editor'
 };
-
-// Get token from localStorage
-function getAuthToken() {
-    return localStorage.getItem('pilot_tkn');
-}
 
 // Initialize Toastr
 function initializeToastr() {
@@ -146,7 +141,6 @@ function showSuccessAlert() {
 
 // Create user via API
 async function createUser(formData) {
-    const token = getAuthToken();
     if (!token) throw new Error('Authentication required');
 
     const requestData = {
@@ -160,7 +154,7 @@ async function createUser(formData) {
     console.clear();
     console.log('API Request:', requestData);
 
-    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.CREATE_USER}`, {
+    const response = await fetch(`${BASE_URL}${API_ENDPOINTS.CREATE_USER}`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,

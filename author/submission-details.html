@@ -1873,7 +1873,7 @@ body.modal-open {
                                 <i class="fas fa-file"></i> Manuscript File
                             </h2>
                             <div class="file-actions">
-                                <button id="viewDocumentBtn" class="btn btn-primary" style="display: none;">
+                                <button id="viewDocumentBtn" class="btn btn-primary">
                                     <i class="fas fa-eye"></i> View Document
                                 </button>
                                 <button id="downloadBtn" class="btn btn-secondary">
@@ -3052,17 +3052,33 @@ body.modal-open {
                     const journalName = this.submission.journalId?.title || this.submission.journalTitle || 'Unknown Journal';
                     const journalISSN = this.submission.journalId?.issn || 'N/A';
                     const submittedByName = this.submission.submitterName || 'Unknown';
-                    header.innerHTML = `
-            <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
-            <span class="header-status-badge">${this.escapeHtml(statusDisplay)}</span>
-            <div class="header-meta">
-                <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
-                <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
-                <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
-                <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
-            </div>
-        `;
+
+                    // Normalize status into a key matching your CSS variable names, e.g. "under review" -> "under_review"
+                    const normalizeStatusKey = (s) => {
+                        if (!s) return '';
+                        return String(s).toLowerCase().trim().replace(/\s+/g, '_').replace(/-/g, '_');
+                    };
+                    const statusKey = normalizeStatusKey(statusToDisplay);
+
+                    // Build inline style using CSS variables you've defined in style.css (fall back to sensible defaults)
+                    const statusStyle = `
+                    background: var(--status-${statusKey}-bg, transparent);
+                    color: var(--status-${statusKey}-color, #111827);
+                    border: 1px solid var(--status-${statusKey}-border, transparent);
+                `.replace(/\s+/g, ' ').trim();
+
+                                header.innerHTML = `
+                    <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
+                    <span class="header-status-badge" style="${statusStyle}">${this.escapeHtml(statusDisplay)}</span>
+                    <div class="header-meta">
+                        <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
+                        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
+                        <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
+                        <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
+                    </div>
+                `;
                 }
+
 
                 renderAbstract() {
                     const abstractSection = document.getElementById('abstractSection');
@@ -3250,20 +3266,80 @@ body.modal-open {
                     const viewBtn = document.getElementById('viewDocumentBtn');
                     const downloadBtn = document.getElementById('downloadBtn');
                     if (!viewBtn || !downloadBtn || !this.submission) return;
-                    const fileUrl = this.submission.file?.url || this.submission.file;
-                    if (!fileUrl) {
-                        viewBtn.disabled = true; downloadBtn.disabled = true;
+
+                    const fileUrlRaw = this.submission.file?.url || this.submission.file;
+                    if (!fileUrlRaw) {
+                        viewBtn.disabled = true;
+                        downloadBtn.disabled = true;
                         viewBtn.innerHTML = '<i class="fas fa-eye"></i> No Document Available';
                         downloadBtn.innerHTML = '<i class="fas fa-download"></i> No Document Available';
                         return;
                     }
-                    const resolvedUrl = this.buildFileUrl(fileUrl);
+
+                    const resolvedUrl = this.buildFileUrl(fileUrlRaw);
                     const fileName = this.submission.file?.originalName || this.submission.title || 'manuscript';
-                    viewBtn.addEventListener('click', () => window.open(resolvedUrl, '_blank'));
-                    downloadBtn.addEventListener('click', () => {
-                        const link = document.createElement('a'); link.href = resolvedUrl; link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+
+                    // remove old listeners by cloning nodes, then re-query them
+                    viewBtn.replaceWith(viewBtn.cloneNode(true));
+                    downloadBtn.replaceWith(downloadBtn.cloneNode(true));
+                    const newViewBtn = document.getElementById('viewDocumentBtn');
+                    const newDownloadBtn = document.getElementById('downloadBtn');
+
+                    // helper to determine file type and build viewer URL
+                    const buildViewerUrl = (url) => {
+                        if (!url) return null;
+                        const lower = url.split('?')[0].toLowerCase();
+
+                        // PDF: open directly
+                        if (lower.endsWith('.pdf')) {
+                            return url;
+                        }
+
+                        // Office file types -> Microsoft Office viewer
+                        const officeExts = ['.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.pptm', '.docm', '.xlsm'];
+                        if (officeExts.some(ext => lower.endsWith(ext))) {
+                            // Microsoft Office Online viewer
+                            return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
+                        }
+
+                        // Optionally: other known types (odt, ods, rtf) - fall back to Google viewer
+                        const googleExts = ['.odt', '.ods', '.rtf', '.txt', '.html', '.htm'];
+                        if (googleExts.some(ext => lower.endsWith(ext))) {
+                            return `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+                        }
+
+                        // fallback: direct open
+                        return url;
+                    };
+
+                    newViewBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const viewerUrl = buildViewerUrl(resolvedUrl);
+                        if (!viewerUrl) {
+                            toastr?.error('Unable to open file', 'Error');
+                            return;
+                        }
+
+                        // Open in new tab/window. If viewerUrl is an external viewer (Office/Google),
+                        // it will embed the file. Note: the file must be publicly accessible or a signed URL.
+                        window.open(viewerUrl, '_blank', 'noopener');
                     });
+
+                    newDownloadBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const link = document.createElement('a');
+                        link.href = resolvedUrl;
+                        link.download = fileName;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    });
+
+                    // Button labels
+                    newViewBtn.innerHTML = '<i class="fas fa-eye"></i> View file';
+                    newDownloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
                 }
+
 
                 buildFileUrl(filePath) {
                     if (!filePath) return null;

@@ -104,6 +104,11 @@
             font-size: var(--font-size-sm);
         }
 
+        label i{
+            color: var(--accent-orange);
+        }
+
+
         label.required::after {
             content: " *";
             color: var(--danger);
@@ -144,31 +149,11 @@
 
         /* Buttons */
         .btn {
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: var(--font-size-base);
-            cursor: pointer;
-            transition: var(--transition-normal);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            border: none;
             width: 100%;
         }
 
-        .btn-primary {
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-        }
 
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:disabled {
+        .btn-brand:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
@@ -184,7 +169,7 @@
             width: 16px;
             height: 16px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: var(--btn-primary-text);
+            border-top-color: var(--btn-brand-text);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -398,6 +383,14 @@
                 font-size: var(--font-size-2xl);
             }
         }
+
+
+
+
+
+
+
+
     </style>
 </head>
 
@@ -420,7 +413,7 @@
                 <!-- Email -->
                 <div class="form-group">
                     <label for="email" class="required">
-                        <i class="fas fa-envelope" style="color: var(--primary);"></i> Email Address
+                        <i class="fas fa-envelope"></i> Email Address
                     </label>
                     <div class="input-wrapper">
                         <input type="email" id="email" name="email" placeholder="Enter your email address" required>
@@ -431,7 +424,7 @@
                 <!-- Password -->
                 <div class="form-group">
                     <label for="password" class="required">
-                        <i class="fas fa-lock" style="color: var(--primary);"></i> Password
+                        <i class="fas fa-lock"></i> Password
                     </label>
                     <div class="input-wrapper">
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
@@ -453,7 +446,7 @@
                     </a>
                 </div>
 
-                <button type="submit" class="btn btn-primary" id="submitBtn">
+                <button type="submit" class="btn btn-brand" id="submitBtn">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
 

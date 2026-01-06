@@ -87,7 +87,7 @@
             display: inline-flex;
             align-items: center;
             gap: var(--spacing-sm);
-            background: var(--primary-light);
+            background: var(--accent-orange);
             color: white;
             padding: var(--spacing-sm) var(--spacing-md);
             border-radius: 50px;
@@ -122,8 +122,8 @@
             gap: var(--spacing-sm);
         }
 
-        .otp-title i {
-            color: var(--primary);
+        .otp-title i{
+            color: var(--accent-orange);
         }
 
         /* OTP Inputs */
@@ -157,7 +157,7 @@
 
         .otp-digit.filled {
             border-color: var(--primary);
-            background: var(--primary-light);
+            background: var(--lite-secondary6);
         }
 
         .otp-digit.active {
@@ -198,32 +198,10 @@
 
         .btn {
             flex: 1;
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: var(--font-size-base);
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-sm);
-            border: none;
         }
 
-        .btn-primary {
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-            box-shadow: var(--shadow-sm);
-        }
 
-        .btn-primary:hover:not(:disabled) {
-            background: var(--btn-primary-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:disabled {
+        .btn-brand:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
@@ -282,7 +260,7 @@
             flex-direction: column;
             justify-content: center;
             padding: var(--spacing-xl);
-            color: var(--btn-primary-text);
+            color: var(--btn-brand-text);
             position: relative;
         }
 
@@ -353,7 +331,7 @@
             margin-top: -8px;
             margin-left: -8px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: var(--btn-primary-text);
+            border-top-color: var(--btn-brand-text);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -509,7 +487,7 @@
 
                     <!-- Action Buttons -->
                     <div class="action-buttons">
-                        <button type="button" class="btn btn-primary" id="verifyBtn" disabled>
+                        <button type="button" class="btn btn-brand" id="verifyBtn" disabled>
                             <i class="fas fa-check-circle"></i> Verify OTP
                         </button>
                     </div>

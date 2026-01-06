@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create Issue</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <!-- Custom Select CSS -->
+    <link rel="stylesheet" href="/assets/css/custom-select.css">
+
+    <!-- Create Issue CSS -->
+    <style>
+        .create-issue-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Back Button */
+        .back-button-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition-normal);
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+            transform: translateY(-1px);
+        }
+
+        /* Page Title */
+        .page-title {
+            margin-bottom: 2rem;
+        }
+
+        .page-title h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: var(--font-size-lg);
+        }
+
+        /* Two Column Layout */
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 992px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        /* Form Styles */
+        .issue-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .form-group label i {
+            color: var(--primary);
+        }
+
+        .form-group label.required::after {
+            content: "*";
+            color: var(--danger);
+            margin-left: var(--spacing-xs);
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            transition: var(--transition-normal);
+            font-family: inherit;
+            background: var(--form-bg);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+        }
+
+        .form-control.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(var(--danger-rgb), 0.1);
+        }
+
+        .form-hint {
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+            margin-top: var(--spacing-xs);
+        }
+
+        .form-error {
+            color: var(--danger);
+            font-size: var(--font-size-sm);
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        /* Two Column Group */
+        .two-column-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .two-column-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Action Button */
+        .action-button {
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            width: 100%;
+            justify-content: center;
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: ;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-top: -8px;
+            margin-left: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Recent Issues Section */
+        .recent-issues-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            height: fit-content;
+        }
+
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .issues-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .issue-item {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            transition: var(--transition-normal);
+        }
+
+        .issue-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .issue-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: var(--font-size-base);
+        }
+
+        .issue-meta {
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .issue-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .issue-submissions {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .issue-submissions i {
+            color: var(--primary);
+        }
+
+        .no-issues {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .no-issues i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .view-all-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            transition: var(--transition-normal);
+            justify-content: center;
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-sm);
+        }
+
+        .view-all-link:hover {
+            background: var(--secondary-color2);
+            color: white;
+            gap: 0.75rem;
+        }
+
+        /* Loading States */
+        .loading-screen {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .create-issue-container {
+                padding: 0 0.5rem;
+            }
+
+            .form-card,
+            .recent-issues-card {
+                padding: 1.5rem;
+            }
+
+            .issue-header {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .issue-meta {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Included-->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <!-- Header Included-->
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+
+                <div class="create-issue-container">
+                    <!-- Page Title -->
+                    <div class="page-title">
+                        <h1>Create New Issue</h1>
+                        <p>Create a new journal issue for publication</p>
+                    </div>
+
+                    <!-- Two Column Layout -->
+                    <div class="two-column-layout">
+                        <!-- Left Column: Create Issue Form -->
+                        <div>
+                            <div class="form-card">
+                                <form id="createIssueForm" class="issue-form">
+                                    <!-- Journal Select -->
+                                    <div class="form-group">
+                                        <label for="journalSelect" class="required">
+                                            <i class="fas fa-book"></i> Journal
+                                        </label>
+                                        <div class="custom-select" id="journalSelect">
+                                            <input type="hidden" name="journalId" id="selectedJournalId">
+                                            <div class="select-header">
+                                                <span class="selected-text">Select a journal...</span>
+                                                <i class="fas fa-chevron-down select-arrow"></i>
+                                            </div>
+                                            <div class="select-dropdown">
+                                                <div class="select-search">
+                                                    <i class="fas fa-search"></i>
+                                                    <input type="text" class="select-search-input" placeholder="Search journals...">
+                                                    <button type="button" class="clear-search-btn">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="select-options" id="journalOptions">
+                                                    <!-- Options will be populated here -->
+                                                </div>
+                                                <div class="select-loading" id="journalLoading">
+                                                    <i class="fas fa-spinner fa-spin"></i> Loading journals...
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-hint"></div>
+                                        <div class="form-error" id="journalError"></div>
+                                    </div>
+
+                                    <!-- Issue Title -->
+                                    <div class="form-group">
+                                        <label for="issueTitle" class="required">
+                                            <i class="fas fa-heading"></i> Issue Title
+                                        </label>
+                                        <input type="text" id="issueTitle" class="form-control" placeholder="e.g., Special Issue on AI and Robotics" required>
+                                        <div class="form-hint"></div>
+                                        <div class="form-error" id="titleError"></div>
+                                    </div>
+
+                                    <!-- Volume and Issue Number -->
+                                    <div class="two-column-group">
+                                        <div class="form-group">
+                                            <label for="volume" class="required">
+                                                <i class="fas fa-layer-group"></i> Volume
+                                            </label>
+                                            <input type="number" id="volume" class="form-control" placeholder="e.g., 5" min="1" required>
+                                            <div class="form-hint"></div>
+                                            <div class="form-error" id="volumeError"></div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="issueNumber" class="required">
+                                                <i class="fas fa-hashtag"></i> Issue Number
+                                            </label>
+                                            <input type="number" id="issueNumber" class="form-control" placeholder="e.g., 2" min="1" required>
+                                            <div class="form-hint"></div>
+                                            <div class="form-error" id="issueNumberError"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Publication Date -->
+                                    <div class="form-group">
+                                        <label for="publicationDate" class="required">
+                                            <i class="fas fa-calendar-alt"></i> Publication Date
+                                        </label>
+                                        <input type="date" id="publicationDate" class="form-control" required>
+                                        <div class="form-hint"></div>
+                                        <div class="form-error" id="dateError"></div>
+                                    </div>
+
+                                    <!-- Create Button -->
+                                    <div class="action-button">
+                                        <button type="submit" id="submitIssueBtn" class="btn-primary">
+                                            <i class="fas fa-plus-circle"></i> Create Issue
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Recent Issues -->
+                        <div>
+                            <div class="recent-issues-card">
+                                <h2 class="section-title">
+                                    <i class="fas fa-history"></i> Recently Added Issues
+                                </h2>
+
+                                <div id="issuesList" class="issues-list">
+                                    <!-- Issues will be loaded here -->
+                                    <div class="loading-screen">
+                                        <div class="spinner"></div>
+                                        <p>Loading recent issues...</p>
+                                    </div>
+                                </div>
+
+                                <a href="view-issues.html" class="view-all-link">
+                                    <i class="fas fa-external-link-alt"></i> View All Issues
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'create-issue';
+    </script>
+
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Create Issue JavaScript -->
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class CustomSelect {
+            constructor(container) {
+                this.container = container;
+                this.header = container.querySelector('.select-header');
+                this.selectedText = container.querySelector('.selected-text');
+                this.dropdown = container.querySelector('.select-dropdown');
+                this.searchInput = container.querySelector('.select-search-input');
+                this.clearSearchBtn = container.querySelector('.clear-search-btn');
+                this.optionsContainer = container.querySelector('.select-options');
+                this.hiddenInput = container.querySelector('input[type="hidden"]');
+                this.loadingEl = container.querySelector('.select-loading');
+                this.isOpen = false;
+                this.options = [];
+                this.filteredOptions = [];
+                this.selectedOption = null;
+
+                this.init();
+            }
+
+            init() {
+                // Toggle dropdown
+                this.header.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggle();
+                });
+
+                // Search functionality
+                this.searchInput.addEventListener('input', () => {
+                    this.filterOptions();
+                });
+
+                // Clear search
+                this.clearSearchBtn.addEventListener('click', () => {
+                    this.searchInput.value = '';
+                    this.filterOptions();
+                    this.searchInput.focus();
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.container.contains(e.target)) {
+                        this.close();
+                    }
+                });
+
+                // Prevent dropdown from closing when clicking inside
+                this.dropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+
+            toggle() {
+                if (this.isOpen) {
+                    this.close();
+                } else {
+                    this.open();
+                }
+            }
+
+            open() {
+                if (this.isOpen) return;
+
+                this.isOpen = true;
+                this.container.classList.add('open');
+                this.dropdown.style.display = 'block';
+
+                // Focus search input
+                setTimeout(() => {
+                    this.searchInput.focus();
+                }, 100);
+
+                // Position dropdown
+                this.positionDropdown();
+            }
+
+            close() {
+                if (!this.isOpen) return;
+
+                this.isOpen = false;
+                this.container.classList.remove('open');
+                this.dropdown.style.display = 'none';
+                this.searchInput.value = '';
+                this.filterOptions();
+            }
+
+            positionDropdown() {
+                const rect = this.container.getBoundingClientRect();
+                const dropdownHeight = 300; // Approximate max height
+                const spaceBelow = window.innerHeight - rect.bottom;
+
+                if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                    // Position above
+                    this.dropdown.style.bottom = '100%';
+                    this.dropdown.style.top = 'auto';
+                    this.dropdown.style.marginTop = '0';
+                    this.dropdown.style.marginBottom = '5px';
+                } else {
+                    // Position below (default)
+                    this.dropdown.style.top = '100%';
+                    this.dropdown.style.bottom = 'auto';
+                    this.dropdown.style.marginTop = '5px';
+                    this.dropdown.style.marginBottom = '0';
+                }
+            }
+
+            filterOptions() {
+                const searchTerm = this.searchInput.value.toLowerCase().trim();
+                this.clearSearchBtn.style.display = searchTerm ? 'flex' : 'none';
+
+                if (!searchTerm) {
+                    this.filteredOptions = [...this.options];
+                } else {
+                    this.filteredOptions = this.options.filter(option =>
+                        option.title.toLowerCase().includes(searchTerm) ||
+                        (option.issn && option.issn.toLowerCase().includes(searchTerm)) ||
+                        (option.publisher && option.publisher.toLowerCase().includes(searchTerm))
+                    );
+                }
+
+                this.renderOptions();
+            }
+
+            setOptions(options) {
+                this.options = options;
+                this.filteredOptions = [...options];
+                this.renderOptions();
+            }
+
+            renderOptions() {
+                if (this.filteredOptions.length === 0) {
+                    this.optionsContainer.innerHTML = `
+                        <div class="select-no-results">
+                            <i class="fas fa-search"></i>
+                            <span>No journals found</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.optionsContainer.innerHTML = this.filteredOptions.map(option => `
+                    <div class="select-option ${this.selectedOption?.id === option.id ? 'selected' : ''}" 
+                         data-id="${option.id}">
+                        <div class="option-content">
+                            <div class="option-title">${this.escapeHtml(option.title)}</div>
+                            <div class="option-details">
+                                ${option.issn ? `<span><i class="fas fa-hashtag"></i> ${this.escapeHtml(option.issn)}</span>` : ''}
+                                ${option.publisher ? `<span><i class="fas fa-building"></i> ${this.escapeHtml(option.publisher)}</span>` : ''}
+                            </div>
+                        </div>
+                        ${this.selectedOption?.id === option.id ? '<i class="fas fa-check select-check"></i>' : ''}
+                    </div>
+                `).join('');
+
+                // Add click handlers
+                this.optionsContainer.querySelectorAll('.select-option').forEach(optionEl => {
+                    optionEl.addEventListener('click', () => {
+                        const id = optionEl.getAttribute('data-id');
+                        const option = this.options.find(opt => opt.id === id);
+                        if (option) {
+                            this.select(option);
+                        }
+                    });
+                });
+            }
+
+            select(option) {
+                this.selectedOption = option;
+                this.selectedText.textContent = option.title;
+                this.selectedText.classList.remove('placeholder');
+                this.hiddenInput.value = option.id;
+
+                // Update UI
+                this.container.querySelectorAll('.select-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                const selectedEl = this.container.querySelector(`[data-id="${option.id}"]`);
+                if (selectedEl) {
+                    selectedEl.classList.add('selected');
+                }
+
+                this.close();
+            }
+
+            clear() {
+                this.selectedOption = null;
+                this.selectedText.textContent = 'Select a journal...';
+                this.selectedText.classList.add('placeholder');
+                this.hiddenInput.value = '';
+
+                this.container.querySelectorAll('.select-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+            }
+
+            showLoading() {
+                if (this.loadingEl) {
+                    this.loadingEl.style.display = 'block';
+                }
+            }
+
+            hideLoading() {
+                if (this.loadingEl) {
+                    this.loadingEl.style.display = 'none';
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        class IssueManager {
+            constructor() {
+                this.journals = [];
+                this.recentIssues = [];
+                this.journalSelect = null;
+
+                this.init();
+            }
+
+            async init() {
+                this.initializeToastr();
+                await this.initializeCustomSelect();
+                this.bindEvents();
+                await this.loadRecentIssues();
+                this.setMinDate();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000,
+                    preventDuplicates: true
+                };
+            }
+
+            setMinDate() {
+                const today = new Date().toISOString().split('T')[0];
+                const dateInput = document.getElementById('publicationDate');
+                dateInput.min = today;
+                dateInput.value = today;
+            }
+
+            async initializeCustomSelect() {
+                const selectContainer = document.getElementById('journalSelect');
+                if (!selectContainer) return;
+
+                this.journalSelect = new CustomSelect(selectContainer);
+
+                // Load journals
+                this.journalSelect.showLoading();
+                await this.loadJournals();
+                this.journalSelect.hideLoading();
+            }
+
+            bindEvents() {
+                // Form submission
+                const form = document.getElementById('createIssueForm');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.createIssue();
+                    });
+                }
+
+                // Window resize for dropdown positioning
+                window.addEventListener('resize', () => {
+                    if (this.journalSelect && this.journalSelect.isOpen) {
+                        this.journalSelect.positionDropdown();
+                    }
+                });
+            }
+
+            async loadJournals() {
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login.');
+                        return;
+                    }
+
+                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load journals');
+                    }
+
+                    this.journals = (data.journals || []).map(journal => ({
+                        id: journal._id,
+                        title: journal.title,
+                        issn: journal.issn,
+                        publisher: journal.publisher
+                    }));
+
+                    if (this.journalSelect) {
+                        this.journalSelect.setOptions(this.journals);
+                    }
+
+                } catch (error) {
+                    console.error('Error loading journals:', error);
+                    toastr.error('Failed to load journals. Please refresh the page.');
+
+                    // Show error in select
+                    if (this.journalSelect) {
+                        this.journalSelect.optionsContainer.innerHTML = `
+                            <div class="select-error">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Failed to load journals</span>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            async loadRecentIssues() {
+                try {
+                    const issuesList = document.getElementById('issuesList');
+                    if (!issuesList) return;
+
+                    if (!token) {
+                        issuesList.innerHTML = `
+                            <div class="no-issues">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <p>Please login to view issues</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const response = await fetch(`${BASE_URL}/issues?limit=5`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch recent issues: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load recent issues');
+                    }
+
+                    this.recentIssues = data.issues || [];
+                    this.renderRecentIssues();
+
+                } catch (error) {
+                    console.error('Error loading recent issues:', error);
+                    this.renderRecentIssues([]);
+                }
+            }
+
+            renderRecentIssues(issues = this.recentIssues) {
+                const container = document.getElementById('issuesList');
+                if (!container) return;
+
+                if (!issues || issues.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-issues">
+                            <i class="fas fa-inbox"></i>
+                            <p>No issues created yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = issues.map(issue => `
+                    <div class="issue-item">
+                        <div class="issue-header">
+                            <div>
+                                <div class="issue-title">${this.escapeHtml(issue.title)}</div>
+                                <div class="issue-meta">
+                                    <span><i class="fas fa-book"></i> ${this.escapeHtml(issue.journalId?.title || 'Unknown Journal')}</span>
+                                    <span><i class="fas fa-layer-group"></i> Vol. ${issue.volume}, No. ${issue.issueNumber}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="issue-submissions">
+                            <i class="fas fa-file-alt"></i>
+                            <span>${issue.submissions?.length || 0} submission${issue.submissions?.length !== 1 ? 's' : ''} included</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            showError(fieldId, message) {
+                const errorEl = document.getElementById(fieldId);
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.style.display = 'block';
+                }
+            }
+
+            hideError(fieldId) {
+                const errorEl = document.getElementById(fieldId);
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                }
+            }
+
+            validateForm() {
+                let isValid = true;
+
+                // Clear all errors
+                this.hideError('journalError');
+                this.hideError('titleError');
+                this.hideError('volumeError');
+                this.hideError('issueNumberError');
+                this.hideError('dateError');
+
+                // Validate journal
+                const journalId = document.getElementById('selectedJournalId').value;
+                if (!journalId) {
+                    this.showError('journalError', 'Please select a journal');
+                    isValid = false;
+                }
+
+                // Validate title
+                const title = document.getElementById('issueTitle').value.trim();
+                if (!title) {
+                    this.showError('titleError', 'Please enter an issue title');
+                    isValid = false;
+                }
+
+                // Validate volume
+                const volume = document.getElementById('volume').value;
+                if (!volume || parseInt(volume) < 1) {
+                    this.showError('volumeError', 'Please enter a valid volume number');
+                    isValid = false;
+                }
+
+                // Validate issue number
+                const issueNumber = document.getElementById('issueNumber').value;
+                if (!issueNumber || parseInt(issueNumber) < 1) {
+                    this.showError('issueNumberError', 'Please enter a valid issue number');
+                    isValid = false;
+                }
+
+                // Validate date
+                const publicationDate = document.getElementById('publicationDate').value;
+                if (!publicationDate) {
+                    this.showError('dateError', 'Please select a publication date');
+                    isValid = false;
+                } else {
+                    const selectedDate = new Date(publicationDate);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    if (selectedDate < today) {
+                        this.showError('dateError', 'Publication date must be today or in the future');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            }
+
+            async createIssue() {
+                if (!this.validateForm()) {
+                    return;
+                }
+
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login.');
+                        return;
+                    }
+
+                    const formData = {
+                        journalId: document.getElementById('selectedJournalId').value,
+                        title: document.getElementById('issueTitle').value.trim(),
+                        volume: parseInt(document.getElementById('volume').value),
+                        issueNumber: parseInt(document.getElementById('issueNumber').value),
+                        publicationDate: document.getElementById('publicationDate').value
+                    };
+
+                    // Show loading state
+                    const submitBtn = document.getElementById('submitIssueBtn');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                    submitBtn.disabled = true;
+
+                    const response = await fetch(`${BASE_URL}/issues`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        throw new Error('Invalid response from server');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data.message || `Failed to create issue: ${response.status}`);
+                    }
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to create issue');
+                    }
+
+                    // Success
+                    await Swal.fire({
+                        title: 'Issue Created Successfully!',
+                        text: `"${formData.title}" has been created successfully.`,
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#10b981'
+                    });
+
+                    // Reset form
+                    this.resetForm();
+
+                    // Reload recent issues
+                    await this.loadRecentIssues();
+
+                } catch (error) {
+                    console.error('Error creating issue:', error);
+                    toastr.error(error.message || 'Failed to create issue. Please try again.');
+                } finally {
+                    // Reset button state
+                    const submitBtn = document.getElementById('submitIssueBtn');
+                    submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Create Issue';
+                    submitBtn.disabled = false;
+                }
+            }
+
+            resetForm() {
+                // Reset form fields
+                document.getElementById('issueTitle').value = '';
+                document.getElementById('volume').value = '';
+                document.getElementById('issueNumber').value = '';
+
+                // Reset date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('publicationDate').value = today;
+
+                // Clear select
+                if (this.journalSelect) {
+                    this.journalSelect.clear();
+                }
+
+                // Clear errors
+                this.hideError('journalError');
+                this.hideError('titleError');
+                this.hideError('volumeError');
+                this.hideError('issueNumberError');
+                this.hideError('dateError');
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize
+        let issueManager;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            issueManager = new IssueManager();
+        });
+    </script>
+</body>
+
+</html>

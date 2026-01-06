@@ -1,6 +1,6 @@
 // API Configuration
 
-export const BASE_URL = 'https://fp.247laboratory.net/api/v1';
+export const BASE_URL = 'https://jms.247laboratory.net/api/v1';
 export const token = localStorage.getItem('token');
 
 const API_BASE_URL = 'https://fp.247laboratory.net/';

@@ -1,10 +1,6 @@
 // js/my-submissions.js
-// Uses the server endpoint:
-//  - GET /submissions/my-submissions?page=1&limit=...
-//
-// Make sure this file is loaded as a normal script (not module).
+ import { BASE_URL, token } from '/assets/js/utility.js';
 
-const BASE_API = 'https://fp.247laboratory.net/api/v1';
 
 class MySubmissionsManager {
     constructor() {
@@ -243,7 +239,7 @@ class MySubmissionsManager {
             if (this.currentFilters.dateFrom) params.set('dateFrom', this.currentFilters.dateFrom);
             if (this.currentFilters.dateTo) params.set('dateTo', this.currentFilters.dateTo);
 
-            const url = `${BASE_API}/submissions/my-submissions?${params.toString()}`;
+            const url = `${BASE_URL}/submissions/my-submissions?${params.toString()}`;
 
             const resp = await fetch(url, {
                 headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
@@ -358,7 +354,7 @@ class MySubmissionsManager {
         const statusStyle = this.getStatusStyle(sub.status);
 
         const title = sub.title || 'Untitled';
-        const journalTitle = (sub.journalId && (sub.journalId.title || sub.journalId)) || 'Unknown Journal';
+        const scopeTitle = (sub.scopeId && (sub.scopeId.title || sub.scopeId)) || 'Unknown scope';
         const authors = Array.isArray(sub.authors) ? sub.authors : [];
         // show "Resubmit" when status is either 'revised' OR 'revision_requested'
         const isResubmit = ['revised', 'revision_requested'].includes(String(sub.status));
@@ -368,9 +364,9 @@ class MySubmissionsManager {
 
             <div class="card-header">
                 <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 80))}</div>
-                <div class="card-sub" title="${this.escapeHtml(journalTitle)}">
+                <div class="card-sub" title="${this.escapeHtml(scopeTitle)}">
                     <i class="fas fa-book"></i>
-                    <span>${this.escapeHtml(this.truncate(journalTitle, 50))}</span>
+                    <span>${this.escapeHtml(this.truncate(scopeTitle, 50))}</span>
                 </div>
             </div>
 
@@ -429,7 +425,7 @@ class MySubmissionsManager {
             if (!token) { toastr.error('Authentication required.'); return; }
 
             toastr.info('Preparing download...');
-            const resp = await fetch(`${BASE_API}/submissions/${subId}/download`, {
+            const resp = await fetch(`${BASE_URL}/submissions/${subId}/download`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 

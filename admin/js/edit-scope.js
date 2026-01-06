@@ -1,18 +1,8 @@
 // Import utility functions
-import { createCustomSelect, createEditorSelect } from './utility.js';
-//import { BASE_URL, getAuthToken2 } from '../../assets/js/utility.js';
+import { createCustomSelect, createEditorSelect, BASE_URL, token} from './utility.js';
 
-// API Configuration
-const API_BASE_URL = 'https://fp.247laboratory.net/';
-const API_ENDPOINTS = {
-    JOURNALS: 'api/v1/journal',
-    JOURNAL_DETAILS: 'api/v1/journal'
-};
 
-// Get token from localStorage
-function getAuthToken() {
-    return localStorage.getItem('pilot_tkn');
-}
+
 
 // Get journal ID from URL
 function getJournalIdFromUrl() {
@@ -22,14 +12,13 @@ function getJournalIdFromUrl() {
 
 // Fetch journal details for editing
 async function fetchJournalForEdit(journalId) {
-    const token = getAuthToken();
     
     if (!token) {
         throw new Error('Authentication required. Please login.');
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.JOURNAL_DETAILS}/${journalId}`, {
+        const response = await fetch(`${BASE_URL}/scope/${journalId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -542,7 +531,7 @@ async function submitEditForm(event) {
         }
 
         // Make API call to update journal
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.JOURNAL}/${formData._id}`, {
+        const response = await fetch(`${BASE_URL}/scope/${formData._id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,

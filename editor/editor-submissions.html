@@ -527,26 +527,26 @@
                     <!-- Filter Controls -->
                     <div class="filter-controls">
                         <div class="filter-group">
-                            <label class="filter-label">Filter by Journal</label>
-                            <div class="custom-select with-search" id="journalFilter">
-                                <input type="hidden" name="journalId" id="selectedJournalId" value="all">
+                            <label class="filter-label">Filter by scope</label>
+                            <div class="custom-select with-search" id="scopeFilter">
+                                <input type="hidden" name="scopeId" id="selectedscopeId" value="all">
                                 <div class="select-header">
-                                    <span class="selected-text placeholder">All Journals</span>
+                                    <span class="selected-text placeholder">All scopes</span>
                                     <i class="fas fa-chevron-down select-arrow"></i>
                                 </div>
                                 <div class="select-dropdown">
                                     <div class="select-search">
                                         <i class="fas fa-search"></i>
-                                        <input type="text" class="select-search-input" placeholder="Search journals...">
+                                        <input type="text" class="select-search-input" placeholder="Search scopes...">
                                         <button type="button" class="clear-search-btn">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
-                                    <div class="select-options" id="journalOptions">
+                                    <div class="select-options" id="scopeOptions">
                                         <!-- Options will be populated here -->
                                     </div>
                                     <div class="select-loading">
-                                        <i class="fas fa-spinner fa-spin"></i> Loading journals...
+                                        <i class="fas fa-spinner fa-spin"></i> Loading scopes...
                                     </div>
                                 </div>
                             </div>
@@ -631,16 +631,16 @@
                 this.limit = 6; // Cards per page
                 this.totalItems = 0;
                 this.totalPages = 0;
-                this.allSubmissions = []; // Store all submissions from all journals
+                this.allSubmissions = []; // Store all submissions from all scopes
                 this.filteredSubmissions = [];
-                this.editorJournals = [];
+                this.editorscopes = [];
                 this.currentFilters = {
-                    journalId: 'all',
+                    scopeId: 'all',
                     status: 'all'
                 };
 
                 this.userCache = new Map(); // Cache for user details (submitter and reviewers)
-                this.journalSelect = null;
+                this.scopeSelect = null;
                 this.statusSelect = null;
 
                 this.init();
@@ -676,8 +676,8 @@
 
                 // Window resize for dropdown positioning
                 window.addEventListener('resize', () => {
-                    if (this.journalSelect && this.journalSelect.isOpen) {
-                        this.journalSelect.positionDropdown();
+                    if (this.scopeSelect && this.scopeSelect.isOpen) {
+                        this.scopeSelect.positionDropdown();
                     }
                     if (this.statusSelect && this.statusSelect.isOpen) {
                         this.statusSelect.positionDropdown();
@@ -687,13 +687,13 @@
 
             async loadData() {
                 try {
-                    // Step 1: Get all journals for this editor
-                    await this.loadEditorJournals();
+                    // Step 1: Get all scopes for this editor
+                    await this.loadEditorscopes();
 
-                    // Step 2: Initialize custom selects after journals are loaded
+                    // Step 2: Initialize custom selects after scopes are loaded
                     await this.initializeCustomSelects();
 
-                    // Step 3: Get submissions from all journals
+                    // Step 3: Get submissions from all scopes
                     await this.loadAllSubmissions();
 
                     // Step 4: Apply initial filters and render
@@ -705,7 +705,7 @@
                 }
             }
 
-            async loadEditorJournals() {
+            async loadEditorscopes() {
                 try {
                     const token = getAuthToken2();
                     if (!token) {
@@ -713,7 +713,7 @@
                         return;
                     }
 
-                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                    const response = await fetch(`${BASE_URL}/editor/scopes`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
@@ -721,59 +721,59 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                        throw new Error(`Failed to fetch scopes: ${response.status}`);
                     }
 
                     const data = await response.json();
 
                     if (!data.success) {
-                        throw new Error(data.message || 'Failed to load journals');
+                        throw new Error(data.message || 'Failed to load scopes');
                     }
 
-                    this.editorJournals = data.journals || [];
+                    this.editorscopes = data.scopes || [];
 
-                    if (this.editorJournals.length === 0) {
-                        this.showNoJournalsMessage();
+                    if (this.editorscopes.length === 0) {
+                        this.showNoscopesMessage();
                         return;
                     }
 
                 } catch (error) {
-                    console.error('Error loading editor journals:', error);
+                    console.error('Error loading editor scopes:', error);
                     throw error;
                 }
             }
 
             async initializeCustomSelects() {
-                // Initialize journal select
-                const journalSelectEl = document.getElementById('journalFilter');
-                if (journalSelectEl) {
-                    this.journalSelect = new CustomSelect(journalSelectEl, true);
+                // Initialize scope select
+                const scopeSelectEl = document.getElementById('scopeFilter');
+                if (scopeSelectEl) {
+                    this.scopeSelect = new CustomSelect(scopeSelectEl, true);
 
-                    // Add "All Journals" option first
-                    const allJournalsOption = {
+                    // Add "All scopes" option first
+                    const allscopesOption = {
                         id: 'all',
-                        title: 'All Journals',
+                        title: 'All scopes',
                         issn: ''
                     };
 
-                    const journalOptions = [
-                        allJournalsOption,
-                        ...this.editorJournals.map(journal => ({
-                            id: journal._id,
-                            title: journal.title,
-                            issn: journal.issn || ''
+                    const scopeOptions = [
+                        allscopesOption,
+                        ...this.editorscopes.map(scope => ({
+                            id: scope._id,
+                            title: scope.title,
+                            issn: scope.issn || ''
                         }))
                     ];
 
-                    this.journalSelect.setOptions(journalOptions);
+                    this.scopeSelect.setOptions(scopeOptions);
 
-                    // Listen for journal selection changes
-                    const journalHiddenInput = document.getElementById('selectedJournalId');
-                    if (journalHiddenInput) {
+                    // Listen for scope selection changes
+                    const scopeHiddenInput = document.getElementById('selectedscopeId');
+                    if (scopeHiddenInput) {
                         const observer = new MutationObserver(() => {
-                            this.currentFilters.journalId = journalHiddenInput.value;
+                            this.currentFilters.scopeId = scopeHiddenInput.value;
                         });
-                        observer.observe(journalHiddenInput, { attributes: true, attributeFilter: ['value'] });
+                        observer.observe(scopeHiddenInput, { attributes: true, attributeFilter: ['value'] });
                     }
                 }
 
@@ -794,15 +794,15 @@
             }
 
             async loadAllSubmissions() {
-                if (this.editorJournals.length === 0) {
+                if (this.editorscopes.length === 0) {
                     this.allSubmissions = [];
                     return;
                 }
 
                 try {
-                    // Fetch submissions for all journals in parallel
-                    const submissionPromises = this.editorJournals.map(journal =>
-                        this.fetchSubmissionsForJournal(journal._id)
+                    // Fetch submissions for all scopes in parallel
+                    const submissionPromises = this.editorscopes.map(scope =>
+                        this.fetchSubmissionsForscope(scope._id)
                     );
 
                     const results = await Promise.allSettled(submissionPromises);
@@ -813,18 +813,18 @@
                     results.forEach((result, index) => {
                         if (result.status === 'fulfilled') {
                             const submissions = result.value;
-                            // Add journal info to each submission
-                            const journal = this.editorJournals[index];
+                            // Add scope info to each submission
+                            const scope = this.editorscopes[index];
                             submissions.forEach(sub => {
-                                sub.journalInfo = {
-                                    _id: journal._id,
-                                    title: journal.title,
-                                    issn: journal.issn
+                                sub.scopeInfo = {
+                                    _id: scope._id,
+                                    title: scope.title,
+                                    issn: scope.issn
                                 };
                             });
                             allSubmissions.push(...submissions);
                         } else {
-                            console.warn(`Failed to fetch submissions for journal ${this.editorJournals[index].title}:`, result.reason);
+                            console.warn(`Failed to fetch submissions for scope ${this.editorscopes[index].title}:`, result.reason);
                         }
                     });
 
@@ -840,11 +840,11 @@
                 }
             }
 
-            async fetchSubmissionsForJournal(journalId) {
+            async fetchSubmissionsForscope(scopeId) {
                 try {
                     const token = getAuthToken2();
                     const response = await fetch(
-                        `${BASE_URL}/editor/submissions?journalId=${journalId}&page=1&limit=100`,
+                        `${BASE_URL}/editor/submissions?scopeId=${scopeId}&page=1&limit=100`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -854,7 +854,7 @@
                     );
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch submissions for journal ${journalId}: ${response.status}`);
+                        throw new Error(`Failed to fetch submissions for scope ${scopeId}: ${response.status}`);
                     }
 
                     const data = await response.json();
@@ -866,7 +866,7 @@
                     return data.submissions || [];
 
                 } catch (error) {
-                    console.error(`Error fetching submissions for journal ${journalId}:`, error);
+                    console.error(`Error fetching submissions for scope ${scopeId}:`, error);
                     return [];
                 }
             }
@@ -997,9 +997,9 @@
             applyFilters() {
                 let filtered = [...this.allSubmissions];
 
-                // Apply journal filter
-                if (this.currentFilters.journalId && this.currentFilters.journalId !== 'all') {
-                    filtered = filtered.filter(sub => sub.journalId === this.currentFilters.journalId);
+                // Apply scope filter
+                if (this.currentFilters.scopeId && this.currentFilters.scopeId !== 'all') {
+                    filtered = filtered.filter(sub => sub.scopeId === this.currentFilters.scopeId);
                 }
 
                 // Apply status filter
@@ -1021,8 +1021,8 @@
             // Clear all filters
             clearFilters() {
                 // Reset custom selects
-                if (this.journalSelect) {
-                    this.journalSelect.select({ id: 'all', title: 'All Journals' });
+                if (this.scopeSelect) {
+                    this.scopeSelect.select({ id: 'all', title: 'All scopes' });
                 }
                 if (this.statusSelect) {
                     this.statusSelect.select({ id: 'all', title: 'All Statuses' });
@@ -1030,7 +1030,7 @@
 
                 // Reset filters
                 this.currentFilters = {
-                    journalId: 'all',
+                    scopeId: 'all',
                     status: 'all'
                 };
 
@@ -1047,7 +1047,7 @@
                         <div class="no-results">
                             <i class="fas fa-inbox"></i>
                             <h3>No Submissions Found</h3>
-                            <p>${this.allSubmissions.length === 0 ? 'No submissions in your journals yet.' : 'No submissions match your current filters.'}</p>
+                            <p>${this.allSubmissions.length === 0 ? 'No submissions in your scopes yet.' : 'No submissions match your current filters.'}</p>
                             ${this.allSubmissions.length > 0 ? `
                                 <button class="retry-btn" id="clearFiltersBtn2">
                                     <i class="fas fa-filter"></i> Clear Filters
@@ -1088,7 +1088,7 @@
 
                 // Truncate long titles
                 const truncatedTitle = this.truncateText(submission.title, 60);
-                const truncatedJournal = this.truncateText(submission.journalInfo?.title || 'Unknown Journal', 40);
+                const truncatedscope = this.truncateText(submission.scopeInfo?.title || 'Unknown scope', 40);
 
                 // Get status color and text
                 const statusColor = this.getStatusColor(submission.status);
@@ -1117,12 +1117,12 @@
                             </h3>
                             <div class="card-sub">
                                 <i class="fas fa-book"></i>
-                                <span title="${this.escapeHtml(submission.journalInfo?.title || 'Unknown Journal')}">
-                                    ${this.escapeHtml(truncatedJournal)}
+                                <span title="${this.escapeHtml(submission.scopeInfo?.title || 'Unknown scope')}">
+                                    ${this.escapeHtml(truncatedscope)}
                                 </span>
-                                ${submission.journalInfo?.issn ? `
+                                ${submission.scopeInfo?.issn ? `
                                     <span style="margin-left: 0.5rem; color: var(--text-light); font-size: var(--font-size-xs);">
-                                        ISSN: ${this.escapeHtml(submission.journalInfo.issn)}
+                                        ISSN: ${this.escapeHtml(submission.scopeInfo.issn)}
                                     </span>
                                 ` : ''}
                             </div>
@@ -1343,14 +1343,14 @@
                 });
             }
 
-            // Show no journals message
-            showNoJournalsMessage() {
+            // Show no scopes message
+            showNoscopesMessage() {
                 const cardsGrid = document.getElementById('cardsGrid');
                 cardsGrid.innerHTML = `
                     <div class="no-results">
-                        <i class="fas fa-journal-whills"></i>
-                        <h3>No Journals Assigned</h3>
-                        <p>You are not assigned as an editor to any journals yet.</p>
+                        <i class="fas fa-scope-whills"></i>
+                        <h3>No scopes Assigned</h3>
+                        <p>You are not assigned as an editor to any scopes yet.</p>
                     </div>
                 `;
             }

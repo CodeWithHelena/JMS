@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JournalFlow | Sign Up</title>
+    <title>ScopeFlow | Sign Up</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <!-- Toastr CSS -->
@@ -105,6 +105,10 @@
             font-weight: 600;
             color: var(--text-secondary);
             font-size: var(--font-size-sm);
+        }
+
+        label i{
+            color: var(--accent-orange);
         }
 
         label.required::after {
@@ -223,52 +227,52 @@
             border-radius: 2px;
         }
 
-        .journal-option {
+        .scope-option {
             padding: 0.75rem;
             cursor: pointer;
             border-bottom: 1px solid var(--border);
             transition: background-color var(--transition-fast);
         }
 
-        .journal-option:last-child {
+        .scope-option:last-child {
             border-bottom: none;
         }
 
-        .journal-option:hover {
+        .scope-option:hover {
             background-color: var(--light);
         }
 
-        .journal-option.selected {
+        .scope-option.selected {
             background-color: var(--primary-light);
         }
 
-        .journal-title {
+        .scope-title {
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 2px;
         }
 
-        .journal-issn {
+        .scope-issn {
             font-size: var(--font-size-sm);
             color: var(--text-muted);
         }
 
-        .no-journals {
+        .no-scopes {
             padding: 1.5rem;
             text-align: center;
             color: var(--text-muted);
             font-style: italic;
         }
 
-        .no-journals i {
+        .no-scopes i {
             display: block;
             margin-bottom: 0.5rem;
             font-size: var(--font-size-xl);
             color: var(--text-light);
         }
 
-        /* Journal Select Container */
-        .journal-select-container {
+        /* Scope Select Container */
+        .scope-select-container {
             display: none;
             margin-top: var(--spacing-md);
             animation: fadeIn 0.3s ease;
@@ -286,7 +290,7 @@
             }
         }
 
-        .journal-select-container.visible {
+        .scope-select-container.visible {
             display: block;
         }
 
@@ -322,7 +326,7 @@
             content: '\f00c';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
-            color: var(--btn-primary-text);
+            color: var(--btn-brand-text);
             font-size: 10px;
         }
 
@@ -336,32 +340,10 @@
 
         /* Buttons */
         .btn {
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: var(--font-size-base);
-            cursor: pointer;
-            transition: var(--transition-normal);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            border: none;
             width: 100%;
         }
 
-        .btn-primary {
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--btn-primary-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:disabled {
+        .btn-brand:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
@@ -377,7 +359,7 @@
             width: 16px;
             height: 16px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: var(--btn-primary-text);
+            border-top-color: var(--btn-brand-text);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -578,7 +560,7 @@
                 font-size: var(--font-size-2xl);
             }
 
-            .journal-option {
+            .scope-option {
                 padding: 0.5rem;
             }
         }
@@ -594,7 +576,7 @@
             </div>
             
             <h1>Create Account</h1>
-            <p class="subtitle">Join our platform for seamless journal management and peer review</p>
+            <p class="subtitle">Join our platform for seamless scope management and peer review</p>
             
             <div class="success-message" id="successMessage">
                 <i class="fas fa-check-circle"></i> Account created successfully! Redirecting...
@@ -604,7 +586,7 @@
                 <!-- First Name -->
                 <div class="form-group">
                     <label for="firstName" class="required">
-                        <i class="fas fa-user" style="color: var(--primary);"></i> First Name
+                        <i class="fas fa-user"></i> First Name
                     </label>
                     <div class="input-wrapper">
                         <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
@@ -615,7 +597,7 @@
                 <!-- Last Name -->
                 <div class="form-group">
                     <label for="lastName" class="required">
-                        <i class="fas fa-user" style="color: var(--primary);"></i> Last Name
+                        <i class="fas fa-user"></i> Last Name
                     </label>
                     <div class="input-wrapper">
                         <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
@@ -626,7 +608,7 @@
                 <!-- Gender -->
                 <div class="form-group">
                     <label for="gender" class="required">
-                        <i class="fas fa-venus-mars" style="color: var(--primary);"></i> Gender
+                        <i class="fas fa-venus-mars"></i> Gender
                     </label>
                     <div class="custom-select" id="genderSelect">
                         <div class="select-header" id="genderSelectHeader">
@@ -635,10 +617,10 @@
                         </div>
                         <div class="select-dropdown" id="genderDropdown">
                             <div class="select-options">
-                                <div class="journal-option" data-value="male">
+                                <div class="scope-option" data-value="male">
                                     <i class="fas fa-mars" style="color: var(--primary); margin-right: 0.5rem;"></i> Male
                                 </div>
-                                <div class="journal-option" data-value="female">
+                                <div class="scope-option" data-value="female">
                                     <i class="fas fa-venus" style="color: var(--primary); margin-right: 0.5rem;"></i> Female
                                 </div>
                             </div>
@@ -651,7 +633,7 @@
                 <!-- Email -->
                 <div class="form-group">
                     <label for="email" class="required">
-                        <i class="fas fa-envelope" style="color: var(--primary);"></i> Email Address
+                        <i class="fas fa-envelope"></i> Email Address
                     </label>
                     <div class="input-wrapper">
                         <input type="email" id="email" name="email" placeholder="Enter your email address" required>
@@ -662,7 +644,7 @@
                 <!-- Phone -->
                 <div class="form-group">
                     <label for="phone" class="required">
-                        <i class="fas fa-phone" style="color: var(--primary);"></i> Phone Number
+                        <i class="fas fa-phone" ></i> Phone Number
                     </label>
                     <div class="input-wrapper">
                         <input type="tel" id="phone" name="phone" placeholder="+2348012345678" required>
@@ -673,7 +655,7 @@
                 <!-- Address -->
                 <div class="form-group">
                     <label for="address" class="required">
-                        <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Address
+                        <i class="fas fa-map-marker-alt"></i> Address
                     </label>
                     <div class="input-wrapper">
                         <input type="text" id="address" name="address" placeholder="Enter your address" required>
@@ -684,7 +666,7 @@
                 <!-- Affiliation -->
                 <div class="form-group">
                     <label for="affiliation">
-                        <i class="fas fa-university" style="color: var(--primary);"></i> Affiliation / Institution
+                        <i class="fas fa-university"></i> Affiliation / Institution
                     </label>
                     <div class="input-wrapper">
                         <input type="text" id="affiliation" name="affiliation" placeholder="Enter your university or institution">
@@ -694,7 +676,7 @@
                 <!-- ORCID -->
                 <div class="form-group">
                     <label for="orcid">
-                        <i class="fas fa-id-card" style="color: var(--primary);"></i> ORCID iD
+                        <i class="fas fa-id-card"></i> ORCID iD
                     </label>
                     <div class="input-wrapper">
                         <input type="text" id="orcid" name="orcid" placeholder="0000-0000-0000-0000">
@@ -710,35 +692,35 @@
                     </label>
                 </div>
             
-                <!-- Journal Selection -->
-                <div id="journalSelectContainer" class="journal-select-container">
-                    <label for="journalSearch">
-                        <i class="fas fa-book" style="color: var(--primary);"></i> Select Journal (Optional)
+                <!-- Scope Selection -->
+                <div id="scopeSelectContainer" class="scope-select-container">
+                    <label for="scopeSearch">
+                        <i class="fas fa-book" ></i> Select Scope (Optional)
                     </label>
-                    <div class="custom-select" id="journalSelect">
-                        <div class="select-header" id="journalSelectHeader">
-                            <span class="placeholder">Search and select a journal...</span>
+                    <div class="custom-select" id="scopeSelect">
+                        <div class="select-header" id="scopeSelectHeader">
+                            <span class="placeholder">Search and select a scope...</span>
                             <span class="arrow"><i class="fas fa-chevron-down"></i></span>
                         </div>
-                        <div class="select-dropdown" id="journalDropdown">
+                        <div class="select-dropdown" id="scopeDropdown">
                             <div class="select-search-container">
-                                <input type="text" placeholder="Search journals..." id="journalSearch">
-                                <button type="button" class="search-clear" id="clearJournalSearch">
+                                <input type="text" placeholder="Search scopes..." id="scopeSearch">
+                                <button type="button" class="search-clear" id="clearScopeSearch">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                            <div class="select-options" id="journalOptions">
+                            <div class="select-options" id="scopeOptions">
                                 <!-- Will be populated by JavaScript -->
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" id="selectedJournalId" name="journalId">
+                    <input type="hidden" id="selectedScopeId" name="scopeId">
                 </div>
             
                 <!-- Password -->
                 <div class="form-group">
                     <label for="password" class="required">
-                        <i class="fas fa-lock" style="color: var(--primary);"></i> Password
+                        <i class="fas fa-lock"></i> Password
                     </label>
                     <div class="input-wrapper">
                         <input type="password" id="password" name="password" placeholder="Create a password (min. 8 characters)" required>
@@ -752,7 +734,7 @@
                 <!-- Confirm Password -->
                 <div class="form-group">
                     <label for="confirmPassword" class="required">
-                        <i class="fas fa-lock" style="color: var(--primary);"></i> Confirm Password
+                        <i class="fas fa-lock"></i> Confirm Password
                     </label>
                     <div class="input-wrapper">
                         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
@@ -763,7 +745,7 @@
                     <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
                 </div>
             
-                <button type="submit" class="btn btn-primary" id="submitBtn">
+                <button type="submit" class="btn btn-brand" id="submitBtn">
                     <i class="fas fa-user-plus"></i> Create Account
                 </button>
             
@@ -787,7 +769,7 @@
                     <div class="feature-icon">
                         <i class="fas fa-paper-plane"></i>
                     </div>
-                    <div class="feature-text">Submit manuscripts to multiple journals with one click</div>
+                    <div class="feature-text">Submit manuscripts to multiple scopes with one click</div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon">
@@ -823,16 +805,16 @@
 
         class SignupManager {
             constructor() {
-                this.journals = [];
-                this.filteredJournals = [];
-                this.selectedJournal = null;
+                this.scopes = [];
+                this.filteredScopes = [];
+                this.selectedScope = null;
                 this.isSubmitting = false;
 
                 this.initializeToastr();
                 this.bindEvents();
                 this.initializeGenderSelect();
                 this.setupPasswordToggles();
-                this.initializeJournalSelect();
+                this.initializeScopeSelect();
             }
 
             initializeToastr() {
@@ -846,9 +828,9 @@
             }
 
             bindEvents() {
-                // Reviewer checkbox toggles journal select
+                // Reviewer checkbox toggles scope select
                 document.getElementById('reviewer').addEventListener('change', (e) => {
-                    this.toggleJournalSelect(e.target.checked);
+                    this.toggleScopeSelect(e.target.checked);
                 });
 
                 // Form submission
@@ -897,7 +879,7 @@
                 const selectHeader = document.getElementById('genderSelectHeader');
                 const dropdown = document.getElementById('genderDropdown');
                 const genderInput = document.getElementById('gender');
-                const options = dropdown.querySelectorAll('.journal-option');
+                const options = dropdown.querySelectorAll('.scope-option');
 
                 selectHeader.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -934,16 +916,16 @@
                 });
             }
 
-            initializeJournalSelect() {
-                const selectHeader = document.getElementById('journalSelectHeader');
-                const dropdown = document.getElementById('journalDropdown');
-                const searchInput = document.getElementById('journalSearch');
-                const clearBtn = document.getElementById('clearJournalSearch');
+            initializeScopeSelect() {
+                const selectHeader = document.getElementById('scopeSelectHeader');
+                const dropdown = document.getElementById('scopeDropdown');
+                const searchInput = document.getElementById('scopeSearch');
+                const clearBtn = document.getElementById('clearScopeSearch');
 
                 selectHeader.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (!dropdown.classList.contains('active')) {
-                        this.loadJournals();
+                        this.loadScopes();
                     }
                     dropdown.classList.toggle('active');
                     selectHeader.classList.toggle('active');
@@ -953,141 +935,141 @@
                 searchInput.addEventListener('input', () => {
                     const term = searchInput.value.toLowerCase().trim();
                     clearBtn.classList.toggle('visible', term.length > 0);
-                    this.filterJournals(term);
+                    this.filterScopes(term);
                 });
 
                 clearBtn.addEventListener('click', () => {
                     searchInput.value = '';
                     clearBtn.classList.remove('visible');
-                    this.filterJournals('');
+                    this.filterScopes('');
                     searchInput.focus();
                 });
 
                 // Close dropdown when clicking outside
                 document.addEventListener('click', (e) => {
-                    if (!e.target.closest('#journalSelect')) {
+                    if (!e.target.closest('#scopeSelect')) {
                         dropdown.classList.remove('active');
                         selectHeader.classList.remove('active');
                     }
                 });
             }
 
-            toggleJournalSelect(show) {
-                const container = document.getElementById('journalSelectContainer');
+            toggleScopeSelect(show) {
+                const container = document.getElementById('scopeSelectContainer');
                 if (show) {
                     container.classList.add('visible');
                 } else {
                     container.classList.remove('visible');
-                    this.clearJournalSelection();
+                    this.clearScopeSelection();
                 }
             }
 
-            async loadJournals() {
-                const optionsContainer = document.getElementById('journalOptions');
+            async loadScopes() {
+                const optionsContainer = document.getElementById('scopeOptions');
 
                 try {
                     optionsContainer.innerHTML = `
-                        <div class="no-journals">
+                        <div class="no-scopes">
                             <i class="fas fa-spinner fa-spin"></i>
-                            <div>Loading journals...</div>
+                            <div>Loading scopes...</div>
                         </div>
                     `;
 
-                    const response = await fetch(`${BASE_URL}/journal/shallow`);
+                    const response = await fetch(`${BASE_URL}/scope/shallow`);
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                        throw new Error(`Failed to fetch scopes: ${response.status}`);
                     }
 
                     const data = await response.json();
 
                     if (!data.success) {
-                        throw new Error(data.message || 'Failed to load journals');
+                        throw new Error(data.message || 'Failed to load scopes');
                     }
 
-                    this.journals = data.journals || [];
-                    this.filteredJournals = [...this.journals];
+                    this.scopes = data.scopes || [];
+                    this.filteredScopes = [...this.scopes];
 
-                    this.renderJournalOptions();
+                    this.renderScopeOptions();
 
                 } catch (error) {
-                    console.error('Error loading journals:', error);
+                    console.error('Error loading scopes:', error);
                     optionsContainer.innerHTML = `
-                        <div class="no-journals">
+                        <div class="no-scopes">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <div>Failed to load journals</div>
+                            <div>Failed to load scopes</div>
                         </div>
                     `;
                 }
             }
 
-            filterJournals(searchTerm) {
+            filterScopes(searchTerm) {
                 if (!searchTerm) {
-                    this.filteredJournals = [...this.journals];
+                    this.filteredScopes = [...this.scopes];
                 } else {
-                    this.filteredJournals = this.journals.filter(journal =>
-                        journal.title.toLowerCase().includes(searchTerm) ||
-                        (journal.issn && journal.issn.toLowerCase().includes(searchTerm))
+                    this.filteredScopes = this.scopes.filter(scope =>
+                        scope.title.toLowerCase().includes(searchTerm) ||
+                        (scope.issn && scope.issn.toLowerCase().includes(searchTerm))
                     );
                 }
-                this.renderJournalOptions();
+                this.renderScopeOptions();
             }
 
-            renderJournalOptions() {
-                const optionsContainer = document.getElementById('journalOptions');
+            renderScopeOptions() {
+                const optionsContainer = document.getElementById('scopeOptions');
 
-                if (this.filteredJournals.length === 0) {
+                if (this.filteredScopes.length === 0) {
                     optionsContainer.innerHTML = `
-                        <div class="no-journals">
+                        <div class="no-scopes">
                             <i class="fas fa-search"></i>
-                            <div>No journal found</div>
+                            <div>No scope found</div>
                         </div>
                     `;
                     return;
                 }
 
-                optionsContainer.innerHTML = this.filteredJournals.map(journal => `
-                    <div class="journal-option ${this.selectedJournal?._id === journal._id ? 'selected' : ''}" 
-                         data-id="${journal._id}">
-                        <div class="journal-title">${this.escapeHtml(journal.title)}</div>
-                        ${journal.issn ? `<div class="journal-issn">ISSN: ${journal.issn}</div>` : ''}
+                optionsContainer.innerHTML = this.filteredScopes.map(scope => `
+                    <div class="scope-option ${this.selectedScope?._id === scope._id ? 'selected' : ''}" 
+                         data-id="${scope._id}">
+                        <div class="scope-title">${this.escapeHtml(scope.title)}</div>
+                        ${scope.issn ? `<div class="scope-issn">ISSN: ${scope.issn}</div>` : ''}
                     </div>
                 `).join('');
 
                 // Add click handlers
-                optionsContainer.querySelectorAll('.journal-option').forEach(option => {
+                optionsContainer.querySelectorAll('.scope-option').forEach(option => {
                     option.addEventListener('click', () => {
                         const id = option.getAttribute('data-id');
-                        const journal = this.filteredJournals.find(j => j._id === id);
+                        const scope = this.filteredScopes.find(j => j._id === id);
 
-                        if (journal) {
-                            this.selectedJournal = journal;
-                            document.getElementById('journalSelectHeader').querySelector('.placeholder').textContent = journal.title;
-                            document.getElementById('selectedJournalId').value = journal._id;
+                        if (scope) {
+                            this.selectedScope = scope;
+                            document.getElementById('scopeSelectHeader').querySelector('.placeholder').textContent = scope.title;
+                            document.getElementById('selectedScopeId').value = scope._id;
 
                             // Update selection
-                            optionsContainer.querySelectorAll('.journal-option').forEach(opt => {
+                            optionsContainer.querySelectorAll('.scope-option').forEach(opt => {
                                 opt.classList.remove('selected');
                             });
                             option.classList.add('selected');
 
                             // Close dropdown
-                            document.getElementById('journalDropdown').classList.remove('active');
-                            document.getElementById('journalSelectHeader').classList.remove('active');
+                            document.getElementById('scopeDropdown').classList.remove('active');
+                            document.getElementById('scopeSelectHeader').classList.remove('active');
                         }
                     });
                 });
             }
 
-            clearJournalSelection() {
-                this.selectedJournal = null;
-                const header = document.getElementById('journalSelectHeader');
-                header.querySelector('.placeholder').textContent = 'Search and select a journal...';
-                document.getElementById('selectedJournalId').value = '';
-                document.getElementById('journalSearch').value = '';
-                document.getElementById('clearJournalSearch').classList.remove('visible');
-                this.filteredJournals = [...this.journals];
-                this.renderJournalOptions();
+            clearScopeSelection() {
+                this.selectedScope = null;
+                const header = document.getElementById('scopeSelectHeader');
+                header.querySelector('.placeholder').textContent = 'Search and select a scope...';
+                document.getElementById('selectedScopeId').value = '';
+                document.getElementById('scopeSearch').value = '';
+                document.getElementById('clearScopeSearch').classList.remove('visible');
+                this.filteredScopes = [...this.scopes];
+                this.renderScopeOptions();
             }
 
             // Validation Methods
@@ -1230,8 +1212,8 @@
                     const orcid = document.getElementById('orcid').value.trim();
                     if (orcid) formData.orcid = orcid;
 
-                    const journalId = document.getElementById('selectedJournalId').value;
-                    if (journalId) formData.journalId = journalId;
+                    const scopeId = document.getElementById('selectedScopeId').value;
+                    if (scopeId) formData.scopeId = scopeId;
 
                     console.log('Submitting form data:', formData);
 

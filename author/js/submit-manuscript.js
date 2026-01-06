@@ -1,20 +1,20 @@
-// submit-manuscript2.js (fixed)
-// - Fix 1: ensure submit button keeps a background while disabled/submitting
-// - Fix 2: ensure files added via drag-and-drop are assigned to the file input so FormData includes them
+ import { BASE_URL, token } from '/assets/js/utility.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------
-    // Config: base URL and token
+    // Config: Import Base URL and Token
     // -------------------------------
-    const BASE_URL = 'https://fp.247laboratory.net/'; // base URL
-    const token = localStorage.getItem('token') || null;
+   
+
+    // const BASE_URL = 'https://fp.247laboratory.net/'; // base URL
+    // const token = localStorage.getItem('token') || null;
 
     // -------------------------------
-    // Reusable: fetch journals
+    // Reusable: fetch scopes
     // -------------------------------
-    async function getJournals() {
+    async function getScopes() {
         try {
-            const url = new URL('api/v1/journal/shallow', BASE_URL).toString();
+            const url = new URL(`${BASE_URL}/scope/shallow`)
             const res = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -24,23 +24,23 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (!res.ok) {
-                console.error('Failed to fetch journals', res.status, res.statusText);
+                console.error('Failed to fetch scopes', res.status, res.statusText);
                 return [];
             }
 
             const payload = await res.json();
             if (Array.isArray(payload)) return payload;
             if (Array.isArray(payload.data)) return payload.data;
-            if (Array.isArray(payload.journals)) return payload.journals;
+            if (Array.isArray(payload.scopes)) return payload.scopes;
             const arr = Object.values(payload).find(v => Array.isArray(v));
             if (Array.isArray(arr)) return arr;
             return [];
         } catch (err) {
-            console.error('Error fetching journals:', err);
+            console.error('Error fetching scopes:', err);
             return [];
         }
     }
-    window.getJournals = getJournals;
+    window.getScopes = getScopes;
 
     // -------------------------------
     // Quill initialization
@@ -60,69 +60,69 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // -------------------------------
-    // Custom select logic (journals)
+    // Custom select logic (scopes)
     // -------------------------------
-    const journalSelect = document.getElementById('journalSelect');
-    const selectHeader = journalSelect.querySelector('.select-header');
-    const selectDropdown = journalSelect.querySelector('.select-dropdown');
-    const selectArrow = journalSelect.querySelector('.select-arrow');
-    const journalSearch = document.getElementById('journalSearch');
-    const searchClear = journalSelect.querySelector('.search-clear');
-    const journalOptions = document.getElementById('journalOptions');
-    const selectedJournal = document.getElementById('selectedJournal');
+    const scopeSelect = document.getElementById('scopeSelect');
+    const selectHeader = scopeSelect.querySelector('.select-header');
+    const selectDropdown = scopeSelect.querySelector('.select-dropdown');
+    const selectArrow = scopeSelect.querySelector('.select-arrow');
+    const scopeSearch = document.getElementById('scopeSearch');
+    const searchClear = scopeSelect.querySelector('.search-clear');
+    const scopeOptions = document.getElementById('scopeOptions');
+    const selectedScope = document.getElementById('selectedScope');
 
-    function getJournalDisplayName(item) {
+    function getScopeDisplayName(item) {
         if (typeof item === 'string') return item;
         if (!item) return '';
-        return item.title || item.name || item.journalName || item.shortTitle || item._id || JSON.stringify(item);
+        return item.title || item.name || item.scopeName || item.shortTitle || item._id || JSON.stringify(item);
     }
 
-    function getJournalId(item) {
+    function getScopeId(item) {
         if (!item) return '';
         if (typeof item === 'string') return item; // fallback: use name as id
-        return item._id || item.id || getJournalDisplayName(item);
+        return item._id || item.id || getScopeDisplayName(item);
     }
 
-    function populateJournalOptions(filter = '') {
-        journalOptions.innerHTML = '';
-        const filtered = journalsCache.filter(j =>
-            getJournalDisplayName(j).toLowerCase().includes(filter.toLowerCase())
+    function populateScopeOptions(filter = '') {
+        scopeOptions.innerHTML = '';
+        const filtered = scopesCache.filter(j =>
+            getScopeDisplayName(j).toLowerCase().includes(filter.toLowerCase())
         );
 
         if (filtered.length === 0) {
             const noResults = document.createElement('div');
             noResults.className = 'select-option';
-            noResults.textContent = 'No journals found';
+            noResults.textContent = 'No scopes found';
             noResults.style.color = 'var(--text-light)';
             noResults.style.cursor = 'default';
-            journalOptions.appendChild(noResults);
+            scopeOptions.appendChild(noResults);
             return;
         }
 
         filtered.forEach(j => {
             const option = document.createElement('div');
             option.className = 'select-option';
-            const name = getJournalDisplayName(j);
-            const id = getJournalId(j);
+            const name = getScopeDisplayName(j);
+            const id = getScopeId(j);
             option.textContent = name;
             option.dataset.jid = id;
             option.addEventListener('click', function () {
                 selectHeader.querySelector('.select-placeholder').textContent = name;
-                selectedJournal.value = id; // store id (if present) else fallback name
+                selectedScope.value = id; // store id (if present) else fallback name
                 selectHeader.classList.remove('open');
                 selectDropdown.style.display = 'none';
                 selectArrow.classList.remove('open');
             });
-            journalOptions.appendChild(option);
+            scopeOptions.appendChild(option);
         });
     }
 
-    let journalsCache = [];
+    let scopesCache = [];
 
-    (async function loadJournalsAndPopulate() {
-        const remote = await getJournals();
-        if (remote && remote.length) journalsCache = remote;
-        populateJournalOptions();
+    (async function loadScopesAndPopulate() {
+        const remote = await getScopes();
+        if (remote && remote.length) scopesCache = remote;
+        populateScopeOptions();
     })();
 
     selectHeader.addEventListener('click', function () {
@@ -136,22 +136,22 @@ document.addEventListener('DOMContentLoaded', function () {
             selectHeader.classList.add('open');
             selectDropdown.style.display = 'block';
             selectArrow.classList.add('open');
-            journalSearch.focus();
+            scopeSearch.focus();
         }
     });
 
-    journalSearch.addEventListener('input', function () {
-        populateJournalOptions(this.value);
+    scopeSearch.addEventListener('input', function () {
+        populateScopeOptions(this.value);
     });
 
     searchClear.addEventListener('click', function () {
-        journalSearch.value = '';
-        populateJournalOptions();
-        journalSearch.focus();
+        scopeSearch.value = '';
+        populateScopeOptions();
+        scopeSearch.focus();
     });
 
     document.addEventListener('click', function (e) {
-        if (!journalSelect.contains(e.target)) {
+        if (!scopeSelect.contains(e.target)) {
             selectHeader.classList.remove('open');
             selectDropdown.style.display = 'none';
             selectArrow.classList.remove('open');
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div style="font-size:0.9rem;color:var(--text-light)">${escapeHtml(a.email)}</div>
                 </div>
                 <div>
-                    <button type="button" class="btn" data-id="${a.id}" title="Remove author" style="background:none;border:none;color:var(--danger-color)">
+                    <button type="button" class="btn btn-remove" data-id="${a.id}" title="Remove author">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -443,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
 
         // Build list of fields to check to determine if the user left everything blank
-        const journalVal = selectedJournal.value && selectedJournal.value.trim();
+        const scopeVal = selectedScope.value && selectedScope.value.trim();
         const titleVal = document.getElementById('manuscriptTitle').value.trim();
         const abstractText = quill.getText().trim(); // plain text check
         const filePresent = manuscriptFile.files && manuscriptFile.files.length > 0;
@@ -451,15 +451,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const addedAuthorsCount = authorsAdded.length;
 
         // If everything is empty -> show "cannot submit empty field"
-        if (!journalVal && !titleVal && !abstractText && !filePresent && addedAuthorsCount === 0) {
+        if (!scopeVal && !titleVal && !abstractText && !filePresent && addedAuthorsCount === 0) {
             toastr.error('Cannot submit empty field');
             return;
         }
 
         // Now check required fields in order, and show only the FIRST missing/invalid one
-        // 1. journal
-        if (!journalVal) {
-            toastr.error('Please select a journal');
+        // 1. scope
+        if (!scopeVal) {
+            toastr.error('Please select a scope');
             return;
         }
 
@@ -512,8 +512,8 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('title', titleVal);
             // send HTML abstract
             formData.append('abstract', document.getElementById('abstractContent').value || '');
-            // send journalId (selectedJournal holds id when API provided it)
-            formData.append('journalId', journalVal);
+            // send scopeId (selectedScope holds id when API provided it)
+            formData.append('scopeId', scopeVal);
             // authors: from authorsAdded
             const authorsPayload = authorsAdded.map(a => ({
                 name: a.name,
@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // file -- key 'file' to match your Postman sample
             formData.append('file', manuscriptFile.files[0]);
 
-            const res = await fetch(`${BASE_URL}/api/v1/submissions`, {
+            const res = await fetch(`${BASE_URL}/submissions`, {
                 method: 'POST',
                 headers: {
                     // Do NOT set Content-Type when sending FormData — browser sets the boundary
@@ -567,9 +567,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to reset form to original state
     function resetForm() {
-        // Reset journal selection
-        selectedJournal.value = '';
-        selectHeader.querySelector('.select-placeholder').textContent = 'Select a journal';
+        // Reset scope selection
+        selectedScope.value = '';
+        selectHeader.querySelector('.select-placeholder').textContent = 'Select a scope';
 
         // Reset manuscript title
         document.getElementById('manuscriptTitle').value = '';

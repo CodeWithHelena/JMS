@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>View Issues</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <!-- Custom Select CSS -->
+    <link rel="stylesheet" href="/assets/css/custom-select.css">
+
+    <!-- View Issues CSS -->
+    <style>
+        .view-issues-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Back Button */
+        .back-button-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition-normal);
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+            transform: translateY(-1px);
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: var(--font-size-lg);
+        }
+
+        .create-new-btn {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .create-new-btn:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .search-input-wrapper {
+            padding-top: 1.7rem;
+            position: relative;
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            background: var(--form-bg);
+            transition: var(--transition-normal);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 70%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            padding-top: 1.7rem;
+        }
+
+        .btn-filter {
+            background: var(--light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-filter:hover {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+        }
+
+        .btn-filter.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Issues Grid */
+        .issues-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .issues-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Issue Card */
+        .issue-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            transition: var(--transition-normal);
+            border: 1px solid var(--border);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .issue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .issue-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .issue-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .issue-journal {
+            color: var(--primary);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .issue-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: var(--font-size-base);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .submissions-info {
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .submissions-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: var(--font-size-sm);
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .submissions-count i {
+            color: var(--primary);
+        }
+
+        .submissions-list {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .issue-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-edit {
+            background: var(--primary-light);
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-view {
+            background: var(--light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-view:hover {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-info {
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+        }
+
+        .btn-prev,
+        .btn-next {
+            background: var(--light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-prev:hover:not(:disabled),
+        .btn-next:hover:not(:disabled) {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+        }
+
+        .btn-prev:disabled,
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+            grid-column: 1 / -1;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Edit Issue Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1200;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .modal-header h3 i {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+            transition: var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .form-group label i {
+            color: var(--primary);
+        }
+
+        .form-group label.required::after {
+            content: "*";
+            color: var(--danger);
+            margin-left: var(--spacing-xs);
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            transition: var(--transition-normal);
+            font-family: inherit;
+            background: var(--form-bg);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: var(--btn-secondary-bg);
+            color: var(--btn-secondary-text);
+            border: 1px solid var(--btn-secondary-border);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+        }
+
+        .btn-cancel:hover {
+            background: var(--btn-secondary-hover);
+            border-color: var(--text-light);
+        }
+
+        .btn-save {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            background: var(--btn-primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-save.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-save.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-top: -8px;
+            margin-left: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .view-issues-container {
+                padding: 0 0.5rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .create-new-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group,
+            .search-input-wrapper {
+                width: 100%;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .btn-cancel,
+            .btn-save {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Included-->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <!-- Header Included-->
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="view-issues-container">
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="page-title">
+                            <h1>Journal Issues</h1>
+                            <p>Manage and view all journal issues</p>
+                        </div>
+                        <a href="create-issue.html" class="create-new-btn">
+                            <i class="fas fa-plus-circle"></i> Create New Issue
+                        </a>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label class="filter-label">Journal</label>
+                            <div class="custom-select with-search" id="journalFilter">
+                                <input type="hidden" name="journalId" id="selectedJournalFilterId" value="">
+                                <div class="select-header">
+                                    <span class="selected-text placeholder">All Journals</span>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <div class="select-dropdown">
+                                    <div class="select-search">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" class="select-search-input" placeholder="Search journals...">
+                                        <button type="button" class="clear-search-btn">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="select-options" id="journalFilterOptions">
+                                        <!-- Options will be populated here -->
+                                    </div>
+                                    <div class="select-loading" id="journalFilterLoading">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading journals...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <div class="custom-select" id="statusFilter">
+                                <input type="hidden" name="status" id="selectedStatus" value="">
+                                <div class="select-header">
+                                    <span class="selected-text placeholder">All Statuses</span>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <div class="select-dropdown">
+                                    <div class="select-options">
+                                        <div class="select-option" data-id="">All Statuses</div>
+                                        <div class="select-option" data-id="published">Published</div>
+                                        <div class="select-option" data-id="upcoming">Upcoming</div>
+                                        <div class="select-option" data-id="draft">Draft</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search issues by title, volume, or issue number...">
+                        </div>
+
+                        <div class="filter-actions">
+                            <button type="button" id="clearFiltersBtn" class="btn-filter">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Issues Grid -->
+                    <div id="issuesGrid" class="issues-grid">
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading issues...</p>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination" class="pagination" style="display: none;">
+                        <button id="prevPage" class="btn-prev" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span id="pageInfo" class="page-info">Page 1 of 1</span>
+                        <button id="nextPage" class="btn-next" disabled>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- No Results -->
+                    <div id="noResults" class="no-results" style="display: none;">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Issues Found</h3>
+                        <p>No issues match your search criteria.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Edit Issue Modal -->
+    <div id="editIssueModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Issue</h3>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editIssueForm" class="modal-form">
+                    <!-- Issue Title -->
+                    <div class="form-group">
+                        <label for="editIssueTitle" class="required">
+                            <i class="fas fa-heading"></i> Issue Title
+                        </label>
+                        <input type="text" id="editIssueTitle" class="form-control" required>
+                    </div>
+
+                    <!-- Volume and Issue Number -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label for="editVolume" class="required">
+                                <i class="fas fa-layer-group"></i> Volume
+                            </label>
+                            <input type="number" id="editVolume" class="form-control" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editIssueNumber" class="required">
+                                <i class="fas fa-hashtag"></i> Issue Number
+                            </label>
+                            <input type="number" id="editIssueNumber" class="form-control" min="1" required>
+                        </div>
+                    </div>
+
+                    <!-- Publication Date -->
+                    <div class="form-group">
+                        <label for="editPublicationDate" class="required">
+                            <i class="fas fa-calendar-alt"></i> Publication Date
+                        </label>
+                        <input type="date" id="editPublicationDate" class="form-control" required>
+                    </div>
+
+                    <!-- Hidden field for issue ID -->
+                    <input type="hidden" id="editIssueId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelEditBtn">Cancel</button>
+                <button type="submit" form="editIssueForm" class="btn-save" id="saveIssueBtn">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'view-issues';
+    </script>
+    <!-- layout.js loads partials and wires header+sidebar behaviors -->
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- View Issues JavaScript -->
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class ViewIssueManager {
+            constructor() {
+                this.journals = [];
+                this.issues = [];
+                this.currentPage = 1;
+                this.totalPages = 1;
+                this.totalItems = 0;
+                this.pageSize = 9;
+                this.filters = {
+                    journalId: '',
+                    status: '',
+                    search: ''
+                };
+
+                this.journalFilterSelect = null;
+                this.statusFilterSelect = null;
+                this.editingIssueId = null;
+
+                this.init();
+            }
+
+            async init() {
+                this.initializeToastr();
+                await this.initializeFilters();
+                this.bindEvents();
+                await this.loadIssues();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000,
+                    preventDuplicates: true
+                };
+            }
+
+            async initializeFilters() {
+                // Initialize journal filter (with search)
+                const journalFilter = document.getElementById('journalFilter');
+                if (journalFilter) {
+                    this.journalFilterSelect = new CustomSelect(journalFilter, true);
+                    this.journalFilterSelect.showLoading();
+                    await this.loadJournals();
+                    this.journalFilterSelect.hideLoading();
+
+                    // Listen for journal selection changes
+                    const journalHiddenInput = document.getElementById('selectedJournalFilterId');
+                    if (journalHiddenInput) {
+                        const observer = new MutationObserver(() => {
+                            this.filters.journalId = journalHiddenInput.value;
+                            this.currentPage = 1;
+                            this.loadIssues();
+                        });
+                        observer.observe(journalHiddenInput, { attributes: true, attributeFilter: ['value'] });
+                    }
+                }
+
+                // Initialize status filter (without search)
+                const statusFilter = document.getElementById('statusFilter');
+                if (statusFilter) {
+                    this.statusFilterSelect = new CustomSelect(statusFilter, false);
+
+                    // Listen for status selection changes
+                    const statusHiddenInput = document.getElementById('selectedStatus');
+                    if (statusHiddenInput) {
+                        const observer = new MutationObserver(() => {
+                            this.filters.status = statusHiddenInput.value;
+                            this.currentPage = 1;
+                            this.loadIssues();
+                        });
+                        observer.observe(statusHiddenInput, { attributes: true, attributeFilter: ['value'] });
+                    }
+                }
+            }
+
+            bindEvents() {
+                // Search input with debounce
+                const searchInput = document.getElementById('searchInput');
+                let searchTimeout;
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        this.filters.search = searchInput.value.trim();
+                        this.currentPage = 1;
+                        this.loadIssues();
+                    }, 500);
+                });
+
+                // Clear filters
+                const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+                if (clearFiltersBtn) {
+                    clearFiltersBtn.addEventListener('click', () => {
+                        this.clearFilters();
+                    });
+                }
+
+                // Pagination
+                const prevPageBtn = document.getElementById('prevPage');
+                const nextPageBtn = document.getElementById('nextPage');
+
+                if (prevPageBtn) {
+                    prevPageBtn.addEventListener('click', () => {
+                        if (this.currentPage > 1) {
+                            this.currentPage--;
+                            this.loadIssues();
+                        }
+                    });
+                }
+
+                if (nextPageBtn) {
+                    nextPageBtn.addEventListener('click', () => {
+                        if (this.currentPage < this.totalPages) {
+                            this.currentPage++;
+                            this.loadIssues();
+                        }
+                    });
+                }
+
+                // Modal events
+                const closeModalBtn = document.getElementById('closeModalBtn');
+                const cancelEditBtn = document.getElementById('cancelEditBtn');
+                const editIssueForm = document.getElementById('editIssueForm');
+                const modalOverlay = document.getElementById('editIssueModal');
+
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', () => {
+                        this.closeEditModal();
+                    });
+                }
+
+                if (cancelEditBtn) {
+                    cancelEditBtn.addEventListener('click', () => {
+                        this.closeEditModal();
+                    });
+                }
+
+                if (editIssueForm) {
+                    editIssueForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.updateIssue();
+                    });
+                }
+
+                // Close modal when clicking outside
+                if (modalOverlay) {
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) {
+                            this.closeEditModal();
+                        }
+                    });
+                }
+
+                // Window resize for dropdown positioning
+                window.addEventListener('resize', () => {
+                    if (this.journalFilterSelect && this.journalFilterSelect.isOpen) {
+                        this.journalFilterSelect.positionDropdown();
+                    }
+                    if (this.statusFilterSelect && this.statusFilterSelect.isOpen) {
+                        this.statusFilterSelect.positionDropdown();
+                    }
+                });
+
+                // Escape key to close modal
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeEditModal();
+                    }
+                });
+            }
+
+            async loadJournals() {
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login.');
+                        return;
+                    }
+
+                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load journals');
+                    }
+
+                    this.journals = (data.journals || []).map(journal => ({
+                        id: journal._id,
+                        title: journal.title,
+                        issn: journal.issn,
+                        publisher: journal.publisher
+                    }));
+
+                    // Add "All Journals" option
+                    const allJournalsOption = {
+                        id: '',
+                        title: 'All Journals'
+                    };
+
+                    if (this.journalFilterSelect) {
+                        this.journalFilterSelect.setOptions([allJournalsOption, ...this.journals]);
+                    }
+
+                } catch (error) {
+                    console.error('Error loading journals:', error);
+                    toastr.error('Failed to load journals. Please refresh the page.');
+
+                    if (this.journalFilterSelect) {
+                        this.journalFilterSelect.showError('Failed to load journals');
+                    }
+                }
+            }
+
+            async loadIssues() {
+                try {
+                    const issuesGrid = document.getElementById('issuesGrid');
+                    if (!issuesGrid) return;
+
+                    issuesGrid.innerHTML = `
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading issues...</p>
+                        </div>
+                    `;
+
+                    if (!token) {
+                        issuesGrid.innerHTML = `
+                            <div class="no-results">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <h3>Authentication Required</h3>
+                                <p>Please login to view issues</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    // Build query parameters
+                    const params = new URLSearchParams({
+                        page: this.currentPage,
+                        limit: this.pageSize
+                    });
+
+                    if (this.filters.journalId) {
+                        params.append('journalId', this.filters.journalId);
+                    }
+
+                    if (this.filters.status) {
+                        params.append('status', this.filters.status);
+                    }
+
+                    if (this.filters.search) {
+                        params.append('search', this.filters.search);
+                    }
+
+                    const response = await fetch(`${BASE_URL}/issues?${params.toString()}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch issues: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load issues');
+                    }
+
+                    this.issues = data.issues || [];
+                    this.totalItems = data.total || 0;
+                    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+
+                    this.renderIssues();
+                    this.updatePagination();
+
+                } catch (error) {
+                    console.error('Error loading issues:', error);
+                    const issuesGrid = document.getElementById('issuesGrid');
+                    if (issuesGrid) {
+                        issuesGrid.innerHTML = `
+                            <div class="no-results">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>Error Loading Issues</h3>
+                                <p>${error.message || 'Please try again later'}</p>
+                            </div>
+                        `;
+                    }
+                    toastr.error('Failed to load issues. Please refresh the page.');
+                }
+            }
+
+            renderIssues() {
+                const issuesGrid = document.getElementById('issuesGrid');
+                const noResults = document.getElementById('noResults');
+
+                if (!issuesGrid) return;
+
+                if (this.issues.length === 0) {
+                    issuesGrid.innerHTML = '';
+                    if (noResults) {
+                        noResults.style.display = 'block';
+                    }
+                    return;
+                }
+
+                if (noResults) {
+                    noResults.style.display = 'none';
+                }
+
+                issuesGrid.innerHTML = this.issues.map(issue => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const publicationDate = new Date(issue.publicationDate);
+                    const isPublished = publicationDate <= today;
+                    const status = isPublished ? 'Published' : 'Upcoming';
+
+                    return `
+                        <div class="issue-card">
+                            <div class="issue-header">
+                                <div>
+                                    <div class="issue-title">${this.escapeHtml(issue.title)}</div>
+                                    <div class="issue-journal">
+                                        <i class="fas fa-book"></i>
+                                        ${this.escapeHtml(issue.journalId?.title || 'Unknown Journal')}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="issue-meta">
+                                <div class="meta-item">
+                                    <div class="meta-label">Volume</div>
+                                    <div class="meta-value">${issue.volume}</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-label">Issue</div>
+                                    <div class="meta-value">${issue.issueNumber}</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-label">Publication Date</div>
+                                    <div class="meta-value">${this.formatDate(issue.publicationDate)}</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-label">Status</div>
+                                    <div class="meta-value">${status}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="submissions-info">
+                                <div class="submissions-count">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>${issue.submissions?.length || 0} Submissions</span>
+                                </div>
+                                <div class="submissions-list">
+                                    ${this.getSubmissionSummary(issue.submissions)}
+                                </div>
+                            </div>
+                            
+                            <div class="issue-actions">
+                                <a href="issue-detail.html?id=${issue._id}" class="btn-view">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <button class="btn-edit" data-id="${issue._id}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn-delete" data-id="${issue._id}" data-title="${this.escapeHtml(issue.title)}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Add event listeners
+                this.attachEventListeners();
+            }
+
+            attachEventListeners() {
+                const issuesGrid = document.getElementById('issuesGrid');
+                if (!issuesGrid) return;
+
+                // Edit button event listeners
+                issuesGrid.querySelectorAll('.btn-edit').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const issueId = button.getAttribute('data-id');
+                        this.openEditModal(issueId);
+                    });
+                });
+
+                // Delete button event listeners
+                issuesGrid.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const issueId = button.getAttribute('data-id');
+                        const issueTitle = button.getAttribute('data-title');
+                        this.deleteIssue(issueId, issueTitle);
+                    });
+                });
+            }
+
+            getSubmissionSummary(submissions = []) {
+                if (submissions.length === 0) {
+                    return 'No submissions added yet';
+                }
+
+                const statusCounts = {
+                    pending: 0,
+                    under_review: 0,
+                    accepted: 0,
+                    rejected: 0
+                };
+
+                submissions.forEach(sub => {
+                    const status = sub.status || 'pending';
+                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                });
+
+                const summary = [];
+                if (statusCounts.accepted > 0) summary.push(`${statusCounts.accepted} accepted`);
+                if (statusCounts.under_review > 0) summary.push(`${statusCounts.under_review} under review`);
+                if (statusCounts.pending > 0) summary.push(`${statusCounts.pending} pending`);
+                if (statusCounts.rejected > 0) summary.push(`${statusCounts.rejected} rejected`);
+
+                return summary.join(' • ') || 'No submissions';
+            }
+
+            updatePagination() {
+                const pagination = document.getElementById('pagination');
+                const pageInfo = document.getElementById('pageInfo');
+                const prevBtn = document.getElementById('prevPage');
+                const nextBtn = document.getElementById('nextPage');
+
+                if (!pagination || !pageInfo || !prevBtn || !nextBtn) return;
+
+                if (this.totalPages <= 1) {
+                    pagination.style.display = 'none';
+                    return;
+                }
+
+                pagination.style.display = 'flex';
+                pageInfo.textContent = `Page ${this.currentPage} of ${this.totalPages}`;
+
+                prevBtn.disabled = this.currentPage === 1;
+                nextBtn.disabled = this.currentPage === this.totalPages;
+            }
+
+            clearFilters() {
+                // Clear search
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = '';
+                    this.filters.search = '';
+                }
+
+                // Clear journal filter
+                if (this.journalFilterSelect) {
+                    this.journalFilterSelect.clear();
+                    this.filters.journalId = '';
+                }
+
+                // Clear status filter
+                if (this.statusFilterSelect) {
+                    this.statusFilterSelect.clear();
+                    this.filters.status = '';
+                }
+
+                // Reset to first page and reload
+                this.currentPage = 1;
+                this.loadIssues();
+            }
+
+            async openEditModal(issueId) {
+                try {
+                    this.editingIssueId = issueId;
+
+                    // Show loading state
+                    const saveBtn = document.getElementById('saveIssueBtn');
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+                    // Fetch issue details
+                    const response = await fetch(`${BASE_URL}/issues/${issueId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch issue: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load issue details');
+                    }
+
+                    const issue = data.issue;
+
+                    // Populate form
+                    document.getElementById('editIssueId').value = issue._id;
+                    document.getElementById('editIssueTitle').value = issue.title;
+                    document.getElementById('editVolume').value = issue.volume;
+                    document.getElementById('editIssueNumber').value = issue.issueNumber;
+
+                    // Format date for input
+                    const publicationDate = new Date(issue.publicationDate);
+                    const formattedDate = publicationDate.toISOString().split('T')[0];
+                    document.getElementById('editPublicationDate').value = formattedDate;
+
+                    // Reset button
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+
+                    // Open modal
+                    document.getElementById('editIssueModal').classList.add('active');
+                    document.getElementById('editIssueTitle').focus();
+
+                } catch (error) {
+                    console.error('Error loading issue details:', error);
+                    toastr.error('Failed to load issue details. Please try again.');
+
+                    // Reset button
+                    const saveBtn = document.getElementById('saveIssueBtn');
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                }
+            }
+
+            closeEditModal() {
+                document.getElementById('editIssueModal').classList.remove('active');
+                this.editingIssueId = null;
+
+                // Reset form
+                document.getElementById('editIssueForm').reset();
+            }
+
+            async updateIssue() {
+                try {
+                    const issueId = document.getElementById('editIssueId').value;
+                    if (!issueId) {
+                        toastr.error('No issue selected for editing');
+                        return;
+                    }
+
+                    // Get form data
+                    const formData = {
+                        title: document.getElementById('editIssueTitle').value.trim(),
+                        volume: parseInt(document.getElementById('editVolume').value),
+                        issueNumber: parseInt(document.getElementById('editIssueNumber').value),
+                        publicationDate: document.getElementById('editPublicationDate').value
+                    };
+
+                    // Validation
+                    if (!formData.title) {
+                        toastr.error('Please enter an issue title', 'Validation Error');
+                        document.getElementById('editIssueTitle').focus();
+                        return;
+                    }
+
+                    if (!formData.volume || formData.volume < 1) {
+                        toastr.error('Please enter a valid volume number', 'Validation Error');
+                        document.getElementById('editVolume').focus();
+                        return;
+                    }
+
+                    if (!formData.issueNumber || formData.issueNumber < 1) {
+                        toastr.error('Please enter a valid issue number', 'Validation Error');
+                        document.getElementById('editIssueNumber').focus();
+                        return;
+                    }
+
+                    if (!formData.publicationDate) {
+                        toastr.error('Please select a publication date', 'Validation Error');
+                        document.getElementById('editPublicationDate').focus();
+                        return;
+                    }
+
+                    // Show loading state
+                    const saveBtn = document.getElementById('saveIssueBtn');
+                    const originalText = saveBtn.innerHTML;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    saveBtn.disabled = true;
+
+                    // Send update request - Using PUT method for the endpoint
+                    const response = await fetch(`${BASE_URL}/issues/${issueId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        throw new Error('Invalid response from server');
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data.message || `Failed to update issue: ${response.status}`);
+                    }
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to update issue');
+                    }
+
+                    // Success
+                    toastr.success('Issue updated successfully');
+
+                    // Close modal
+                    this.closeEditModal();
+
+                    // Reload issues
+                    await this.loadIssues();
+
+                } catch (error) {
+                    console.error('Error updating issue:', error);
+                    toastr.error(error.message || 'Failed to update issue. Please try again.');
+
+                    // Reset button
+                    const saveBtn = document.getElementById('saveIssueBtn');
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                    saveBtn.disabled = false;
+                }
+            }
+
+            async deleteIssue(issueId, issueTitle) {
+                const result = await Swal.fire({
+                    title: 'Delete Issue?',
+                    html: `Are you sure you want to delete <strong>"${issueTitle}"</strong>?<br><br>
+                           <small class="text-muted">This action cannot be undone.</small>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (!result.isConfirmed) return;
+
+                try {
+                    const response = await fetch(`${BASE_URL}/issues/${issueId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.message || 'Failed to delete issue');
+                    }
+
+                    toastr.success('Issue deleted successfully');
+
+                    // Reload issues
+                    await this.loadIssues();
+
+                } catch (error) {
+                    console.error('Error deleting issue:', error);
+                    toastr.error(error.message || 'Failed to delete issue. Please try again.');
+                }
+            }
+
+            formatDate(dateString) {
+                if (!dateString) return 'N/A';
+
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                } catch (error) {
+                    return dateString;
+                }
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+        }
+
+        // CustomSelect class with support for both search and non-search versions
+        class CustomSelect {
+            constructor(container, hasSearch = true) {
+                this.container = container;
+                this.header = container.querySelector('.select-header');
+                this.selectedText = container.querySelector('.selected-text');
+                this.dropdown = container.querySelector('.select-dropdown');
+                this.searchInput = hasSearch ? container.querySelector('.select-search-input') : null;
+                this.clearSearchBtn = hasSearch ? container.querySelector('.clear-search-btn') : null;
+                this.optionsContainer = container.querySelector('.select-options');
+                this.hiddenInput = container.querySelector('input[type="hidden"]');
+                this.loadingEl = container.querySelector('.select-loading');
+                this.isOpen = false;
+                this.options = [];
+                this.filteredOptions = [];
+                this.selectedOption = null;
+                this.hasSearch = hasSearch;
+
+                this.init();
+            }
+
+            init() {
+                // Toggle dropdown
+                this.header.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggle();
+                });
+
+                if (this.hasSearch && this.searchInput) {
+                    // Search functionality
+                    this.searchInput.addEventListener('input', () => {
+                        this.filterOptions();
+                    });
+
+                    // Clear search
+                    if (this.clearSearchBtn) {
+                        this.clearSearchBtn.addEventListener('click', () => {
+                            this.searchInput.value = '';
+                            this.filterOptions();
+                            this.searchInput.focus();
+                        });
+                    }
+                }
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.container.contains(e.target)) {
+                        this.close();
+                    }
+                });
+
+                // Prevent dropdown from closing when clicking inside
+                this.dropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+
+                // Handle option clicks
+                this.optionsContainer.addEventListener('click', (e) => {
+                    const option = e.target.closest('.select-option');
+                    if (option) {
+                        const id = option.getAttribute('data-id');
+                        const title = option.querySelector('.option-title') ?
+                            option.querySelector('.option-title').textContent :
+                            option.textContent.trim();
+                        this.select({ id, title });
+                    }
+                });
+            }
+
+            toggle() {
+                if (this.isOpen) {
+                    this.close();
+                } else {
+                    this.open();
+                }
+            }
+
+            open() {
+                if (this.isOpen) return;
+
+                this.isOpen = true;
+                this.container.classList.add('open');
+                this.dropdown.style.display = 'block';
+
+                // Focus search input if exists
+                if (this.hasSearch && this.searchInput) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 100);
+                }
+
+                // Position dropdown
+                this.positionDropdown();
+            }
+
+            close() {
+                if (!this.isOpen) return;
+
+                this.isOpen = false;
+                this.container.classList.remove('open');
+                this.dropdown.style.display = 'none';
+
+                if (this.hasSearch && this.searchInput) {
+                    this.searchInput.value = '';
+                    this.filterOptions();
+                }
+            }
+
+            positionDropdown() {
+                const rect = this.container.getBoundingClientRect();
+                const dropdownHeight = 300;
+                const spaceBelow = window.innerHeight - rect.bottom;
+
+                if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                    // Position above
+                    this.dropdown.style.bottom = '100%';
+                    this.dropdown.style.top = 'auto';
+                    this.dropdown.style.marginTop = '0';
+                    this.dropdown.style.marginBottom = '5px';
+                } else {
+                    // Position below
+                    this.dropdown.style.top = '100%';
+                    this.dropdown.style.bottom = 'auto';
+                    this.dropdown.style.marginTop = '5px';
+                    this.dropdown.style.marginBottom = '0';
+                }
+            }
+
+            filterOptions() {
+                if (!this.hasSearch || !this.searchInput) {
+                    this.filteredOptions = [...this.options];
+                    this.renderOptions();
+                    return;
+                }
+
+                const searchTerm = this.searchInput.value.toLowerCase().trim();
+                if (this.clearSearchBtn) {
+                    this.clearSearchBtn.style.display = searchTerm ? 'flex' : 'none';
+                }
+
+                if (!searchTerm) {
+                    this.filteredOptions = [...this.options];
+                } else {
+                    this.filteredOptions = this.options.filter(option =>
+                        option.title.toLowerCase().includes(searchTerm) ||
+                        (option.issn && option.issn.toLowerCase().includes(searchTerm)) ||
+                        (option.publisher && option.publisher.toLowerCase().includes(searchTerm))
+                    );
+                }
+
+                this.renderOptions();
+            }
+
+            setOptions(options) {
+                this.options = options;
+                this.filteredOptions = [...options];
+                this.renderOptions();
+            }
+
+            renderOptions() {
+                if (this.filteredOptions.length === 0) {
+                    this.optionsContainer.innerHTML = `
+                        <div class="select-no-results">
+                            <i class="fas fa-search"></i>
+                            <span>No results found</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.optionsContainer.innerHTML = this.filteredOptions.map(option => {
+                    const isSelected = this.selectedOption?.id === option.id;
+
+                    if (option.issn || option.publisher) {
+                        return `
+                            <div class="select-option ${isSelected ? 'selected' : ''}" 
+                                 data-id="${option.id}">
+                                <div class="option-content">
+                                    <div class="option-title">${this.escapeHtml(option.title)}</div>
+                                    <div class="option-details">
+                                        ${option.issn ? `<span><i class="fas fa-hashtag"></i> ${this.escapeHtml(option.issn)}</span>` : ''}
+                                        ${option.publisher ? `<span><i class="fas fa-building"></i> ${this.escapeHtml(option.publisher)}</span>` : ''}
+                                    </div>
+                                </div>
+                                ${isSelected ? '<i class="fas fa-check select-check"></i>' : ''}
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="select-option ${isSelected ? 'selected' : ''}" 
+                                 data-id="${option.id}">
+                                <span>${this.escapeHtml(option.title)}</span>
+                                ${isSelected ? '<i class="fas fa-check select-check"></i>' : ''}
+                            </div>
+                        `;
+                    }
+                }).join('');
+            }
+
+            select(option) {
+                this.selectedOption = option;
+                this.selectedText.textContent = option.title;
+                this.selectedText.classList.remove('placeholder');
+
+                if (this.hiddenInput) {
+                    this.hiddenInput.value = option.id;
+                    // Trigger change event
+                    const event = new Event('change', { bubbles: true });
+                    this.hiddenInput.dispatchEvent(event);
+                }
+
+                // Update UI
+                this.container.querySelectorAll('.select-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                const selectedEl = this.container.querySelector(`[data-id="${option.id}"]`);
+                if (selectedEl) {
+                    selectedEl.classList.add('selected');
+                }
+
+                this.close();
+            }
+
+            clear() {
+                this.selectedOption = null;
+                this.selectedText.textContent = this.selectedText.dataset.placeholder || 'Select an option...';
+                this.selectedText.classList.add('placeholder');
+
+                if (this.hiddenInput) {
+                    this.hiddenInput.value = '';
+                    const event = new Event('change', { bubbles: true });
+                    this.hiddenInput.dispatchEvent(event);
+                }
+
+                this.container.querySelectorAll('.select-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+
+                if (this.hasSearch && this.searchInput) {
+                    this.searchInput.value = '';
+                    this.filterOptions();
+                }
+            }
+
+            showLoading() {
+                if (this.loadingEl) {
+                    this.loadingEl.style.display = 'block';
+                }
+            }
+
+            hideLoading() {
+                if (this.loadingEl) {
+                    this.loadingEl.style.display = 'none';
+                }
+            }
+
+            showError(message) {
+                if (this.optionsContainer) {
+                    this.optionsContainer.innerHTML = `
+                        <div class="select-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>${message}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize
+        let viewIssueManager;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            viewIssueManager = new ViewIssueManager();
+        });
+    </script>
+</body>
+
+</html>

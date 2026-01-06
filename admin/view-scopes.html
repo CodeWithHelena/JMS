@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Journals | JournalFlow</title>
+    <title>scopes | scopeFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -27,13 +27,13 @@
             min-height: 100vh;
         }
 
-        .journals-container {
+        .scopes-container {
             max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
         }
 
-        .journals-header {
+        .scopes-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -280,15 +280,15 @@
             color: var(--text-primary);
         }
 
-        /* Journals Grid */
-        .journals-grid {
+        /* scopes Grid */
+        .scopes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
 
-        .journal-card {
+        .scope-card {
             background-color: var(--card-bg);
             border-radius: var(--radius-lg);
             box-shadow: var(--card-shadow);
@@ -297,18 +297,18 @@
             border: 1px solid var(--border);
         }
 
-        .journal-card:hover {
+        .scope-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--card-shadow-hover);
         }
 
-        .journal-header {
+        .scope-header {
             padding: 20px;
             border-bottom: 1px solid var(--border);
             background: rgb(223, 229, 251);
         }
 
-        .journal-title {
+        .scope-title {
             font-size: 18px;
             font-weight: 700;
             color: var(--text-primary);
@@ -320,7 +320,7 @@
             overflow: hidden;
         }
 
-        .journal-issn {
+        .scope-issn {
             font-size: 14px;
             color: white;
             font-weight: 600;
@@ -330,11 +330,11 @@
             display: inline-block;
         }
 
-        .journal-body {
+        .scope-body {
             padding: 20px;
         }
 
-        .journal-description {
+        .scope-description {
             color: var(--text-muted);
             font-size: 14px;
             line-height: 1.5;
@@ -345,7 +345,7 @@
             overflow: hidden;
         }
 
-        .journal-meta {
+        .scope-meta {
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -390,7 +390,7 @@
             font-weight: 600;
         }
 
-        .journal-footer {
+        .scope-footer {
             padding: 15px 20px;
             border-top: 1px solid var(--border);
             display: flex;
@@ -398,7 +398,7 @@
             align-items: center;
         }
 
-        .journal-actions {
+        .scope-actions {
             display: flex;
             gap: 10px;
         }
@@ -559,7 +559,7 @@
 
         /* Responsive */
         @media screen and (max-width: 768px) {
-            .journals-header {
+            .scopes-header {
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -574,17 +574,17 @@
                 justify-content: center;
             }
 
-            .journals-grid {
+            .scopes-grid {
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
 
-            .journal-footer {
+            .scope-footer {
                 flex-direction: column;
                 gap: 15px;
                 align-items: flex-start;
             }
 
-            .journal-actions {
+            .scope-actions {
                 width: 100%;
                 justify-content: flex-start;
             }
@@ -604,11 +604,11 @@
         }
 
         @media screen and (max-width: 480px) {
-            .journals-grid {
+            .scopes-grid {
                 grid-template-columns: 1fr;
             }
 
-            .journal-card {
+            .scope-card {
                 margin: 0 10px;
             }
 
@@ -642,18 +642,18 @@
             <div id="header-placeholder"></div>
             <main class="main-content">
                 <div class="container page-title">
-                    <h1>Journals</h1>
-                    <p>Manage and view all academic journals</p>
+                    <h1>scopes</h1>
+                    <p>Manage and view all academic scopes</p>
                 </div>
 
-                <div class="journals-container">
-                    <!-- Header with Create Journal button -->
-                    <div class="journals-header">
+                <div class="scopes-container">
+                    <!-- Header with Create scope button -->
+                    <div class="scopes-header">
                         <div class="header-left">
                         </div>
                         <div class="header-actions">
-                            <a href="create-journal.html" class="create-btn">
-                                <i class="fas fa-plus"></i> Create Journal
+                            <a href="create-scope.html" class="create-btn">
+                                <i class="fas fa-plus"></i> Create scope
                             </a>
                         </div>
                     </div>
@@ -662,7 +662,7 @@
                     <div class="filter-controls">
                         <div class="filter-group">
                             <label class="filter-label">Search</label>
-                            <input type="text" id="searchInput" class="search-input" placeholder="Search journals...">
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search scopes...">
                         </div>
 
                         <div class="filter-group">
@@ -705,9 +705,9 @@
                         </div>
                     </div>
 
-                    <!-- Journals Grid -->
-                    <div class="journals-grid" id="journalsGrid">
-                        <!-- Journals will be loaded here -->
+                    <!-- scopes Grid -->
+                    <div class="scopes-grid" id="scopesGrid">
+                        <!-- scopes will be loaded here -->
                         <div class="loading">
                             <div class="loading-spinner"></div>
                         </div>
@@ -724,7 +724,7 @@
 
     <script>
         window.SIDEBAR_MODULE = 'admin';
-        window.SIDEBAR_ACTIVE_ID = 'view-journals';
+        window.SIDEBAR_ACTIVE_ID = 'view-scopes';
     </script>
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (required for toastr) -->
@@ -735,7 +735,7 @@
     <script type="module">
         import { BASE_URL, token } from '../assets/js/utility.js';
 
-        class JournalsManager {
+        class scopesManager {
             constructor() {
                 this.currentPage = 1;
                 this.limit = 9;
@@ -754,7 +754,7 @@
 
             init() {
                 if (!token) {
-                    this.showNoJournals('Please login to view journals.');
+                    this.showNoscopes('Please login to view scopes.');
                     return;
                 }
 
@@ -831,22 +831,22 @@
 
                 document.getElementById('clearFilters')?.addEventListener('click', () => this.clearFilters());
 
-                document.getElementById('journalsGrid')?.addEventListener('click', e => {
+                document.getElementById('scopesGrid')?.addEventListener('click', e => {
                     const viewBtn = e.target.closest('.view-more-btn');
                     if (viewBtn) {
-                        window.location.href = `journal-details.html?id=${viewBtn.dataset.id}`;
+                        window.location.href = `scope-details.html?id=${viewBtn.dataset.id}`;
                         return;
                     }
 
-                    const editBtn = e.target.closest('.edit-journal-btn');
+                    const editBtn = e.target.closest('.edit-scope-btn');
                     if (editBtn) {
-                        window.location.href = `edit-journal.html?id=${editBtn.dataset.id}`;
+                        window.location.href = `edit-scope.html?id=${editBtn.dataset.id}`;
                     }
                 });
             }
 
             async fetchAndRender(page = 1) {
-                const grid = document.getElementById('journalsGrid');
+                const grid = document.getElementById('scopesGrid');
                 grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
 
                 try {
@@ -860,58 +860,58 @@
                     if (this.currentFilters.search) params.set('search', this.currentFilters.search);
                     if (this.currentFilters.policy !== 'all') params.set('reviewPolicy', this.currentFilters.policy);
 
-                    const response = await fetch(`${BASE_URL}/journal?${params}`, {
+                    const response = await fetch(`${BASE_URL}/scope?${params}`, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                             Accept: 'application/json'
                         }
                     });
 
-                    if (!response.ok) throw new Error('Failed to fetch journals');
+                    if (!response.ok) throw new Error('Failed to fetch scopes');
 
                     const res = await response.json();
-                    const journals = res.journals || res.data || [];
+                    const scopes = res.scopes || res.data || [];
 
-                    this.totalItems = res.total ?? journals.length;
+                    this.totalItems = res.total ?? scopes.length;
                     this.totalPages = res.totalPages ?? Math.ceil(this.totalItems / this.limit);
                     this.currentPage = res.page ?? page;
 
-                    this.renderGrid(journals);
+                    this.renderGrid(scopes);
                 } catch (err) {
                     console.error(err);
-                    this.showNoJournals('Unable to load journals.');
+                    this.showNoscopes('Unable to load scopes.');
                 }
             }
 
-            renderGrid(journals) {
-                const grid = document.getElementById('journalsGrid');
-                if (!journals.length) {
-                    this.showNoJournals('No journals found.');
+            renderGrid(scopes) {
+                const grid = document.getElementById('scopesGrid');
+                if (!scopes.length) {
+                    this.showNoscopes('No scopes found.');
                     return;
                 }
 
                 grid.innerHTML = '';
-                journals.forEach(journal => grid.appendChild(this.createCard(journal)));
+                scopes.forEach(scope => grid.appendChild(this.createCard(scope)));
                 this.renderPagination();
             }
 
-            createCard(journal) {
+            createCard(scope) {
                 const el = document.createElement('article');
-                el.className = 'journal-card';
+                el.className = 'scope-card';
 
                 el.innerHTML = `
-            <div class="journal-header">
-                <h3 class="journal-title">${journal.title}</h3>
-                <span class="journal-issn">${journal.issn || 'No ISSN'}</span>
+            <div class="scope-header">
+                <h3 class="scope-title">${scope.title}</h3>
+                <span class="scope-issn">${scope.issn || 'No ISSN'}</span>
             </div>
-            <div class="journal-body">
-                <p class="journal-description">${journal.description || 'No description'}</p>
+            <div class="scope-body">
+                <p class="scope-description">${scope.description || 'No description'}</p>
             </div>
-            <div class="journal-footer">
-                <small>Created: ${new Date(journal.createdAt).toDateString()}</small>
-                <div class="journal-actions">
-                    <button class="action-btn view-btn view-more-btn" data-id="${journal._id}">View</button>
-                    <button class="action-btn edit-btn edit-journal-btn" data-id="${journal._id}">Edit</button>
+            <div class="scope-footer">
+                <small>Created: ${new Date(scope.createdAt).toDateString()}</small>
+                <div class="scope-actions">
+                    <button class="action-btn view-btn view-more-btn" data-id="${scope._id}">View</button>
+                    <button class="action-btn edit-btn edit-scope-btn" data-id="${scope._id}">Edit</button>
                 </div>
             </div>
         `;
@@ -930,11 +930,11 @@
                 paginationContainer.style.display = 'flex';
 
                 let html = `<div class="pagination-info">
-            Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} of ${this.totalItems} journal${this.totalItems !== 1 ? 's' : ''}
+            Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} of ${this.totalItems} scope${this.totalItems !== 1 ? 's' : ''}
         </div>
         <div class="pagination-controls">`;
 
-                html += `<button class="pagination-btn" ${this.currentPage === 1 ? 'disabled' : ''} onclick="journalsManager.changePage(${this.currentPage - 1})">
+                html += `<button class="pagination-btn" ${this.currentPage === 1 ? 'disabled' : ''} onclick="scopesManager.changePage(${this.currentPage - 1})">
             <i class="fas fa-chevron-left"></i> Previous
         </button>`;
 
@@ -944,18 +944,18 @@
                 if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1);
 
                 if (start > 1) {
-                    html += `<button class="pagination-btn" onclick="journalsManager.changePage(1)">1</button>`;
+                    html += `<button class="pagination-btn" onclick="scopesManager.changePage(1)">1</button>`;
                     if (start > 2) html += `<span class="pagination-dots">...</span>`;
                 }
                 for (let i = start; i <= end; i++) {
-                    html += `<button class="pagination-btn ${i === this.currentPage ? 'active' : ''}" onclick="journalsManager.changePage(${i})">${i}</button>`;
+                    html += `<button class="pagination-btn ${i === this.currentPage ? 'active' : ''}" onclick="scopesManager.changePage(${i})">${i}</button>`;
                 }
                 if (end < this.totalPages) {
                     if (end < this.totalPages - 1) html += `<span class="pagination-dots">...</span>`;
-                    html += `<button class="pagination-btn" onclick="journalsManager.changePage(${this.totalPages})">${this.totalPages}</button>`;
+                    html += `<button class="pagination-btn" onclick="scopesManager.changePage(${this.totalPages})">${this.totalPages}</button>`;
                 }
 
-                html += `<button class="pagination-btn" ${this.currentPage === this.totalPages ? 'disabled' : ''} onclick="journalsManager.changePage(${this.currentPage + 1})">
+                html += `<button class="pagination-btn" ${this.currentPage === this.totalPages ? 'disabled' : ''} onclick="scopesManager.changePage(${this.currentPage + 1})">
             Next <i class="fas fa-chevron-right"></i>
         </button>`;
                 html += '</div>';
@@ -968,7 +968,7 @@
                 if (page > this.totalPages) page = this.totalPages;
                 this.currentPage = page;
                 this.fetchAndRender(page);
-                document.getElementById('journalsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('scopesGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             clearFilters() {
@@ -977,17 +977,17 @@
                 this.fetchAndRender(1);
             }
 
-            showNoJournals(message) {
-                document.getElementById('journalsGrid').innerHTML = `
+            showNoscopes(message) {
+                document.getElementById('scopesGrid').innerHTML = `
             <div class="empty-state">
-                <h3>No Journals</h3>
+                <h3>No scopes</h3>
                 <p>${message}</p>
             </div>
         `;
             }
         }
 
-        window.journalsManager = new JournalsManager();
+        window.scopesManager = new scopesManager();
     </script>
 
 </body>
