@@ -233,7 +233,7 @@
             line-height: 1.3;
         }
 
-        .issue-journal {
+        .issue-scope {
             color: var(--primary);
             font-size: var(--font-size-sm);
             font-weight: 600;
@@ -697,8 +697,8 @@
                     <!-- Page Header -->
                     <div class="page-header">
                         <div class="page-title">
-                            <h1>Journal Issues</h1>
-                            <p>Manage and view all journal issues</p>
+                            <h1>Scope Issues</h1>
+                            <p>Manage and view all scope issues</p>
                         </div>
                         <a href="create-issue.html" class="create-new-btn">
                             <i class="fas fa-plus-circle"></i> Create New Issue
@@ -708,26 +708,26 @@
                     <!-- Filter Controls -->
                     <div class="filter-controls">
                         <div class="filter-group">
-                            <label class="filter-label">Journal</label>
-                            <div class="custom-select with-search" id="journalFilter">
-                                <input type="hidden" name="journalId" id="selectedJournalFilterId" value="">
+                            <label class="filter-label">Scope</label>
+                            <div class="custom-select with-search" id="scopeFilter">
+                                <input type="hidden" name="scopeId" id="selectedScopeFilterId" value="">
                                 <div class="select-header">
-                                    <span class="selected-text placeholder">All Journals</span>
+                                    <span class="selected-text placeholder">All Scopes</span>
                                     <i class="fas fa-chevron-down select-arrow"></i>
                                 </div>
                                 <div class="select-dropdown">
                                     <div class="select-search">
                                         <i class="fas fa-search"></i>
-                                        <input type="text" class="select-search-input" placeholder="Search journals...">
+                                        <input type="text" class="select-search-input" placeholder="Search scopes...">
                                         <button type="button" class="clear-search-btn">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
-                                    <div class="select-options" id="journalFilterOptions">
+                                    <div class="select-options" id="scopeFilterOptions">
                                         <!-- Options will be populated here -->
                                     </div>
-                                    <div class="select-loading" id="journalFilterLoading">
-                                        <i class="fas fa-spinner fa-spin"></i> Loading journals...
+                                    <div class="select-loading" id="scopeFilterLoading">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading scopes...
                                     </div>
                                 </div>
                             </div>
@@ -868,19 +868,19 @@
 
         class ViewIssueManager {
             constructor() {
-                this.journals = [];
+                this.scopes = [];
                 this.issues = [];
                 this.currentPage = 1;
                 this.totalPages = 1;
                 this.totalItems = 0;
                 this.pageSize = 9;
                 this.filters = {
-                    journalId: '',
+                    scopeId: '',
                     status: '',
                     search: ''
                 };
 
-                this.journalFilterSelect = null;
+                this.scopeFilterSelect = null;
                 this.statusFilterSelect = null;
                 this.editingIssueId = null;
 
@@ -906,23 +906,23 @@
             }
 
             async initializeFilters() {
-                // Initialize journal filter (with search)
-                const journalFilter = document.getElementById('journalFilter');
-                if (journalFilter) {
-                    this.journalFilterSelect = new CustomSelect(journalFilter, true);
-                    this.journalFilterSelect.showLoading();
-                    await this.loadJournals();
-                    this.journalFilterSelect.hideLoading();
+                // Initialize scope filter (with search)
+                const scopeFilter = document.getElementById('scopeFilter');
+                if (scopeFilter) {
+                    this.scopeFilterSelect = new CustomSelect(scopeFilter, true);
+                    this.scopeFilterSelect.showLoading();
+                    await this.loadScopes();
+                    this.scopeFilterSelect.hideLoading();
 
-                    // Listen for journal selection changes
-                    const journalHiddenInput = document.getElementById('selectedJournalFilterId');
-                    if (journalHiddenInput) {
+                    // Listen for scope selection changes
+                    const scopeHiddenInput = document.getElementById('selectedScopeFilterId');
+                    if (scopeHiddenInput) {
                         const observer = new MutationObserver(() => {
-                            this.filters.journalId = journalHiddenInput.value;
+                            this.filters.scopeId = scopeHiddenInput.value;
                             this.currentPage = 1;
                             this.loadIssues();
                         });
-                        observer.observe(journalHiddenInput, { attributes: true, attributeFilter: ['value'] });
+                        observer.observe(scopeHiddenInput, { attributes: true, attributeFilter: ['value'] });
                     }
                 }
 
@@ -1023,8 +1023,8 @@
 
                 // Window resize for dropdown positioning
                 window.addEventListener('resize', () => {
-                    if (this.journalFilterSelect && this.journalFilterSelect.isOpen) {
-                        this.journalFilterSelect.positionDropdown();
+                    if (this.scopeFilterSelect && this.scopeFilterSelect.isOpen) {
+                        this.scopeFilterSelect.positionDropdown();
                     }
                     if (this.statusFilterSelect && this.statusFilterSelect.isOpen) {
                         this.statusFilterSelect.positionDropdown();
@@ -1039,14 +1039,14 @@
                 });
             }
 
-            async loadJournals() {
+            async loadScopes() {
                 try {
                     if (!token) {
                         toastr.error('Authentication required. Please login.');
                         return;
                     }
 
-                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                    const response = await fetch(`${BASE_URL}/scope`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
@@ -1054,38 +1054,38 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                        throw new Error(`Failed to fetch scopes: ${response.status}`);
                     }
 
                     const data = await response.json();
 
                     if (!data.success) {
-                        throw new Error(data.message || 'Failed to load journals');
+                        throw new Error(data.message || 'Failed to load scopes');
                     }
 
-                    this.journals = (data.journals || []).map(journal => ({
-                        id: journal._id,
-                        title: journal.title,
-                        issn: journal.issn,
-                        publisher: journal.publisher
+                    this.scopes = (data.scopes || []).map(scope => ({
+                        id: scope._id,
+                        title: scope.title,
+                        issn: scope.issn,
+                        publisher: scope.publisher
                     }));
 
-                    // Add "All Journals" option
-                    const allJournalsOption = {
+                    // Add "All Scopes" option
+                    const allScopesOption = {
                         id: '',
-                        title: 'All Journals'
+                        title: 'All Scopes'
                     };
 
-                    if (this.journalFilterSelect) {
-                        this.journalFilterSelect.setOptions([allJournalsOption, ...this.journals]);
+                    if (this.scopeFilterSelect) {
+                        this.scopeFilterSelect.setOptions([allScopesOption, ...this.scopes]);
                     }
 
                 } catch (error) {
-                    console.error('Error loading journals:', error);
-                    toastr.error('Failed to load journals. Please refresh the page.');
+                    console.error('Error loading scopes:', error);
+                    toastr.error('Failed to load scopes. Please refresh the page.');
 
-                    if (this.journalFilterSelect) {
-                        this.journalFilterSelect.showError('Failed to load journals');
+                    if (this.scopeFilterSelect) {
+                        this.scopeFilterSelect.showError('Failed to load scopes');
                     }
                 }
             }
@@ -1119,8 +1119,8 @@
                         limit: this.pageSize
                     });
 
-                    if (this.filters.journalId) {
-                        params.append('journalId', this.filters.journalId);
+                    if (this.filters.scopeId) {
+                        params.append('scopeId', this.filters.scopeId);
                     }
 
                     if (this.filters.status) {
@@ -1201,9 +1201,9 @@
                             <div class="issue-header">
                                 <div>
                                     <div class="issue-title">${this.escapeHtml(issue.title)}</div>
-                                    <div class="issue-journal">
+                                    <div class="issue-scope">
                                         <i class="fas fa-book"></i>
-                                        ${this.escapeHtml(issue.journalId?.title || 'Unknown Journal')}
+                                        ${this.escapeHtml(issue.scopeId?.title || 'Unknown Scope')}
                                     </div>
                                 </div>
                             </div>
@@ -1334,10 +1334,10 @@
                     this.filters.search = '';
                 }
 
-                // Clear journal filter
-                if (this.journalFilterSelect) {
-                    this.journalFilterSelect.clear();
-                    this.filters.journalId = '';
+                // Clear scope filter
+                if (this.scopeFilterSelect) {
+                    this.scopeFilterSelect.clear();
+                    this.filters.scopeId = '';
                 }
 
                 // Clear status filter

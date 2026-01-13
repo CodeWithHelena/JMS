@@ -5,6 +5,8 @@ import {
     submitJournalData 
 } from './utility.js';
 
+import { BASE_URL, token } from '/assets/js/utility.js';
+
 // Define variables in the module scope
 let journalForm;
 let reviewPolicySelect;

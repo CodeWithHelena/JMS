@@ -82,7 +82,7 @@
     --btn-clear-border: var(--primary-color-dark);
 
     /* Status Colors */
-    --status-submitted-bg: #E0F2FE;
+    --status-submitted-bg: #cae7fa;
     --status-submitted-color:  var(--info);
     --status-submitted-border: #E0F2FE;
 
@@ -90,8 +90,8 @@
     --status-under_review-color: var(--warning);
     --status-under_review-border: var(--warning);
 
-    --status-reviewed-bg: var(--primary-color);
-    --status-reviewed-color: var(--lite-primary-color);
+    --status-reviewed-bg: #98deb5;
+    --status-reviewed-color: #2A2566;
     --status-reviewed-border: var(--lite-primary-color);
 
     --status-accepted-bg: rgb(196, 254, 235);
@@ -333,6 +333,62 @@
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+    /* Submitted — neutral / newly created (soft blue) */
+    /* --status-submitted-bg: #E6F7FF; */
+    /* light airy blue */
+    --status-submitted-text: #004A75;
+    /* deep blue for readable text */
+    --status-submitted-accent: #00BFFF;
+    /* primary blue */
+
+    /* Under review — in progress (mid blue) */
+    --status-under_review-bg: #BFEAFF;
+    --status-under_review-text: #003E5C;
+    --status-under_review-accent: #0099CC;
+
+    /* Reviewed — examined (calm indigo) */
+    /* --status-reviewed-bg: #EEF2FF; */
+    --status-reviewed-text: #2A2566;
+    /* your secondary-light fits well */
+    --status-reviewed-accent: #1F1B51;
+
+    /* Revision requested — action required (warm alert) */
+    --status-revision_requested-bg: #FFF3E8;
+    /* pale coral/orange */
+    --status-revision_requested-text: #7A2E00;
+    --status-revision_requested-accent: #FF7A59;
+    /* warm-accent */
+
+    /* Revised — user acted on revision (soft success) */
+    --status-revised-bg: #ECFFF4;
+    --status-revised-text: #065F46;
+    --status-revised-accent: #10B981;
+    /* your green accent */
+
+    /* Accepted — success (green) */
+    --status-accepted-bg: #ECFDF5;
+    --status-accepted-text: #065F46;
+    --status-accepted-accent: #10B981;
+
+    /* Rejected — negative (red/pale pink) */
+    --status-rejected-bg: #FFF1F2;
+    --status-rejected-text: #7F1D1D;
+    --status-rejected-accent: #EF4444;
+
+    /* Awaiting payment — attention (golden / awaiting) */
+    --status-awaiting_payment-bg: #FFFAEB;
+    --status-awaiting_payment-text: #5C3D00;
+    --status-awaiting_payment-accent: #FFD166;
+    /* warm-accent-2 */
+
+    /* Published — final / visible (prominent deep navy badge + light row bg) */
+    --status-published-row-bg: #F0F7FF;
+    /* light blue row background */
+    --status-published-row-text: #0A3A66;
+    --status-published-badge-bg: #0A3A66;
+    /* deep navy for published badge */
+    --status-published-badge-text: #FFFFFF;
 }
 
 /* Dark-mode variables switch when body.dark-mode is present */

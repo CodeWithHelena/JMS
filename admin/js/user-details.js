@@ -1,10 +1,6 @@
 // API Configuration
-const API_BASE_URL = 'https://fp.247laboratory.net/';
+ import { BASE_URL, token } from '/assets/js/utility.js';
 
-// Get token from localStorage
-function getAuthToken() {
-    return localStorage.getItem('pilot_tkn');
-}
 
 // Get user ID from URL
 function getUserIdFromUrl() {
@@ -14,7 +10,6 @@ function getUserIdFromUrl() {
 
 // Fetch user details
 async function fetchUserDetails(userId) {
-    const token = getAuthToken();
     
     if (!token) {
         Swal.fire({
@@ -29,7 +24,7 @@ async function fetchUserDetails(userId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}api/v1/user/${userId}`, {
+        const response = await fetch(`${BASE_URL}/user/${userId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -207,12 +202,13 @@ async function toggleUserActive(userId, currentActiveStatus, user) {
         });
 
         // Use toggle endpoint for ALL users (activation/deactivation)
-        const response = await fetch(`${API_BASE_URL}api/v1/user/${userId}/toggle`, {
+        const response = await fetch(`${BASE_URL}/user/${userId}/toggle`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
+            
         });
 
         const responseData = await response.json();

@@ -925,7 +925,7 @@
             color: var(--text-muted);
         }
 
-        .journal-name {
+        .scope-name {
             flex: 1;
         }
 
@@ -1343,7 +1343,7 @@
             this.submissionId = this.getSubmissionIdFromURL();
             this.submission = null;
             this.selectedReviewers = [];
-            this.journalId = null;
+            this.scopeId = null;
             this.allReviewers = [];
             this.userCache = new Map();
             this.issues = [];
@@ -1415,10 +1415,10 @@
                 this.showLoading();
                 await this.loadSubmissionData();
 
-                // journalId: API may return object or id
-                this.journalId = this.submission?.journalId?._id || this.submission?.journalId || null;
+                // scopeId: API may return object or id
+                this.scopeId = this.submission?.scopeId?._id || this.submission?.scopeId || null;
 
-                if (this.journalId) {
+                if (this.scopeId) {
                     await this.loadAvailableReviewers();
                     this.initializeReviewerSelect();
                 } else {
@@ -1566,18 +1566,20 @@
         async loadAvailableReviewers() {
             try {
                 const token = getAuthToken2();
-                if (!token || !this.journalId) {
+                if (!token || !this.scopeId) {
                     this.allReviewers = [];
                     return;
                 }
 
-                const response = await fetch(`${BASE_URL}/editor/journal-reviewers?journalId=${this.journalId}`, {
+                const response = await fetch(`${BASE_URL}/editor/scope-reviewers?scopeId=${this.scopeId}&isApproved=true`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json'
                     }
                 });
+
+                console.log('Available reviewers response:', response);
 
                 if (!response.ok) {
                     this.allReviewers = [];
@@ -1730,7 +1732,7 @@
 
         renderReviewerOptions(reviewers) {
             if (!reviewers || reviewers.length === 0) {
-                return '<div class="no-results" style="padding:12px;text-align:center;color:var(--muted)">No reviewers available for this journal</div>';
+                return '<div class="no-results" style="padding:12px;text-align:center;color:var(--muted)">No reviewers available for this scope</div>';
             }
             return reviewers.map(reviewer => `
     <div class="select-option-item" data-id="${this.escapeHtml(reviewer.id)}" style="padding:0.6rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.03);">
@@ -1750,16 +1752,16 @@
             const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
             const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
             const statusDisplay = this.formatStatus(statusToDisplay);
-            const journalName = this.submission.journalId?.title || this.submission.journalTitle || 'Unknown Journal';
-            const journalISSN = this.submission.journalId?.issn || 'N/A';
+            const scopeName = this.submission.scopeId?.title || this.submission.scopeTitle || 'Unknown scope';
+            const scopeISSN = this.submission.scopeId?.issn || 'N/A';
             const submittedByName = this.submission.submitterName || 'Unknown';
 
             header.innerHTML = `
     <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
     <span class="header-status-badge">${this.escapeHtml(statusDisplay)}</span>
     <div class="header-meta">
-        <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
-        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
+        <div class="meta-item"><i class="fas fa-book-open"></i><span>scope: ${this.escapeHtml(scopeName)}</span></div>
+        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(scopeISSN)}</span></div>
         <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
         <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
     </div>
@@ -2517,7 +2519,7 @@
                         </div>
                         <div class="option-email" style="font-size: 0.9rem; color: var(--muted);">
                             Volume ${this.escapeHtml(issue.volume || 'N/A')}, Issue ${this.escapeHtml(issue.issueNumber || 'N/A')}
-                            ${issue.journalId?.title ? `<br><small>${this.escapeHtml(issue.journalId.title)}</small>` : ''}
+                            ${issue.scopeId?.title ? `<br><small>${this.escapeHtml(issue.scopeId.title)}</small>` : ''}
                         </div>
                     </div>
                     <div style="padding-left: 0.5rem; color: var(--primary);">
@@ -2658,7 +2660,7 @@
                 if (issueWithSubmission) {
                     const issueInfo = document.getElementById('issueInfo');
                     if (issueInfo) {
-                        issueInfo.innerHTML = `${this.escapeHtml(issueWithSubmission.title)} (Vol. ${issueWithSubmission.volume}, Issue ${issueWithSubmission.issueNumber}) - ${issueWithSubmission.journalId?.title || ''}`;
+                        issueInfo.innerHTML = `${this.escapeHtml(issueWithSubmission.title)} (Vol. ${issueWithSubmission.volume}, Issue ${issueWithSubmission.issueNumber}) - ${issueWithSubmission.scopeId?.title || ''}`;
                     }
                 }
             } catch (error) {

@@ -2027,8 +2027,8 @@ body.modal-open {
                         </p>
                         <div class="payment-details">
                             <div class="detail-item">
-                                <span class="detail-label">Journal:</span>
-                                <span id="paymentJournalName" class="detail-value"></span>
+                                <span class="detail-label">Scope:</span>
+                                <span id="paymentScopeName" class="detail-value"></span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Submission ID:</span>
@@ -2155,7 +2155,7 @@ body.modal-open {
                     this.editorialDecision = null;
                     this.reviewerFeedback = null;
                     this.userCache = new Map();
-                    this.journalCache = new Map();
+                    this.scopeCache = new Map();
                     this.currentModalContent = '';
                     this.currentModalType = '';
                     this.currentModalTitle = '';
@@ -2406,19 +2406,19 @@ body.modal-open {
                             }
                         }
 
-                        // journal
-                        if (this.submission.journalId && this.submission.journalId._id) {
-                            const journal = await this.getJournalDetails(this.submission.journalId._id);
-                            if (journal) {
-                                this.submission.journalId = {
-                                    ...this.submission.journalId,
-                                    title: journal.title || this.submission.journalId.title,
-                                    issn: journal.issn || this.submission.journalId.issn,
-                                    publicationFee: journal.publicationFee,
-                                    currency: journal.currency
+                        // scope
+                        if (this.submission.scopeId && this.submission.scopeId._id) {
+                            const scope = await this.getScopeDetails(this.submission.scopeId._id);
+                            if (scope) {
+                                this.submission.scopeId = {
+                                    ...this.submission.scopeId,
+                                    title: scope.title || this.submission.scopeId.title,
+                                    issn: scope.issn || this.submission.scopeId.issn,
+                                    publicationFee: scope.publicationFee,
+                                    currency: scope.currency
                                 };
-                                this.publicationFee = journal.publicationFee || this.publicationFee;
-                                this.currency = journal.currency || this.currency;
+                                this.publicationFee = scope.publicationFee || this.publicationFee;
+                                this.currency = scope.currency || this.currency;
                             }
                         }
 
@@ -2513,17 +2513,17 @@ body.modal-open {
 
                     const paymentModal = document.getElementById('paymentModal');
                     const paymentManuscriptTitle = document.getElementById('paymentManuscriptTitle');
-                    const paymentJournalName = document.getElementById('paymentJournalName');
+                    const paymentScopeName = document.getElementById('paymentScopeName');
                     const paymentSubmissionId = document.getElementById('paymentSubmissionId');
                     const paymentAmount = document.getElementById('paymentAmount');
 
-                    if (!paymentModal || !paymentManuscriptTitle || !paymentJournalName || !paymentSubmissionId || !paymentAmount) {
+                    if (!paymentModal || !paymentManuscriptTitle || !paymentScopeName || !paymentSubmissionId || !paymentAmount) {
                         console.warn('Payment modal elements missing');
                         return;
                     }
 
                     paymentManuscriptTitle.textContent = this.submission.title || 'Untitled Manuscript';
-                    paymentJournalName.textContent = this.submission.journalId?.title || 'Unknown Journal';
+                    paymentScopeName.textContent = this.submission.scopeId?.title || 'Unknown Scope';
                     paymentSubmissionId.textContent = this.submissionId;
 
                     const fee = this.publicationFee || 15000;
@@ -2997,7 +2997,7 @@ body.modal-open {
                     }
                 }
 
-                /* ---------- User/journal helpers and rendering ---------- */
+                /* ---------- User/scope helpers and rendering ---------- */
                 async getUserDetails(userId) {
                     if (!userId) return null;
                     if (this.userCache.has(userId)) return this.userCache.get(userId);
@@ -3017,28 +3017,28 @@ body.modal-open {
                     }
                 }
 
-                async getJournalDetails(journalId) {
-                    if (!journalId) return null;
-                    if (this.journalCache.has(journalId)) {
-                        const journal = this.journalCache.get(journalId);
-                        this.publicationFee = journal.publicationFee || this.publicationFee || 15000;
-                        this.currency = journal.currency || this.currency || 'NGN';
-                        return journal;
+                async getScopeDetails(scopeId) {
+                    if (!scopeId) return null;
+                    if (this.scopeCache.has(scopeId)) {
+                        const scope = this.scopeCache.get(scopeId);
+                        this.publicationFee = scope.publicationFee || this.publicationFee || 15000;
+                        this.currency = scope.currency || this.currency || 'NGN';
+                        return scope;
                     }
                     try {
                         const token = getAuthToken2();
                         if (!token) return null;
-                        const response = await fetch(`${BASE_URL}/journal/${journalId}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
-                        if (!response.ok) { console.warn(`Failed to fetch journal ${journalId}: ${response.status}`); return null; }
+                        const response = await fetch(`${BASE_URL}/scope/${scopeId}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+                        if (!response.ok) { console.warn(`Failed to fetch scope ${scopeId}: ${response.status}`); return null; }
                         const data = await response.json();
                         if (!data.success) return null;
-                        const journal = data.journal || data;
-                        this.journalCache.set(journalId, journal);
-                        this.publicationFee = journal.publicationFee || this.publicationFee || 15000;
-                        this.currency = journal.currency || this.currency || 'NGN';
-                        return journal;
+                        const scope = data.scope || data;
+                        this.scopeCache.set(scopeId, scope);
+                        this.publicationFee = scope.publicationFee || this.publicationFee || 15000;
+                        this.currency = scope.currency || this.currency || 'NGN';
+                        return scope;
                     } catch (error) {
-                        console.error(`Error fetching journal ${journalId}:`, error);
+                        console.error(`Error fetching scope ${scopeId}:`, error);
                         return null;
                     }
                 }
@@ -3049,8 +3049,8 @@ body.modal-open {
                     const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
                     const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
                     const statusDisplay = this.formatStatus(statusToDisplay);
-                    const journalName = this.submission.journalId?.title || this.submission.journalTitle || 'Unknown Journal';
-                    const journalISSN = this.submission.journalId?.issn || 'N/A';
+                    const scopeName = this.submission.scopeId?.title || this.submission.scopeTitle || 'Unknown Scope';
+                    const scopeISSN = this.submission.scopeId?.issn || 'N/A';
                     const submittedByName = this.submission.submitterName || 'Unknown';
 
                     // Normalize status into a key matching your CSS variable names, e.g. "under review" -> "under_review"
@@ -3071,8 +3071,8 @@ body.modal-open {
                     <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
                     <span class="header-status-badge" style="${statusStyle}">${this.escapeHtml(statusDisplay)}</span>
                     <div class="header-meta">
-                        <div class="meta-item"><i class="fas fa-book-open"></i><span>Journal: ${this.escapeHtml(journalName)}</span></div>
-                        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(journalISSN)}</span></div>
+                        <div class="meta-item"><i class="fas fa-book-open"></i><span>Scope: ${this.escapeHtml(scopeName)}</span></div>
+                        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(scopeISSN)}</span></div>
                         <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
                         <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
                     </div>

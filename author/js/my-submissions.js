@@ -498,7 +498,7 @@ class MySubmissionsManager {
 
     getStatusStyle(status) {
         const styles = {
-            'submitted': { bg: 'var(--status-submitted-bg)', color: 'var(----status-submitted-color)', border: 'var()' },
+            'submitted': { bg: 'var(--status-submitted-bg)', color: 'var(--status-submitted-color)', border: 'var()' },
             'under_review': { bg: '#fff7ed', color: '#d97706', border: '#fde68a' },
             'reviewed': { bg: 'var(--status-reviewed-bg)', color: 'var(--status-reviewed-color)', border: 'var()' },
             'accepted': { bg: 'var(--status-accepted-bg)', color: '(--status-accepted-color)', border: 'var(--)' },

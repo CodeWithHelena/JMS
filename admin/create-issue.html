@@ -412,7 +412,7 @@
                     <!-- Page Title -->
                     <div class="page-title">
                         <h1>Create New Issue</h1>
-                        <p>Create a new journal issue for publication</p>
+                        <p>Create a new scope issue for publication</p>
                     </div>
 
                     <!-- Two Column Layout -->
@@ -421,35 +421,35 @@
                         <div>
                             <div class="form-card">
                                 <form id="createIssueForm" class="issue-form">
-                                    <!-- Journal Select -->
+                                    <!-- Scope Select -->
                                     <div class="form-group">
-                                        <label for="journalSelect" class="required">
-                                            <i class="fas fa-book"></i> Journal
+                                        <label for="scopeSelect" class="required">
+                                            <i class="fas fa-book"></i> Scope
                                         </label>
-                                        <div class="custom-select" id="journalSelect">
-                                            <input type="hidden" name="journalId" id="selectedJournalId">
+                                        <div class="custom-select" id="scopeSelect">
+                                            <input type="hidden" name="scopeId" id="selectedScopeId">
                                             <div class="select-header">
-                                                <span class="selected-text">Select a journal...</span>
+                                                <span class="selected-text">Select a scope...</span>
                                                 <i class="fas fa-chevron-down select-arrow"></i>
                                             </div>
                                             <div class="select-dropdown">
                                                 <div class="select-search">
                                                     <i class="fas fa-search"></i>
-                                                    <input type="text" class="select-search-input" placeholder="Search journals...">
+                                                    <input type="text" class="select-search-input" placeholder="Search scopes...">
                                                     <button type="button" class="clear-search-btn">
                                                         <i class="fas fa-times"></i>
                                                     </button>
                                                 </div>
-                                                <div class="select-options" id="journalOptions">
+                                                <div class="select-options" id="scopeOptions">
                                                     <!-- Options will be populated here -->
                                                 </div>
-                                                <div class="select-loading" id="journalLoading">
-                                                    <i class="fas fa-spinner fa-spin"></i> Loading journals...
+                                                <div class="select-loading" id="scopeLoading">
+                                                    <i class="fas fa-spinner fa-spin"></i> Loading scopes...
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-hint"></div>
-                                        <div class="form-error" id="journalError"></div>
+                                        <div class="form-error" id="scopeError"></div>
                                     </div>
 
                                     <!-- Issue Title -->
@@ -680,7 +680,7 @@
                     this.optionsContainer.innerHTML = `
                         <div class="select-no-results">
                             <i class="fas fa-search"></i>
-                            <span>No journals found</span>
+                            <span>No scopes found</span>
                         </div>
                     `;
                     return;
@@ -732,7 +732,7 @@
 
             clear() {
                 this.selectedOption = null;
-                this.selectedText.textContent = 'Select a journal...';
+                this.selectedText.textContent = 'Select a scope...';
                 this.selectedText.classList.add('placeholder');
                 this.hiddenInput.value = '';
 
@@ -762,9 +762,9 @@
 
         class IssueManager {
             constructor() {
-                this.journals = [];
+                this.scopes = [];
                 this.recentIssues = [];
-                this.journalSelect = null;
+                this.scopeSelect = null;
 
                 this.init();
             }
@@ -796,15 +796,15 @@
             }
 
             async initializeCustomSelect() {
-                const selectContainer = document.getElementById('journalSelect');
+                const selectContainer = document.getElementById('scopeSelect');
                 if (!selectContainer) return;
 
-                this.journalSelect = new CustomSelect(selectContainer);
+                this.scopeSelect = new CustomSelect(selectContainer);
 
-                // Load journals
-                this.journalSelect.showLoading();
-                await this.loadJournals();
-                this.journalSelect.hideLoading();
+                // Load scopes
+                this.scopeSelect.showLoading();
+                await this.loadScopes();
+                this.scopeSelect.hideLoading();
             }
 
             bindEvents() {
@@ -819,20 +819,20 @@
 
                 // Window resize for dropdown positioning
                 window.addEventListener('resize', () => {
-                    if (this.journalSelect && this.journalSelect.isOpen) {
-                        this.journalSelect.positionDropdown();
+                    if (this.scopeSelect && this.scopeSelect.isOpen) {
+                        this.scopeSelect.positionDropdown();
                     }
                 });
             }
 
-            async loadJournals() {
+            async loadScopes() {
                 try {
                     if (!token) {
                         toastr.error('Authentication required. Please login.');
                         return;
                     }
 
-                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                    const response = await fetch(`${BASE_URL}/scope`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
@@ -840,36 +840,36 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                        throw new Error(`Failed to fetch scopes: ${response.status}`);
                     }
 
                     const data = await response.json();
 
                     if (!data.success) {
-                        throw new Error(data.message || 'Failed to load journals');
+                        throw new Error(data.message || 'Failed to load scopes');
                     }
 
-                    this.journals = (data.journals || []).map(journal => ({
-                        id: journal._id,
-                        title: journal.title,
-                        issn: journal.issn,
-                        publisher: journal.publisher
+                    this.scopes = (data.scopes || []).map(scope => ({
+                        id: scope._id,
+                        title: scope.title,
+                        issn: scope.issn,
+                        publisher: scope.publisher
                     }));
 
-                    if (this.journalSelect) {
-                        this.journalSelect.setOptions(this.journals);
+                    if (this.scopeSelect) {
+                        this.scopeSelect.setOptions(this.scopes);
                     }
 
                 } catch (error) {
-                    console.error('Error loading journals:', error);
-                    toastr.error('Failed to load journals. Please refresh the page.');
+                    console.error('Error loading scopes:', error);
+                    toastr.error('Failed to load scopes. Please refresh the page.');
 
                     // Show error in select
-                    if (this.journalSelect) {
-                        this.journalSelect.optionsContainer.innerHTML = `
+                    if (this.scopeSelect) {
+                        this.scopeSelect.optionsContainer.innerHTML = `
                             <div class="select-error">
                                 <i class="fas fa-exclamation-triangle"></i>
-                                <span>Failed to load journals</span>
+                                <span>Failed to load scopes</span>
                             </div>
                         `;
                     }
@@ -937,7 +937,7 @@
                             <div>
                                 <div class="issue-title">${this.escapeHtml(issue.title)}</div>
                                 <div class="issue-meta">
-                                    <span><i class="fas fa-book"></i> ${this.escapeHtml(issue.journalId?.title || 'Unknown Journal')}</span>
+                                    <span><i class="fas fa-book"></i> ${this.escapeHtml(issue.scopeId?.title || 'Unknown Scope')}</span>
                                     <span><i class="fas fa-layer-group"></i> Vol. ${issue.volume}, No. ${issue.issueNumber}</span>
                                 </div>
                             </div>
@@ -969,16 +969,16 @@
                 let isValid = true;
 
                 // Clear all errors
-                this.hideError('journalError');
+                this.hideError('scopeError');
                 this.hideError('titleError');
                 this.hideError('volumeError');
                 this.hideError('issueNumberError');
                 this.hideError('dateError');
 
-                // Validate journal
-                const journalId = document.getElementById('selectedJournalId').value;
-                if (!journalId) {
-                    this.showError('journalError', 'Please select a journal');
+                // Validate scope
+                const scopeId = document.getElementById('selectedScopeId').value;
+                if (!scopeId) {
+                    this.showError('scopeError', 'Please select a scope');
                     isValid = false;
                 }
 
@@ -1034,7 +1034,7 @@
                     }
 
                     const formData = {
-                        journalId: document.getElementById('selectedJournalId').value,
+                        scopeId: document.getElementById('selectedScopeId').value,
                         title: document.getElementById('issueTitle').value.trim(),
                         volume: parseInt(document.getElementById('volume').value),
                         issueNumber: parseInt(document.getElementById('issueNumber').value),
@@ -1111,12 +1111,12 @@
                 document.getElementById('publicationDate').value = today;
 
                 // Clear select
-                if (this.journalSelect) {
-                    this.journalSelect.clear();
+                if (this.scopeSelect) {
+                    this.scopeSelect.clear();
                 }
 
                 // Clear errors
-                this.hideError('journalError');
+                this.hideError('scopeError');
                 this.hideError('titleError');
                 this.hideError('volumeError');
                 this.hideError('issueNumberError');

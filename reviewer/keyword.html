@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Keywords</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <style>
+        .keywords-form {
+            background: var(--sidebar-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            height: 100%;
+        }
+
+        .form-title {
+            color: var(--text-color);
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 1.25rem;
+        }
+
+        .form-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            background-color: var(--sidebar-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.2);
+            border-color: var(--secondary-color2);
+        }
+
+        /* Keywords styling */
+        .keywords-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            min-height: 50px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .keyword-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--body-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .keyword-chip:hover {
+            background: var(--lite-secondary6);
+            border-color: var(--secondary-color2);
+        }
+
+        .keyword-remove {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--danger-dark);
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.8rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .keyword-remove:hover {
+            background: var(--danger-dark);
+            color: white;
+        }
+
+        .btn-brand {
+            background-color: var(--secondary-color2);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .btn-brand:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .btn-brand:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-add {
+            background-color: var(--success-dark);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .btn-add:hover {
+            background-color: var(--success-dark);
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-add:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--text-light);
+            width: 100%;
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            color: var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .empty-state h5 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+
+        .empty-state p {
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(204, 85, 0, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color2);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-badge {
+            min-width: 77.72px;
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            border-radius: 10px;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .status-saved {
+            background: var(--success-light);
+            color: var(--success-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .keywords-form {
+                padding: 20px;
+            }
+
+            .row.g-4 {
+                gap: 20px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .btn-brand,
+            .btn-add {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .d-flex.gap-2 {
+                flex-direction: column;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group .form-control {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Included -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <!-- Header Included -->
+            <div id="header-placeholder"></div>
+            <main class="main-content">
+                <div class="container page-title">
+                    <h1>My Keywords</h1>
+                    <p>Manage your research interests and expertise</p>
+                </div>
+                <div class="container my-4">
+                    <div class="row g-4">
+                        <!-- Add New Keywords Section -->
+                        <div class="col-lg-6">
+                            <div class="keywords-form">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h2 class="form-title">Add New Keywords</h2>
+                                    <button type="button" id="addKeywordsBtn" class="btn btn-brand" disabled>
+                                        <i class="fas fa-plus me-1"></i> Add Keywords
+                                    </button>
+                                </div>
+
+                                <!-- New Keywords Preview -->
+                                <div class="mb-3">
+                                    <div id="newKeywordsList" class="keywords-list">
+                                        <!-- New keywords will appear here -->
+                                        <div class="empty-state">
+                                            <i class="fas fa-plus-circle"></i>
+                                            <h5>No new keywords</h5>
+                                            <p>Add keywords above to see them here</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Input Section -->
+                                <div class="mb-3">
+                                    <div class="d-flex gap-2">
+                                        <input type="text" class="form-control" id="keywordInput" placeholder="e.g., ai, javascript, programming">
+                                        <button type="button" id="addSingleBtn" class="btn btn-add" title="Add keyword">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text mt-2">
+                                        <i class="fas fa-info-circle me-1"></i> Enter single or comma-separated keywords
+                                    </div>
+                                    <div class="error-message" id="keywordError" style="display: none; color: var(--danger-dark); font-size: 0.85rem; margin-top: 5px;">
+                                        <i class="fas fa-exclamation-circle me-1"></i> Please enter valid keywords
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Keywords Section -->
+                        <div class="col-lg-6">
+                            <div class="keywords-form">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h2 class="form-title">My Current Keywords</h2>
+                                    <span id="currentKeywordCount" class="status-badge status-saved">0 keywords</span>
+                                </div>
+                                <p class="form-subtitle">Click X to remove keywords</p>
+
+                                <div id="currentKeywordsContainer" class="keywords-list">
+                                    <!-- Current keywords will be loaded here -->
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <p class="mt-2">Loading keywords...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'reviewer';
+        window.SIDEBAR_ACTIVE_ID = 'my-keywords';
+    </script>
+    <script src="/assets/js/layout.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (required for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Main JS -->
+    <script type="module">
+        import { BASE_URL, token } from '/assets/js/utility.js';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // State management
+            let currentKeywords = [];
+            let newKeywords = [];
+            let isSaving = false;
+
+            // Initialize Toastr
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: 'toast-top-right',
+                timeOut: 3000
+            };
+
+            // Initialize the page
+            initializePage();
+
+            function initializePage() {
+                setupEventListeners();
+                loadCurrentKeywords();
+            }
+
+            function setupEventListeners() {
+                // Add single keyword button (+)
+                document.getElementById('addSingleBtn').addEventListener('click', addNewKeywordsFromInput);
+
+                // Add keywords button (makes API call)
+                document.getElementById('addKeywordsBtn').addEventListener('click', saveNewKeywords);
+
+                // Enter key in input field
+                document.getElementById('keywordInput').addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addNewKeywordsFromInput();
+                    }
+                });
+            }
+
+            async function loadCurrentKeywords() {
+                if (!token) {
+                    showError('Please log in to view your keywords');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${BASE_URL}/profile/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && data.user && Array.isArray(data.user.myKeywords)) {
+                        currentKeywords = data.user.myKeywords;
+                        displayCurrentKeywords();
+                    } else {
+                        currentKeywords = [];
+                        displayCurrentKeywords();
+                    }
+                } catch (error) {
+                    console.error('Error loading keywords:', error);
+                    showError('Failed to load your keywords');
+                    showCurrentKeywordsEmptyState();
+                }
+            }
+
+            function addNewKeywordsFromInput() {
+                const input = document.getElementById('keywordInput');
+                const keywordText = input.value.trim();
+
+                if (!keywordText) {
+                    showError('Please enter at least one keyword');
+                    return;
+                }
+
+                // Parse keywords (comma separated, trim, lowercase, remove empty)
+                const parsedKeywords = keywordText
+                    .split(',')
+                    .map(k => k.trim().toLowerCase())
+                    .filter(k => k.length > 0);
+
+                if (parsedKeywords.length === 0) {
+                    showError('Please enter valid keywords');
+                    return;
+                }
+
+                // Filter out duplicates from both new and current keywords
+                const uniqueNewKeywords = parsedKeywords.filter(k =>
+                    !newKeywords.includes(k) && !currentKeywords.includes(k)
+                );
+
+                if (uniqueNewKeywords.length === 0) {
+                    showInfo('All keywords already exist in your profile');
+                    input.value = '';
+                    return;
+                }
+
+                // Add to new keywords list
+                newKeywords = [...newKeywords, ...uniqueNewKeywords];
+
+                // Update UI
+                displayNewKeywords();
+                updateNewKeywordsUI();
+
+                // Clear input
+                input.value = '';
+                input.focus();
+
+                // No toastr message on click of "+" button (removed as requested)
+            }
+
+            function displayNewKeywords() {
+                const container = document.getElementById('newKeywordsList');
+
+                if (newKeywords.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-plus-circle"></i>
+                            <h5>No new keywords</h5>
+                            <p>Add keywords above to see them here</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                newKeywords.forEach((keyword, index) => {
+                    const chip = createNewKeywordChip(keyword, index);
+                    container.appendChild(chip);
+                });
+            }
+
+            function createNewKeywordChip(keyword, index) {
+                const chip = document.createElement('div');
+                chip.className = 'keyword-chip';
+                chip.innerHTML = `
+                    <span>${escapeHtml(keyword)}</span>
+                    <button type="button" class="keyword-remove" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                // Add remove event listener
+                const removeBtn = chip.querySelector('.keyword-remove');
+                removeBtn.addEventListener('click', function () {
+                    const indexToRemove = parseInt(this.dataset.index);
+                    removeNewKeyword(indexToRemove);
+                });
+
+                return chip;
+            }
+
+            // s
+
+            function updateNewKeywordsUI() {
+                // Enable/disable add button based on new keywords count
+                const addBtn = document.getElementById('addKeywordsBtn');
+                addBtn.disabled = newKeywords.length === 0 || isSaving;
+            }
+
+            async function saveNewKeywords() {
+                if (newKeywords.length === 0 || isSaving) return;
+
+                if (!token) {
+                    showError('Please log in to save keywords');
+                    return;
+                }
+
+                // Combine current and new keywords
+                const allKeywords = [...currentKeywords, ...newKeywords];
+
+                // Set loading state
+                isSaving = true;
+                const addBtn = document.getElementById('addKeywordsBtn');
+                const originalText = addBtn.innerHTML;
+                addBtn.disabled = true;
+                addBtn.innerHTML = '<span class="spinner"></span> Adding...';
+
+                try {
+                    const response = await fetch(`${BASE_URL}/profile/update-my-keywords`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            myKeywords: allKeywords
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Update current keywords
+                        currentKeywords = allKeywords;
+                        newKeywords = [];
+
+                        // Update UI
+                        displayCurrentKeywords();
+                        displayNewKeywords();
+                        updateNewKeywordsUI();
+
+                        // Show success message
+                        showSuccess(`Successfully added keywords to your profile`);
+                    } else {
+                        throw new Error(data.message || 'Failed to add keywords');
+                    }
+                } catch (error) {
+                    console.error('Error saving keywords:', error);
+                    showError(error.message || 'Failed to add keywords. Please try again.');
+                } finally {
+                    isSaving = false;
+                    addBtn.disabled = false;
+                    addBtn.innerHTML = originalText;
+                }
+            }
+
+            function displayCurrentKeywords() {
+                const container = document.getElementById('currentKeywordsContainer');
+
+                if (currentKeywords.length === 0) {
+                    showCurrentKeywordsEmptyState();
+                    updateCurrentKeywordsCount();
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                currentKeywords.forEach((keyword, index) => {
+                    const chip = createCurrentKeywordChip(keyword, index);
+                    container.appendChild(chip);
+                });
+
+                updateCurrentKeywordsCount();
+            }
+
+            function createCurrentKeywordChip(keyword, index) {
+                const chip = document.createElement('div');
+                chip.className = 'keyword-chip';
+                chip.innerHTML = `
+                    <span>${escapeHtml(keyword)}</span>
+                    <button type="button" class="keyword-remove" data-keyword="${escapeHtml(keyword)}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                // Add remove event listener with SweetAlert confirmation
+                const removeBtn = chip.querySelector('.keyword-remove');
+                removeBtn.addEventListener('click', function () {
+                    const keywordToRemove = this.dataset.keyword;
+                    confirmRemoveKeyword(keywordToRemove);
+                });
+
+                return chip;
+            }
+
+            function confirmRemoveKeyword(keyword) {
+                Swal.fire({
+                    title: 'Remove Keyword?',
+                    text: `Are you sure you want to remove "${keyword}" from your keywords?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, remove',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        removeCurrentKeyword(keyword);
+                    }
+                });
+            }
+
+            async function removeCurrentKeyword(keyword) {
+                if (!token) {
+                    showError('Please log in to remove keywords');
+                    return;
+                }
+
+                // Remove from current keywords
+                const updatedKeywords = currentKeywords.filter(k => k !== keyword);
+
+                // Show loading on the specific chip
+                const chip = document.querySelector(`[data-keyword="${escapeHtml(keyword)}"]`).closest('.keyword-chip');
+                const originalContent = chip.innerHTML;
+                chip.innerHTML = '<span class="spinner"></span>';
+                chip.style.opacity = '0.6';
+
+                try {
+                    const response = await fetch(`${BASE_URL}/profile/update-my-keywords`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            myKeywords: updatedKeywords
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Update current keywords
+                        currentKeywords = updatedKeywords;
+                        displayCurrentKeywords();
+
+                        // Show success message with SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Keyword Removed',
+                            text: `"${keyword}" has been removed from your keywords`,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        throw new Error(data.message || 'Failed to remove keyword');
+                    }
+                } catch (error) {
+                    console.error('Error removing keyword:', error);
+                    chip.innerHTML = originalContent;
+                    chip.style.opacity = '1';
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'Failed to remove keyword. Please try again.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                }
+            }
+
+            function showCurrentKeywordsEmptyState() {
+                const container = document.getElementById('currentKeywordsContainer');
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-tags"></i>
+                        <h5>No Keywords Yet</h5>
+                        <p>Add your first keywords using the form on the left</p>
+                    </div>
+                `;
+            }
+
+            function updateCurrentKeywordsCount() {
+                document.getElementById('currentKeywordCount').textContent = `${currentKeywords.length} keywords`;
+            }
+
+            // Helper functions
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>\"'`=\/]/g, function (s) {
+                    return ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;',
+                        '/': '&#x2F;',
+                        '`': '&#x60;',
+                        '=': '&#x3D;'
+                    })[s];
+                });
+            }
+
+            // Toastr wrapper functions (only for errors and general info)
+            function showSuccess(message) {
+                toastr.success(message, 'Success');
+            }
+
+            function showError(message) {
+                toastr.error(message, 'Error');
+            }
+
+            function showInfo(message) {
+                toastr.info(message, 'Info');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Editor Dashboard - Journal Management System</title>
+    <title>Editor Dashboard</title>
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -448,15 +448,15 @@
                                 <i class="fas fa-newspaper"></i>
                             </div>
                             <h3 class="action-title">All Issues</h3>
-                            <p class="action-description">View and manage journal issues</p>
+                            <p class="action-description">View and manage scope issues</p>
                         </div>
 
-                        <div class="action-card" onclick="window.location.href='editor-journals.html'">
+                        <div class="action-card" onclick="window.location.href='editor-scopes.html'">
                             <div class="action-icon">
                                 <i class="fas fa-book-open"></i>
                             </div>
-                            <h3 class="action-title">My Journal</h3>
-                            <p class="action-description">Manage your journal settings and details</p>
+                            <h3 class="action-title">My Scope</h3>
+                            <p class="action-description">Manage your scope settings and details</p>
                         </div>
                     </div>
                 </div>
@@ -497,7 +497,7 @@
         class EditorDashboardManager {
             constructor() {
                 this.user = null;
-                this.journals = [];
+                this.scopes = [];
                 this.submissions = [];
                 this.issues = [];
                 this.charts = {};
@@ -642,10 +642,10 @@
                     // Load user data first
                     await this.loadUserData();
 
-                    // Load journals
-                    await this.loadJournals();
+                    // Load scopes
+                    await this.loadScopes();
 
-                    // Load submissions for each journal
+                    // Load submissions for each scope
                     await this.loadSubmissions();
 
                     // Load issues
@@ -689,31 +689,34 @@
                 }
             }
 
-            async loadJournals() {
+            async loadScopes() {
                 try {
-                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                    const response = await fetch(`${BASE_URL}/editor/scope`, {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
                             'Accept': 'application/json'
                         }
                     });
 
+                    console.log('Scopes response:', response);
+
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                        throw new Error(`Failed to fetch scopes: ${response.status}`);
                     }
 
                     const data = await response.json();
 
-                    if (!data.success || !data.journals) {
-                        toastr.warning('No journals found.');
+                    console.log('Scopes data:', data);
+                    if (!data.success || !data.scopes) {
+                        toastr.warning('No scopes found.');
                         return;
                     }
 
-                    this.journals = data.journals;
+                    this.scopes = data.scopes;
 
                 } catch (error) {
-                    console.error('Error loading journals:', error);
-                    toastr.error('Failed to load journals.');
+                    console.error('Error loading scopes:', error);
+                    toastr.error('Failed to load scopes.');
                 }
             }
 
@@ -721,14 +724,14 @@
                 try {
                     this.submissions = [];
 
-                    // If no journals, return empty
-                    if (!this.journals || this.journals.length === 0) {
+                    // If no scopes, return empty
+                    if (!this.scopes || this.scopes.length === 0) {
                         return;
                     }
 
-                    // Load submissions for each journal
-                    for (const journal of this.journals) {
-                        const response = await fetch(`${BASE_URL}/editor/submissions?journalId=${journal._id}`, {
+                    // Load submissions for each scope
+                    for (const scope of this.scopes) {
+                        const response = await fetch(`${BASE_URL}/editor/submissions?scopeId=${scope._id}`, {
                             headers: {
                                 'Authorization': `Bearer ${this.token}`,
                                 'Accept': 'application/json'
@@ -738,12 +741,12 @@
                         if (response.ok) {
                             const data = await response.json();
                             if (data.success && data.submissions) {
-                                // Add journal info to each submission
-                                const submissionsWithJournal = data.submissions.map(sub => ({
+                                // Add scope info to each submission
+                                const submissionsWithScope = data.submissions.map(sub => ({
                                     ...sub,
-                                    journalTitle: journal.title
+                                    scopeTitle: scope.title
                                 }));
-                                this.submissions = [...this.submissions, ...submissionsWithJournal];
+                                this.submissions = [...this.submissions, ...submissionsWithScope];
                             }
                         }
                     }

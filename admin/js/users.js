@@ -1,11 +1,8 @@
 // Import utility functions
-import { createCustomSelect } from './utility.js';
+import {createCustomSelect} from './utility.js';
+ import { BASE_URL, token } from '/assets/js/utility.js';
 
-// API Configuration
-const API_BASE_URL = 'https://fp.247laboratory.net/';
-const API_ENDPOINTS = {
-    USERS: 'api/v1/user'
-};
+
 
 // Get token from localStorage
 function getAuthToken() {
@@ -14,7 +11,6 @@ function getAuthToken() {
 
 // Fetch users from API
 async function fetchUsers(page = 1, limit = 10, role = '', search = '') {
-    const token = getAuthToken();
     
     if (!token) {
         Swal.fire({
@@ -30,7 +26,7 @@ async function fetchUsers(page = 1, limit = 10, role = '', search = '') {
 
     try {
         // Build query parameters
-        let url = `${API_BASE_URL}${API_ENDPOINTS.USERS}?page=${page}&limit=${limit}`;
+        let url = `${BASE_URL}/user?page=${page}&limit=${limit}`;
         
         if (role) {
             url += `&role=${role}`;
