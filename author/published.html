@@ -101,13 +101,14 @@
         .custom-select {
             position: relative;
             width: 100%;
+            user-select: none;
         }
 
         .custom-select .select-header {
             background: var(--bg-white);
             border: 1.5px solid var(--border-color);
             border-radius: 6px;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.8rem;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -120,14 +121,19 @@
             border-color: var(--brand);
         }
 
+        .custom-select .selected-text {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
         .custom-select .selected-text.placeholder {
             color: var(--text-light);
-            font-weight: 600;
         }
 
         .custom-select .select-arrow {
             color: var(--text-light);
             transition: transform 0.2s ease;
+            margin-left: 0.5rem;
         }
 
         .custom-select.open .select-arrow {
@@ -145,7 +151,7 @@
             box-shadow: var(--shadow);
             z-index: 9999;
             display: none;
-            max-height: 260px;
+            max-height: 220px;
             overflow: auto;
         }
 
@@ -153,59 +159,21 @@
             display: block;
         }
 
-        .select-search {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            padding: 0.6rem;
-            border-bottom: 1.5px solid var(--border-color);
-        }
-
-        .select-search input {
-            width: 100%;
-            padding: 0.45rem 0.5rem;
-            border: 1.5px solid var(--border-color);
-            border-radius: 6px;
-            outline: none;
-            background: var(--bg-white);
-            color: var(--text-color);
-            font-family: inherit;
-        }
-
-        .select-search input:focus {
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.15);
-        }
-
-        .clear-search-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.25rem;
-            border-radius: 4px;
-        }
-
-        .clear-search-btn:hover {
-            background: var(--lite-primary-color);
-            color: var(--brand);
-        }
-
         .select-options .select-option {
-            padding: 0.75rem;
+            padding: 0.75rem 0.9rem;
             cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            border-bottom: 1px solid var(--lite-primary-color);
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
         }
 
-        .select-options .select-option:hover {
+        .select-options .select-option:hover,
+        .select-options .select-option[aria-selected="true"] {
             background: var(--lite-primary-color);
+            color: white;
         }
 
         .select-no-results {
@@ -565,6 +533,112 @@
                 flex-direction: column;
             }
         }
+
+        /* ========== Modal styles ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 12, 20, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10050;
+            padding: 1rem;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 520px;
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(90deg, rgba(0, 191, 255, 0.06), rgba(31, 27, 81, 0.02));
+        }
+
+        .modal-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.05rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0.35rem;
+            border-radius: 6px;
+        }
+
+        .modal-body {
+            padding: 1rem 1.25rem;
+        }
+
+        .form-row {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-row label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.85rem 1.25rem;
+            border-top: 1px solid var(--border-color);
+            justify-content: flex-end;
+            background: var(--light);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1.2px solid var(--border-color);
+            padding: 0.55rem 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .btn-submit {
+            background: var(--brand);
+            color: white;
+            border: none;
+            padding: 0.55rem 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .btn-submit[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .modal-small-note {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
     </style>
 </head>
 
@@ -616,6 +690,46 @@
         </div>
     </div>
 
+    <!-- Certificate Request Modal with Custom Select -->
+    <div id="certificateModalOverlay" class="modal-overlay" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="certificateModalTitle">
+            <div class="modal-header">
+                <div id="certificateModalTitle" class="modal-title">Request Certificate</div>
+                <button class="modal-close" id="certificateModalClose" aria-label="Close modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-row">
+                    <label for="certificateCustomSelect">Certificate Type</label>
+
+                    <!-- Custom select -->
+                    <div class="custom-select" id="certificateCustomSelect" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="certificateModalTitle">
+                        <div class="select-header" id="certificateCustomSelectHeader" aria-controls="certificateCustomSelectDropdown">
+                            <span class="selected-text" id="certificateCustomSelectValue">Digital</span>
+                            <i class="select-arrow fas fa-chevron-down" aria-hidden="true"></i>
+                        </div>
+
+                        <div class="select-dropdown" id="certificateCustomSelectDropdown" role="listbox" aria-labelledby="certificateCustomSelectHeader">
+                            <div class="select-options">
+                                <div class="select-option" role="option" data-value="digital" aria-selected="true">Digital</div>
+                                <div class="select-option" role="option" data-value="hardcopy" aria-selected="false">Hardcopy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end custom select -->
+
+                </div>
+
+                <div class="modal-small-note">Choose the certificate type then click submit to request.</div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" id="certificateModalCancel">Cancel</button>
+                <button class="btn-submit" id="certificateModalSubmit">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.SIDEBAR_MODULE = 'author';
         window.SIDEBAR_ACTIVE_ID = 'published-submissions';
@@ -640,12 +754,23 @@
                     search: ''
                 };
 
+                // modal related
+                this.certificateModalOverlay = null;
+                this.certificateModalSubmitBtn = null;
+                this.certificateModalCloseBtn = null;
+                this.certificateModalCancelBtn = null;
+                this.certificateCustomSelect = null;
+                this.certificateSelectedType = 'digital';
+                this.selectedSubmissionIdForCertificate = null;
+                this.certificateIsSubmitting = false;
+
                 this.init();
             }
 
             init() {
                 this.initToastr();
                 this.bindEvents();
+                this.cacheModalElements();
                 this.fetchAndRender(1); // Initial load with status=published
             }
 
@@ -715,7 +840,258 @@
                         this.viewDetails(viewBtn.dataset.id);
                         return;
                     }
+
+                    const requestCertBtn = e.target.closest('[data-action="request-certificate"]');
+                    if (requestCertBtn) {
+                        e.preventDefault();
+                        const id = requestCertBtn.dataset.id;
+                        this.openCertificateModal(id);
+                        return;
+                    }
                 });
+            }
+
+            cacheModalElements() {
+                this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
+                this.certificateModalSubmitBtn = document.getElementById('certificateModalSubmit');
+                this.certificateModalCloseBtn = document.getElementById('certificateModalClose');
+                this.certificateModalCancelBtn = document.getElementById('certificateModalCancel');
+
+                // custom select elements
+                this.certificateCustomSelect = document.getElementById('certificateCustomSelect');
+                const header = document.getElementById('certificateCustomSelectHeader');
+                const dropdown = document.getElementById('certificateCustomSelectDropdown');
+
+                // set up listeners
+                if (this.certificateModalCloseBtn) {
+                    this.certificateModalCloseBtn.addEventListener('click', () => this.closeCertificateModal());
+                }
+                if (this.certificateModalCancelBtn) {
+                    this.certificateModalCancelBtn.addEventListener('click', () => this.closeCertificateModal());
+                }
+                if (this.certificateModalOverlay) {
+                    // close when clicking on overlay (but not when clicking inside modal)
+                    this.certificateModalOverlay.addEventListener('click', (ev) => {
+                        if (ev.target === this.certificateModalOverlay) this.closeCertificateModal();
+                    });
+                }
+                if (this.certificateModalSubmitBtn) {
+                    this.certificateModalSubmitBtn.addEventListener('click', () => this.submitCertificateRequest());
+                }
+
+                // Custom select logic
+                if (header && dropdown && this.certificateCustomSelect) {
+                    const options = Array.from(dropdown.querySelectorAll('.select-option'));
+
+                    const closeDropdown = () => {
+                        this.certificateCustomSelect.classList.remove('open');
+                        this.certificateCustomSelect.setAttribute('aria-expanded', 'false');
+                    };
+
+                    const openDropdown = () => {
+                        this.certificateCustomSelect.classList.add('open');
+                        this.certificateCustomSelect.setAttribute('aria-expanded', 'true');
+                        // focus first option
+                        const selected = dropdown.querySelector('.select-option[aria-selected="true"]');
+                        if (selected) selected.scrollIntoView({ block: 'nearest' });
+                    };
+
+                    header.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        const isOpen = this.certificateCustomSelect.classList.contains('open');
+                        if (isOpen) closeDropdown();
+                        else openDropdown();
+                    });
+
+                    // option click
+                    options.forEach(opt => {
+                        opt.addEventListener('click', (ev) => {
+                            ev.stopPropagation();
+                            this.selectCertificateType(opt.dataset.value);
+                            closeDropdown();
+                        });
+                    });
+
+                    // keyboard support
+                    this.certificateCustomSelect.addEventListener('keydown', (ev) => {
+                        const isOpen = this.certificateCustomSelect.classList.contains('open');
+
+                        if (ev.key === ' ' || ev.key === 'Enter') {
+                            ev.preventDefault();
+                            if (!isOpen) openDropdown();
+                            else {
+                                // if open and Enter/Space pressed on focused option, trigger selection
+                                const focused = document.activeElement;
+                                if (focused && focused.classList.contains('select-option')) {
+                                    this.selectCertificateType(focused.dataset.value);
+                                    closeDropdown();
+                                }
+                            }
+                            return;
+                        }
+
+                        if (ev.key === 'Escape') {
+                            if (isOpen) closeDropdown();
+                            else this.closeCertificateModal();
+                            return;
+                        }
+
+                        if (ev.key === 'ArrowDown' || ev.key === 'Down') {
+                            ev.preventDefault();
+                            if (!isOpen) {
+                                openDropdown();
+                            } else {
+                                // move focus to next option
+                                const opts = Array.from(dropdown.querySelectorAll('.select-option'));
+                                let idx = opts.findIndex(o => o === document.activeElement);
+                                if (idx === -1) idx = opts.findIndex(o => o.getAttribute('aria-selected') === 'true');
+                                const next = opts[Math.min(opts.length - 1, Math.max(0, idx + 1))];
+                                if (next) next.focus();
+                            }
+                            return;
+                        }
+
+                        if (ev.key === 'ArrowUp' || ev.key === 'Up') {
+                            ev.preventDefault();
+                            if (!isOpen) {
+                                openDropdown();
+                            } else {
+                                const opts = Array.from(dropdown.querySelectorAll('.select-option'));
+                                let idx = opts.findIndex(o => o === document.activeElement);
+                                if (idx === -1) idx = opts.findIndex(o => o.getAttribute('aria-selected') === 'true');
+                                const prev = opts[Math.min(opts.length - 1, Math.max(0, idx - 1))];
+                                if (prev) prev.focus();
+                            }
+                            return;
+                        }
+                    });
+
+                    // click outside custom select closes it
+                    document.addEventListener('click', (ev) => {
+                        if (!this.certificateCustomSelect) return;
+                        if (!this.certificateCustomSelect.contains(ev.target)) {
+                            closeDropdown();
+                        }
+                    });
+
+                    // make options focusable
+                    options.forEach(o => o.setAttribute('tabindex', '0'));
+                }
+
+                // close on Escape (modal level)
+                document.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Escape' && this.certificateModalOverlay && this.certificateModalOverlay.classList.contains('open')) {
+                        this.closeCertificateModal();
+                    }
+                });
+            }
+
+            selectCertificateType(value) {
+                this.certificateSelectedType = value;
+                const dropdown = document.getElementById('certificateCustomSelectDropdown');
+                const display = document.getElementById('certificateCustomSelectValue');
+                if (display) display.textContent = value.charAt(0).toUpperCase() + value.slice(1);
+                if (dropdown) {
+                    const opts = dropdown.querySelectorAll('.select-option');
+                    opts.forEach(opt => {
+                        if (opt.dataset.value === value) opt.setAttribute('aria-selected', 'true');
+                        else opt.setAttribute('aria-selected', 'false');
+                    });
+                }
+            }
+
+            openCertificateModal(submissionId) {
+                this.selectedSubmissionIdForCertificate = submissionId;
+                // reset to default
+                this.selectCertificateType('digital');
+
+                if (!this.certificateModalOverlay) this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
+                this.certificateModalOverlay?.classList.add('open');
+                this.certificateModalOverlay?.setAttribute('aria-hidden', 'false');
+
+                // ensure custom select closed
+                if (this.certificateCustomSelect) {
+                    this.certificateCustomSelect.classList.remove('open');
+                    this.certificateCustomSelect.setAttribute('aria-expanded', 'false');
+                }
+            }
+
+            closeCertificateModal() {
+                if (!this.certificateModalOverlay) this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
+                this.certificateModalOverlay?.classList.remove('open');
+                this.certificateModalOverlay?.setAttribute('aria-hidden', 'true');
+                this.selectedSubmissionIdForCertificate = null;
+                this.certificateIsSubmitting = false;
+                if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
+            }
+
+            async submitCertificateRequest() {
+                if (this.certificateIsSubmitting) return;
+                const subId = this.selectedSubmissionIdForCertificate;
+                if (!subId) {
+                    toastr.error('No submission selected for certificate request.');
+                    return;
+                }
+
+                const type = this.certificateSelectedType || 'digital';
+                if (!['digital', 'hardcopy'].includes(type)) {
+                    toastr.error('Invalid certificate type.');
+                    return;
+                }
+
+                if (!token) {
+                    toastr.error('Authentication token not found. Please login again.');
+                    return;
+                }
+
+                this.certificateIsSubmitting = true;
+                if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = true;
+                toastr.info('Sending certificate request...');
+
+                try {
+                    const payload = {
+                        submissionId: subId,
+                        type: type
+                    };
+
+                    const res = await fetch(`${BASE_URL}/certificate/request`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!res.ok) {
+                        // try to read error message if any
+                        let errMsg = 'Failed to request certificate.';
+                        try {
+                            const errJson = await res.json();
+                            if (errJson && errJson.message) errMsg = errJson.message;
+                        } catch { /* ignore */ }
+                        toastr.error(errMsg);
+                        this.certificateIsSubmitting = false;
+                        if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
+                        return;
+                    }
+
+                   
+
+                    
+
+                    const data = await res.json();
+                    const okMsg = (data && data.message) ? data.message : 'Certificate requested successfully.';
+                    toastr.success(okMsg);
+                    this.closeCertificateModal();
+                    this.fetchAndRender(1);
+                } catch (err) {
+                    console.error('Certificate request error', err);
+                    toastr.error('An error occurred while requesting certificate.');
+                    this.certificateIsSubmitting = false;
+                    if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
+                }
             }
 
             async fetchAndRender(page = 1) {
@@ -804,9 +1180,13 @@
                     </div>
     
                     <div class="card-footer">
-                        <a class="btn-view" href="submission-details.html?id=${sub._id}" title="View details">
-                            <i class="fas fa-eye"></i> View Details
-                        </a>
+                        ${sub.isCertRequested ? `<button class="btn-view">
+                            <i class="fas fa-certificate"></i>
+                            View Certificate
+                        </button>` : `<button class="btn-view" data-action="request-certificate" data-id="${sub._id}" title="Request certificate">
+                            <i class="fas fa-certificate"></i>
+                            Request Certificate
+                        </button>`}
     
                         <div class="published-date">
                             <i class="fas fa-calendar-alt"></i>
@@ -967,6 +1347,15 @@
 
         // Initialize manager globally
         window.publishedManager = new PublishedManuscriptsManager();
+
+
+        //create a function that takes and id and return the submission\
+        /*
+        function getSubmissionById(id) {
+            fetch(`${BASE_URL}/submissions/${id}`, {
+                headers: {
+        }
+                */
     </script>
 
 </body>

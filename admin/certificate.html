@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Certificate Management</title>
+
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Page-specific CSS -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        /* Page header */
+        .container.page-title {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.6rem;
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .page-title p {
+            margin: .25rem 0 0;
+            color: var(--text-light);
+        }
+
+        /* Filter controls */
+        .filter-controls {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            margin: 1.25rem auto;
+            max-width: 1400px;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+            background: var(--bg-white);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.15);
+        }
+
+        /* Custom Select Styles */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .custom-select-header {
+            background: var(--bg-white);
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+            transition: var(--transition);
+        }
+
+        .custom-select-header:hover {
+            border-color: var(--brand);
+        }
+
+        .custom-select-header.open {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.15);
+        }
+
+        .custom-select-value {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .custom-select-value.placeholder {
+            color: var(--text-light);
+            font-weight: normal;
+        }
+
+        .custom-select-arrow {
+            color: var(--text-light);
+            transition: transform 0.2s ease;
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .custom-select-header.open .custom-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--bg-white);
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            max-height: 220px;
+            overflow-y: auto;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .custom-select-dropdown.open {
+            display: block;
+        }
+
+        .custom-select-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .custom-select-option:hover {
+            background: var(--lite-primary-color);
+            color: white;
+        }
+
+        .custom-select-option.selected {
+            background: var(--lite-secondary6);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .custom-select-option.selected:hover {
+            background: var(--lite-primary-color);
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-primary {
+            background: var(--lite-primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            height: 44px;
+        }
+
+        .btn-primary:hover {
+            background: var(--lite-primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--text-light);
+            border: 1.5px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            height: 44px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-light);
+            color: white;
+        }
+
+        /* Table container */
+        .table-container {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin: 1.25rem auto;
+            max-width: 1400px;
+            overflow: hidden;
+        }
+
+        /* Table styles */
+        .certificates-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .certificates-table thead {
+            background: linear-gradient(90deg, rgba(0, 191, 255, 0.06), rgba(31, 27, 81, 0.02));
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .certificates-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .certificates-table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .certificates-table tbody tr:hover {
+            background-color: var(--light);
+        }
+
+        .certificates-table td {
+            padding: 0.5rem;
+            vertical-align: middle;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: capitalize;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #b58500;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-approved {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-dispatched {
+            background-color: rgba(0, 123, 255, 0.15);
+            color: #007bff;
+            border: 1px solid rgba(0, 123, 255, 0.3);
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-view {
+            background: var(--lite-primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-view:hover {
+            background: var(--lite-primary-color);
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+
+
+
+        /* Loading state */
+        .loading-state {
+            padding: 3rem 1rem;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--lite-primary-color);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: 3rem 1rem;
+            text-align: center;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--border-color);
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-white);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-white);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover:not(.disabled) {
+            background-color: var(--light);
+            border-color: var(--brand);
+        }
+
+        .page-btn.active {
+            background-color: var(--brand);
+            color: white;
+            border-color: var(--brand);
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-right: 1rem;
+        }
+
+        /* Responsive table */
+        @media (max-width: 1024px) {
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .certificates-table {
+                min-width: 1000px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                min-width: 100%;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pagination-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .pagination-info {
+                margin-right: 0;
+                order: -1;
+            }
+        }
+
+
+        /* Utility classes */
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+
+        .author-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* Filter chips */
+        .filter-chips {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .filter-chip {
+            background: var(--lite-secondary6);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .filter-chip-remove {
+            background: none;
+            border: none;
+            color: var(--danger-dark);
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .filter-chip-remove:hover {
+            opacity: 0.8;
+        }
+
+        .clear-all-filters {
+            color: var(--brand);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .clear-all-filters:hover {
+            background: var(--light);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="container page-title">
+                    <h1>Certificate Management</h1>
+                    <p>View, approve, and manage certificate requests</p>
+                </div>
+
+                <!-- Filter controls -->
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label class="filter-label">Search Certificate Number</label>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Enter certificate number...">
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <div class="custom-select-wrapper" id="statusSelect">
+                            <div class="custom-select-header" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Select status">
+                                <span class="custom-select-value placeholder">All Status</span>
+                                <i class="custom-select-arrow fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-select-dropdown" role="listbox" aria-label="Status options">
+                                <div class="custom-select-option selected" data-value="" role="option">All Status</div>
+                                <div class="custom-select-option" data-value="pending" role="option">Pending</div>
+                                <div class="custom-select-option" data-value="approved" role="option">Approved</div>
+                                <div class="custom-select-option" data-value="dispatched" role="option">Dispatched</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Type</label>
+                        <div class="custom-select-wrapper" id="typeSelect">
+                            <div class="custom-select-header" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Select type">
+                                <span class="custom-select-value placeholder">All Types</span>
+                                <i class="custom-select-arrow fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-select-dropdown" role="listbox" aria-label="Type options">
+                                <div class="custom-select-option selected" data-value="" role="option">All Types</div>
+                                <div class="custom-select-option" data-value="digital" role="option">Digital</div>
+                                <div class="custom-select-option" data-value="hardcopy" role="option">Hardcopy</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-group" style="min-width: auto; flex: 0 0 auto;">
+                        <button id="applyFilters" class="btn-primary">
+                            <i class="fas fa-search me-1"></i> Search
+                        </button>
+                    </div>
+
+                    <div class="filter-group" style="min-width: auto; flex: 0 0 auto;">
+                        <button id="clearFilters" class="btn-secondary">
+                            <i class="fas fa-times me-1"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active filters display -->
+                <div class="filter-chips" id="activeFilters" style="max-width: 1400px; margin: 0 auto 1rem;"></div>
+
+                <!-- Table container -->
+                <div class="table-container">
+                    <table class="certificates-table">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Author</th>
+                                <th>Publication</th>
+                                <th>Status</th>
+                                <th>Certificate Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="certificatesTableBody">
+                            <tr>
+                                <td colspan="7" class="loading-state">
+                                    <div class="loading-spinner"></div>
+                                    <p>Loading certificates...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Empty state (hidden by default) -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <i class="fas fa-certificate"></i>
+                        <h3>No Certificates Found</h3>
+                        <p>No certificates match your current filters.</p>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="paginationContainer" class="pagination-container">
+                        <div class="pagination">
+                            <button class="page-btn prev-btn disabled" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="pagination-info">Page 1 of 1</span>
+                            <button class="page-btn next-btn disabled" disabled>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div id="itemsInfo" class="pagination-info">
+                            Showing 0 items
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'certificates';
+    </script>
+
+    <script src="/assets/js/layout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class CertificateManager {
+            constructor() {
+                this.currentPage = 1;
+                this.limit = 10;
+                this.totalItems = 0;
+                this.totalPages = 0;
+                this.currentCertificates = [];
+
+                this.currentFilters = {
+                    search: '',
+                    status: '',
+                    type: ''
+                };
+
+                this.selectedCertificate = null;
+                this.isLoading = false;
+
+                this.init();
+            }
+
+            init() {
+                this.initToastr();
+                this.setupCustomSelects();
+                this.bindEvents();
+                this.loadCertificates();
+            }
+
+            initToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            setupCustomSelects() {
+                // Setup status select
+                this.setupCustomSelect('statusSelect', (value) => {
+                    this.currentFilters.status = value;
+                    this.currentPage = 1;
+                    this.updateActiveFilters();
+                });
+
+                // Setup type select
+                this.setupCustomSelect('typeSelect', (value) => {
+                    this.currentFilters.type = value;
+                    this.currentPage = 1;
+                    this.updateActiveFilters();
+                });
+            }
+
+            setupCustomSelect(selectId, onChangeCallback) {
+                const selectWrapper = document.getElementById(selectId);
+                const header = selectWrapper.querySelector('.custom-select-header');
+                const dropdown = selectWrapper.querySelector('.custom-select-dropdown');
+                const options = dropdown.querySelectorAll('.custom-select-option');
+                const valueDisplay = header.querySelector('.custom-select-value');
+
+                const closeDropdown = () => {
+                    header.classList.remove('open');
+                    dropdown.classList.remove('open');
+                    header.setAttribute('aria-expanded', 'false');
+                };
+
+                const openDropdown = () => {
+                    header.classList.add('open');
+                    dropdown.classList.add('open');
+                    header.setAttribute('aria-expanded', 'true');
+                };
+
+                const selectOption = (option) => {
+                    const value = option.dataset.value;
+
+                    // Update selected state
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+
+                    // Update display
+                    const displayText = option.textContent;
+                    valueDisplay.textContent = displayText;
+                    valueDisplay.classList.remove('placeholder');
+
+                    // Call callback
+                    onChangeCallback(value);
+
+                    // Close dropdown
+                    closeDropdown();
+                };
+
+                // Header click to toggle dropdown
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (header.classList.contains('open')) {
+                        closeDropdown();
+                    } else {
+                        openDropdown();
+                    }
+                });
+
+                // Option click
+                options.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectOption(option);
+                    });
+
+                    // Keyboard navigation
+                    option.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            selectOption(option);
+                        }
+                    });
+                });
+
+                // Keyboard support
+                header.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (header.classList.contains('open')) {
+                            closeDropdown();
+                        } else {
+                            openDropdown();
+                        }
+                    } else if (e.key === 'Escape' && header.classList.contains('open')) {
+                        closeDropdown();
+                    } else if (e.key === 'ArrowDown' && header.classList.contains('open')) {
+                        e.preventDefault();
+                        const firstOption = options[0];
+                        if (firstOption) firstOption.focus();
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!selectWrapper.contains(e.target)) {
+                        closeDropdown();
+                    }
+                });
+
+                // Close on Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && header.classList.contains('open')) {
+                        closeDropdown();
+                    }
+                });
+            }
+
+            bindEvents() {
+                // Filter buttons
+                document.getElementById('applyFilters')?.addEventListener('click', () => this.applyFilters());
+                document.getElementById('clearFilters')?.addEventListener('click', () => this.clearFilters());
+
+                // Search input - Enter key
+                document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.applyFilters();
+                });
+
+                // Pagination
+                document.getElementById('paginationContainer')?.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.page-btn');
+                    if (!btn || btn.classList.contains('disabled')) return;
+
+                    if (btn.classList.contains('prev-btn')) {
+                        this.changePage(this.currentPage - 1);
+                    } else if (btn.classList.contains('next-btn')) {
+                        this.changePage(this.currentPage + 1);
+                    }
+                });
+
+                // Table actions (event delegation)
+                document.getElementById('certificatesTableBody')?.addEventListener('click', (e) => {
+                    const viewBtn = e.target.closest('.btn-view');
+                    if (!viewBtn) return;
+
+                    const certId = viewBtn.dataset.certId;
+
+                    if (!certId) {
+                        toastr.error('Certificate ID not found');
+                        return;
+                    }
+
+                    // Redirect with certificate ID
+                    window.location.href = `certificate-details.html?id=${certId}`;
+                });
+
+
+            }
+
+            async loadCertificates() {
+                if (this.isLoading) return;
+
+                this.isLoading = true;
+                this.showLoading(true);
+
+                try {
+                    const params = new URLSearchParams({
+                        page: this.currentPage,
+                        limit: this.limit
+                    });
+
+                    if (this.currentFilters.search) {
+                        params.set('search', this.currentFilters.search);
+                    }
+
+                    if (this.currentFilters.status) {
+                        params.set('status', this.currentFilters.status);
+                    }
+
+                    if (this.currentFilters.type) {
+                        params.set('type', this.currentFilters.type);
+                    }
+
+                    const response = await fetch(`${BASE_URL}/certificate?${params.toString()}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: Failed to load certificates`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && data.certificates) {
+                        this.currentCertificates = data.certificates;
+                        this.totalItems = data.total || 0;
+                        this.totalPages = data.pages || Math.ceil(this.totalItems / this.limit);
+                        this.currentPage = data.page || 1;
+
+                        this.renderTable();
+                        this.renderPagination();
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.error('Error loading certificates:', error);
+                    toastr.error('Failed to load certificates. Please try again.');
+                    this.showEmptyState();
+                } finally {
+                    this.isLoading = false;
+                    this.showLoading(false);
+                }
+            }
+
+            updateActiveFilters() {
+                const container = document.getElementById('activeFilters');
+                const filters = [];
+
+                if (this.currentFilters.search) {
+                    filters.push({
+                        label: `Search: "${this.currentFilters.search}"`,
+                        type: 'search',
+                        value: this.currentFilters.search
+                    });
+                }
+
+                if (this.currentFilters.status) {
+                    filters.push({
+                        label: `Status: ${this.currentFilters.status}`,
+                        type: 'status',
+                        value: this.currentFilters.status
+                    });
+                }
+
+                if (this.currentFilters.type) {
+                    filters.push({
+                        label: `Type: ${this.currentFilters.type}`,
+                        type: 'type',
+                        value: this.currentFilters.type
+                    });
+                }
+
+                if (filters.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                let html = filters.map(filter => `
+                    <div class="filter-chip">
+                        <span>${this.escapeHtml(filter.label)}</span>
+                        <button class="filter-chip-remove" data-type="${filter.type}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                html += `<button class="clear-all-filters">Clear All</button>`;
+                container.innerHTML = html;
+
+                // Add event listeners
+                container.querySelectorAll('.filter-chip-remove').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const type = btn.dataset.type;
+                        this.removeFilter(type);
+                    });
+                });
+
+                container.querySelector('.clear-all-filters').addEventListener('click', () => {
+                    this.clearFilters();
+                });
+            }
+
+            removeFilter(type) {
+                switch (type) {
+                    case 'search':
+                        this.currentFilters.search = '';
+                        document.getElementById('searchInput').value = '';
+                        break;
+                    case 'status':
+                        this.currentFilters.status = '';
+                        this.resetSelect('statusSelect', 'All Status');
+                        break;
+                    case 'type':
+                        this.currentFilters.type = '';
+                        this.resetSelect('typeSelect', 'All Types');
+                        break;
+                }
+
+                this.currentPage = 1;
+                this.updateActiveFilters();
+                this.loadCertificates();
+            }
+
+            resetSelect(selectId, placeholder) {
+                const selectWrapper = document.getElementById(selectId);
+                const valueDisplay = selectWrapper.querySelector('.custom-select-value');
+                const options = selectWrapper.querySelectorAll('.custom-select-option');
+
+                valueDisplay.textContent = placeholder;
+                valueDisplay.classList.add('placeholder');
+
+                options.forEach(opt => opt.classList.remove('selected'));
+                const allOption = selectWrapper.querySelector('.custom-select-option[data-value=""]');
+                if (allOption) allOption.classList.add('selected');
+            }
+
+            renderTable() {
+                const tbody = document.getElementById('certificatesTableBody');
+                const emptyState = document.getElementById('emptyState');
+
+                if (!this.currentCertificates.length) {
+                    tbody.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+
+                tbody.innerHTML = this.currentCertificates.map((cert, index) => {
+                    const serial = ((this.currentPage - 1) * this.limit) + index + 1;
+                    const author = cert.authorId || {};
+                    const submission = cert.submissionId || {};
+                    const title = submission.title || 'Untitled';
+                    const truncatedTitle = this.truncateText(title, 43);
+
+                    return `
+                        <tr>
+                            <td>${serial}</td>
+                            <td>
+                                <div class="author-name">${this.escapeHtml(author.firstName || '')} ${this.escapeHtml(author.lastName || '')}</div>
+                            </td>
+                            <td title="${this.escapeHtml(title)}" class="text-truncate">
+                                ${this.escapeHtml(truncatedTitle)}
+                            </td>
+                            <td>
+                                <span class="status-badge status-${cert.status}">
+                                    ${cert.status}
+                                </span>
+                            </td>
+                            <td>
+                                <code>${this.escapeHtml(cert.certificateNumber || 'N/A')}</code>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-view" data-cert-id="${cert._id}">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            renderPagination() {
+                const container = document.getElementById('paginationContainer');
+                const pagination = container.querySelector('.pagination');
+                const itemsInfo = document.getElementById('itemsInfo');
+
+                if (this.totalPages <= 1) {
+                    pagination.innerHTML = `
+                        <button class="page-btn prev-btn disabled" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="pagination-info">Page ${this.currentPage} of ${this.totalPages}</span>
+                        <button class="page-btn next-btn disabled" disabled>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    `;
+                } else {
+                    pagination.innerHTML = `
+                        <button class="page-btn prev-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
+                                ${this.currentPage === 1 ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="pagination-info">Page ${this.currentPage} of ${this.totalPages}</span>
+                        <button class="page-btn next-btn ${this.currentPage === this.totalPages ? 'disabled' : ''}" 
+                                ${this.currentPage === this.totalPages ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    `;
+                }
+
+                const startItem = ((this.currentPage - 1) * this.limit) + 1;
+                const endItem = Math.min(this.currentPage * this.limit, this.totalItems);
+                itemsInfo.textContent = `Showing ${startItem}-${endItem} of ${this.totalItems} certificates`;
+            }
+
+            changePage(page) {
+                if (page < 1 || page > this.totalPages) return;
+                this.currentPage = page;
+                this.loadCertificates();
+                // Scroll to top of table
+                document.querySelector('.table-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            applyFilters() {
+                this.currentFilters.search = document.getElementById('searchInput').value.trim();
+                this.currentPage = 1;
+                this.updateActiveFilters();
+                this.loadCertificates();
+            }
+
+            clearFilters() {
+                this.currentFilters = { search: '', status: '', type: '' };
+                document.getElementById('searchInput').value = '';
+                this.resetSelect('statusSelect', 'All Status');
+                this.resetSelect('typeSelect', 'All Types');
+                this.currentPage = 1;
+                this.updateActiveFilters();
+                this.loadCertificates();
+            }
+
+            showLoading(show) {
+                const tbody = document.getElementById('certificatesTableBody');
+                if (show) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <p>Loading certificates...</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            showEmptyState() {
+                const tbody = document.getElementById('certificatesTableBody');
+                const emptyState = document.getElementById('emptyState');
+
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+
+                // Reset pagination info
+                document.getElementById('itemsInfo').textContent = 'Showing 0 items';
+                document.querySelector('.pagination-info').textContent = 'Page 1 of 1';
+                document.querySelectorAll('.page-btn').forEach(btn => {
+                    btn.classList.add('disabled');
+                    btn.disabled = true;
+                });
+            }
+
+            // Utility functions
+            truncateText(text, maxLength) {
+                if (!text) return '';
+                return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+            }
+
+            formatDate(isoString) {
+                if (!isoString) return 'N/A';
+                try {
+                    const date = new Date(isoString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } catch {
+                    return isoString;
+                }
+            }
+
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the certificate manager
+        document.addEventListener('DOMContentLoaded', () => {
+            window.certificateManager = new CertificateManager();
+        });
+    </script>
+</body>
+
+</html>

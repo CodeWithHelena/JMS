@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Certificate Details</title>
+
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Page-specific CSS -->
+    <style>
+        :root {
+            /* New accent colors */
+            --accent-orange: #FF9F1C;
+            --warning-yellow: #F4C430;
+            --accent-hover: #b34a00;
+            --accent-orange-soft: #FFE2B8;
+            --warning-yellow-soft: #FFF4CC;
+            --error-red-soft: #FADBD8;
+
+            /* Enhanced color variants */
+            --card-bg: #ffffff;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --section-bg: #f9fafb;
+            --border-light: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 20% 80%, rgba(255, 158, 28, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 80% 20%, rgba(244, 196, 48, 0.05) 0%, transparent 20%);
+        }
+
+        /* Page header */
+        .container.page-title {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.75rem;
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--brand) 0%, var(--accent-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title p {
+            margin: .5rem 0 0;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--brand);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-button:hover {
+            background: var(--accent-orange-soft);
+            border-color: var(--accent-orange);
+            transform: translateX(-4px);
+        }
+
+        /* Main content container */
+        .content-container {
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+            padding: 0 1rem;
+        }
+
+        /* Certificate card */
+        .certificate-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certificate-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--brand), var(--accent-orange));
+        }
+
+        /* Header section */
+        .certificate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border-light);
+            position: relative;
+        }
+
+        .certificate-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--brand);
+        }
+
+        .certificate-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .certificate-title p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        /* Status badge */
+        .status-badge {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .status-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, var(--warning-yellow), #ffc107);
+            color: #856404;
+            border: none;
+        }
+
+        .status-approved {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+        }
+
+        .status-dispatched {
+            background: linear-gradient(135deg, #17a2b8, #0dcaf0);
+            color: white;
+            border: none;
+        }
+
+        /* Certificate details sections - FULL WIDTH */
+        .details-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .detail-section {
+            padding: 2rem;
+            background: var(--section-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--brand);
+        }
+
+        .detail-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--brand);
+        }
+
+        .detail-section.publication-section {
+            background: linear-gradient(135deg, var(--accent-orange-soft), #fff);
+        }
+
+        .detail-section.author-section {
+            background: linear-gradient(135deg, var(--warning-yellow-soft), #fff);
+        }
+
+        .detail-section.certificate-section {
+            background: linear-gradient(135deg, #e3f2fd, #fff);
+        }
+
+        .detail-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .detail-section h3 i {
+            color: var(--brand);
+            font-size: 1.5rem;
+            background: var(--card-bg);
+            padding: 0.75rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.1);
+        }
+
+        /* Details grid inside each section */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            border-color: var(--brand);
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-label i {
+            color: var(--accent-orange);
+        }
+
+        .detail-value {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .detail-value.code {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            background: var(--body-bg);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            font-size: 1rem;
+            color: var(--brand);
+        }
+
+        /* Type badge */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--card-bg);
+            border: 2px solid;
+        }
+
+        .type-digital {
+            background: linear-gradient(135deg, var(--warning-yellow-soft), #fff);
+            border-color: var(--warning-yellow);
+            color: #856404;
+        }
+
+        .type-hardcopy {
+            background: linear-gradient(135deg, #e3f2fd, #fff);
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        /* Action buttons section */
+        .action-section {
+            padding: 2rem;
+            background: var(--section-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--brand), var(--accent-orange));
+        }
+
+        .action-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .action-section h3 i {
+            color: var(--brand);
+            font-size: 1.5rem;
+            background: var(--card-bg);
+            padding: 0.75rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            min-height: 54px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brand), var(--accent-orange));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--accent-hover), var(--brand));
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838, #28a745);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #0dcaf0);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(135deg, #138496, #17a2b8);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-orange-soft);
+            border-color: var(--accent-orange);
+        }
+
+        /* File upload */
+        .file-upload-area {
+            border: 3px dashed var(--border-light);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background-color: var(--card-bg);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 158, 28, 0.05), rgba(244, 196, 48, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.dragover {
+            border-color: var(--accent-orange);
+            background-color: var(--accent-orange-soft);
+        }
+
+        .file-upload-area:hover::before,
+        .file-upload-area.dragover::before {
+            opacity: 1;
+        }
+
+        .file-upload-icon {
+            font-size: 3.5rem;
+            color: var(--accent-orange);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-upload-text {
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-upload-subtext {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-preview {
+            margin-top: 1.5rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .file-preview-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 2px solid var(--border-light);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .file-preview-name {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .file-preview-name i {
+            color: var(--accent-orange);
+            font-size: 1.5rem;
+        }
+
+        .file-preview-remove {
+            color: var(--danger-dark);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .file-preview-remove:hover {
+            background-color: var(--error-red-soft);
+            transform: rotate(90deg);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-requirements {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 1rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Loading state */
+        .loading-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--accent-orange-soft);
+            border-top-color: var(--accent-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error state */
+        .error-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--danger-dark);
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .error-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--warning-yellow);
+        }
+
+        .error-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Approved certificate section */
+        .approved-certificate-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-light);
+        }
+
+        .approved-certificate-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Timestamps */
+        .timestamp {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .timestamp i {
+            color: var(--accent-orange);
+        }
+
+        /* Alert message */
+        .alert {
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--warning-yellow-soft);
+            border: 2px solid var(--warning-yellow);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .alert i {
+            font-size: 1.5rem;
+            color: var(--warning-yellow);
+        }
+
+        .alert div {
+            flex: 1;
+        }
+
+        .alert strong {
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .certificate-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .certificate-card {
+                padding: 1.5rem;
+            }
+
+            .detail-section {
+                padding: 1.5rem;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .file-upload-area {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .certificate-title h2 {
+                font-size: 1.25rem;
+            }
+
+            .detail-section {
+                padding: 1.25rem;
+            }
+        }
+
+        /* Card hover effects */
+        .detail-item,
+        .action-section,
+        .file-upload-area {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Enhanced shadows */
+        .certificate-card,
+        .detail-section,
+        .action-section {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--brand), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="container page-title">
+                    <a href="certificate.html" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Back to Certificates
+                    </a>
+                    <h1><i class="fas fa-certificate"></i> Certificate Details</h1>
+                    <p>View and manage certificate details</p>
+                </div>
+
+                <div class="content-container">
+                    <div id="loadingState" class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Loading certificate details...</p>
+                    </div>
+
+                    <div id="errorState" class="error-state" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Certificate Not Found</h3>
+                        <p id="errorMessage">The requested certificate could not be loaded.</p>
+                        <a href="certificate.html" class="btn btn-secondary" style="margin-top: 1.5rem;">
+                            <i class="fas fa-arrow-left"></i> Back to Certificates
+                        </a>
+                    </div>
+
+                    <div id="certificateContent" class="certificate-card" style="display: none;">
+                        <!-- Certificate details will be loaded here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'certificates';
+    </script>
+
+    <script src="/assets/js/layout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class CertificateDetailsManager {
+            constructor() {
+                this.certificateId = null;
+                this.certificateData = null;
+                this.isLoading = false;
+                this.selectedFile = null;
+
+                this.init();
+            }
+
+            init() {
+                this.initToastr();
+                this.getCertificateIdFromURL();
+
+                if (this.certificateId) {
+                    this.loadCertificateDetails();
+                } else {
+                    this.showError('Certificate ID not found in URL');
+                }
+            }
+
+            initToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            getCertificateIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.certificateId = urlParams.get('id');
+
+                if (!this.certificateId) {
+                    // Try to get from hash
+                    const hash = window.location.hash.substring(1);
+                    if (hash) this.certificateId = hash;
+                }
+            }
+
+            async loadCertificateDetails() {
+                this.isLoading = true;
+                this.showLoading(true);
+
+                try {
+                    const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: Failed to load certificate details`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && data.certificate) {
+                        this.certificateData = data.certificate;
+                        this.renderCertificateDetails();
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.error('Error loading certificate details:', error);
+                    this.showError(error.message || 'Failed to load certificate details');
+                } finally {
+                    this.isLoading = false;
+                    this.showLoading(false);
+                }
+            }
+
+            renderCertificateDetails() {
+                if (!this.certificateData) return;
+
+                const certificate = this.certificateData;
+                const author = certificate.authorId || {};
+                const submission = certificate.submissionId || {};
+
+                // Determine status class
+                const statusClass = `status-${certificate.status}`;
+                const statusText = certificate.status.charAt(0).toUpperCase() + certificate.status.slice(1);
+
+                // Determine action buttons based on status and type
+                let actionButtons = '';
+
+                if (certificate.status === 'pending') {
+                    if (certificate.type === 'digital') {
+                        actionButtons = this.renderDigitalCertificateActions();
+                    } else if (certificate.type === 'hardcopy') {
+                        actionButtons = this.renderHardcopyCertificateActions();
+                    }
+                } else if (certificate.status === 'approved' && certificate.fileUrl) {
+                    actionButtons = `
+                        <div class="action-buttons">
+                            <a href="${BASE_URL}${certificate.fileUrl}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> View Certificate
+                            </a>
+                            <a href="${BASE_URL}${certificate.fileUrl}" download class="btn btn-secondary">
+                                <i class="fas fa-download"></i> Download Certificate
+                            </a>
+                        </div>
+                    `;
+                }
+
+                // Format dates
+                const issueDate = certificate.issueDate ? this.formatDate(certificate.issueDate) : 'Not issued yet';
+                const requestedDate = certificate.requestedAt ? this.formatDate(certificate.requestedAt) : 'N/A';
+                const updatedDate = certificate.updatedAt ? this.formatDate(certificate.updatedAt) : 'N/A';
+
+                // Build the certificate details HTML with new FULL WIDTH sections
+                const html = `
+                    <div class="certificate-header">
+                        <div class="certificate-title">
+                            <h2>Certificate Details</h2>
+                            <p>Manage and view complete certificate information</p>
+                        </div>
+                        <div class="status-badge ${statusClass}">
+                            <i class="fas fa-${certificate.status === 'pending' ? 'clock' : certificate.status === 'approved' ? 'check-circle' : 'paper-plane'}"></i>
+                            ${statusText}
+                        </div>
+                    </div>
+
+                    <div class="details-sections">
+                        <!-- Publication Details - FULL WIDTH -->
+                        <div class="detail-section publication-section">
+                            <h3><i class="fas fa-file-alt"></i> Publication Details</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-heading"></i> Publication Title
+                                    </div>
+                                    <div class="detail-value">${this.escapeHtml(submission.title || 'N/A')}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Author Details - FULL WIDTH -->
+                        <div class="detail-section author-section">
+                            <h3><i class="fas fa-user"></i> Author Details</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-user-circle"></i> Author Name
+                                    </div>
+                                    <div class="detail-value">${this.escapeHtml(author.firstName || '')} ${this.escapeHtml(author.lastName || '')}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-envelope"></i> Author Email
+                                    </div>
+                                    <div class="detail-value">${this.escapeHtml(author.email || 'N/A')}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Certificate Details - FULL WIDTH -->
+                        <div class="detail-section certificate-section">
+                            <h3><i class="fas fa-certificate"></i> Certificate Details</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-hashtag"></i> Certificate Number
+                                    </div>
+                                    <div class="detail-value code">${this.escapeHtml(certificate.certificateNumber || 'N/A')}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-tag"></i> Certificate Type
+                                    </div>
+                                    <div class="detail-value">
+                                        <span class="type-badge type-${certificate.type}">
+                                            <i class="fas fa-${certificate.type === 'digital' ? 'file-pdf' : 'box'}"></i>
+                                            ${certificate.type ? certificate.type.charAt(0).toUpperCase() + certificate.type.slice(1) : 'N/A'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-calendar-check"></i> Issue Date
+                                    </div>
+                                    <div class="detail-value">${issueDate}</div>
+                                    ${certificate.issueDate ? `
+                                        <div class="timestamp">
+                                            <i class="far fa-clock"></i> ${this.formatDateTime(certificate.issueDate)}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-calendar-plus"></i> Requested Date
+                                    </div>
+                                    <div class="detail-value">${requestedDate}</div>
+                                    ${certificate.requestedAt ? `
+                                        <div class="timestamp">
+                                            <i class="far fa-clock"></i> ${this.formatDateTime(certificate.requestedAt)}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Required Alert -->
+                    ${certificate.status === 'pending' ? `
+                        <div class="alert">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <strong>Action Required</strong>
+                                <span>This certificate is pending. ${certificate.type === 'digital'
+                            ? 'Please upload the digital certificate file and approve it.'
+                            : 'Please mark this hardcopy certificate as dispatched.'}
+                                </span>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Approved Certificate Section -->
+                    ${certificate.status === 'approved' && certificate.fileUrl ? `
+                        <div class="approved-certificate-section">
+                            <h3><i class="fas fa-file-pdf gradient-text"></i> Approved Certificate</h3>
+                            <div class="action-buttons">
+                                <a href="${BASE_URL}${certificate.fileUrl}" target="_blank" class="btn btn-primary">
+                                    <i class="fas fa-external-link-alt"></i> View Certificate
+                                </a>
+                                <a href="${BASE_URL}${certificate.fileUrl}" download class="btn btn-secondary">
+                                    <i class="fas fa-download"></i> Download Certificate
+                                </a>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Action Section -->
+                    ${actionButtons ? `
+                        <div class="action-section">
+                            <h3><i class="fas fa-cogs gradient-text"></i> Certificate Actions</h3>
+                            ${actionButtons}
+                        </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('certificateContent').innerHTML = html;
+                document.getElementById('certificateContent').style.display = 'block';
+
+                // Setup event listeners for actions
+                this.setupActionListeners();
+            }
+
+            renderDigitalCertificateActions() {
+                return `
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="file-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="file-upload-text">Upload Digital Certificate</div>
+                        <div class="file-upload-subtext">Drag & drop your PDF file here or click to browse</div>
+                        <input type="file" id="certificateFile" class="file-input" accept=".pdf" style="display: none;">
+                        <div class="file-requirements">PDF files only • Max size: 10MB</div>
+                    </div>
+
+                    <div class="file-preview" id="filePreview">
+                        <!-- File preview will be added here -->
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="approveBtn" class="btn btn-success" disabled>
+                            <i class="fas fa-check-circle"></i> Approve Certificate
+                        </button>
+                        <button id="cancelBtn" class="btn btn-secondary">
+                            <i class="fas fa-times-circle"></i> Cancel
+                        </button>
+                    </div>
+                `;
+            }
+
+            renderHardcopyCertificateActions() {
+                return `
+                    <div class="action-buttons">
+                        <button id="dispatchBtn" class="btn btn-info">
+                            <i class="fas fa-paper-plane"></i> Mark as Dispatched
+                        </button>
+                    </div>
+                `;
+            }
+
+            setupActionListeners() {
+                // File upload for digital certificates
+                const fileUploadArea = document.getElementById('fileUploadArea');
+                const certificateFile = document.getElementById('certificateFile');
+                const filePreview = document.getElementById('filePreview');
+                const approveBtn = document.getElementById('approveBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const dispatchBtn = document.getElementById('dispatchBtn');
+
+                if (fileUploadArea && certificateFile) {
+                    fileUploadArea.addEventListener('click', () => certificateFile.click());
+
+                    certificateFile.addEventListener('change', (e) => {
+                        this.handleFileSelection(e.target.files[0]);
+                    });
+
+                    fileUploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        fileUploadArea.classList.add('dragover');
+                    });
+
+                    fileUploadArea.addEventListener('dragleave', (e) => {
+                        e.preventDefault();
+                        fileUploadArea.classList.remove('dragover');
+                    });
+
+                    fileUploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        fileUploadArea.classList.remove('dragover');
+
+                        if (e.dataTransfer.files.length) {
+                            this.handleFileSelection(e.dataTransfer.files[0]);
+                        }
+                    });
+                }
+
+                if (approveBtn) {
+                    approveBtn.addEventListener('click', () => this.approveDigitalCertificate());
+                }
+
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', () => this.clearFileSelection());
+                }
+
+                if (dispatchBtn) {
+                    dispatchBtn.addEventListener('click', () => this.dispatchHardcopyCertificate());
+                }
+            }
+
+            handleFileSelection(file) {
+                if (!file) return;
+
+                // Validate file type
+                if (file.type !== 'application/pdf') {
+                    toastr.error('Please upload a PDF file only');
+                    return;
+                }
+
+                // Validate file size (10MB)
+                const maxSize = 10 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    toastr.error('File size exceeds 10MB limit');
+                    return;
+                }
+
+                this.selectedFile = file;
+
+                // Update UI
+                const filePreview = document.getElementById('filePreview');
+                const approveBtn = document.getElementById('approveBtn');
+                const fileUploadArea = document.getElementById('fileUploadArea');
+
+                filePreview.innerHTML = `
+                    <div class="file-preview-item">
+                        <div class="file-preview-name">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>${this.escapeHtml(file.name)} (${this.formatFileSize(file.size)})</span>
+                        </div>
+                        <button type="button" class="file-preview-remove" id="removeFile">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                filePreview.style.display = 'block';
+
+                if (approveBtn) {
+                    approveBtn.disabled = false;
+                }
+
+                if (fileUploadArea) {
+                    fileUploadArea.style.display = 'none';
+                }
+
+                // Add remove file listener
+                document.getElementById('removeFile')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.clearFileSelection();
+                });
+            }
+
+            clearFileSelection() {
+                this.selectedFile = null;
+
+                const filePreview = document.getElementById('filePreview');
+                const approveBtn = document.getElementById('approveBtn');
+                const fileUploadArea = document.getElementById('fileUploadArea');
+                const certificateFile = document.getElementById('certificateFile');
+
+                if (filePreview) {
+                    filePreview.style.display = 'none';
+                    filePreview.innerHTML = '';
+                }
+
+                if (approveBtn) {
+                    approveBtn.disabled = true;
+                }
+
+                if (fileUploadArea) {
+                    fileUploadArea.style.display = 'block';
+                }
+
+                if (certificateFile) {
+                    certificateFile.value = '';
+                }
+            }
+
+            async approveDigitalCertificate() {
+                if (!this.selectedFile) {
+                    toastr.error('Please select a certificate file first');
+                    return;
+                }
+
+                const result = await Swal.fire({
+                    title: 'Approve Digital Certificate?',
+                    text: 'Are you sure you want to approve this digital certificate? This action cannot be undone.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, approve it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                });
+
+                if (!result.isConfirmed) return;
+
+                const approveBtn = document.getElementById('approveBtn');
+                const originalText = approveBtn.innerHTML;
+                approveBtn.disabled = true;
+                approveBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Approving...';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('status', 'approved');
+                    formData.append('certificate', this.selectedFile);
+
+                    const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Show success message
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Certificate Approved!',
+                            text: data.message || 'Digital certificate has been approved successfully.',
+                            confirmButtonColor: '#28a745',
+                            showConfirmButton: true,
+                            timer: 3000
+                        });
+
+                        // Reload certificate details
+                        this.loadCertificateDetails();
+                    } else {
+                        throw new Error(data.message || 'Failed to approve certificate');
+                    }
+                } catch (error) {
+                    console.error('Error approving certificate:', error);
+                    toastr.error(error.message || 'Failed to approve certificate');
+                    approveBtn.disabled = false;
+                    approveBtn.innerHTML = originalText;
+                }
+            }
+
+            async dispatchHardcopyCertificate() {
+                const result = await Swal.fire({
+                    title: 'Dispatch Hardcopy Certificate?',
+                    text: 'Are you sure you want to mark this hardcopy certificate as dispatched?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#17a2b8',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, mark as dispatched',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                });
+
+                if (!result.isConfirmed) return;
+
+                const dispatchBtn = document.getElementById('dispatchBtn');
+                const originalText = dispatchBtn.innerHTML;
+                dispatchBtn.disabled = true;
+                dispatchBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Dispatching...';
+
+                try {
+                    const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: 'dispatched'
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Show success message
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Certificate Dispatched!',
+                            text: data.message || 'Hardcopy certificate has been marked as dispatched.',
+                            confirmButtonColor: '#17a2b8',
+                            showConfirmButton: true,
+                            timer: 3000
+                        });
+
+                        // Reload certificate details
+                        this.loadCertificateDetails();
+                    } else {
+                        throw new Error(data.message || 'Failed to dispatch certificate');
+                    }
+                } catch (error) {
+                    console.error('Error dispatching certificate:', error);
+                    toastr.error(error.message || 'Failed to dispatch certificate');
+                    dispatchBtn.disabled = false;
+                    dispatchBtn.innerHTML = originalText;
+                }
+            }
+
+            showLoading(show) {
+                const loadingState = document.getElementById('loadingState');
+                const certificateContent = document.getElementById('certificateContent');
+                const errorState = document.getElementById('errorState');
+
+                if (show) {
+                    loadingState.style.display = 'block';
+                    certificateContent.style.display = 'none';
+                    errorState.style.display = 'none';
+                } else {
+                    loadingState.style.display = 'none';
+                }
+            }
+
+            showError(message) {
+                const loadingState = document.getElementById('loadingState');
+                const certificateContent = document.getElementById('certificateContent');
+                const errorState = document.getElementById('errorState');
+                const errorMessage = document.getElementById('errorMessage');
+
+                loadingState.style.display = 'none';
+                certificateContent.style.display = 'none';
+                errorState.style.display = 'block';
+                errorMessage.textContent = message;
+            }
+
+            // Utility functions
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            formatDate(isoString) {
+                if (!isoString) return 'N/A';
+                try {
+                    const date = new Date(isoString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                } catch {
+                    return isoString;
+                }
+            }
+
+            formatDateTime(isoString) {
+                if (!isoString) return 'N/A';
+                try {
+                    const date = new Date(isoString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } catch {
+                    return isoString;
+                }
+            }
+
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the certificate details manager
+        document.addEventListener('DOMContentLoaded', () => {
+            window.certificateDetailsManager = new CertificateDetailsManager();
+        });
+    </script>
+</body>
+
+</html>
