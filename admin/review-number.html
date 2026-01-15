@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Auto Assign Reviewers - Certificate Management</title>
+
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Page-specific CSS -->
+    <style>
+        :root {
+            --brand: #cc5500;
+            --accent-hover: #b34c00;
+            --bg-white: #ffffff;
+            --light: #f8f9fa;
+            --border-color: #e2e8f0;
+            --text-color: #1a202c;
+            --text-light: #718096;
+            --danger-dark: #c53030;
+            --warning-yellow: #f6e05e;
+            --accent-orange-soft: #fffaf0;
+            --transition: all 0.3s ease;
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            margin-bottom: 2rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* Current Setting Display */
+        .current-setting-display {
+            background: linear-gradient(90deg, rgba(0, 191, 255, 0.06), rgba(31, 27, 81, 0.02));
+            border-radius: 16px;
+            padding: 2rem;
+            border: 3px solid var(--lite-secondary6);
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .current-setting-label {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .current-setting-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .current-setting-unit {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem ;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: stretch;
+            max-width: 400px;
+        }
+
+        .form-control {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px 0 0 12px;
+            background: var(--bg-white);
+            color: var(--text-color);
+            font-size: 1.1rem;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 4px rgba(204, 85, 0, 0.15);
+            outline: none;
+        }
+
+        .input-group-text {
+            background: var(--light);
+            border: 2px solid var(--border-color);
+            border-left: none;
+            padding: 1rem 1.5rem;
+            border-radius: 0 12px 12px 0;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 1.1rem;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .form-text {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .form-text i {
+            color: var(--primary-color);
+            margin-top: 0.2rem;
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            color: var(--danger-dark);
+            font-size: 0.95rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #fed7d7;
+            border-radius: 8px;
+            border-left: 4px solid var(--danger-dark);
+        }
+
+        .error-message i {
+            margin-right: 0.5rem;
+        }
+
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+            min-width: 180px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(204, 85, 0, 0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Spinner */
+        .spinner-border {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border 0.75s linear infinite;
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-message.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #38a169;
+        }
+
+        .status-message.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .status-message i {
+            font-size: 1.25rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .content-card {
+                padding: 1.5rem;
+            }
+
+            .current-setting-value {
+                font-size: 2.5rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+                max-width: 100%;
+            }
+
+            .form-control {
+                border-radius: 12px 12px 0 0;
+                text-align: center;
+                font-size: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .input-group-text {
+                border-radius: 0 0 12px 12px;
+                border-top: none;
+                border-left: 2px solid var(--border-color);
+                padding: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+
+        /* Info Box */
+        /* .info-box {
+            background: linear-gradient(135deg, rgba(0, 191, 255, 0.06), rgba(31, 27, 81, 0.02));
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 191, 255, 0.15);
+        } */
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="container">
+                    <!-- Page Header -->
+                    <div class="container page-title">
+                        <h1>Auto Assign Reviewers</h1>
+                        <p>Configure the automatic reviewer assignment</p>
+                    </div>
+
+                    <!-- Status Message Area -->
+                    <div id="statusMessage" class="status-message">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="statusText"></span>
+                    </div>
+
+                    <!-- Main Content Card -->
+                    <div class="content-card">
+                        <!-- Current Setting -->
+                        <div class="current-setting-display">
+                            <div class="current-setting-label">
+                                <i class="fas fa-user-check"></i>
+                                Current Auto-Assigned Reviewers Per Submission
+                            </div>
+                            <div class="current-setting-value" id="currentReviewersNumber"></div>
+                            <div class="current-setting-unit">reviewers per submission</div>
+                        </div>
+
+                        <!-- Update Form -->
+                        <div class="form-section">
+                            <div class="form-header">
+                                <h3><i class="fas fa-edit"></i> Update Reviewers Number</h3>
+                                <p>Enter a new value between 1 and 50 reviewers per submission</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newReviewersNumber" class="form-label">
+                                    <i class="fas fa-user-plus"></i>
+                                    Number of Reviewers to Auto-Assign
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" id="newReviewersNumber" class="form-control" min="1" max="50" value="3" placeholder="Enter number (1-50)" aria-label="Number of reviewers to auto-assign">
+                                    <span class="input-group-text">reviewers</span>
+                                </div>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i>
+                                    The system will automatically assign this many reviewers to each new submission.
+                                </div>
+                                <div class="error-message" id="reviewersError">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span id="reviewersErrorMessage"></span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary" id="resetBtn">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button class="btn btn-primary" id="updateReviewersBtn">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'certificates';
+    </script>
+
+    <script src="/assets/js/layout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class ReviewNumberManager {
+            constructor() {
+                this.currentNumber = 3; // Demo value
+                this.isLoading = false;
+                this.originalValue = 3;
+
+                this.init();
+            }
+
+            init() {
+                this.cacheElements();
+                this.bindEvents();
+                this.fetchCurrentNumber();
+            }
+
+            cacheElements() {
+                this.currentNumberDisplay = document.getElementById('currentReviewersNumber');
+                this.newNumberInput = document.getElementById('newReviewersNumber');
+                this.updateBtn = document.getElementById('updateReviewersBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.errorDisplay = document.getElementById('reviewersError');
+                this.errorMessage = document.getElementById('reviewersErrorMessage');
+                this.statusMessage = document.getElementById('statusMessage');
+                this.statusText = document.getElementById('statusText');
+            }
+
+            bindEvents() {
+                // Input validation
+                if (this.newNumberInput) {
+                    this.newNumberInput.addEventListener('input', () => {
+                        this.validateInput();
+                        this.checkForChanges();
+                    });
+
+                    this.newNumberInput.addEventListener('change', () => {
+                        this.validateInput();
+                        this.checkForChanges();
+                    });
+                }
+
+                // Update button click
+                if (this.updateBtn) {
+                    this.updateBtn.addEventListener('click', () => this.updateReviewersNumber());
+                }
+
+                // Reset button click
+                if (this.resetBtn) {
+                    this.resetBtn.addEventListener('click', () => this.resetForm());
+                }
+            }
+
+            async fetchCurrentNumber() {
+                try {
+                    const response = await fetch(`${BASE_URL}/settings`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: Failed to fetch settings`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && data.settings) {
+                        this.currentNumber = data.settings.numberOfReviewersAutoAssignedPerSubmission || 0;
+                        this.updateDisplay();
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.error('Error fetching reviewers number:', error);
+                    // Use demo value if API fails
+                    this.updateDisplay();
+                }
+            }
+
+            updateDisplay() {
+                if (this.currentNumberDisplay) {
+                    this.currentNumberDisplay.textContent = this.currentNumber;
+                }
+
+                if (this.newNumberInput) {
+                    this.newNumberInput.value = this.currentNumber;
+                }
+
+                this.originalValue = this.currentNumber;
+                this.checkForChanges();
+            }
+
+            validateInput() {
+                const value = parseInt(this.newNumberInput.value);
+
+                if (isNaN(value)) {
+                    this.showError('Please enter a valid number');
+                    return false;
+                }
+
+                if (value < 1) {
+                    this.showError('Number must be at least 1 reviewer');
+                    return false;
+                }
+
+                if (value > 50) {
+                    this.showError('Number cannot exceed 50 reviewers');
+                    return false;
+                }
+
+                this.hideError();
+                return true;
+            }
+
+            checkForChanges() {
+                const value = parseInt(this.newNumberInput.value);
+                if (isNaN(value)) return;
+
+                if (value === this.originalValue) {
+                    this.updateBtn.disabled = true;
+                } else {
+                    this.updateBtn.disabled = false;
+                }
+            }
+
+            showError(message) {
+                if (this.errorDisplay && this.errorMessage) {
+                    this.errorMessage.textContent = message;
+                    this.errorDisplay.style.display = 'block';
+                }
+
+                if (this.updateBtn) {
+                    this.updateBtn.disabled = true;
+                }
+            }
+
+            hideError() {
+                if (this.errorDisplay) {
+                    this.errorDisplay.style.display = 'none';
+                }
+            }
+
+            showStatus(message, type = 'success') {
+                if (this.statusMessage && this.statusText) {
+                    this.statusText.textContent = message;
+                    this.statusMessage.className = `status-message ${type}`;
+                    this.statusMessage.style.display = 'flex';
+
+                    if (type === 'success') {
+                        this.statusMessage.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
+                    } else {
+                        this.statusMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>${message}</span>`;
+                    }
+
+                    // Auto-hide after 5 seconds
+                    setTimeout(() => {
+                        this.statusMessage.style.display = 'none';
+                    }, 5000);
+                }
+            }
+
+            resetForm() {
+                if (this.newNumberInput) {
+                    this.newNumberInput.value = this.currentNumber;
+                }
+                this.hideError();
+                this.updateBtn.disabled = true;
+                this.showStatus('Form reset to current value', 'success');
+            }
+
+            async updateReviewersNumber() {
+                // Validate input
+                if (!this.validateInput()) {
+                    return;
+                }
+
+                const newNumber = parseInt(this.newNumberInput.value);
+
+                // Check if number changed
+                if (newNumber === this.currentNumber) {
+                    this.showStatus('Number is already set to this value', 'error');
+                    return;
+                }
+
+                if (!token) {
+                    this.showStatus('Authentication token not found. Please login again.', 'error');
+                    return;
+                }
+
+                this.isLoading = true;
+                const originalText = this.updateBtn.innerHTML;
+                this.updateBtn.disabled = true;
+                this.updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+
+                try {
+                    const payload = {
+                        numberOfReviewersAutoAssignedPerSubmission: newNumber
+                    };
+
+                    const response = await fetch(`${BASE_URL}/settings`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Update current number
+                        this.currentNumber = newNumber;
+                        this.updateDisplay();
+
+                        // Show success message
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message || 'Reviewers number updated successfully',
+                            confirmButtonColor: '#3085d6',
+                            timer: 2000,
+                            showConfirmButton: true
+                        });
+
+                        this.showStatus('Reviewers number updated successfully!', 'success');
+
+                    } else {
+                        throw new Error(data.message || 'Failed to update reviewers number');
+                    }
+
+                } catch (error) {
+                    console.error('Error updating reviewers number:', error);
+
+                    // Show error with SweetAlert
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Update Failed',
+                        text: error.message || 'Failed to update reviewers number. Please try again.',
+                        confirmButtonColor: '#d33',
+                    });
+
+                    this.showStatus(error.message || 'Failed to update reviewers number', 'error');
+
+                    // Reset to current value
+                    this.newNumberInput.value = this.currentNumber;
+
+                } finally {
+                    this.isLoading = false;
+                    this.updateBtn.disabled = false;
+                    this.updateBtn.innerHTML = originalText;
+                    this.checkForChanges();
+                }
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Toastr
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 3000,
+                extendedTimeOut: 1000
+            };
+
+            // Initialize manager
+            window.reviewNumberManager = new ReviewNumberManager();
+        });
+    </script>
+
+</body>
+
+</html>

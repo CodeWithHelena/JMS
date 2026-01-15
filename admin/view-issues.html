@@ -1190,10 +1190,11 @@
                 }
 
                 issuesGrid.innerHTML = this.issues.map(issue => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const publicationDate = new Date(issue.publicationDate);
+                    const today = new Date().setHours(0, 0, 0, 0);
+                    const publicationDate = new Date(issue.publicationDate).setHours(0, 0, 0, 0);
+
                     const isPublished = publicationDate <= today;
+
                     const status = isPublished ? 'Published' : 'Upcoming';
 
                     return `
@@ -1214,7 +1215,7 @@
                                     <div class="meta-value">${issue.volume}</div>
                                 </div>
                                 <div class="meta-item">
-                                    <div class="meta-label">Issue</div>
+                                    <div class="meta-label">Issue Number</div>
                                     <div class="meta-value">${issue.issueNumber}</div>
                                 </div>
                                 <div class="meta-item">
@@ -1238,7 +1239,7 @@
                             </div>
                             
                             <div class="issue-actions">
-                                <a href="issue-detail.html?id=${issue._id}" class="btn-view">
+                                <a href="issue-submission.html?id=${issue._id}" class="btn-view">
                                     <i class="fas fa-eye"></i> View
                                 </a>
                                 <button class="btn-edit" data-id="${issue._id}">

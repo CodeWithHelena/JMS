@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Journal Settings</title>
+
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <!-- Page-specific CSS -->
+    <style>
+        :root {
+            --primary-color: #00BFFF;
+            --lite-primary-color: #00BFFF;
+            --secondary-color: #1F1B51;
+            --secondary-color2: #00BFFF;
+            --secondary-color3: #0E6BA7;
+            --lite-secondary1: #1F77A1;
+            --lite-secondary2: #0A7AB5;
+            --lite-secondary3: #83B4CE;
+            --lite-secondary4: #B7D4E3;
+            --lite-secondary5: #FEFDFD;
+            --lite-secondary6: #EBF2FE;
+            --brand: #cc5500;
+            --accent-hover: #b34c00;
+            --bg-white: #ffffff;
+            --light: #f8f9fa;
+            --border-color: #e2e8f0;
+            --text-color: #1a202c;
+            --text-light: #718096;
+            --danger-dark: #c53030;
+            --warning-yellow: #f6e05e;
+            --accent-orange-soft: #fffaf0;
+            --success-green: #38a169;
+            --info-blue: #3182ce;
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Journal Card */
+        .journal-card {
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .journal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color3));
+        }
+
+        .journal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .journal-title-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .journal-issn {
+            display: inline-block;
+            background: var(--light);
+            color: var(--secondary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid var(--lite-secondary4);
+        }
+
+        .edit-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .edit-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(204, 85, 0, 0.2);
+        }
+
+        /* Journal Details Grid */
+        .journal-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .detail-section {
+            background: var(--lite-secondary5);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .detail-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color3);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--lite-secondary4);
+        }
+
+        .detail-section h3 i {
+            color: var(--primary-color);
+        }
+
+        .detail-item {
+            margin-bottom: 1rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .detail-value {
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .detail-value.url,
+        .detail-value.email {
+            color: var(--lite-secondary1);
+            text-decoration: none;
+        }
+
+        .detail-value.url:hover,
+        .detail-value.email:hover {
+            text-decoration: underline;
+            color: var(--primary-color);
+        }
+
+        /* Indexing List */
+        .indexing-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .indexing-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .indexing-list li:last-child {
+            border-bottom: none;
+        }
+
+        .indexing-list i {
+            color: var(--primary-color);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 12, 20, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1300;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-white);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, rgba(0, 191, 255, 0.06), rgba(31, 27, 81, 0.02));
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-header h2 i {
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            background: var(--light);
+            color: var(--text-color);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            background: var(--lite-secondary5);
+            border-radius: 0 0 20px 20px;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--danger-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-color);
+            background: var(--bg-white);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.1);
+        }
+
+        .form-control.textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-color);
+            background: var(--bg-white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.1);
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .form-text i {
+            color: var(--primary-color);
+            margin-right: 0.25rem;
+        }
+
+        /* Indexing Form Section */
+        .indexing-form-section {
+            background: var(--lite-secondary6);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .indexing-form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .indexing-form-header h4 {
+            margin: 0;
+            color: var(--secondary-color3);
+            font-size: 1.1rem;
+        }
+
+        .btn-add-indexing {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add-indexing:hover {
+            background: var(--lite-secondary1);
+            transform: translateY(-2px);
+        }
+
+        .indexing-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .indexing-item .form-control {
+            flex: 1;
+        }
+
+        .btn-remove-indexing {
+            background: var(--danger-dark);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove-indexing:hover {
+            background: #9b2c2c;
+            transform: scale(1.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--brand);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(204, 85, 0, 0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        /* Spinner */
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 0.2em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border 0.75s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .journal-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .journal-title-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .edit-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .journal-details {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .indexing-item {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .indexing-item .form-control {
+                width: 100%;
+            }
+
+            .btn-remove-indexing {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <!-- Page Header -->
+                <div class="container page-title">
+                    <h1>Journal Settings</h1>
+                    <p>Manage your journal's information, policies, and settings.</p>
+                </div>
+
+                <!-- Journal Display Card -->
+                <div class="journal-card">
+                    <div class="journal-header">
+                        <div class="journal-title-section">
+                            <h2 id="journalTitle">Loading...</h2>
+                            <span class="journal-issn" id="journalIssn">ISSN: Loading...</span>
+                        </div>
+                        <button class="edit-btn" id="editJournalBtn">
+                            <i class="fas fa-edit"></i> Edit Journal
+                        </button>
+                    </div>
+
+                    <div class="journal-details">
+                        <!-- Basic Information -->
+                        <div class="detail-section">
+                            <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                            <div class="detail-item">
+                                <div class="detail-label">Publisher</div>
+                                <div class="detail-value" id="journalPublisher">Loading...</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Description</div>
+                                <div class="detail-value" id="journalDescription">Loading...</div>
+                            </div>
+                        </div>
+
+                        <!-- Contact & Website -->
+                        <div class="detail-section">
+                            <h3><i class="fas fa-globe"></i> Contact & Website</h3>
+                            <div class="detail-item">
+                                <div class="detail-label">Website</div>
+                                <div class="detail-value">
+                                    <a href="#" id="journalWebsite" class="url" target="_blank">Loading...</a>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value">
+                                    <a href="mailto:" id="journalEmail" class="email">Loading...</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review Policy & Fees -->
+                        <div class="detail-section">
+                            <h3><i class="fas fa-cog"></i> Policies & Fees</h3>
+                            <div class="detail-item">
+                                <div class="detail-label">Review Policy</div>
+                                <div class="detail-value" id="journalReviewPolicy">Loading...</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Submission Fee</div>
+                                <div class="detail-value" id="journalSubmissionFee">Loading...</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Publication Fee</div>
+                                <div class="detail-value" id="journalPublicationFee">Loading...</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Currency</div>
+                                <div class="detail-value" id="journalCurrency">Loading...</div>
+                            </div>
+                        </div>
+
+                        <!-- Indexing Services -->
+                        <div class="detail-section">
+                            <h3><i class="fas fa-search"></i> Indexing Services</h3>
+                            <ul class="indexing-list" id="journalIndexing">
+                                <li><i class="fas fa-spinner fa-spin"></i> Loading...</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">Last Updated</div>
+                        <div class="detail-value" id="journalUpdatedAt">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Edit Journal Modal -->
+                <div class="modal-overlay" id="editJournalModal">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h2><i class="fas fa-edit"></i> Edit Journal Information</h2>
+                            <button class="modal-close" id="modalClose">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editJournalForm">
+                                <div class="form-grid">
+                                    <!-- Basic Information -->
+                                    <div class="form-group">
+                                        <label for="editTitle" class="form-label required">Journal Title</label>
+                                        <input type="text" id="editTitle" class="form-control" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editIssn" class="form-label">ISSN</label>
+                                        <input type="text" id="editIssn" class="form-control">
+                                        <div class="form-text"><i class="fas fa-info-circle"></i> International Standard Serial Number</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editPublisher" class="form-label required">Publisher</label>
+                                        <input type="text" id="editPublisher" class="form-control" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editDescription" class="form-label required">Description</label>
+                                        <textarea id="editDescription" class="form-control textarea" rows="4" required></textarea>
+                                    </div>
+
+                                    <!-- Contact Information -->
+                                    <div class="form-group">
+                                        <label for="editWebsite" class="form-label required">Website</label>
+                                        <input type="url" id="editWebsite" class="form-control" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editEmail" class="form-label required">Contact Email</label>
+                                        <input type="email" id="editEmail" class="form-control" required>
+                                    </div>
+
+                                    <!-- Policies -->
+                                    <div class="form-group">
+                                        <label for="editReviewPolicy" class="form-label required">Review Policy</label>
+                                        <select id="editReviewPolicy" class="form-select" required>
+                                            <option value="double-blind">Double-Blind Peer Review</option>
+                                            <option value="single-blind">Single-Blind Peer Review</option>
+                                            <option value="open">Open Peer Review</option>
+                                        </select>
+                                        <div class="form-text"><i class="fas fa-info-circle"></i> Method used for reviewing submissions</div>
+                                    </div>
+
+                                    <!-- Fees -->
+                                    <div class="form-group">
+                                        <label for="editSubmissionFee" class="form-label">Submission Fee</label>
+                                        <input type="number" id="editSubmissionFee" class="form-control" min="0" step="0.01">
+                                        <div class="form-text"><i class="fas fa-info-circle"></i> Fee for submitting articles (0 for free submission)</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editPublicationFee" class="form-label">Publication Fee</label>
+                                        <input type="number" id="editPublicationFee" class="form-control" min="0" step="0.01" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="editCurrency" class="form-label required">Currency</label>
+                                        <select id="editCurrency" class="form-select" required>
+                                            <option value="NGN">Nigerian Naira (NGN)</option>
+                                            <option value="USD">US Dollar (USD)</option>
+                                            <option value="EUR">Euro (EUR)</option>
+                                            <option value="GBP">British Pound (GBP)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Indexing Services -->
+                                    <div class="indexing-form-section">
+                                        <div class="indexing-form-header">
+                                            <h4>Indexing Services</h4>
+                                            <button type="button" class="btn-add-indexing" id="addIndexingBtn">
+                                                <i class="fas fa-plus"></i> Add Service
+                                            </button>
+                                        </div>
+                                        <div id="indexingContainer">
+                                            <!-- Indexing items will be added here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+                            <button class="btn btn-primary" id="modalSave" disabled>
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'journal';
+    </script>
+
+    <script src="/assets/js/layout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        class JournalManager {
+            constructor() {
+                this.journal = null;
+                this.isLoading = false;
+                this.originalData = null;
+                this.indexingCounter = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.cacheElements();
+                this.bindEvents();
+                this.loadJournal();
+                this.setupToastr();
+            }
+
+            cacheElements() {
+                // Display elements
+                this.journalTitle = document.getElementById('journalTitle');
+                this.journalIssn = document.getElementById('journalIssn');
+                this.journalPublisher = document.getElementById('journalPublisher');
+                this.journalDescription = document.getElementById('journalDescription');
+                this.journalWebsite = document.getElementById('journalWebsite');
+                this.journalEmail = document.getElementById('journalEmail');
+                this.journalReviewPolicy = document.getElementById('journalReviewPolicy');
+                this.journalSubmissionFee = document.getElementById('journalSubmissionFee');
+                this.journalPublicationFee = document.getElementById('journalPublicationFee');
+                this.journalCurrency = document.getElementById('journalCurrency');
+                this.journalIndexing = document.getElementById('journalIndexing');
+                this.journalUpdatedAt = document.getElementById('journalUpdatedAt');
+
+                // Modal elements
+                this.editJournalBtn = document.getElementById('editJournalBtn');
+                this.editJournalModal = document.getElementById('editJournalModal');
+                this.modalClose = document.getElementById('modalClose');
+                this.modalCancel = document.getElementById('modalCancel');
+                this.modalSave = document.getElementById('modalSave');
+
+                // Form elements
+                this.editTitle = document.getElementById('editTitle');
+                this.editIssn = document.getElementById('editIssn');
+                this.editPublisher = document.getElementById('editPublisher');
+                this.editDescription = document.getElementById('editDescription');
+                this.editWebsite = document.getElementById('editWebsite');
+                this.editEmail = document.getElementById('editEmail');
+                this.editReviewPolicy = document.getElementById('editReviewPolicy');
+                this.editSubmissionFee = document.getElementById('editSubmissionFee');
+                this.editPublicationFee = document.getElementById('editPublicationFee');
+                this.editCurrency = document.getElementById('editCurrency');
+                this.addIndexingBtn = document.getElementById('addIndexingBtn');
+                this.indexingContainer = document.getElementById('indexingContainer');
+                this.editJournalForm = document.getElementById('editJournalForm');
+            }
+
+            bindEvents() {
+                // Edit button click
+                this.editJournalBtn.addEventListener('click', () => this.openEditModal());
+
+                // Modal close events
+                this.modalClose.addEventListener('click', () => this.closeEditModal());
+                this.modalCancel.addEventListener('click', () => this.closeEditModal());
+
+                // Close modal on overlay click
+                this.editJournalModal.addEventListener('click', (e) => {
+                    if (e.target === this.editJournalModal) {
+                        this.closeEditModal();
+                    }
+                });
+
+                // Close modal on Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.editJournalModal.classList.contains('active')) {
+                        this.closeEditModal();
+                    }
+                });
+
+                // Form input changes
+                this.editJournalForm.addEventListener('input', () => this.validateForm());
+
+                // Save button click
+                this.modalSave.addEventListener('click', () => this.saveJournal());
+
+                // Add indexing button
+                this.addIndexingBtn.addEventListener('click', () => this.addIndexingField());
+            }
+
+            setupToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 4000,
+                    extendedTimeOut: 1000,
+                    showMethod: "slideDown",
+                    hideMethod: "slideUp"
+                };
+            }
+
+            async loadJournal() {
+                this.showLoadingState(true);
+
+                try {
+                    const response = await fetch(`${BASE_URL}/journal`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: Failed to load journal`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && data.mainJournal) {
+                        this.journal = data.mainJournal;
+                        this.updateDisplay();
+                    } else {
+                        throw new Error(data.message || 'Invalid journal data');
+                    }
+                } catch (error) {
+                    console.error('Error loading journal:', error);
+                    toastr.error(error.message || 'Failed to load journal information');
+                } finally {
+                    this.showLoadingState(false);
+                }
+            }
+
+            updateDisplay() {
+                if (!this.journal) return;
+
+                // Update display elements
+                this.journalTitle.textContent = this.journal.title;
+                this.journalIssn.textContent = `ISSN: ${this.journal.issn || 'Pending'}`;
+                this.journalPublisher.textContent = this.journal.publisher || 'Not specified';
+                this.journalDescription.textContent = this.journal.description || 'No description available';
+
+                // Website link
+                this.journalWebsite.textContent = this.journal.website || 'Not specified';
+                this.journalWebsite.href = this.journal.website || '#';
+
+                // Email link
+                this.journalEmail.textContent = this.journal.email || 'Not specified';
+                this.journalEmail.href = `mailto:${this.journal.email || ''}`;
+
+                // Review policy
+                const reviewPolicyMap = {
+                    'double-blind': 'Double-Blind Peer Review',
+                    'single-blind': 'Single-Blind Peer Review',
+                    'open': 'Open Peer Review'
+                };
+                this.journalReviewPolicy.textContent = reviewPolicyMap[this.journal.reviewPolicy] || this.journal.reviewPolicy;
+
+                // Fees and currency
+                const currencySymbols = {
+                    'NGN': '₦',
+                    'USD': '$',
+                    'EUR': '€',
+                    'GBP': '£'
+                };
+                const currencySymbol = currencySymbols[this.journal.currency] || this.journal.currency;
+
+                this.journalSubmissionFee.textContent = `${currencySymbol}${this.journal.submissionFee || 0}`;
+                this.journalPublicationFee.textContent = `${currencySymbol}${this.journal.publicationFee || 0}`;
+                this.journalCurrency.textContent = this.journal.currency || 'NGN';
+
+                // Indexing services
+                this.updateIndexingDisplay();
+
+                // Last updated
+                if (this.journal.updatedAt) {
+                    const date = new Date(this.journal.updatedAt);
+                    this.journalUpdatedAt.textContent = date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            }
+
+            updateIndexingDisplay() {
+                if (!this.journal || !this.journal.indexing || this.journal.indexing.length === 0) {
+                    this.journalIndexing.innerHTML = '<li><i class="fas fa-info-circle"></i> No indexing services </li>';
+                    return;
+                }
+
+                this.journalIndexing.innerHTML = '';
+                this.journal.indexing.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <i class="fas fa-external-link-alt"></i>
+                        ${item.name}
+                        ${item.url ? `<a href="${item.url}" target="_blank" class="url">(Link)</a>` : ''}
+                    `;
+                    this.journalIndexing.appendChild(li);
+                });
+            }
+
+            showLoadingState(show) {
+                if (show) {
+                    this.editJournalBtn.disabled = true;
+                    this.editJournalBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
+                } else {
+                    this.editJournalBtn.disabled = false;
+                    this.editJournalBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Journal';
+                }
+            }
+
+            openEditModal() {
+                if (!this.journal) {
+                    toastr.error('Journal data not loaded');
+                    return;
+                }
+
+                // Store original data for comparison
+                this.originalData = JSON.parse(JSON.stringify(this.journal));
+
+                // Populate form fields
+                this.editTitle.value = this.journal.title || '';
+                this.editIssn.value = this.journal.issn || '';
+                this.editPublisher.value = this.journal.publisher || '';
+                this.editDescription.value = this.journal.description || '';
+                this.editWebsite.value = this.journal.website || '';
+                this.editEmail.value = this.journal.email || '';
+                this.editReviewPolicy.value = this.journal.reviewPolicy || 'double-blind';
+                this.editSubmissionFee.value = this.journal.submissionFee || 0;
+                this.editPublicationFee.value = this.journal.publicationFee || 0;
+                this.editCurrency.value = this.journal.currency || 'NGN';
+
+                // Populate indexing fields
+                this.populateIndexingFields();
+
+                // Show modal
+                this.editJournalModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                // Focus on first field
+                setTimeout(() => {
+                    this.editTitle.focus();
+                }, 100);
+            }
+
+            populateIndexingFields() {
+                this.indexingContainer.innerHTML = '';
+                this.indexingCounter = 0;
+
+                if (this.journal.indexing && this.journal.indexing.length > 0) {
+                    this.journal.indexing.forEach(item => {
+                        this.addIndexingField(item.name, item.url);
+                    });
+                } else {
+                    // Add one empty field by default
+                    this.addIndexingField();
+                }
+            }
+
+            addIndexingField(name = '', url = '') {
+                this.indexingCounter++;
+                const id = this.indexingCounter;
+
+                const indexingItem = document.createElement('div');
+                indexingItem.className = 'indexing-item';
+                indexingItem.innerHTML = `
+                    <input type="text" 
+                           class="form-control indexing-name" 
+                           placeholder="Service name (e.g., Google Scholar)" 
+                           value="${name}">
+                    <input type="url" 
+                           class="form-control indexing-url" 
+                           placeholder="Service URL (optional)" 
+                           value="${url}">
+                    <button type="button" class="btn-remove-indexing" data-id="${id}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                this.indexingContainer.appendChild(indexingItem);
+
+                // Add event listener for remove button
+                const removeBtn = indexingItem.querySelector('.btn-remove-indexing');
+                removeBtn.addEventListener('click', () => {
+                    indexingItem.remove();
+                    this.validateForm();
+                });
+
+                // Add input listeners for validation
+                const nameInput = indexingItem.querySelector('.indexing-name');
+                const urlInput = indexingItem.querySelector('.indexing-url');
+                nameInput.addEventListener('input', () => this.validateForm());
+                urlInput.addEventListener('input', () => this.validateForm());
+
+                this.validateForm();
+            }
+
+            closeEditModal() {
+                this.editJournalModal.classList.remove('active');
+                document.body.style.overflow = '';
+                this.modalSave.disabled = true;
+            }
+
+            validateForm() {
+                // Check if form has changes
+                const formData = this.getFormData();
+                const hasChanges = JSON.stringify(formData) !== JSON.stringify(this.originalData);
+
+                // Basic validation
+                const isTitleValid = this.editTitle.value.trim().length > 0;
+                const isPublisherValid = this.editPublisher.value.trim().length > 0;
+                const isDescriptionValid = this.editDescription.value.trim().length > 0;
+                const isWebsiteValid = this.editWebsite.value.trim().length > 0;
+                const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.editEmail.value);
+                const isPublicationFeeValid = !isNaN(parseFloat(this.editPublicationFee.value)) && parseFloat(this.editPublicationFee.value) >= 0;
+
+                // Validate indexing fields (if any have names, all names must be valid)
+                let indexingValid = true;
+                const indexingItems = this.indexingContainer.querySelectorAll('.indexing-item');
+                indexingItems.forEach(item => {
+                    const nameInput = item.querySelector('.indexing-name');
+                    const urlInput = item.querySelector('.indexing-url');
+
+                    if (nameInput.value.trim() && !urlInput.value.trim()) {
+                        // Name provided but URL is empty - still valid as URL is optional
+                    } else if (nameInput.value.trim() && urlInput.value.trim()) {
+                        // Both provided - validate URL
+                        try {
+                            new URL(urlInput.value);
+                        } catch {
+                            indexingValid = false;
+                        }
+                    }
+                });
+
+                const isValid = isTitleValid && isPublisherValid && isDescriptionValid &&
+                    isWebsiteValid && isEmailValid && isPublicationFeeValid && indexingValid;
+
+                this.modalSave.disabled = !(isValid && hasChanges);
+                return isValid;
+            }
+
+            getFormData() {
+                // Collect indexing data
+                const indexing = [];
+                const indexingItems = this.indexingContainer.querySelectorAll('.indexing-item');
+
+                indexingItems.forEach(item => {
+                    const nameInput = item.querySelector('.indexing-name');
+                    const urlInput = item.querySelector('.indexing-url');
+
+                    if (nameInput.value.trim()) {
+                        indexing.push({
+                            name: nameInput.value.trim(),
+                            url: urlInput.value.trim() || undefined
+                        });
+                    }
+                });
+
+                return {
+                    title: this.editTitle.value.trim(),
+                    issn: this.editIssn.value.trim() || undefined,
+                    publisher: this.editPublisher.value.trim(),
+                    description: this.editDescription.value.trim(),
+                    reviewPolicy: this.editReviewPolicy.value,
+                    submissionFee: parseFloat(this.editSubmissionFee.value) || 0,
+                    publicationFee: parseFloat(this.editPublicationFee.value) || 0,
+                    currency: this.editCurrency.value,
+                    website: this.editWebsite.value.trim(),
+                    email: this.editEmail.value.trim(),
+                    indexing: indexing
+                };
+            }
+
+            async saveJournal() {
+                if (!this.validateForm()) {
+                    toastr.error('Please fix the validation errors before saving');
+                    return;
+                }
+
+                const formData = this.getFormData();
+                this.isLoading = true;
+
+                const originalText = this.modalSave.innerHTML;
+                this.modalSave.disabled = true;
+                this.modalSave.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+                try {
+                    const response = await fetch(`${BASE_URL}/journal`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Update local journal data
+                        this.journal = { ...this.journal, ...formData };
+                        this.updateDisplay();
+
+                        // Show success with SweetAlert
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Journal information updated successfully',
+                            confirmButtonColor: '#3085d6',
+                            timer: 2000,
+                            showConfirmButton: true
+                        });
+
+                        // Close modal
+                        this.closeEditModal();
+
+                    } else {
+                        throw new Error(data.message || 'Failed to update journal');
+                    }
+                } catch (error) {
+                    console.error('Error updating journal:', error);
+                    toastr.error(error.message || 'Failed to update journal. Please try again.');
+                } finally {
+                    this.isLoading = false;
+                    this.modalSave.disabled = false;
+                    this.modalSave.innerHTML = originalText;
+                    this.validateForm();
+                }
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            window.journalManager = new JournalManager();
+        });
+    </script>
+
+</body>
+
+</html>

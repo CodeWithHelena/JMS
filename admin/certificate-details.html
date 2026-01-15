@@ -822,7 +822,7 @@
 
     <script>
         window.SIDEBAR_MODULE = 'admin';
-        window.SIDEBAR_ACTIVE_ID = 'certificates';
+        window.SIDEBAR_ACTIVE_ID = 'certificate';
     </script>
 
     <script src="/assets/js/layout.js"></script>
@@ -830,626 +830,648 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    <script type="module">
-        import { BASE_URL, token } from '../assets/js/utility.js';
-
-        class CertificateDetailsManager {
-            constructor() {
-                this.certificateId = null;
-                this.certificateData = null;
-                this.isLoading = false;
-                this.selectedFile = null;
-
-                this.init();
-            }
-
-            init() {
-                this.initToastr();
-                this.getCertificateIdFromURL();
-
-                if (this.certificateId) {
-                    this.loadCertificateDetails();
-                } else {
-                    this.showError('Certificate ID not found in URL');
-                }
-            }
-
-            initToastr() {
-                toastr.options = {
-                    closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000,
-                    extendedTimeOut: 1000
-                };
-            }
-
-            getCertificateIdFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                this.certificateId = urlParams.get('id');
-
-                if (!this.certificateId) {
-                    // Try to get from hash
-                    const hash = window.location.hash.substring(1);
-                    if (hash) this.certificateId = hash;
-                }
-            }
-
-            async loadCertificateDetails() {
-                this.isLoading = true;
-                this.showLoading(true);
-
-                try {
-                    const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: Failed to load certificate details`);
-                    }
-
-                    const data = await response.json();
-
-                    if (data.success && data.certificate) {
-                        this.certificateData = data.certificate;
-                        this.renderCertificateDetails();
-                    } else {
-                        throw new Error('Invalid response format');
-                    }
-                } catch (error) {
-                    console.error('Error loading certificate details:', error);
-                    this.showError(error.message || 'Failed to load certificate details');
-                } finally {
-                    this.isLoading = false;
-                    this.showLoading(false);
-                }
-            }
-
-            renderCertificateDetails() {
-                if (!this.certificateData) return;
-
-                const certificate = this.certificateData;
-                const author = certificate.authorId || {};
-                const submission = certificate.submissionId || {};
-
-                // Determine status class
-                const statusClass = `status-${certificate.status}`;
-                const statusText = certificate.status.charAt(0).toUpperCase() + certificate.status.slice(1);
-
-                // Determine action buttons based on status and type
-                let actionButtons = '';
-
-                if (certificate.status === 'pending') {
-                    if (certificate.type === 'digital') {
-                        actionButtons = this.renderDigitalCertificateActions();
-                    } else if (certificate.type === 'hardcopy') {
-                        actionButtons = this.renderHardcopyCertificateActions();
-                    }
-                } else if (certificate.status === 'approved' && certificate.fileUrl) {
-                    actionButtons = `
-                        <div class="action-buttons">
-                            <a href="${BASE_URL}${certificate.fileUrl}" target="_blank" class="btn btn-primary">
-                                <i class="fas fa-external-link-alt"></i> View Certificate
-                            </a>
-                            <a href="${BASE_URL}${certificate.fileUrl}" download class="btn btn-secondary">
-                                <i class="fas fa-download"></i> Download Certificate
-                            </a>
-                        </div>
-                    `;
-                }
-
-                // Format dates
-                const issueDate = certificate.issueDate ? this.formatDate(certificate.issueDate) : 'Not issued yet';
-                const requestedDate = certificate.requestedAt ? this.formatDate(certificate.requestedAt) : 'N/A';
-                const updatedDate = certificate.updatedAt ? this.formatDate(certificate.updatedAt) : 'N/A';
-
-                // Build the certificate details HTML with new FULL WIDTH sections
-                const html = `
-                    <div class="certificate-header">
-                        <div class="certificate-title">
-                            <h2>Certificate Details</h2>
-                            <p>Manage and view complete certificate information</p>
-                        </div>
-                        <div class="status-badge ${statusClass}">
-                            <i class="fas fa-${certificate.status === 'pending' ? 'clock' : certificate.status === 'approved' ? 'check-circle' : 'paper-plane'}"></i>
-                            ${statusText}
-                        </div>
-                    </div>
-
-                    <div class="details-sections">
-                        <!-- Publication Details - FULL WIDTH -->
-                        <div class="detail-section publication-section">
-                            <h3><i class="fas fa-file-alt"></i> Publication Details</h3>
-                            <div class="details-grid">
-                                <div class="detail-item">
-                                    <div class="detail-label">
-                                        <i class="fas fa-heading"></i> Publication Title
-                                    </div>
-                                    <div class="detail-value">${this.escapeHtml(submission.title || 'N/A')}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Author Details - FULL WIDTH -->
-                        <div class="detail-section author-section">
-                            <h3><i class="fas fa-user"></i> Author Details</h3>
-                            <div class="details-grid">
-                                <div class="detail-item">
-                                    <div class="detail-label">
-                                        <i class="fas fa-user-circle"></i> Author Name
-                                    </div>
-                                    <div class="detail-value">${this.escapeHtml(author.firstName || '')} ${this.escapeHtml(author.lastName || '')}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">
-                                        <i class="fas fa-envelope"></i> Author Email
-                                    </div>
-                                    <div class="detail-value">${this.escapeHtml(author.email || 'N/A')}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Certificate Details - FULL WIDTH -->
-                        <div class="detail-section certificate-section">
-                            <h3><i class="fas fa-certificate"></i> Certificate Details</h3>
-                            <div class="details-grid">
-                                <div class="detail-item">
-                                    <div class="detail-label">
-                                        <i class="fas fa-hashtag"></i> Certificate Number
-                                    </div>
-                                    <div class="detail-value code">${this.escapeHtml(certificate.certificateNumber || 'N/A')}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">
-                                        <i class="fas fa-tag"></i> Certificate Type
-                                    </div>
-                                    <div class="detail-value">
-                                        <span class="type-badge type-${certificate.type}">
-                                            <i class="fas fa-${certificate.type === 'digital' ? 'file-pdf' : 'box'}"></i>
-                                            ${certificate.type ? certificate.type.charAt(0).toUpperCase() + certificate.type.slice(1) : 'N/A'}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">
-                                        <i class="fas fa-calendar-check"></i> Issue Date
-                                    </div>
-                                    <div class="detail-value">${issueDate}</div>
-                                    ${certificate.issueDate ? `
-                                        <div class="timestamp">
-                                            <i class="far fa-clock"></i> ${this.formatDateTime(certificate.issueDate)}
-                                        </div>
-                                    ` : ''}
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">
-                                        <i class="fas fa-calendar-plus"></i> Requested Date
-                                    </div>
-                                    <div class="detail-value">${requestedDate}</div>
-                                    ${certificate.requestedAt ? `
-                                        <div class="timestamp">
-                                            <i class="far fa-clock"></i> ${this.formatDateTime(certificate.requestedAt)}
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Required Alert -->
-                    ${certificate.status === 'pending' ? `
-                        <div class="alert">
-                            <i class="fas fa-info-circle"></i>
-                            <div>
-                                <strong>Action Required</strong>
-                                <span>This certificate is pending. ${certificate.type === 'digital'
-                            ? 'Please upload the digital certificate file and approve it.'
-                            : 'Please mark this hardcopy certificate as dispatched.'}
-                                </span>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    <!-- Approved Certificate Section -->
-                    ${certificate.status === 'approved' && certificate.fileUrl ? `
-                        <div class="approved-certificate-section">
-                            <h3><i class="fas fa-file-pdf gradient-text"></i> Approved Certificate</h3>
-                            <div class="action-buttons">
-                                <a href="${BASE_URL}${certificate.fileUrl}" target="_blank" class="btn btn-primary">
-                                    <i class="fas fa-external-link-alt"></i> View Certificate
-                                </a>
-                                <a href="${BASE_URL}${certificate.fileUrl}" download class="btn btn-secondary">
-                                    <i class="fas fa-download"></i> Download Certificate
-                                </a>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    <!-- Action Section -->
-                    ${actionButtons ? `
-                        <div class="action-section">
-                            <h3><i class="fas fa-cogs gradient-text"></i> Certificate Actions</h3>
-                            ${actionButtons}
-                        </div>
-                    ` : ''}
-                `;
-
-                document.getElementById('certificateContent').innerHTML = html;
-                document.getElementById('certificateContent').style.display = 'block';
-
-                // Setup event listeners for actions
-                this.setupActionListeners();
-            }
-
-            renderDigitalCertificateActions() {
-                return `
-                    <div class="file-upload-area" id="fileUploadArea">
-                        <div class="file-upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <div class="file-upload-text">Upload Digital Certificate</div>
-                        <div class="file-upload-subtext">Drag & drop your PDF file here or click to browse</div>
-                        <input type="file" id="certificateFile" class="file-input" accept=".pdf" style="display: none;">
-                        <div class="file-requirements">PDF files only • Max size: 10MB</div>
-                    </div>
-
-                    <div class="file-preview" id="filePreview">
-                        <!-- File preview will be added here -->
-                    </div>
-
-                    <div class="action-buttons">
-                        <button id="approveBtn" class="btn btn-success" disabled>
-                            <i class="fas fa-check-circle"></i> Approve Certificate
-                        </button>
-                        <button id="cancelBtn" class="btn btn-secondary">
-                            <i class="fas fa-times-circle"></i> Cancel
-                        </button>
-                    </div>
-                `;
-            }
-
-            renderHardcopyCertificateActions() {
-                return `
-                    <div class="action-buttons">
-                        <button id="dispatchBtn" class="btn btn-info">
-                            <i class="fas fa-paper-plane"></i> Mark as Dispatched
-                        </button>
-                    </div>
-                `;
-            }
-
-            setupActionListeners() {
-                // File upload for digital certificates
-                const fileUploadArea = document.getElementById('fileUploadArea');
-                const certificateFile = document.getElementById('certificateFile');
-                const filePreview = document.getElementById('filePreview');
-                const approveBtn = document.getElementById('approveBtn');
-                const cancelBtn = document.getElementById('cancelBtn');
-                const dispatchBtn = document.getElementById('dispatchBtn');
-
-                if (fileUploadArea && certificateFile) {
-                    fileUploadArea.addEventListener('click', () => certificateFile.click());
-
-                    certificateFile.addEventListener('change', (e) => {
-                        this.handleFileSelection(e.target.files[0]);
-                    });
-
-                    fileUploadArea.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        fileUploadArea.classList.add('dragover');
-                    });
-
-                    fileUploadArea.addEventListener('dragleave', (e) => {
-                        e.preventDefault();
-                        fileUploadArea.classList.remove('dragover');
-                    });
-
-                    fileUploadArea.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        fileUploadArea.classList.remove('dragover');
-
-                        if (e.dataTransfer.files.length) {
-                            this.handleFileSelection(e.dataTransfer.files[0]);
-                        }
-                    });
-                }
-
-                if (approveBtn) {
-                    approveBtn.addEventListener('click', () => this.approveDigitalCertificate());
-                }
-
-                if (cancelBtn) {
-                    cancelBtn.addEventListener('click', () => this.clearFileSelection());
-                }
-
-                if (dispatchBtn) {
-                    dispatchBtn.addEventListener('click', () => this.dispatchHardcopyCertificate());
-                }
-            }
-
-            handleFileSelection(file) {
-                if (!file) return;
-
-                // Validate file type
-                if (file.type !== 'application/pdf') {
-                    toastr.error('Please upload a PDF file only');
-                    return;
-                }
-
-                // Validate file size (10MB)
-                const maxSize = 10 * 1024 * 1024;
-                if (file.size > maxSize) {
-                    toastr.error('File size exceeds 10MB limit');
-                    return;
-                }
-
-                this.selectedFile = file;
-
-                // Update UI
-                const filePreview = document.getElementById('filePreview');
-                const approveBtn = document.getElementById('approveBtn');
-                const fileUploadArea = document.getElementById('fileUploadArea');
-
-                filePreview.innerHTML = `
-                    <div class="file-preview-item">
-                        <div class="file-preview-name">
-                            <i class="fas fa-file-pdf"></i>
-                            <span>${this.escapeHtml(file.name)} (${this.formatFileSize(file.size)})</span>
-                        </div>
-                        <button type="button" class="file-preview-remove" id="removeFile">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-                filePreview.style.display = 'block';
-
-                if (approveBtn) {
-                    approveBtn.disabled = false;
-                }
-
-                if (fileUploadArea) {
-                    fileUploadArea.style.display = 'none';
-                }
-
-                // Add remove file listener
-                document.getElementById('removeFile')?.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.clearFileSelection();
-                });
-            }
-
-            clearFileSelection() {
-                this.selectedFile = null;
-
-                const filePreview = document.getElementById('filePreview');
-                const approveBtn = document.getElementById('approveBtn');
-                const fileUploadArea = document.getElementById('fileUploadArea');
-                const certificateFile = document.getElementById('certificateFile');
-
-                if (filePreview) {
-                    filePreview.style.display = 'none';
-                    filePreview.innerHTML = '';
-                }
-
-                if (approveBtn) {
-                    approveBtn.disabled = true;
-                }
-
-                if (fileUploadArea) {
-                    fileUploadArea.style.display = 'block';
-                }
-
-                if (certificateFile) {
-                    certificateFile.value = '';
-                }
-            }
-
-            async approveDigitalCertificate() {
-                if (!this.selectedFile) {
-                    toastr.error('Please select a certificate file first');
-                    return;
-                }
-
-                const result = await Swal.fire({
-                    title: 'Approve Digital Certificate?',
-                    text: 'Are you sure you want to approve this digital certificate? This action cannot be undone.',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, approve it!',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true
-                });
-
-                if (!result.isConfirmed) return;
-
-                const approveBtn = document.getElementById('approveBtn');
-                const originalText = approveBtn.innerHTML;
-                approveBtn.disabled = true;
-                approveBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Approving...';
-
-                try {
-                    const formData = new FormData();
-                    formData.append('status', 'approved');
-                    formData.append('certificate', this.selectedFile);
-
-                    const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        // Show success message
-                        await Swal.fire({
-                            icon: 'success',
-                            title: 'Certificate Approved!',
-                            text: data.message || 'Digital certificate has been approved successfully.',
-                            confirmButtonColor: '#28a745',
-                            showConfirmButton: true,
-                            timer: 3000
-                        });
-
-                        // Reload certificate details
-                        this.loadCertificateDetails();
-                    } else {
-                        throw new Error(data.message || 'Failed to approve certificate');
-                    }
-                } catch (error) {
-                    console.error('Error approving certificate:', error);
-                    toastr.error(error.message || 'Failed to approve certificate');
-                    approveBtn.disabled = false;
-                    approveBtn.innerHTML = originalText;
-                }
-            }
-
-            async dispatchHardcopyCertificate() {
-                const result = await Swal.fire({
-                    title: 'Dispatch Hardcopy Certificate?',
-                    text: 'Are you sure you want to mark this hardcopy certificate as dispatched?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#17a2b8',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, mark as dispatched',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true
-                });
-
-                if (!result.isConfirmed) return;
-
-                const dispatchBtn = document.getElementById('dispatchBtn');
-                const originalText = dispatchBtn.innerHTML;
-                dispatchBtn.disabled = true;
-                dispatchBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Dispatching...';
-
-                try {
-                    const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            status: 'dispatched'
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        // Show success message
-                        await Swal.fire({
-                            icon: 'success',
-                            title: 'Certificate Dispatched!',
-                            text: data.message || 'Hardcopy certificate has been marked as dispatched.',
-                            confirmButtonColor: '#17a2b8',
-                            showConfirmButton: true,
-                            timer: 3000
-                        });
-
-                        // Reload certificate details
-                        this.loadCertificateDetails();
-                    } else {
-                        throw new Error(data.message || 'Failed to dispatch certificate');
-                    }
-                } catch (error) {
-                    console.error('Error dispatching certificate:', error);
-                    toastr.error(error.message || 'Failed to dispatch certificate');
-                    dispatchBtn.disabled = false;
-                    dispatchBtn.innerHTML = originalText;
-                }
-            }
-
-            showLoading(show) {
-                const loadingState = document.getElementById('loadingState');
-                const certificateContent = document.getElementById('certificateContent');
-                const errorState = document.getElementById('errorState');
-
-                if (show) {
-                    loadingState.style.display = 'block';
-                    certificateContent.style.display = 'none';
-                    errorState.style.display = 'none';
-                } else {
-                    loadingState.style.display = 'none';
-                }
-            }
-
-            showError(message) {
-                const loadingState = document.getElementById('loadingState');
-                const certificateContent = document.getElementById('certificateContent');
-                const errorState = document.getElementById('errorState');
-                const errorMessage = document.getElementById('errorMessage');
-
-                loadingState.style.display = 'none';
-                certificateContent.style.display = 'none';
-                errorState.style.display = 'block';
-                errorMessage.textContent = message;
-            }
-
-            // Utility functions
-            formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-
-            formatDate(isoString) {
-                if (!isoString) return 'N/A';
-                try {
-                    const date = new Date(isoString);
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                } catch {
-                    return isoString;
-                }
-            }
-
-            formatDateTime(isoString) {
-                if (!isoString) return 'N/A';
-                try {
-                    const date = new Date(isoString);
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                } catch {
-                    return isoString;
-                }
-            }
-
-            escapeHtml(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
+   <script type="module">
+    import { BASE_URL, token } from '../assets/js/utility.js';
+
+    class CertificateDetailsManager {
+        constructor() {
+            this.certificateId = null;
+            this.certificateData = null;
+            this.isLoading = false;
+            this.selectedFile = null;
+
+            this.init();
+        }
+
+        init() {
+            this.initToastr();
+            this.getCertificateIdFromURL();
+
+            if (this.certificateId) {
+                this.loadCertificateDetails();
+            } else {
+                this.showError('Certificate ID not found in URL');
             }
         }
 
-        // Initialize the certificate details manager
-        document.addEventListener('DOMContentLoaded', () => {
-            window.certificateDetailsManager = new CertificateDetailsManager();
-        });
-    </script>
+        initToastr() {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 3000,
+                extendedTimeOut: 1000
+            };
+        }
+
+        getCertificateIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.certificateId = urlParams.get('id');
+
+            if (!this.certificateId) {
+                // Try to get from hash
+                const hash = window.location.hash.substring(1);
+                if (hash) this.certificateId = hash;
+            }
+        }
+
+        async loadCertificateDetails() {
+            this.isLoading = true;
+            this.showLoading(true);
+
+            try {
+                const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Failed to load certificate details`);
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.certificate) {
+                    this.certificateData = data.certificate;
+                    this.renderCertificateDetails();
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                console.error('Error loading certificate details:', error);
+                this.showError(error.message || 'Failed to load certificate details');
+            } finally {
+                this.isLoading = false;
+                this.showLoading(false);
+            }
+        }
+
+        renderCertificateDetails() {
+            if (!this.certificateData) return;
+
+            const certificate = this.certificateData;
+            const author = certificate.authorId || {};
+            const submission = certificate.submissionId || {};
+
+            // Determine status class
+            const statusClass = `status-${certificate.status}`;
+            const statusText = certificate.status.charAt(0).toUpperCase() + certificate.status.slice(1);
+
+            // Action buttons should ONLY appear when status is pending
+            let actionButtons = '';
+
+            if (certificate.status === 'pending') {
+                if (certificate.type === 'digital') {
+                    actionButtons = this.renderDigitalCertificateActions();
+                } else if (certificate.type === 'hardcopy') {
+                    actionButtons = this.renderHardcopyCertificateActions();
+                }
+            }
+
+            // Format dates
+            const issueDate = certificate.issueDate ? this.formatDate(certificate.issueDate) : 'Not issued yet';
+            const updatedDate = certificate.updatedAt ? this.formatDate(certificate.updatedAt) : 'N/A';
+
+            const html = `
+                <div class="certificate-header">
+                    <div class="certificate-title">
+                        <h2>Certificate Details</h2>
+                        <p>Manage and view complete certificate information</p>
+                    </div>
+                    <div class="status-badge ${statusClass}">
+                        <i class="fas fa-${certificate.status === 'pending' ? 'clock' : certificate.status === 'approved' ? 'check-circle' : 'paper-plane'}"></i>
+                        ${statusText}
+                    </div>
+                </div>
+
+                <div class="details-sections">
+                    <div class="detail-section publication-section">
+                        <h3><i class="fas fa-file-alt"></i> Publication Details</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-heading"></i> Publication Title
+                                </div>
+                                <div class="detail-value">${this.escapeHtml(submission.title || 'N/A')}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section author-section">
+                        <h3><i class="fas fa-user"></i> Author Details</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-user-circle"></i> Author Name
+                                </div>
+                                <div class="detail-value">${this.escapeHtml(author.firstName || '')} ${this.escapeHtml(author.lastName || '')}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-envelope"></i> Author Email
+                                </div>
+                                <div class="detail-value">${this.escapeHtml(author.email || 'N/A')}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section certificate-section">
+                        <h3><i class="fas fa-certificate"></i> Certificate Details</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-hashtag"></i> Certificate Number
+                                </div>
+                                <div class="detail-value code">${this.escapeHtml(certificate.certificateNumber || 'N/A')}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-tag"></i> Certificate Type
+                                </div>
+                                <div class="detail-value">
+                                    <span class="type-badge type-${certificate.type}">
+                                        <i class="fas fa-${certificate.type === 'digital' ? 'file-pdf' : 'box'}"></i>
+                                        ${certificate.type ? certificate.type.charAt(0).toUpperCase() + certificate.type.slice(1) : 'N/A'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-calendar-check"></i> Issue Date
+                                </div>
+                                <div class="detail-value">${issueDate}</div>
+                                ${certificate.issueDate ? `
+                                    <div class="timestamp">
+                                        <i class="far fa-clock"></i> ${this.formatDateTime(certificate.issueDate)}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                ${certificate.status === 'pending' ? `
+                    <div class="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Action Required</strong>
+                            <span>This certificate is pending. ${certificate.type === 'digital'
+                        ? 'Please upload the digital certificate file and approve it.'
+                        : 'Please mark this hardcopy certificate as dispatched.'}
+                            </span>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${certificate.status === 'approved' && certificate.fileUrl ? `
+                    <div class="approved-certificate-section">
+                        <h3><i class="fas fa-file-pdf gradient-text"></i> Approved Certificate</h3>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary view-certificate-btn" data-file="${this.escapeHtml(certificate.fileUrl)}">
+                                <i class="fas fa-external-link-alt"></i> View Certificate
+                            </button>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${actionButtons ? `
+                    <div class="action-section">
+                        <h3><i class="fas fa-cogs gradient-text"></i> Certificate Actions</h3>
+                        ${actionButtons}
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('certificateContent').innerHTML = html;
+            document.getElementById('certificateContent').style.display = 'block';
+
+            // Setup event listeners for actions (delegated)
+            this.setupActionListeners();
+        }
+
+        renderDigitalCertificateActions() {
+            return `
+                <div class="file-upload-area" id="fileUploadArea">
+                    <div class="file-upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="file-upload-text">Upload Digital Certificate</div>
+                    <div class="file-upload-subtext">Drag & drop your PDF file here or click to browse</div>
+                    <input type="file" id="certificateFile" class="file-input" accept=".pdf" style="display: none;">
+                    <div class="file-requirements">PDF files only • Max size: 10MB</div>
+                </div>
+
+                <div class="file-preview" id="filePreview">
+                    <!-- File preview will be added here -->
+                </div>
+
+                <div class="action-buttons">
+                    <button id="approveBtn" class="btn btn-success" disabled>
+                        <i class="fas fa-check-circle"></i> Approve Certificate
+                    </button>
+                    <button id="cancelBtn" class="btn btn-secondary">
+                        <i class="fas fa-times-circle"></i> Cancel
+                    </button>
+                </div>
+            `;
+        }
+
+        renderHardcopyCertificateActions() {
+            return `
+                <div class="action-buttons">
+                    <button id="dispatchBtn" class="btn btn-info">
+                        <i class="fas fa-paper-plane"></i> Mark as Dispatched
+                    </button>
+                </div>
+            `;
+        }
+
+        setupActionListeners() {
+            const root = document.getElementById('certificateContent');
+
+            // File upload for digital certificates (attach only if elements exist)
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const certificateFile = document.getElementById('certificateFile');
+            const filePreview = document.getElementById('filePreview');
+            const approveBtn = document.getElementById('approveBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const dispatchBtn = document.getElementById('dispatchBtn');
+
+            if (fileUploadArea && certificateFile) {
+                fileUploadArea.addEventListener('click', () => certificateFile.click());
+
+                certificateFile.addEventListener('change', (e) => {
+                    this.handleFileSelection(e.target.files[0]);
+                });
+
+                fileUploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileUploadArea.classList.add('dragover');
+                });
+
+                fileUploadArea.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    fileUploadArea.classList.remove('dragover');
+                });
+
+                fileUploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    fileUploadArea.classList.remove('dragover');
+
+                    if (e.dataTransfer.files.length) {
+                        this.handleFileSelection(e.dataTransfer.files[0]);
+                    }
+                });
+            }
+
+            if (approveBtn) {
+                approveBtn.addEventListener('click', () => this.approveDigitalCertificate());
+            }
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => this.clearFileSelection());
+            }
+
+            if (dispatchBtn) {
+                dispatchBtn.addEventListener('click', () => this.dispatchHardcopyCertificate());
+            }
+
+            // View certificate buttons (may appear in multiple places). Delegated handler:
+            root.querySelectorAll('.view-certificate-btn')?.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const filePath = btn.getAttribute('data-file');
+                    this.openPdfInNewTab(filePath);
+                });
+            });
+        }
+
+        handleFileSelection(file) {
+            if (!file) return;
+
+            // Validate file type
+            if (file.type !== 'application/pdf') {
+                toastr.error('Please upload a PDF file only');
+                return;
+            }
+
+            // Validate file size (10MB)
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                toastr.error('File size exceeds 10MB limit');
+                return;
+            }
+
+            this.selectedFile = file;
+
+            // Update UI
+            const filePreview = document.getElementById('filePreview');
+            const approveBtn = document.getElementById('approveBtn');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+
+            filePreview.innerHTML = `
+                <div class="file-preview-item">
+                    <div class="file-preview-name">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${this.escapeHtml(file.name)} (${this.formatFileSize(file.size)})</span>
+                    </div>
+                    <button type="button" class="file-preview-remove" id="removeFile">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            filePreview.style.display = 'block';
+
+            if (approveBtn) {
+                approveBtn.disabled = false;
+            }
+
+            if (fileUploadArea) {
+                fileUploadArea.style.display = 'none';
+            }
+
+            // Add remove file listener
+            document.getElementById('removeFile')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.clearFileSelection();
+            });
+        }
+
+        clearFileSelection() {
+            this.selectedFile = null;
+
+            const filePreview = document.getElementById('filePreview');
+            const approveBtn = document.getElementById('approveBtn');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const certificateFile = document.getElementById('certificateFile');
+
+            if (filePreview) {
+                filePreview.style.display = 'none';
+                filePreview.innerHTML = '';
+            }
+
+            if (approveBtn) {
+                approveBtn.disabled = true;
+            }
+
+            if (fileUploadArea) {
+                fileUploadArea.style.display = 'block';
+            }
+
+            if (certificateFile) {
+                certificateFile.value = '';
+            }
+        }
+
+        async approveDigitalCertificate() {
+            if (!this.selectedFile) {
+                toastr.error('Please select a certificate file first');
+                return;
+            }
+
+            const result = await Swal.fire({
+                title: 'Approve Digital Certificate?',
+                text: 'Are you sure you want to approve this digital certificate? This action cannot be undone.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, approve it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            });
+
+            if (!result.isConfirmed) return;
+
+            const approveBtn = document.getElementById('approveBtn');
+            const originalText = approveBtn.innerHTML;
+            approveBtn.disabled = true;
+            approveBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Approving...';
+
+            try {
+                const formData = new FormData();
+                formData.append('status', 'approved');
+                formData.append('certificate', this.selectedFile);
+
+                const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Certificate Approved!',
+                        text: data.message || 'Digital certificate has been approved successfully.',
+                        confirmButtonColor: '#28a745',
+                        showConfirmButton: true,
+                        timer: 2500
+                    });
+
+                    if (data.certificate) {
+                        this.certificateData = data.certificate;
+                    } else {
+                        this.certificateData.status = 'approved';
+                    }
+
+                    this.clearFileSelection();
+                    this.renderCertificateDetails();
+                } else {
+                    throw new Error(data.message || 'Failed to approve certificate');
+                }
+            } catch (error) {
+                console.error('Error approving certificate:', error);
+                toastr.error(error.message || 'Failed to approve certificate');
+                approveBtn.disabled = false;
+                approveBtn.innerHTML = originalText;
+            }
+        }
+
+        async dispatchHardcopyCertificate() {
+            const result = await Swal.fire({
+                title: 'Dispatch Hardcopy Certificate?',
+                text: 'Are you sure you want to mark this hardcopy certificate as dispatched?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#17a2b8',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, mark as dispatched',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            });
+
+            if (!result.isConfirmed) return;
+
+            const dispatchBtn = document.getElementById('dispatchBtn');
+            const originalText = dispatchBtn.innerHTML;
+            dispatchBtn.disabled = true;
+            dispatchBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Dispatching...';
+
+            try {
+                const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'dispatched'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Certificate Dispatched!',
+                        text: data.message || 'Hardcopy certificate has been marked as dispatched.',
+                        confirmButtonColor: '#17a2b8',
+                        showConfirmButton: true,
+                        timer: 2500
+                    });
+
+                    if (data.certificate) {
+                        this.certificateData = data.certificate;
+                    } else {
+                        this.certificateData.status = 'dispatched';
+                    }
+
+                    this.renderCertificateDetails();
+                } else {
+                    throw new Error(data.message || 'Failed to dispatch certificate');
+                }
+            } catch (error) {
+                console.error('Error dispatching certificate:', error);
+                toastr.error(error.message || 'Failed to dispatch certificate');
+                dispatchBtn.disabled = false;
+                dispatchBtn.innerHTML = originalText;
+            }
+        }
+
+        openPdfInNewTab(filePath) {
+            if (!filePath) {
+                toastr.error('Certificate file not available');
+                return;
+            }
+
+            let url = filePath;
+
+            try {
+                if (/^https?:\/\//i.test(filePath)) {
+                    url = filePath;
+                } else {
+                    const base = (BASE_URL || '').replace(/\/$/, '');
+                    if (filePath.startsWith('/')) {
+                        url = base ? `${base}${filePath}` : `${window.location.origin}${filePath}`;
+                    } else {
+                        url = base ? `${base}/${filePath}` : `${window.location.origin}/${filePath}`;
+                    }
+                }
+
+                if (url === (BASE_URL || '').replace(/\/$/, '')) {
+                    toastr.error('Invalid certificate file URL');
+                    return;
+                }
+            } catch (err) {
+                console.error('Error building file URL', err);
+                toastr.error('Cannot open certificate file');
+                return;
+            }
+
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        showLoading(show) {
+            const loadingState = document.getElementById('loadingState');
+            const certificateContent = document.getElementById('certificateContent');
+            const errorState = document.getElementById('errorState');
+
+            if (show) {
+                loadingState.style.display = 'block';
+                certificateContent.style.display = 'none';
+                errorState.style.display = 'none';
+            } else {
+                loadingState.style.display = 'none';
+            }
+        }
+
+        showError(message) {
+            const loadingState = document.getElementById('loadingState');
+            const certificateContent = document.getElementById('certificateContent');
+            const errorState = document.getElementById('errorState');
+            const errorMessage = document.getElementById('errorMessage');
+
+            loadingState.style.display = 'none';
+            certificateContent.style.display = 'none';
+            errorState.style.display = 'block';
+            errorMessage.textContent = message;
+        }
+
+        // Utility functions
+        formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        formatDate(isoString) {
+            if (!isoString) return 'N/A';
+            try {
+                const date = new Date(isoString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch {
+                return isoString;
+            }
+        }
+
+        formatDateTime(isoString) {
+            if (!isoString) return 'N/A';
+            try {
+                const date = new Date(isoString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch {
+                return isoString;
+            }
+        }
+
+        escapeHtml(text) {
+            if (text === undefined || text === null) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    }
+
+    // Initialize the certificate details manager
+    document.addEventListener('DOMContentLoaded', () => {
+        window.certificateDetailsManager = new CertificateDetailsManager();
+    });
+</script>
+
+
 </body>
 
 </html>
