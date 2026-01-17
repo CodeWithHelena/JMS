@@ -234,7 +234,7 @@
         }
 
         .issue-scope {
-            color: var(--primary);
+            color: var(--accent-orange-color);
             font-size: var(--font-size-sm);
             font-weight: 600;
             display: flex;
@@ -301,30 +301,6 @@
             display: flex;
             gap: 0.75rem;
         }
-
-        .btn-edit {
-            background: var(--primary-light);
-            color: white;
-            border: 1px solid var(--primary);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: var(--font-size-sm);
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex: 1;
-            justify-content: center;
-            text-decoration: none;
-        }
-
-        .btn-edit:hover {
-            background: var(--primary);
-            color: white;
-        }
-
         .btn-delete {
             background: var(--danger-light);
             color: var(--danger);
@@ -1242,7 +1218,7 @@
                                 <a href="issue-submission.html?id=${issue._id}" class="btn-view">
                                     <i class="fas fa-eye"></i> View
                                 </a>
-                                <button class="btn-edit" data-id="${issue._id}">
+                                <button class="btn-edit btn-light" data-id="${issue._id}">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
                                 <button class="btn-delete" data-id="${issue._id}" data-title="${this.escapeHtml(issue.title)}">

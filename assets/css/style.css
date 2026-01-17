@@ -15,11 +15,24 @@
     --lite-secondary5: #FEFDFD;
     --lite-secondary6: #EBF2FE;
 
+    --hover-bg: var(--primary-color);
+    --active-bg: var(--secondary-color);
+    --info-light: rgba(59, 130, 246, 0.1);
+    
+    --body-bg: #f5f5f5;
     --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --border-light: #e5e7eb;
+    --section-bg: #f9fafb;
 
     /* Accent Colors  */
+    --accent-orange-color: #ea6404;
+    --accent-orange-dark: #cc5500;
     --accent-orange: #FF9F1C;
+    --light-accent-orange: rgba(255, 122, 24, 0.1);
     --warning-yellow: #F4C430;
+    --warning: #f59e0b;
+    --warning-light: rgba(245, 158, 11, 0.1);
     --accent-hover: #b34a00;
 
     /* Soft Accent Color */
@@ -70,7 +83,7 @@
 
     /* Amber for Warning */
     --warning: #f59e0b;
-    --warning-light: rgba(245, 158, 11, 0.1);
+    
     --warning-dark: #d97706;
     --warning-rgb: 245, 158, 11;
 
@@ -184,13 +197,10 @@
     --sidebar-bg: #ffffff;
     --header-bg: #ffffff;
     --bg-white: #ffffff;
-    --body-bg: #f5f5f5;
     --text-color: #333333;
     --text-light: #666666;
     --border-color: #e0e0e0;
     --lite-secondary3: #83B4CE;
-    --hover-bg: var(--lite-secondary3);
-    --active-bg: var(--secondary-color2);
     --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     --transition: all 0.3s ease;
     --brand: var(--secondary-color2);
@@ -218,6 +228,7 @@
     --card-bg: #ffffff;
     /* Card background */
     --light: #f8fafc;
+    --info-light: rgba(59, 130, 246, 0.1);
     /* Light backgrounds */
     --muted: #6b7280;
     /* Muted text/icons */
@@ -438,7 +449,7 @@ p{
 }
 
 /* CUSTOM BUTTON */
-.btn-brand {
+/* .btn-brand {
     align-items: center;
     appearance: none;
     background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);
@@ -487,6 +498,106 @@ p{
 .btn-brand:active {
     box-shadow: #3c4fe0 0 3px 7px inset;
     transform: translateY(2px);
+} */
+
+/* 
+.btn-brand {
+    margin: 10px;
+    padding: 15px 30px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    border-radius: 10px;
+    display: block;
+    border: 0px;
+    font-weight: 700;
+    box-shadow: 0px 0px 14px -7px #f09819;
+    background-image: linear-gradient(45deg, var(--secondary-color) 0%, var(--primary-color) 51%, var(--secondary-color) 100%);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.btn-brand:hover {
+    background-position: right center;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-brand:active {
+    transform: scale(0.95);
+} */
+
+/* .btn-brand-lite {
+    padding: 15px 30px;
+    border: 2px solid var(--secondary-light) !important;
+    color: var(--secondary);
+} */
+
+.btn-light {
+    background: var(--info-light);
+    color: var(--primary-color);
+    border: 1px solid var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-light:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-brand {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-normal);
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-brand:hover {
+    /* background: var(--lite-secondary1); */
+    opacity: 0.7;
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    background: var(--bg-white);
+    color: var(--secondary-color);
+    border: 2px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.btn-cancel:hover {
+    background: var(--bg-light);
+    transform: translateY(-2px);
 }
 
 
@@ -538,6 +649,7 @@ p{
     box-shadow: rgba(131, 192, 253, 0.5) 0 0 0 3px;
     outline: none;
 }
+
 
 ol,
 ul {
@@ -884,6 +996,7 @@ ul {
 
 .page-title p {
     color: var(--text-light);
+    background: red;
 }
 
 .dashboard-cards {

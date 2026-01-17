@@ -1,14 +1,10 @@
 // API Configuration
-export const API_BASE_URL = 'https://fp.247laboratory.net/';
+import { BASE_URL, token } from '/assets/js/utility.js'; 
+
 const API_ENDPOINTS = {
-    EDITORS: 'api/v1/user?role=editor',
+    EDITORS: '/user?role=editor',
     JOURNAL: 'api/v1/journal'
 };
-
-// Get token from localStorage
-function getAuthToken() {
-    return localStorage.getItem('pilot_tkn');
-}
 
 // Reusable Custom Select Component (without search)
 export function createCustomSelect(options) {
@@ -205,16 +201,15 @@ export async function createEditorSelect(options) {
 
     // Fetch editors from API with authentication
     async function fetchEditors() {
-        const token = getAuthToken();
         
         if (!token) {
-            optionsList.innerHTML = '<div class="no-results">Authentication required. Please login.</div>';
+            optionsList.innerHTML = '<div class="no-results">loading</div>';
             console.error('No authentication token found in localStorage');
             return;
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.EDITORS}`, {
+            const response = await fetch(`${BASE_URL}${API_ENDPOINTS.EDITORS}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -449,15 +444,14 @@ export async function selectMultipleEditors(container, placeholder, onSelect) {
 }
 
 // Function to submit journal data
-export async function submitJournalData(formData) {
-    const token = getAuthToken();
+export async function submitScopeData(formData) {
     
     if (!token) {
         throw new Error('Authentication required. Please login.');
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.JOURNAL}`, {
+        const response = await fetch(`${BASE_URL}${API_ENDPOINTS.JOURNAL}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -482,14 +476,13 @@ export async function submitJournalData(formData) {
 
 // Function to update journal data
 export async function updateJournalData(journalId, formData) {
-    const token = getAuthToken();
     
     if (!token) {
         throw new Error('Authentication required. Please login.');
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.JOURNAL}/${journalId}`, {
+        const response = await fetch(`${BASE_URL}${API_ENDPOINTS.JOURNAL}/${journalId}`, {
             method: 'PUT', // or PATCH depending on your API
             headers: {
                 'Authorization': `Bearer ${token}`,

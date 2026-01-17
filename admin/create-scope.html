@@ -45,6 +45,10 @@
     background-color: #1F1B51 !important;
     }
 
+    .container.page-title{
+        margin: 0 2.2rem;
+    }
+
         .create-scope-container {
             max-width: 900px;
             margin: 40px auto;
@@ -94,6 +98,7 @@
             border-radius: 12px;
             box-shadow: var(--shadow);
             padding: 40px;
+            margin: 0 1rem;
             margin-bottom: 40px;
         }
 
@@ -583,6 +588,7 @@
 
             .scope-form-wrapper {
                 padding: 25px;
+                margin: 0 0 40px;
             }
 
             .form-row {
@@ -654,28 +660,6 @@
                                 <input type="text" id="scopeTitle" name="title" class="form-input" placeholder="Enter scope title" required>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="scopeIssn" class="form-label">
-                                        ISSN <span>*</span>
-                                    </label>
-                                    <input type="text" id="scopeIssn" name="issn" class="form-input" placeholder="e.g., 2714-892X" required>
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i> Format: XXXX-XXXX
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="scopeDoiPrefix" class="form-label">
-                                        DOI Prefix
-                                    </label>
-                                    <input type="text" id="scopeDoiPrefix" name="doiPrefix" class="form-input" placeholder="e.g., 10.1234">
-                                    <div class="form-help">
-                                        <i class="fas fa-info-circle"></i> Format: 10.xxxx
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="form-group">
                                 <label for="scopeDescription" class="form-label">
                                     Description <span>*</span>
@@ -683,37 +667,7 @@
                                 <textarea id="scopeDescription" name="description" class="form-textarea" placeholder="Describe the scope's focus and mission" required></textarea>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="scopePublisher" class="form-label">
-                                        Publisher <span>*</span>
-                                    </label>
-                                    <input type="text" id="scopePublisher" name="publisher" class="form-input" placeholder="Enter publisher name" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="scopeScope" class="form-label">
-                                        Scope / Topics <span>*</span>
-                                    </label>
-                                    <input type="text" id="scopeScope" name="scope" class="form-input" placeholder="e.g., AI, Data Science, Networks" required>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="scopeWebsite" class="form-label">
-                                        Website
-                                    </label>
-                                    <input type="url" id="scopeWebsite" name="website" class="form-input" placeholder="https://example.com">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="scopeEmail" class="form-label">
-                                        Contact Email <span>*</span>
-                                    </label>
-                                    <input type="email" id="scopeEmail" name="email" class="form-input" placeholder="editor@example.com" required>
-                                </div>
-                            </div>
+                           
                         </div>
 
                         <!-- Editorial Team Section -->
@@ -741,76 +695,6 @@
                             </div>
                         </div>
 
-                        <!-- Publication Policy Section -->
-                        <div class="form-section">
-                            <h3 class="section-title">
-                                <i class="fas fa-file-alt"></i> Publication Policy
-                            </h3>
-
-                            <div class="form-group">
-                                <label class="form-label">Review Policy <span>*</span></label>
-                                <div id="reviewPolicySelectContainer"></div>
-                                <input type="hidden" id="reviewPolicy" name="reviewPolicy" required>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="submissionFee" class="form-label">
-                                        Submission Fee
-                                    </label>
-                                    <div class="currency-input-group">
-                                        <span class="currency-prefix" id="currencySymbol">NGN</span>
-                                        <input type="number" id="submissionFee" name="submissionFee" class="form-input" placeholder="0" min="0" step="0.01">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="publicationFee" class="form-label">
-                                        Publication Fee
-                                    </label>
-                                    <div class="currency-input-group">
-                                        <span class="currency-prefix" id="currencySymbol2">NGN</span>
-                                        <input type="number" id="publicationFee" name="publicationFee" class="form-input" placeholder="0" min="0" step="0.01">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    Currency <span>*</span>
-                                </label>
-                                <div id="currencySelectContainer"></div>
-                                <input type="hidden" id="currency" name="currency" required>
-                            </div>
-                        </div>
-
-                        <!-- Indexing Services Section -->
-                        <div class="form-section">
-                            <h3 class="section-title">
-                                <i class="fas fa-search"></i> Indexing Services
-                            </h3>
-
-                            <div class="indexing-display" id="indexingDisplay">
-                                <div class="empty-state">No indexing services added</div>
-                            </div>
-
-                            <div class="indexing-input-row">
-                                <div class="form-group">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" id="indexingName" class="form-input" placeholder="e.g., Google Scholar">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">URL</label>
-                                    <input type="url" id="indexingUrl" class="form-input" placeholder="https://example.com">
-                                </div>
-                            </div>
-
-                            <button type="button" class="add-indexing-btn" id="addIndexingBtn">
-                                <i class="fas fa-plus"></i> Add Indexing Service
-                            </button>
-                            <input type="hidden" id="indexingData" name="indexing" value="[]">
-                        </div>
 
                         <!-- Form Actions -->
                         <div class="form-actions">

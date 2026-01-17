@@ -2,7 +2,7 @@
 /* Sidebar */
 .sidebar {
     width: var(--sidebar-width);
-    background: var(--secondary-color);
+    background: var(--bg-white);
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
@@ -32,7 +32,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid rgb(111, 110, 110);
+    border-bottom: 1px solid rgb(240, 239, 239);
     height: var(--header-height);
 }
 
@@ -74,7 +74,7 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px;
-    color: white;
+    color: var(--secondary-color);
     text-decoration: none;
     border-radius: 8px;
     transition: var(--transition);
@@ -89,12 +89,12 @@
 }
 
 .sidebar-nav a:hover {
-    background: var(--hover-bg);
+    background: rgba(59, 130, 246, 0.1);
 }
 
 .sidebar-nav a.active {
-    background: var(--active-bg);
-    color: white;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--secondary-color);
     font-weight: 600;
 }
 
@@ -118,7 +118,7 @@
 /* footer */
 .sidebar-footer {
     padding: 12px;
-    border-top: 1px solid rgb(111, 110, 110);
+    border-top: 1px solid rgb(240, 239, 239);
 }
 
 .logout-btn {
@@ -127,7 +127,6 @@
     padding: 10px;
     border-radius: 8px;
     text-decoration: none;
-    color: white;
     background: transparent;
 }
 
@@ -150,7 +149,7 @@
     cursor: pointer;
     padding: 10px 16px;
     border-radius: 8px;
-    color: white;
+    color: var(--secondary-color);
     background: transparent;
     border: none;
     font: inherit;
@@ -430,9 +429,9 @@
 
 /* Notification box */
 .notification-box {
-    position: absolute;
-    top: calc(var(--header-height) + 8px);
-    right: 16px;
+    position: fixed;
+    top: calc(var(--header-height) + 0);
+    right: 0;
     width: 320px;
     background: var(--sidebar-bg);
     border-radius: 8px;

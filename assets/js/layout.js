@@ -4,7 +4,7 @@
 // Defensive about missing elements.
 
 // Base API + auth helper (adjusted to match your existing util style)
-const BASE_URL = 'https://fp.247laboratory.net/api/v1/';
+const API_BASE_URL = 'https://jms.247laboratory.net/api/v1';
 
 function getAuthToken2() {
   return localStorage.getItem('token');
@@ -161,19 +161,19 @@ function expandParentDropdowns(el) {
 // Notification API helper functions
 const NOTIFICATION_API = {
   getUnreadCount: function() {
-    return `${BASE_URL}notifications/unread-count`;
+    return `${API_BASE_URL}notifications/unread-count`;
   },
 
   getRecent: function(limit = 3) {
-    return `${BASE_URL}notifications/all?page=1&limit=${limit}`;
+    return `${API_BASE_URL}notifications/all?page=1&limit=${limit}`;
   },
 
   markAsRead: function(id) {
-    return `${BASE_URL}notifications/${id}/read`;
+    return `${API_BASE_URL}notifications/${id}/read`;
   },
 
   clearAll: function() {
-    return `${BASE_URL}notifications/read-all`;
+    return `${API_BASE_URL}notifications/read-all`;
   }
 };
 
