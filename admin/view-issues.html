@@ -53,48 +53,8 @@
             transform: translateY(-1px);
         }
 
-        /* Page Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
 
-        .page-title h1 {
-            font-size: var(--font-size-3xl);
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
 
-        .page-title p {
-            color: var(--text-muted);
-            font-size: var(--font-size-lg);
-        }
-
-        .create-new-btn {
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .create-new-btn:hover {
-            background: var(--btn-primary-hover);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
 
         /* Filter Controls */
         .filter-controls {
@@ -161,31 +121,6 @@
             padding-top: 1.7rem;
         }
 
-        .btn-filter {
-            background: var(--light);
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-filter:hover {
-            background: var(--btn-secondary-hover);
-            border-color: var(--text-light);
-        }
-
-        .btn-filter.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
         /* Issues Grid */
         .issues-grid {
             display: grid;
@@ -205,7 +140,6 @@
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--card-shadow);
-            padding: 1.5rem;
             transition: var(--transition-normal);
             border: 1px solid var(--border);
             height: 100%;
@@ -220,8 +154,9 @@
         }
 
         .issue-header {
+            background: rgb(223, 229, 251);
             margin-bottom: 1rem;
-            padding-bottom: 1rem;
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
             border-bottom: 2px solid var(--light);
         }
 
@@ -234,7 +169,7 @@
         }
 
         .issue-scope {
-            color: var(--accent-orange-color);
+            color: var(--warning);
             font-size: var(--font-size-sm);
             font-weight: 600;
             display: flex;
@@ -247,6 +182,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             margin-bottom: 1.5rem;
+            padding: 0 1.5rem;
         }
 
         .meta-item {
@@ -273,7 +209,7 @@
             background: var(--light);
             border-radius: var(--radius-sm);
             padding: 1rem;
-            margin-bottom: 1.5rem;
+            margin: 0 1.5rem;
         }
 
         .submissions-count {
@@ -300,7 +236,9 @@
             margin-top: auto;
             display: flex;
             gap: 0.75rem;
+            padding: 1.5rem;
         }
+
         .btn-delete {
             background: var(--danger-light);
             color: var(--danger);
@@ -627,16 +565,6 @@
                 padding: 0 0.5rem;
             }
 
-            .page-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .create-new-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
             .filter-controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -671,14 +599,14 @@
             <main class="main-content">
                 <div class="view-issues-container">
                     <!-- Page Header -->
-                    <div class="page-header">
-                        <div class="page-title">
+                    <div class="container page-title">
+                        <div>
                             <h1>Scope Issues</h1>
                             <p>Manage and view all scope issues</p>
                         </div>
-                        <a href="create-issue.html" class="create-new-btn">
+                        <div><a href="create-issue.html" class="btn-brand">
                             <i class="fas fa-plus-circle"></i> Create New Issue
-                        </a>
+                        </a></div>
                     </div>
 
                     <!-- Filter Controls -->
@@ -734,7 +662,7 @@
                         </div>
 
                         <div class="filter-actions">
-                            <button type="button" id="clearFiltersBtn" class="btn-filter">
+                            <button type="button" id="clearFiltersBtn" class="btn-clear">
                                 <i class="fas fa-times"></i> Clear
                             </button>
                         </div>

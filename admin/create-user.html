@@ -22,8 +22,6 @@
 </head>
 <style>
     :root {
-        --primary-color: var(--secondary-color);
-        --secondary-color: var(--lite-primary-color);
         --sidebar-width: 260px;
         --sidebar-collapsed-width: 70px;
         --header-height: 70px;
@@ -36,7 +34,7 @@
         --border-color: #e0e0e0;
         --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         --transition: all 0.3s ease;
-        --brand: var(--secondary-color);
+        --brand: var(--lite-primary-color);
         --muted: #6b7280;
         --success: #10b981;
         --error: #ef4444;
@@ -54,10 +52,6 @@
         color: var(--text-color);
         min-height: 100vh;
     }
-    .sidebar {
-    width: var(--sidebar-width);
-    background-color: #1F1B51 !important;
-    }
 
     .create-user-container {
         max-width: 800px;
@@ -70,29 +64,6 @@
         display: flex;
         align-items: center;
         margin-bottom: 30px;
-    }
-
-    .back-btn {
-        display: inline-flex;
-        align-items: center;
-        color: white;
-        text-decoration: none;
-        font-weight: 600;
-        margin-right: 20px;
-        padding: 10px 16px;
-        border-radius: 6px;
-        transition: var(--transition);
-        background-color: var(--primary-color);
-        border: 1px solid var(--border-color);
-    }
-
-    .back-btn:hover {
-        border: 1px solid var(--border-color);
-        
-    }
-
-    .back-btn i {
-        margin-right: 8px;
     }
 
 
@@ -112,7 +83,7 @@
         color: var(--text-color);
         margin-bottom: 30px;
         padding-bottom: 15px;
-        border-bottom: 2px solid var(--primary-color);
+        border-bottom: 2px solid var(--secondary-color);
         display: flex;
         align-items: center;
         gap: 12px;
@@ -168,7 +139,7 @@
     .form-input:focus {
         outline: none;
         border-color: var(--brand);
-        box-shadow: 0 0 0 3px var(--primary-color);
+        box-shadow: 0 0 0 3px var(--secondary-color);
     }
 
     .form-input.error {
@@ -204,7 +175,7 @@
 
     /* Role Info */
     .role-info {
-        background-color: var(--primary-color);
+        background-color: var(--secondary-color);
         padding: 20px;
         border-radius: 8px;
         border: 1px solid var(--border-color);
@@ -245,46 +216,11 @@
         border-top: 1px solid var(--border-color);
     }
 
-    .cancel-btn {
-        background-color: var(--body-bg);
-        color: var(--text-color);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 14px 28px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-    }
 
-    .cancel-btn:hover {
-        background-color: #e5e5e5;
-    }
 
-    .submit-btn {
-        background-color: var(--brand);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 14px 28px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
 
-    .submit-btn:hover {
-        background-color: #b34900;
-    }
 
-    .submit-btn:disabled {
-        background-color: var(--muted);
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
+
 
     /* Loading State */
     .loading {
@@ -297,7 +233,7 @@
     .loading-spinner {
         width: 40px;
         height: 40px;
-        border: 3px solid var(--primary-color);
+        border: 3px solid var(--secondary-color);
         border-top-color: var(--brand);
         border-radius: 50%;
         animation: spin 1s linear infinite;
@@ -368,10 +304,9 @@
             flex-direction: column;
         }
 
-        .cancel-btn,
-        .submit-btn {
+        .btn-cancel,
+        .btn-brand {
             width: 100%;
-            justify-content: center;
         }
     }
 
@@ -381,9 +316,6 @@
             align-items: flex-start;
         }
 
-        .back-btn {
-            margin-bottom: 15px;
-        }
     }
 </style>
 
@@ -396,21 +328,21 @@
             <div id="header-placeholder"></div> 
 
             <main class="main-content">
-                <div class="container page-title d-flex justify-content-between align-items-center mb-0">
-                    <div>
-                        <h1>Add New Editor</h1>
-                        <p>Create a new editor account for the system</p>
-                    </div>
-                    <div>
-                        <a href="users.html" class="back-btn">
-                            <i class="fas fa-arrow-left"></i> Back to Users
-                        </a>
-                    </div>
-                </div>
                 <div class="create-user-header">
                     
                 </div>
                 <div class="create-user-container">
+                    <div class="container page-title">
+                        <div>
+                            <h1>Add New Editor</h1>
+                            <p>Create a new editor account for the system</p>
+                        </div>
+                        <div>
+                            <a href="users.html" class="btn-back">
+                                <i class="fas fa-arrow-left"></i> Back to Users
+                            </a>
+                        </div>
+                    </div>
                     <!-- Form Container -->
                     <div class="form-container">
                         <div class="form-title">
@@ -472,8 +404,8 @@
 
                             <!-- Form Actions -->
                             <div class="form-actions">
-                                <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
-                                <button type="submit" class="submit-btn" id="submitBtn">
+                                <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                                <button type="submit" class="btn-brand" id="submitBtn">
                                     <i class="fas fa-user-plus"></i> Create Editor
                                 </button>
                             </div>
@@ -493,10 +425,10 @@
                         <h3>Editor Created Successfully!</h3>
                         <p>The new editor account has been created and login credentials have been sent to the provided email.</p>
                         <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center;">
-                            <a href="users.html" class="cancel-btn" style="display: inline-flex; align-items: center; gap: 8px;">
+                            <a href="users.html" class="btn-cancel" style="display: inline-flex; align-items: center; gap: 8px;">
                                 <i class="fas fa-list"></i> View All Users
                             </a>
-                            <button class="submit-btn" id="addAnotherBtn" style="display: inline-flex;">
+                            <button class="btn-brand" id="addAnotherBtn" style="display: inline-flex;">
                                 <i class="fas fa-user-plus"></i> Add Another Editor
                             </button>
                         </div>

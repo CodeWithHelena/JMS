@@ -182,8 +182,7 @@
         }
 
         .custom-select-option:hover {
-            background: var(--lite-primary-color);
-            color: white;
+            background: var(--lite-secondary6);
         }
 
         .custom-select-option.selected {
@@ -193,8 +192,7 @@
         }
 
         .custom-select-option.selected:hover {
-            background: var(--lite-primary-color);
-            color: white;
+            background: var(--lite-secondary6);
         }
 
         @keyframes fadeIn {
@@ -209,48 +207,18 @@
             }
         }
 
-        .btn-primary {
-            background: var(--lite-primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition);
+        .btn-brand {
             height: 44px;
         }
 
-        .btn-primary:hover {
-            background: var(--lite-primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.2);
-        }
-
-        .btn-primary:disabled {
+        .btn-brand:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
-        .btn-secondary {
-            background: var(--bg-white);
-            color: var(--text-light);
-            border: 1.5px solid var(--border-color);
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
+        .btn-clear {
             height: 44px;
-        }
-
-        .btn-secondary:hover {
-            background: var(--text-light);
-            color: white;
         }
 
         /* Table container */
@@ -338,46 +306,8 @@
         }
 
         .btn-view {
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: var(--transition);
-            white-space: nowrap;
-        }
+           height: fit-content;
 
-
-        /* 
-        .btn-view:hover {
-            background: var(--lite-primary-color);
-            opacity: 0.85;
-            transform: translateY(-1px);
-        } */
-
-
-
-        /* Loading state */
-        .loading-state {
-            padding: 3rem 1rem;
-            text-align: center;
-            color: var(--text-light);
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--lite-primary-color);
-            border-top-color: var(--brand);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
         }
 
         @keyframes spin {
@@ -476,8 +406,8 @@
                 min-width: 100%;
             }
 
-            .btn-primary,
-            .btn-secondary {
+            .btn-brand,
+            .btn-clear {
                 width: 100%;
                 justify-content: center;
             }
@@ -510,7 +440,7 @@
 
         /* Filter chips */
         .filter-chips {
-            display: flex;
+            display: none;
             gap: 0.5rem;
             flex-wrap: wrap;
             margin-bottom: 1rem;
@@ -570,8 +500,10 @@
 
             <main class="main-content">
                 <div class="container page-title">
-                    <h1>Certificate Management</h1>
-                    <p>View, approve, and manage certificate requests</p>
+                    <div>
+                        <h1>Certificate Management</h1>
+                        <p>View, approve, and manage certificate requests</p>
+                    </div>
                 </div>
 
                 <!-- Filter controls -->
@@ -613,13 +545,13 @@
                     </div>
 
                     <div class="filter-group" style="min-width: auto; flex: 0 0 auto;">
-                        <button id="applyFilters" class="btn-primary">
+                        <button id="applyFilters" class="btn-brand">
                             <i class="fas fa-search me-1"></i> Search
                         </button>
                     </div>
 
                     <div class="filter-group" style="min-width: auto; flex: 0 0 auto;">
-                        <button id="clearFilters" class="btn-secondary">
+                        <button id="clearFilters" class="btn-clear">
                             <i class="fas fa-times me-1"></i> Clear
                         </button>
                     </div>

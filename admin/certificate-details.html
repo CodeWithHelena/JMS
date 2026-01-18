@@ -50,57 +50,12 @@
                 radial-gradient(circle at 80% 20%, rgba(244, 196, 48, 0.05) 0%, transparent 20%);
         }
 
-        /* Page header */
-        .container.page-title {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 1.5rem 1rem;
-        }
 
-        .page-title h1 {
-            font-size: 1.75rem;
-            margin: 0;
-            color: var(--text-color);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: linear-gradient(135deg, var(--brand) 0%, var(--accent-orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .page-title p {
-            margin: .5rem 0 0;
-            color: var(--text-light);
-            font-size: 1rem;
-        }
-
-        /* Back button */
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--brand);
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-light);
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .back-button:hover {
-            background: var(--accent-orange-soft);
-            border-color: var(--accent-orange);
-            transform: translateX(-4px);
-        }
 
         /* Main content container */
+        .container.page-title{
+            padding: 0 3rem;
+        }
         .content-container {
             max-width: 1000px;
             margin: 0 auto 3rem;
@@ -418,15 +373,6 @@
             transform: translateY(-1px);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--brand), var(--accent-orange));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--accent-hover), var(--brand));
-        }
-
         .btn-success {
             background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
@@ -590,23 +536,7 @@
             z-index: 1;
         }
 
-        /* Loading state */
-        .loading-state {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: var(--text-light);
-        }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            border: 3px solid var(--accent-orange-soft);
-            border-top-color: var(--accent-orange);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1.5rem;
-        }
 
         @keyframes spin {
             to {
@@ -664,7 +594,7 @@
         }
 
         .timestamp i {
-            color: var(--accent-orange);
+            color: var(--primary-color);
         }
 
         /* Alert message */
@@ -772,7 +702,7 @@
 
         /* Gradient text */
         .gradient-text {
-            background: linear-gradient(135deg, var(--brand), var(--accent-orange));
+            background: linear-gradient(135deg, var( --danger), var(--danger-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -788,11 +718,15 @@
 
             <main class="main-content">
                 <div class="container page-title">
-                    <a href="certificate.html" class="back-button">
-                        <i class="fas fa-arrow-left"></i> Back to Certificates
-                    </a>
-                    <h1><i class="fas fa-certificate"></i> Certificate Details</h1>
-                    <p>View and manage certificate details</p>
+                    <div>
+                        <h1>Certificate Details</h1>
+                        <p>View and manage certificate details</p>
+                    </div>
+                    <div>
+                        <a href="certificate.html" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Back to Certificates
+                        </a>
+                    </div>
                 </div>
 
                 <div class="content-container">
@@ -1027,7 +961,7 @@
                     <div class="approved-certificate-section">
                         <h3><i class="fas fa-file-pdf gradient-text"></i> Approved Certificate</h3>
                         <div class="action-buttons">
-                            <button class="btn btn-primary view-certificate-btn" data-file="${this.escapeHtml(certificate.fileUrl)}">
+                            <button class="btn-brand view-certificate-btn" data-file="${this.escapeHtml(certificate.fileUrl)}">
                                 <i class="fas fa-external-link-alt"></i> View Certificate
                             </button>
                         </div>

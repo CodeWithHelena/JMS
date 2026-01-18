@@ -122,7 +122,7 @@
 
         .form-group label.required::after {
             content: "*";
-            color: var(--danger);
+            color: var(--warning);
             margin-left: var(--spacing-xs);
         }
 
@@ -180,39 +180,22 @@
             border-top: 1px solid var(--border);
         }
 
-        .btn-primary {
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-sm);
+        .btn-brand {
             width: 100%;
-            justify-content: center;
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
+            padding: .8rem 0;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            background: ;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:disabled {
+        .btn-brand:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        .btn-primary.loading {
+        .btn-brand.loading {
             position: relative;
             color: transparent;
         }
 
-        .btn-primary.loading::after {
+        .btn-brand.loading::after {
             content: '';
             position: absolute;
             width: 16px;
@@ -290,7 +273,7 @@
 
         .issue-title {
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--warning);
             margin-bottom: 0.25rem;
             font-size: var(--font-size-base);
         }
@@ -336,27 +319,7 @@
             opacity: 0.5;
         }
 
-        .view-all-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            transition: var(--transition-normal);
-            justify-content: center;
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--primary);
-            border-radius: var(--radius-sm);
-        }
 
-        .view-all-link:hover {
-            background: var(--secondary-color2);
-            color: white;
-            gap: 0.75rem;
-        }
 
         /* Loading States */
         .loading-screen {
@@ -495,7 +458,7 @@
 
                                     <!-- Create Button -->
                                     <div class="action-button">
-                                        <button type="submit" id="submitIssueBtn" class="btn-primary">
+                                        <button type="submit" id="submitIssueBtn" class="btn-brand">
                                             <i class="fas fa-plus-circle"></i> Create Issue
                                         </button>
                                     </div>
@@ -518,7 +481,7 @@
                                     </div>
                                 </div>
 
-                                <a href="view-issues.html" class="view-all-link">
+                                <a href="view-issues.html" class="btn-transparent">
                                     <i class="fas fa-external-link-alt"></i> View All Issues
                                 </a>
                             </div>

@@ -2,7 +2,7 @@
 <header class="header" id="header">
     <div class="header-left">
         <div class="toggle-sidebar" id="toggleSidebar" title="Toggle sidebar">
-            <i class="fas fa-arrow-left" id="toggleIcon" style="display:inline-block"></i>
+            <i class="fa-solid fa-angle-left" id="toggleIcon" style="display:inline-block"></i>
             <div class="hamburger" id="hamburger" style="display:none">
                 <span></span><span></span><span></span>
             </div>
@@ -36,8 +36,7 @@
             <!-- User menu for large screens -->
             <div class="floating-dropdown user-dropdown" id="userDropdown">
                 <a href="profile.html" id="userProfileLarge"><i class="fas fa-user"></i> My Profile</a>
-                <a href="#" id="userSettingsLarge"><i class="fas fa-cog"></i> Settings</a>
-                <a href="/login.html" id="userLogoutLarge"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="/login.html" id="userLogoutLarge" id="logoutSidebar" onclick="localStorage.removeItem('token')"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
 
@@ -53,8 +52,7 @@
                     <span class="notification-badge">0</span>
                 </a>
 
-                <a href="#" id="moreSettings"><i class="fas fa-cog"></i> Settings</a>
-                <a href="#" id="moreLogout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="/login.html" id="moreLogout"  id="logoutSidebar" onclick="localStorage.removeItem('token')"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
     </div>

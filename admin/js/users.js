@@ -133,7 +133,7 @@ function renderUserRow(user, index, currentPage, itemsPerPage) {
                 <span class="user-status ${getStatusClass(user)}">${getStatusText(user)}</span>
             </td>
             <td>
-                <button class="action-btn view-btn view-more-btn" data-id="${user._id}">
+                <button class="action-btn btn-brand view-more-btn" data-id="${user._id}">
                     <i class="fas fa-eye"></i> View More
                 </button>
             </td>
@@ -158,7 +158,7 @@ function renderUserCard(user, index, currentPage, itemsPerPage) {
             </div>
             <div class="user-card-footer">
                 <span class="user-status ${getStatusClass(user)}">${getStatusText(user)}</span>
-                <button class="action-btn view-btn view-more-btn" data-id="${user._id}" style="padding: 6px 12px; font-size: 13px;">
+                <button class="action-btn btn-brand view-more-btn" data-id="${user._id}" style="padding: 6px 12px; font-size: 13px;">
                     <i class="fas fa-eye"></i> View
                 </button>
             </div>

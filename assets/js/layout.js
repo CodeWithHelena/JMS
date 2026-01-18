@@ -437,11 +437,8 @@ function initLayoutBindings() {
 
   const moreNotification = document.getElementById('moreNotification');
   const moreProfile = document.getElementById('moreProfile');
-  const moreSettings = document.getElementById('moreSettings');
-  const moreLogout = document.getElementById('moreLogout');
 
   const userProfileLarge = document.getElementById('userProfileLarge');
-  const userSettingsLarge = document.getElementById('userSettingsLarge');
   const userLogoutLarge = document.getElementById('userLogoutLarge');
 
   const themeToggle = document.getElementById('themeToggle');
@@ -467,7 +464,7 @@ function initLayoutBindings() {
 
     if (isLarge()) {
       sidebar.classList.remove('collapsed');
-      if (toggleIcon) { toggleIcon.style.display = 'inline-block'; toggleIcon.className = 'fas fa-arrow-left'; }
+      if (toggleIcon) { toggleIcon.style.display = 'inline-block'; toggleIcon.className = 'fa-solid fa-angle-left'; }
       if (hamburger) hamburger.style.display = 'none';
       const headerLogo = document.querySelector('.header-logo'); if (headerLogo) headerLogo.style.display = 'none';
 
@@ -476,7 +473,7 @@ function initLayoutBindings() {
       if (moreMenu) moreMenu.style.display = 'none';
     } else if (isTabletRange()) {
       sidebar.classList.add('collapsed');
-      if (toggleIcon) { toggleIcon.style.display = 'inline-block'; toggleIcon.className = 'fas fa-arrow-right'; }
+      if (toggleIcon) { toggleIcon.style.display = 'inline-block'; toggleIcon.className = 'fa-solid fa-angle-right'; }
       if (hamburger) hamburger.style.display = 'none';
       const headerLogo = document.querySelector('.header-logo'); if (headerLogo) headerLogo.style.display = 'none';
 
@@ -522,11 +519,11 @@ function initLayoutBindings() {
       const collapsed = sidebar.classList.contains('collapsed');
       if (collapsed) {
         sidebar.classList.remove('collapsed');
-        toggleIcon && (toggleIcon.className = 'fas fa-arrow-left');
+        toggleIcon && (toggleIcon.className = 'fa-solid fa-angle-left');
         if (mainWrapper) mainWrapper.classList.remove('sidebar-collapsed');
       } else {
         sidebar.classList.add('collapsed');
-        toggleIcon && (toggleIcon.className = 'fas fa-arrow-right');
+        toggleIcon && (toggleIcon.className = 'fa-solid fa-angle-right');
         if (mainWrapper) mainWrapper.classList.add('sidebar-collapsed');
       }
     });
@@ -645,10 +642,7 @@ function initLayoutBindings() {
     });
   }
 
-  // user menu actions (large)
-  if (userProfileLarge) userProfileLarge.addEventListener('click', e => { userDropdown && userDropdown.classList.remove('show'); alert('Open My Profile (large screen)'); e.preventDefault(); });
-  if (userSettingsLarge) userSettingsLarge.addEventListener('click', e => { userDropdown && userDropdown.classList.remove('show'); alert('Open Settings (large screen)'); e.preventDefault(); });
-  if (userLogoutLarge) userLogoutLarge.addEventListener('click', e => { userDropdown && userDropdown.classList.remove('show'); alert('Perform logout (large screen)'); e.preventDefault(); });
+
 
   // More (three dot) menu (mobile)
   if (moreMenu) {
@@ -668,7 +662,6 @@ function initLayoutBindings() {
 
   // More menu items
   if (moreSearch) moreSearch.addEventListener('click', function (e) { hideMoreDropdown(); openSearchModal(); e.preventDefault(); });
-  if (moreProfile) moreProfile.addEventListener('click', function (e) { hideMoreDropdown(); alert('Open My Profile (small)'); e.preventDefault(); });
 
   if (moreNotification) {
     moreNotification.addEventListener('click', function (e) {
@@ -679,8 +672,7 @@ function initLayoutBindings() {
     });
   }
 
-  if (moreSettings) moreSettings.addEventListener('click', function (e) { hideMoreDropdown(); alert('Open Settings (small)'); e.preventDefault(); });
-  if (moreLogout) moreLogout.addEventListener('click', function (e) { hideMoreDropdown(); alert('Logout (small)'); e.preventDefault(); });
+  
 
   // Notification icon (large)
   if (notificationIcon) {

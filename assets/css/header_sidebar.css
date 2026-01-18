@@ -189,7 +189,7 @@
     padding-left: 0;
     margin: 0;
     width: 100%;
-    background: transparent !important;
+    border: 1px solid rgb(247, 246, 246) !important;
 }
 
 .dropdown-menu.show {
@@ -207,6 +207,7 @@
     width: 100%;
     margin-left: 0;
     padding-left: 46px;
+    border-radius: 8px;
     background: var(--sidebar-bg);
 }
 
@@ -217,7 +218,7 @@
 }
 
 .dropdown-menu a:hover {
-    background: var(--hover-bg);
+    background: rgba(59, 130, 246, 0.1);
 }
 
 /* When sidebar collapsed hide caret and collapse its menu */
@@ -272,6 +273,7 @@
 
 .toggle-sidebar:hover {
     background: var(--hover-bg);
+    color: white;
 }
 
 .toggle-sidebar i {
@@ -353,6 +355,7 @@
 
 .header-icon:hover {
     background: var(--hover-bg);
+    color: white;
 }
 
 /* show/hide 3-dot menu on mobile */

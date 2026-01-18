@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
 </head>
 <style>
+    .container.page-title{
+        padding: 0 1.4rem;
+    }
     .placeholder {
         background: none !important;
     }
@@ -37,27 +40,6 @@
         flex-wrap: wrap;
     }
 
-    .add-user-btn {
-        background-color: var(--lite-primary-color);
-        color: white;
-        border: none;
-        border-radius: var(--radius-md);
-        padding: 12px 24px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition-normal);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-
-    .add-user-btn:hover {
-        background-color: var(--primary-dark);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
 
     /* Search Bar Section */
     .search-section {
@@ -123,16 +105,8 @@
         box-shadow: 0 0 0 3px var(--primary-light);
     }
 
-    .search-button {
-        background-color: var(--lite-primary-color);
-        color: white;
-        border: none;
-        border-radius: var(--radius-md);
-        padding: 12px 30px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition-normal);
+    .btn-brand,
+    .btn-clear {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -140,32 +114,8 @@
         min-height: 46px;
     }
 
-    .search-button:hover {
-        background-color: var(--lite-primary-color);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .clear-button {
-        background-color: var(--light);
-        color: var(--text-muted);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: 12px 20px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition-normal);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        align-self: flex-end;
-        min-height: 46px;
-    }
-
-    .clear-button:hover {
-        background-color: var(--bg);
-        color: var(--text-primary);
+    .btn-add-user{
+        min-height: auto;
     }
 
     /* Users Table */
@@ -322,18 +272,8 @@
         align-items: center;
         gap: 6px;
         text-decoration: none;
-    }
-
-    .view-btn {
-        background-color: var(--primary-light);
-        color: white;
-        border: 1px solid var(--lite-primary-color);
-    }
-
-    .view-btn:hover {
-        background-color: var(--lite-primary-color);
-        color: white;
-        transform: translateY(-2px);
+        min-height:auto
+    
     }
 
     /* Stats and Pagination */
@@ -475,11 +415,6 @@
             width: 100%;
         }
 
-        .add-user-btn {
-            width: 100%;
-            justify-content: center;
-        }
-
         .search-filters {
             flex-direction: column;
         }
@@ -489,8 +424,8 @@
             min-width: 100%;
         }
 
-        .search-button,
-        .clear-button {
+        .btn-brand,
+        .btn-clear {
             width: 100%;
             justify-content: center;
         }
@@ -638,15 +573,17 @@
 
             <main class="main-content">
                 <div class="container page-title">
-                    <h1>Users Management</h1>
-                    <p>Manage and view all system users</p>
-                </div>
-                <div class="users-container">
+                    <div>
+                        <h1>Users Management</h1>
+                        <p>Manage and view all system users</p>
+                    </div>
                     <div class="header-actions d-flex justify-content-end mb-2">
-                        <button class="add-user-btn" id="addUserBtn">
+                        <button class="btn-brand btn-add-user" id="addUserBtn">
                             <i class="fas fa-user-plus"></i> Add New User
                         </button>
                     </div>
+                </div>
+                <div class="users-container">
                     <!-- Search Section -->
                     <div class="search-section">
                         <div class="search-title">
@@ -670,11 +607,11 @@
                                 <input type="hidden" id="statusFilter" name="status">
                             </div>
 
-                            <button class="search-button" id="searchButton">
+                            <button class="btn-brand" id="searchButton">
                                 <i class="fas fa-search"></i> Search
                             </button>
 
-                            <button class="clear-button" id="clearButton">
+                            <button class="btn-clear" id="clearButton">
                                 <i class="fas fa-times"></i> Clear
                             </button>
                         </div>
