@@ -410,17 +410,17 @@ function renderUserDetails(user) {
                     </h2>
                     <div class="details-grid">
                         <div class="detail-item">
-                            <div class="detail-label">Full Name</div>
+                            <div class="detail-label"><i class="fa fa-user"></i>Full Name</div>
                             <div class="detail-value">${fullName}</div>
                         </div>
                         
                         <div class="detail-item">
-                            <div class="detail-label">Gender</div>
+                            <div class="detail-label"><i class="fa fa-venus-mars"></i>Gender</div>
                             <div class="detail-value">${getGenderText(user.gender)}</div>
                         </div>
                         
                         <div class="detail-item">
-                            <div class="detail-label">Email</div>
+                            <div class="detail-label"><i class="fa fa-envelope"></i>Email</div>
                             <div class="detail-value">${user.email || 'N/A'}</div>
                             ${user.email ? `
                             <div class="detail-actions">
@@ -432,7 +432,7 @@ function renderUserDetails(user) {
                         </div>
                         
                         <div class="detail-item">
-                            <div class="detail-label">Phone</div>
+                            <div class="detail-label"><i class="fa fa-phone"></i>Phone</div>
                             <div class="detail-value">${formattedPhone}</div>
                             ${user.phone ? `
                             <div class="detail-actions">
@@ -445,26 +445,19 @@ function renderUserDetails(user) {
                         
                         ${user.address ? `
                         <div class="detail-item">
-                            <div class="detail-label">Address</div>
+                            <div class="detail-label"><i class="fa fa-location-dot"></i>Address</div>
                             <div class="detail-value">${user.address}</div>
                         </div>
                         ` : ''}
                         
                         ${user.affiliation ? `
                         <div class="detail-item">
-                            <div class="detail-label">Affiliation</div>
+                            <div class="detail-label"><i class="fa fa-building"></i>Affiliation</div>
                             <div class="detail-value">${user.affiliation}</div>
                         </div>
                         ` : ''}
                         
-                        <div class="detail-item">
-                            <div class="detail-label">User ID</div>
-                            <div class="detail-value">
-                                <code style="font-size: 14px; background: var(--body-bg); padding: 4px 8px; border-radius: 4px;">
-                                    ${user._id || 'N/A'}
-                                </code>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 
@@ -475,7 +468,7 @@ function renderUserDetails(user) {
                     </h2>
                     <div class="details-grid">
                         <div class="detail-item">
-                            <div class="detail-label">Account Status</div>
+                            <div class="detail-label"><i class="fa fa-toggle-on"></i>Account Status</div>
                             <div class="detail-value">
                                 <span class="user-status ${currentStatusClass}">
                                     ${currentStatus}
@@ -484,7 +477,7 @@ function renderUserDetails(user) {
                         </div>
                         
                         <div class="detail-item">
-                            <div class="detail-label">Role</div>
+                            <div class="detail-label"><i class="fa fa-user-tag"></i>Role</div>
                             <div class="detail-value">
                                 <span class="user-role ${getRoleClass(user.role)}">
                                     ${user.role || 'N/A'}
@@ -493,7 +486,7 @@ function renderUserDetails(user) {
                         </div>
                         
                         <div class="detail-item">
-                            <div class="detail-label">Verification Status</div>
+                            <div class="detail-label"><i class="fa fa-check-circle"></i>Verification Status</div>
                             <div class="detail-value">
                                 <span class="user-status ${verificationClass}">
                                     ${verificationStatus}
@@ -502,12 +495,12 @@ function renderUserDetails(user) {
                         </div>
                         
                         <div class="detail-item">
-                            <div class="detail-label">Account Created</div>
+                            <div class="detail-label"><i class="fa fa-calendar-plus"></i>Account Created</div>
                             <div class="detail-value">${formatDate(user.createdAt)}</div>
                         </div>
                         
                         <div class="detail-item">
-                            <div class="detail-label">Last Updated</div>
+                            <div class="detail-label"><i class="fa fa-history"></i>Last Updated</div>
                             <div class="detail-value">${formatDate(user.updatedAt)}</div>
                         </div>
                     </div>
@@ -538,12 +531,12 @@ function renderUserDetails(user) {
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="users.html" class="action-btn back-list-btn">
+                    <a href="users.html" class="action-btn btn-light">
                         <i class="fas fa-list"></i> Back to Users
                     </a>
                     
                     ${!user.isDeleted ? `
-                    <button class="action-btn edit-btn" data-user-id="${user._id}">
+                    <button class="action-btn edit-btn btn-brand" data-user-id="${user._id}">
                         <i class="fas fa-edit"></i> Edit User
                     </button>
                     ` : ''}
@@ -571,7 +564,7 @@ function showErrorState(message) {
                 <a href="users.html" class="action-btn back-list-btn" style="display: inline-flex;">
                     <i class="fas fa-arrow-left"></i> Back to Users
                 </a>
-                <button onclick="location.reload()" class="action-btn edit-btn" style="display: inline-flex;">
+                <button onclick="location.reload()" class="action-btn edit-btn btn-brand" style="display: inline-flex;">
                     <i class="fas fa-redo"></i> Retry
                 </button>
             </div>

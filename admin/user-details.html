@@ -4,21 +4,27 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>User Details </title>
-    <!-- Font Awesome (icons) -->
+    <title>User Details</title>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- jQuery (MUST come before toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Global CSS (variables, body, main) -->
+    <!-- Global CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
-
-    <!-- Header + Sidebar CSS -->
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
     <link rel="stylesheet" href="../assets/css/modal.css">
 </head>
+
 <style>
     * {
         margin: 0;
@@ -39,27 +45,7 @@
         padding: 0 20px;
     }
 
-    .back-btn {
-        display: inline-flex;
-        align-items: center;
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 600;
-        margin-bottom: 30px;
-        padding: 10px 16px;
-        border-radius: 6px;
-        transition: var(--transition-normal);
-        background-color: var(--primary-light);
-        border: 1px solid var(--border);
-    }
 
-    .back-btn:hover {
-        background-color: var(--light);
-    }
-
-    .back-btn i {
-        margin-right: 8px;
-    }
 
     .user-details-card {
         background-color: var(--card-bg);
@@ -71,7 +57,7 @@
 
     .user-header {
         padding: 30px;
-        background: linear-gradient(135deg, var(--primary-light), rgba(var(--primary-rgb), 0.08));
+        background: var(--light);
         border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
@@ -171,42 +157,88 @@
     }
 
     .section-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 20px;
-        padding-bottom: 12px;
-        border-bottom: 2px solid var(--primary-light);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--border-light);
         display: flex;
         align-items: center;
+        gap: 1rem;
     }
 
     .section-title i {
         margin-right: 12px;
         color: var(--primary);
+
+            color: var(--warning);
+    font-size: 1.5rem;
+    /* background: var(--card-bg); */
+    background: var(--warning-light);
+    padding: 0.75rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(204, 85, 0, 0.1);
+
     }
 
     .details-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 20px;
+        padding: 2rem;
+        background: var(--section-bg);
+        border-radius: 16px;
+        border: 1px solid var(--border-light);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
-    .detail-item {
-        padding: 20px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-        transition: var(--transition-normal);
+        .details-grid:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--brand);
     }
+
+    .details-grid::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--brand);
+    }
+
+        .detail-item {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            border-color: var(--brand);
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.08);
+            transform: translateY(-2px);
+        }
 
     .detail-label {
-        font-size: 14px;
         font-weight: 600;
-        color: var(--text-muted);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
+
+        .detail-label i {
+        color: var(--primary-color);
+    }
+
 
     .detail-value {
         font-size: 16px;
@@ -214,34 +246,12 @@
         font-weight: 500;
     }
 
-    .detail-item {
+    /* .detail-item {
         padding: 20px;
         border-radius: var(--radius-md);
         border: 1px solid var(--border);
         transition: var(--transition-normal);
-    }
-
-    /* Alternating background colors for detail items */
-    .details-grid .detail-item:nth-child(4n+1) {
-        background-color: rgba(var(--primary-rgb), 0.08);
-    }
-
-    .details-grid .detail-item:nth-child(4n+2) {
-        background-color: rgba(var(--info-rgb), 0.08);
-    }
-
-    .details-grid .detail-item:nth-child(4n+3) {
-        background-color: rgba(var(--success-rgb), 0.08);
-    }
-
-    .details-grid .detail-item:nth-child(4n+4) {
-        background-color: rgba(var(--secondary-rgb), 0.08);
-    }
-
-    .detail-item:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
+    } */
 
     /* Action buttons for email and phone */
     .detail-actions {
@@ -396,14 +406,8 @@
         text-decoration: none;
     }
 
-    .edit-btn {
-        background-color: var(--primary);
-        color: white;
-    }
 
-    .edit-btn:hover {
-        background-color: var(--primary-dark);
-    }
+
 
     .delete-btn {
         background-color: var(--danger-light);
@@ -416,15 +420,9 @@
         color: white;
     }
 
-    .back-list-btn {
-        background-color: var(--primary-light);
-        color: var(--primary);
-        border: 1px solid var(--border);
-    }
-
-    .back-list-btn:hover {
-        background-color: var(--light);
-    }
+.btn-light{
+   flex: none;
+}
 
     /* Loading State */
     .loading {
@@ -537,11 +535,15 @@
 
             <main class="main-content">
                 <div class="container page-title">
-                    <h1>Users Details</h1>
-                    <p>View and Edit User details</p>
-                    <a href="users.html" class="back-btn">
-                        <i class="fas fa-arrow-left"></i> Back to Users
-                    </a>
+                    <div>
+                        <h1>Users Details</h1>
+                        <p>View and Edit User details</p>
+                    </div>
+                    <div>
+                        <a href="users.html" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Back to Users
+                        </a>
+                    </div>
                 </div>
                 <div id="userDetails">
                     <div class="loading">
@@ -558,8 +560,6 @@
         window.SIDEBAR_ACTIVE_ID = 'view-user';
     </script>
     <script src="/assets/js/layout.js"></script>
-    <!-- jQuery (required for toastr) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- User Details Script -->
     <script type="module" src="./js/user-details.js"></script>

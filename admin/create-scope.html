@@ -20,8 +20,6 @@
     <link rel="stylesheet" href="/assets/css/header_sidebar.css">
     <style>
         :root {
-            --primary-color: rgba(204, 85, 0, 0.12);
-            --secondary-color: var(--lite-primary-color);
             --sidebar-width: 260px;
             --sidebar-collapsed-width: 70px;
             --header-height: 70px;
@@ -32,7 +30,6 @@
             --text-color: #333333;
             --text-light: #666666;
             --border-color: #e0e0e0;
-            --hover-bg: rgba(204, 85, 0, 0.12);
             --active-bg: rgba(204, 85, 0, 0.15);
             --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s ease;
@@ -40,10 +37,6 @@
             --muted: #6b7280;
         }
 
-           .sidebar {
-    width: var(--sidebar-width);
-    background-color: #1F1B51 !important;
-    }
 
     .container.page-title{
         margin: 0 2.2rem;
@@ -74,7 +67,7 @@
         }
 
         .scope-back-btn:hover {
-            background-color: var(--primary-color);
+            background-color: var(--secondary-color);
         }
 
         .scope-back-btn i {
@@ -112,7 +105,7 @@
             color: var(--text-color);
             margin-bottom: 20px;
             padding-bottom: 12px;
-            border-bottom: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--border-light);
             display: flex;
             align-items: center;
         }
@@ -159,8 +152,8 @@
 
         .form-input:focus {
             outline: none;
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--primary-color);
+            border-color: var(--warning);
+            box-shadow: 0 0 0 3px var(--warning-light);
         }
 
         .form-textarea {
@@ -180,7 +173,7 @@
         .form-textarea:focus {
             outline: none;
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--primary-color);
+            box-shadow: 0 0 0 3px var(--secondary-color);
         }
 
         /* Custom Select Styles */
@@ -208,7 +201,7 @@
 
         .select-header.active {
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--primary-color);
+            box-shadow: 0 0 0 3px var(--secondary-color);
         }
 
         .select-header .placeholder {
@@ -352,7 +345,7 @@
         }
 
         .currency-prefix {
-            background-color: var(--primary-color);
+            background-color: var(--secondary-color);
             padding: 14px 16px;
             border: 1.5px solid var(--border-color);
             border-right: none;
@@ -381,7 +374,7 @@
         }
 
         .editor-tag {
-            background-color: var(--primary-color);
+            background-color: var(--secondary-color);
             color: var(--brand);
             padding: 8px 16px;
             border-radius: 20px;
@@ -494,7 +487,7 @@
         }
 
         .add-indexing-btn {
-            background-color: var(--primary-color);
+            background-color: var(--secondary-color);
             color: var(--brand);
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -532,38 +525,6 @@
             margin-top: 40px;
             padding-top: 30px;
             border-top: 1px solid var(--border-color);
-        }
-
-        .cancel-btn {
-            background-color: var(--body-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .cancel-btn:hover {
-            background-color: #e5e5e5;
-        }
-
-        .submit-btn {
-            background-color: var(--brand);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .submit-btn:hover {
-            background-color: #b34900;
         }
 
         .form-help {
@@ -609,8 +570,8 @@
                 flex-direction: column;
             }
 
-            .cancel-btn,
-            .submit-btn {
+            .btn-cancel,
+            .btn-brand {
                 width: 100%;
                 text-align: center;
             }
@@ -641,8 +602,10 @@
             <!-- Header Included-->
             <div id="header-placeholder"></div>
             <div class="container page-title">
-                <h1>Create New Scope</h1>
-                <p>Set up a new scope for publication management</p>
+                <div>
+                    <h1>Create New Scope</h1>
+                    <p>Set up a new scope for publication management</p>
+                </div>
             </div>
             <main class="main-content">
                 <div class="container my-4 scope-form-wrapper">
@@ -698,8 +661,8 @@
 
                         <!-- Form Actions -->
                         <div class="form-actions">
-                            <button type="button" class="cancel-btn">Cancel</button>
-                            <button type="submit" class="submit-btn">Create Scope</button>
+                            <button type="button" class="cancel-btn btn-cancel">Cancel</button>
+                            <button type="submit" class="submit-btn btn-brand">Create Scope</button>
                         </div>
                     </form>
                 </div>
