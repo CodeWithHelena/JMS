@@ -705,7 +705,7 @@
 
                 } catch (error) {
                     console.error('Error loading data:', error);
-                    this.showError('Failed to load submissions. Please try again.');
+                    this.showError(error);
                 }
             }
 
@@ -723,12 +723,14 @@
                             'Accept': 'application/json'
                         }
                     });
-
+                    //console.log('Scopes response status:', response);
                     if (!response.ok) {
                         throw new Error(`Failed to fetch scopes: ${response.status}`);
                     }
 
                     const data = await response.json();
+
+                    console.log('Scopes response status:', data);
 
                     if (!data.success) {
                         throw new Error(data.message || 'Failed to load scopes');

@@ -490,6 +490,31 @@
             background: var(--light);
         }
     </style>
+
+    <style>
+        .type-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: capitalize;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .type-digital {
+            background-color: rgba(23, 162, 184, 0.15);
+            color: #17a2b8;
+            border: 1px solid rgba(23, 162, 184, 0.3);
+        }
+
+        .type-hardcopy {
+            background-color: rgba(255, 87, 34, 0.15);
+            color: #ff5722;
+            border: 1px solid rgba(255, 87, 34, 0.3);
+        }
+    </style>
 </head>
 
 <body>
@@ -993,8 +1018,8 @@
                                 ${this.escapeHtml(truncatedTitle)}
                             </td>
                             <td>
-                                <span class="status-badge status-${cert.status}">
-                                    ${cert.status}
+                                <span class="type-badge type-${cert.type}">
+                                    ${cert.type}
                                 </span>
                             </td>
                             <td>

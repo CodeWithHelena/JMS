@@ -521,6 +521,7 @@
                                 <th>S/N</th>
                                 <th>Publication</th>
                                 <th>Certificate Number</th>
+                                <th>Type</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -778,7 +779,7 @@
                         params.set('type', this.currentFilters.type);
                     }
 
-                    const response = await fetch(`${BASE_URL}/certificate?${params.toString()}`, {
+                    const response = await fetch(`${BASE_URL}/certificate/my-certificates?${params.toString()}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
@@ -790,6 +791,7 @@
                     // }
 
                     const data = await response.json();
+                    console.log("data is ", data)
 
                     if (data.success && data.certificates) {
                         this.currentCertificates = data.certificates;
@@ -921,6 +923,11 @@
                             </td>
                             <td>
                                 <code>${this.escapeHtml(cert.certificateNumber || 'N/A')}</code>
+                            </td>
+                           <td>
+                                <span class="type-badge type-${cert.type}">
+                                    ${cert.type}
+                                </span>
                             </td>
                             <td>
                                 <div class="action-buttons">

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scope Details | scopeFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Toastr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --header-height: 70px;
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --bg-white: #ffffff;
+            --body-bg: #f5f5f5;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --hover-bg: rgba(204, 85, 0, 0.12);
+            --active-bg: rgba(204, 85, 0, 0.15);
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --muted: #6b7280;
+        }
+    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+    
+        body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .container.page-title{
+            padding: 0 3rem;
+        }
+    
+        .scope-details-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        
+
+    
+
+        .scope-details-card {
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scope-details-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color3));
+        }
+        
+    
+        .scope-header {
+            padding: 30px;
+            background: var(--light);
+            border-bottom: 1px solid var(--border-color);
+        }
+    
+        .scope-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+    
+        .scope-issn {
+            font-size: 16px;
+            color: var(--brand);
+            font-weight: 600;
+            background-color: rgba(204, 85, 0, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    
+        .scope-body {
+            padding: 30px;
+        }
+    
+        .section {
+            padding: 2rem;
+            background: var(--section-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+         .section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--brand);
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--brand);
+        }
+    
+        .section:last-child {
+            margin-bottom: 0;
+        }
+    
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+    
+        .section-title i {
+            color: var(--warning);
+            font-size: 1.5rem;
+            /* background: var(--card-bg); */
+            background: var(--warning-light);
+            padding: 0.75rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.1);
+        }
+    
+        .description-content {
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 16px;
+            white-space: pre-line;
+        }
+    
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+    
+        .detail-item,
+        .description-content {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item:hover {
+            border-color: var(--brand);
+            box-shadow: 0 4px 12px rgba(204, 85, 0, 0.08);
+            transform: translateY(-2px);
+        }
+    
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-label i {
+    color: var(--primary-color);
+        
+}
+    
+        .detail-value {
+            font-size: 16px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+    
+        .editor-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+    
+        .editor-card {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            width: calc(33.333% - 10px);
+            min-width: 250px;
+            transition: var(--transition);
+        }
+    
+        .editor-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+    
+        .editor-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+    
+        .editor-email {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+    
+        .editor-role {
+            font-size: 12px;
+            color: white;
+            background-color: var(--secondary-color);
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 600;
+        }
+    
+        .indexing-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    
+        .indexing-item {
+            background-color: var(--secondary-color);
+            padding: 10px 15px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border-color);
+        }
+    
+        .indexing-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+    
+        .indexing-url {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+    
+        .fee-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+    
+        .fee-item {
+            flex: 1;
+            min-width: 200px;
+        }
+    
+        .fee-label {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+    
+        .fee-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--brand);
+        }
+    
+        .fee-currency {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-left: 5px;
+        }
+    
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 100px;
+        }
+    
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--secondary-color);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+        }
+    
+        .error-state i {
+            font-size: 48px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+    
+        .error-state h3 {
+            font-size: 20px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+    
+        .error-state p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+    
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+    
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+    
+
+        .btn-light{
+            flex: none;
+        }
+    
+
+    
+        @media screen and (max-width: 768px) {
+            .scope-header {
+                padding: 20px;
+            }
+    
+            .scope-title {
+                font-size: 24px;
+            }
+    
+            .scope-body {
+                padding: 20px;
+            }
+    
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+    
+            .editor-card {
+                width: 100%;
+            }
+    
+            .fee-info {
+                flex-direction: column;
+                gap: 20px;
+            }
+    
+            .action-buttons {
+                flex-direction: column;
+            }
+    
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+            <main class="main-content">
+                <div class="container page-title">
+                    <div>
+                        <h1>scope</h1>
+                        <p>View and scope information</p>
+                    </div>
+                    <div>
+                        <a href="view-scopes.html" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Back to scopes
+                        </a>
+                    </div>
+                </div>
+                <div class="scope-details-container">
+                
+                    <div id="scopeDetails">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'view-scopes';
+    </script>
+    <script src="/assets/js/layout.js"></script>
+    <!-- jQuery (required for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="module">
+
+        import { BASE_URL, token } from '/assets/js/utility.js';
+        // Get scope ID from URL
+        function getscopeIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // Format currency
+        function formatCurrency(amount, currency = 'NGN') {
+            if (amount === null || amount === undefined) return 'N/A';
+
+            try {
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: currency,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                return formatter.format(amount);
+            } catch (error) {
+                return `${currency} ${amount.toLocaleString()}`;
+            }
+        }
+
+        // Safely get value from object
+        function safeGet(obj, key, defaultValue = 'N/A') {
+            if (!obj) return defaultValue;
+            const value = obj[key];
+            return value !== null && value !== undefined && value !== '' ? value : defaultValue;
+        }
+
+        // Extract scope data from API response
+        function extractscopeData(response) {
+            // Try different response structures
+            if (response._id) {
+                // Case 1: Direct scope object
+                return response;
+            } else if (response.data && response.data._id) {
+                // Case 2: { data: { ...scope... } }
+                return response.data;
+            } else if (response.scope && response.scope._id) {
+                // Case 3: { scope: { ...scope... } }
+                return response.scope;
+            } else if (response.success && response.data && response.data._id) {
+                // Case 4: { success: true, data: { ...scope... } }
+                return response.data;
+            } else if (response.success && response.scope && response.scope._id) {
+                // Case 5: { success: true, scope: { ...scope... } }
+                return response.scope;
+            } else {
+                // Try to find any object with _id in the response
+                for (const key in response) {
+                    if (response[key] && typeof response[key] === 'object' && response[key]._id) {
+                        return response[key];
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Get scope details from API
+        async function fetchscopeDetails(scopeId) {
+
+            if (!token) {
+                Swal.fire({
+                    title: 'Authentication Required',
+                    text: 'Please login to view scope details',
+                    icon: 'warning',
+                    confirmButtonColor: '#cc5500'
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+                return null;
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}/scope/${scopeId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        Swal.fire({
+                            title: 'Session Expired',
+                            text: 'Please login again',
+                            icon: 'warning',
+                            confirmButtonColor: '#cc5500'
+                        }).then(() => {
+                            window.location.href = 'login.html';
+                        });
+                        return null;
+                    }
+
+                    const errorText = await response.text();
+                    console.error(`scope API Error ${response.status}:`, errorText);
+                    throw new Error(`Failed to load scope (Status: ${response.status})`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching scope details:', error.message);
+                Swal.fire({
+                    title: 'Network Error',
+                    text: 'Failed to connect to server. Please check your connection.',
+                    icon: 'error',
+                    confirmButtonColor: '#cc5500'
+                });
+                throw error;
+            }
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // Render scope details
+        function renderscopeDetails(response) {
+            const scopeData = extractscopeData(response);
+
+            if (!scopeData) {
+                console.error('Could not extract scope data from API response');
+                return `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Data Format Error</h3>
+                        <p>Could not extract scope data from server response.</p>
+                        <p>Please contact support.</p>
+                    </div>
+                `;
+            }
+
+            // Ensure arrays exist
+            const editorsInChief = Array.isArray(scopeData.editorsInChief) ? scopeData.editorsInChief : [];
+            const associateEditors = Array.isArray(scopeData.associateEditors) ? scopeData.associateEditors : [];
+            const indexing = Array.isArray(scopeData.indexing) ? scopeData.indexing : [];
+
+            // Create HTML
+            return `
+                <div class="scope-details-card">
+                    <div class="scope-header">
+                        <h1 class="scope-title">${safeGet(scopeData, 'title', 'Untitled scope')}</h1>
+                        <div class="scope-issn" style="display: none">${safeGet(scopeData, 'issn', 'No ISSN')}</div>
+                    </div>
+                    
+                    <div class="scope-body">
+                        <!-- Description Section -->
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-info-circle"></i> Description
+                            </h2>
+                            <div class="description-content">
+                                ${safeGet(scopeData, 'description', 'No description available.')}
+                            </div>
+                        </div>
+    
+                        <!-- Basic Information -->
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-book"></i> Basic Information
+                            </h2>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label"><i class="fa fa-building"></i>Publisher</div>
+                                    <div class="detail-value">${safeGet(scopeData, 'publisher')}</div>
+                                </div>
+                                
+                                <div class="detail-item"  style="display: none">
+                                    <div class="detail-label">Scope / Topics</div>
+                                    <div class="detail-value">${safeGet(scopeData, 'scope')}</div>
+                                </div>
+                                
+                                ${safeGet(scopeData, 'doiPrefix') !== 'N/A' ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">DOI Prefix</div>
+                                    <div class="detail-value">${safeGet(scopeData, 'doiPrefix')}</div>
+                                </div>
+                                ` : ''}
+                                
+                                ${safeGet(scopeData, 'reviewPolicy') !== 'N/A' ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Review Policy</div>
+                                    <div class="detail-value">${safeGet(scopeData, 'reviewPolicy')}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+    
+                        <!-- Contact Information -->
+                        ${(safeGet(scopeData, 'email') !== 'N/A' || safeGet(scopeData, 'website') !== 'N/A') ? `
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-envelope"></i> Contact Information
+                            </h2>
+                            <div class="details-grid">
+                                ${safeGet(scopeData, 'email') !== 'N/A' ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${safeGet(scopeData, 'email')}</div>
+                                </div>
+                                ` : ''}
+                                
+                                ${safeGet(scopeData, 'website') !== 'N/A' ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Website</div>
+                                    <div class="detail-value">
+                                        <a href="${scopeData.website}" 
+                                           target="_blank" 
+                                           rel="noopener noreferrer"
+                                           style="color: var(--brand); text-decoration: none;">
+                                            ${scopeData.website}
+                                        </a>
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+    
+                        <!-- Fees Section -->
+                        ${(scopeData.submissionFee !== undefined || scopeData.publicationFee !== undefined) ? `
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-money-bill-wave"></i> Fees
+                            </h2>
+                            <div class="fee-info">
+                                ${scopeData.submissionFee !== undefined ? `
+                                <div class="fee-item">
+                                    <div class="fee-label">Submission Fee</div>
+                                    <div class="fee-amount">
+                                        ${formatCurrency(scopeData.submissionFee, scopeData.currency || 'NGN')}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                ${scopeData.publicationFee !== undefined ? `
+                                <div class="fee-item">
+                                    <div class="fee-label"><i class="fa fa-building"></i>Publication Fee</div>
+                                    <div class="fee-amount">
+                                        ${formatCurrency(scopeData.publicationFee, scopeData.currency || 'NGN')}
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+    
+                        <!-- Editorial Team Section -->
+                        ${(editorsInChief.length > 0 || associateEditors.length > 0) ? `
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-users"></i> Editorial Team
+                            </h2>
+                            
+                            ${editorsInChief.length > 0 ? `
+                                <h3 style="margin-bottom: 15px; color: var(--text-color); font-size: 16px;">
+                                    <i class="fa fa-user-tie"></i>Editors-in-Chief
+                                </h3>
+                                <div class="editor-list">
+                                    ${editorsInChief.map(editor => `
+                                        <div class="editor-card">
+                                            <div class="editor-name">
+                                                ${safeGet(editor, 'firstName', '')} ${safeGet(editor, 'lastName', '')}
+                                            </div>
+                                            ${safeGet(editor, 'email') !== 'N/A' ? `
+                                            <div class="editor-email">${safeGet(editor, 'email')}</div>
+                                            ` : ''}
+                                            <span class="editor-role">Editor-in-Chief</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            ${associateEditors.length > 0 ? `
+                                <h3 style="margin: 25px 0 15px; color: var(--text-color); font-size: 16px;">
+                                    Associate Editors
+                                </h3>
+                                <div class="editor-list">
+                                    ${associateEditors.map(editor => `
+                                        <div class="editor-card">
+                                            <div class="editor-name">
+                                                ${safeGet(editor, 'firstName', '')} ${safeGet(editor, 'lastName', '')}
+                                            </div>
+                                            ${safeGet(editor, 'email') !== 'N/A' ? `
+                                            <div class="editor-email">${safeGet(editor, 'email')}</div>
+                                            ` : ''}
+                                            <span class="editor-role">Associate Editor</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+    
+                        <!-- Indexing Services -->
+                        ${indexing.length > 0 ? `
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-search"></i> Indexing Services
+                            </h2>
+                            <div class="indexing-list">
+                                ${indexing.map(item => `
+                                    <div class="indexing-item">
+                                        <div class="indexing-name">${safeGet(item, 'name', 'Unnamed Service')}</div>
+                                        ${safeGet(item, 'url') !== 'N/A' ? `
+                                        <div class="indexing-url">
+                                            <a href="${item.url}" 
+                                               target="_blank" 
+                                               rel="noopener noreferrer"
+                                               style="color: var(--brand);">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+    
+                        <!-- Timestamps -->
+                        <div class="section">
+                            <h2 class="section-title">
+                                <i class="fas fa-clock"></i> Timestamps
+                            </h2>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label"><i class="fa fa-calendar-plus"></i> Created</div>
+                                    <div class="detail-value">${formatDate(scopeData.createdAt)}</div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <div class="detail-label"><i class="fa fa-history"></i>Last Updated</div>
+                                    <div class="detail-value">${formatDate(scopeData.updatedAt)}</div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <a href="view-scopes.html" class="action-btn back-list-btn btn-light">
+                                <i class="fas fa-list"></i> Back to List
+                            </a>
+                            ${scopeData._id ? `
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Main function
+        document.addEventListener('DOMContentLoaded', async function () {
+            const scopeDetails = document.getElementById('scopeDetails');
+            const scopeId = getscopeIdFromUrl();
+
+            if (!scopeId) {
+                scopeDetails.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>scope Not Found</h3>
+                        <p>No scope ID specified in the URL.</p>
+                        <a href="view-scopes.html" class="action-btn btn-back" style="display: inline-flex; margin-top: 20px;">
+                            <i class="fas fa-arrow-left"></i> Back to scopes
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetchscopeDetails(scopeId);
+
+                if (!response) {
+                    throw new Error('No response received from server');
+                }
+
+                scopeDetails.innerHTML = renderscopeDetails(response);
+
+            } catch (error) {
+                console.error('Error loading scope details:', error.message);
+                scopeDetails.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading scope</h3>
+                        <p>${error.message || 'Failed to load scope details. Please try again.'}</p>
+                        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                            <a href="view-scopes.html" class="action-btn back-list-btn btn-light" style="display: inline-flex;">
+                                <i class="fas fa-arrow-left"></i> Back to scopes
+                            </a>
+                            <button onclick="location.reload()" class="action-btn edit-btn btn-brand" style="display: inline-flex;">
+                                <i class="fas fa-redo"></i> Retry
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // Add error handling for unhandled promises
+        window.addEventListener('unhandledrejection', function (event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            const scopeDetails = document.getElementById('scopeDetails');
+            if (scopeDetails) {
+                scopeDetails.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Application Error</h3>
+                        <p>An unexpected error occurred. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+
+</html>

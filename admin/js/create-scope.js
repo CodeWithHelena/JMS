@@ -160,20 +160,24 @@ document.addEventListener('DOMContentLoaded', async function() {
     function getFirstError() {
         // Required fields
         const title = document.getElementById('scopeTitle').value.trim();
-        if (!title) return 'Scope title is required';
+
 
 
 
         const description = document.getElementById('scopeDescription').value.trim();
         if (!description) {
-            return 'Description is required';
+            toastr.error('Description is required', 'Error');   
+            return 
+        
         } else if (description.length < 10) {
-            return 'Description must be at least 10 characters long';
+            toastr.error('Description must be at least 10 characters long', 'Error');
+            return 
         }
 
         // Validate at least one Editor-in-Chief
         if (editorsInChiefArray.length === 0) {
-            return 'Please add at least one Editor-in-Chief';
+            toastr.error('Please add at least one Editor-in-Chief', 'Error');
+            return 
         }
 
         return null; // No errors
