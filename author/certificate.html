@@ -268,36 +268,6 @@
             vertical-align: middle;
         }
 
-        /* Status badges */
-        .status-badge {
-            display: inline-block;
-            padding: 0.35rem 0.85rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: capitalize;
-            min-width: 100px;
-            text-align: center;
-        }
-
-        .status-pending {
-            background-color: rgba(255, 193, 7, 0.15);
-            color: #b58500;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-
-        .status-approved {
-            background-color: rgba(40, 167, 69, 0.15);
-            color: #28a745;
-            border: 1px solid rgba(40, 167, 69, 0.3);
-        }
-
-        .status-dispatched {
-            background-color: rgba(0, 123, 255, 0.15);
-            color: #007bff;
-            border: 1px solid rgba(0, 123, 255, 0.3);
-        }
-
         /* Action buttons */
         .action-buttons {
             display: flex;
@@ -512,23 +482,6 @@
                         <label class="filter-label">Search Certificate Number</label>
                         <input type="text" id="searchInput" class="search-input" placeholder="Enter certificate number...">
                     </div>
-
-                    <div class="filter-group">
-                        <label class="filter-label">Status</label>
-                        <div class="custom-select-wrapper" id="statusSelect">
-                            <div class="custom-select-header" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Select status">
-                                <span class="custom-select-value placeholder">All Status</span>
-                                <i class="custom-select-arrow fas fa-chevron-down"></i>
-                            </div>
-                            <div class="custom-select-dropdown" role="listbox" aria-label="Status options">
-                                <div class="custom-select-option selected" data-value="" role="option">All Status</div>
-                                <div class="custom-select-option" data-value="pending" role="option">Pending</div>
-                                <div class="custom-select-option" data-value="approved" role="option">Approved</div>
-                                <div class="custom-select-option" data-value="dispatched" role="option">Dispatched</div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="filter-group">
                         <label class="filter-label">Type</label>
                         <div class="custom-select-wrapper" id="typeSelect">
@@ -566,9 +519,7 @@
                         <thead>
                             <tr>
                                 <th>S/N</th>
-                                <th>Author</th>
                                 <th>Publication</th>
-                                <th>Status</th>
                                 <th>Certificate Number</th>
                                 <th>Actions</th>
                             </tr>
@@ -633,7 +584,6 @@
 
                 this.currentFilters = {
                     search: '',
-                    status: '',
                     type: ''
                 };
 
@@ -661,13 +611,6 @@
             }
 
             setupCustomSelects() {
-                // Setup status select
-                this.setupCustomSelect('statusSelect', (value) => {
-                    this.currentFilters.status = value;
-                    this.currentPage = 1;
-                    this.updateActiveFilters();
-                });
-
                 // Setup type select
                 this.setupCustomSelect('typeSelect', (value) => {
                     this.currentFilters.type = value;
@@ -830,9 +773,6 @@
                         params.set('search', this.currentFilters.search);
                     }
 
-                    if (this.currentFilters.status) {
-                        params.set('status', this.currentFilters.status);
-                    }
 
                     if (this.currentFilters.type) {
                         params.set('type', this.currentFilters.type);
@@ -845,9 +785,9 @@
                         }
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: Failed to load certificates`);
-                    }
+                    // if (!response.ok) {
+                    //     throw new Error(`HTTP ${response.status}: Failed to load certificates`);
+                    // }
 
                     const data = await response.json();
 
@@ -884,13 +824,7 @@
                     });
                 }
 
-                if (this.currentFilters.status) {
-                    filters.push({
-                        label: `Status: ${this.currentFilters.status}`,
-                        type: 'status',
-                        value: this.currentFilters.status
-                    });
-                }
+
 
                 if (this.currentFilters.type) {
                     filters.push({
@@ -935,10 +869,6 @@
                     case 'search':
                         this.currentFilters.search = '';
                         document.getElementById('searchInput').value = '';
-                        break;
-                    case 'status':
-                        this.currentFilters.status = '';
-                        this.resetSelect('statusSelect', 'All Status');
                         break;
                     case 'type':
                         this.currentFilters.type = '';
@@ -986,16 +916,8 @@
                     return `
                         <tr>
                             <td>${serial}</td>
-                            <td>
-                                <div class="author-name">${this.escapeHtml(author.firstName || '')} ${this.escapeHtml(author.lastName || '')}</div>
-                            </td>
                             <td title="${this.escapeHtml(title)}" class="text-truncate">
                                 ${this.escapeHtml(truncatedTitle)}
-                            </td>
-                            <td>
-                                <span class="status-badge status-${cert.status}">
-                                    ${cert.status}
-                                </span>
                             </td>
                             <td>
                                 <code>${this.escapeHtml(cert.certificateNumber || 'N/A')}</code>
@@ -1062,9 +984,8 @@
             }
 
             clearFilters() {
-                this.currentFilters = { search: '', status: '', type: '' };
+                this.currentFilters = { search: '', type: '' };
                 document.getElementById('searchInput').value = '';
-                this.resetSelect('statusSelect', 'All Status');
                 this.resetSelect('typeSelect', 'All Types');
                 this.currentPage = 1;
                 this.updateActiveFilters();
