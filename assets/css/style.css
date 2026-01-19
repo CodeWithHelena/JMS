@@ -448,6 +448,12 @@ p{
     color: var(--text-light);
 }
 
+input:focus {
+    outline: none !important;
+    border-color: var(--warning) !important;
+    box-shadow: 0 0 0 3px var(--warning-light) !important;
+}
+
 /* CUSTOM BUTTON */
 /* .btn-brand {
     align-items: center;
@@ -604,7 +610,6 @@ p{
 }
 
 .btn-brand:disabled {
-    background-color: var(--muted);
     cursor: not-allowed;
     opacity: 0.7;
 }
@@ -1099,7 +1104,6 @@ ul {
 }
 
 .page-title p {
-    color: var(--text-light);
     width: fit-content;
     background: red;
 }

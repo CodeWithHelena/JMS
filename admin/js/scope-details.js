@@ -177,12 +177,12 @@
                             </h2>
                             <div class="details-grid">
                                 <div class="detail-item">
-                                    <div class="detail-label">Publisher</div>
+                                    <div class="detail-label"><i class="fa fa-building"></i>Publisher</div>
                                     <div class="detail-value">${safeGet(scopeData, 'publisher')}</div>
                                 </div>
                                 
                                 <div class="detail-item">
-                                    <div class="detail-label">Scope / Topics</div>
+                                    <div class="detail-label"><i class="fa fa-layer-group"></i>Scope / Topics</div>
                                     <div class="detail-value">${safeGet(scopeData, 'scope')}</div>
                                 </div>
                                 
@@ -270,7 +270,7 @@
                             
                             ${editorsInChief.length > 0 ? `
                                 <h3 style="margin-bottom: 15px; color: var(--text-color); font-size: 16px;">
-                                    Editors-in-Chief
+                                    <i class="fa fa-user-tie"></i>Editors-in-Chief
                                 </h3>
                                 <div class="editor-list">
                                     ${editorsInChief.map(editor => `

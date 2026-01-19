@@ -1,6 +1,8 @@
 // API Configuration
- import { BASE_URL, token } from '/assets/js/utility.js';
+import { BASE_URL, token } from '/assets/js/utility.js';
 
+// Global variable to store current user
+let currentUserGlobal = null;
 
 // Get user ID from URL
 function getUserIdFromUrl() {
@@ -10,7 +12,6 @@ function getUserIdFromUrl() {
 
 // Fetch user details
 async function fetchUserDetails(userId) {
-    
     if (!token) {
         Swal.fire({
             title: 'Authentication Required',
@@ -180,8 +181,6 @@ function getGenderText(gender) {
 
 // Toggle user active/inactive status
 async function toggleUserActive(userId, currentActiveStatus, user) {
-    const token = getAuthToken();
-    
     if (!token) {
         showToastError('Authentication required. Please login.');
         return false;
@@ -260,52 +259,54 @@ async function deleteUser(userId, userName) {
         cancelButtonText: 'Cancel'
     });
 
-    if (result.isConfirmed) {
-        const token = getAuthToken();
-        
-        if (!token) {
-            showToastError('Authentication required. Please login.');
-            return false;
-        }
+    if (!result.isConfirmed) return false;
 
-        try {
-            // Show loading
-            Swal.fire({
-                title: 'Deleting User...',
-                text: 'Please wait',
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                willOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            // TODO: Replace with actual API endpoint for deletion
-            // For now, simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Simulate success
-            Swal.close();
-            
-            Swal.fire({
-                title: 'Deleted!',
-                text: 'User has been deleted successfully',
-                icon: 'success',
-                confirmButtonColor: '#cc5500'
-            }).then(() => {
-                // Redirect to users list
-                window.location.href = 'users.html';
-            });
-            
-            return true;
-        } catch (error) {
-            Swal.close();
-            showToastError(error.message || 'Failed to delete user');
-            return false;
-        }
+    if (!token) {
+        showToastError('Authentication required. Please login.');
+        return false;
     }
-    return false;
+
+    try {
+        Swal.fire({
+            title: 'Deleting User...',
+            text: 'Please wait',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => Swal.showLoading()
+        });
+
+        const response = await fetch(`${BASE_URL}/user/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to delete user');
+        }
+
+        Swal.fire({
+            title: 'Deleted!',
+            text: 'User has been deleted successfully',
+            icon: 'success',
+            confirmButtonColor: 'var(--warning)',
+        }).then(() => {
+            window.location.href = 'users.html';
+        });
+
+        return true;
+
+    } catch (error) {
+        Swal.close();
+        showToastError(error.message || 'Failed to delete user');
+        return false;
+    }
 }
+
 
 // Update user status UI (for activation/deactivation)
 function updateUserStatusUI(user) {
@@ -376,6 +377,23 @@ function showToastError(message) {
 function showToastSuccess(message) {
     if (typeof toastr === 'undefined') return;
     toastr.success(message, 'Success');
+}
+
+// Function to open edit modal (will be called by edit button)
+function openEditModal(user) {
+    // Make sure the openEditModal function exists globally
+    if (typeof window.openEditModal === 'function') {
+        window.openEditModal(user);
+    } else {
+        console.error('openEditModal function not found. Make sure edit-user.js is loaded.');
+        // Fallback: Show error message
+        Swal.fire({
+            title: 'Error',
+            text: 'Edit modal functionality not loaded. Please refresh the page.',
+            icon: 'error',
+            confirmButtonColor: '#cc5500'
+        });
+    }
 }
 
 // Render user details
@@ -536,7 +554,7 @@ function renderUserDetails(user) {
                     </a>
                     
                     ${!user.isDeleted ? `
-                    <button class="action-btn edit-btn btn-brand" data-user-id="${user._id}">
+                    <button class="action-btn edit-btn btn-brand" id="editUserBtn">
                         <i class="fas fa-edit"></i> Edit User
                     </button>
                     ` : ''}
@@ -575,6 +593,7 @@ function showErrorState(message) {
 // Set up event listeners
 function setupEventListeners(user) {
     window.currentUser = user;
+    currentUserGlobal = user;
     
     // Activation/Deactivation toggle
     const verificationToggle = document.getElementById('verificationToggle');
@@ -597,6 +616,14 @@ function setupEventListeners(user) {
         });
     }
     
+    // Edit button
+    const editBtn = document.getElementById('editUserBtn');
+    if (editBtn) {
+        editBtn.addEventListener('click', function() {
+            openEditModal(user);
+        });
+    }
+    
     // Delete button
     const deleteBtn = document.getElementById('deleteUserBtn');
     if (deleteBtn) {
@@ -606,6 +633,9 @@ function setupEventListeners(user) {
         });
     }
 }
+
+// Make openEditModal available globally
+window.openEditModal = openEditModal;
 
 // Main initialization
 document.addEventListener('DOMContentLoaded', async function() {
@@ -636,6 +666,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupEventListeners(userData);
         
     } catch (error) {
+        console.error('Error loading user details:', error);
         showErrorState(error.message || 'Failed to load user details. Please try again.');
     }
 });

@@ -3,7 +3,7 @@ import { BASE_URL, token } from '/assets/js/utility.js';
 
 const API_ENDPOINTS = {
     EDITORS: '/user?role=editor',
-    JOURNAL: 'api/v1/journal'
+    SCOPE: '/scope'
 };
 
 // Reusable Custom Select Component (without search)
@@ -451,7 +451,7 @@ export async function submitScopeData(formData) {
     }
 
     try {
-        const response = await fetch(`${BASE_URL}${API_ENDPOINTS.JOURNAL}`, {
+        const response = await fetch(`${BASE_URL}${API_ENDPOINTS.SCOPE}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -482,7 +482,7 @@ export async function updateJournalData(journalId, formData) {
     }
 
     try {
-        const response = await fetch(`${BASE_URL}${API_ENDPOINTS.JOURNAL}/${journalId}`, {
+        const response = await fetch(`${BASE_URL}${API_ENDPOINTS.SCOPE}/${journalId}`, {
             method: 'PUT', // or PATCH depending on your API
             headers: {
                 'Authorization': `Bearer ${token}`,

@@ -318,6 +318,7 @@
             left: 0;
             width: 100%;
             height: 4px;
+            background: linear-gradient(90deg, var(--brand), var(--accent-orange));
         }
 
         .action-section h3 {
@@ -428,8 +429,8 @@
 
         .file-upload-area:hover,
         .file-upload-area.dragover {
-            border-color: var(--lite-secondary3);
-            background-color: var(---warning-light);
+            border-color: var(--accent-orange);
+            background-color: var(--accent-orange-soft);
         }
 
         .file-upload-area:hover::before,
@@ -477,7 +478,6 @@
             border-radius: 12px;
             border: 2px solid var(--border-light);
             animation: slideIn 0.3s ease;
-            margin-bottom: 1rem;
         }
 
         @keyframes slideIn {
@@ -999,10 +999,10 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button id="approveBtn" class="btn btn-brand" disabled>
+                    <button id="approveBtn" class="btn btn-success" disabled>
                         <i class="fas fa-check-circle"></i> Approve Certificate
                     </button>
-                    <button id="cancelBtn" class="btn btn-clear">
+                    <button id="cancelBtn" class="btn btn-secondary">
                         <i class="fas fa-times-circle"></i> Cancel
                     </button>
                 </div>
@@ -1012,7 +1012,7 @@
         renderHardcopyCertificateActions() {
             return `
                 <div class="action-buttons">
-                    <button id="dispatchBtn" class="btn btn-brand">
+                    <button id="dispatchBtn" class="btn btn-info">
                         <i class="fas fa-paper-plane"></i> Mark as Dispatched
                     </button>
                 </div>
@@ -1302,7 +1302,7 @@
                 if (/^https?:\/\//i.test(filePath)) {
                     url = filePath;
                 } else {
-                    const base = (BASE_URL).replace("/api/v1", '');
+                    const base = (BASE_URL || '').replace(/\/$/, '');
                     if (filePath.startsWith('/')) {
                         url = base ? `${base}${filePath}` : `${window.location.origin}${filePath}`;
                     } else {

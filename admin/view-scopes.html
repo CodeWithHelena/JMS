@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>scopes | scopeFlow</title>
+    <title>Scopes | ScopeFlow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -21,19 +21,13 @@
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        .container.page-title{
-            padding:0 1.5rem;
+        .container.page-title {
+            padding: 0 1.5rem;
         }
 
         .scopes-container {
             max-width: 1200px;
-            margin:0 auto;
+            margin: 0 auto;
             padding: 0 20px;
         }
 
@@ -72,7 +66,7 @@
             text-decoration: none;
         }
 
-        /* Filter controls - same as other pages */
+        /* Filter controls */
         .filter-controls {
             background: linear-gradient(180deg, var(--card-bg) 0%, #fcfcff 100%);
             border-radius: var(--radius-lg);
@@ -83,7 +77,7 @@
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
-            align-items: center;
+            align-items: flex-end;
         }
 
         .filter-group {
@@ -100,7 +94,7 @@
             font-size: 0.9rem;
         }
 
-        /* Custom Select - same as other pages */
+        /* Custom Select */
         .custom-select {
             position: relative;
             width: 100%;
@@ -156,47 +150,6 @@
             display: block;
         }
 
-        .select-search {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            padding: 0.6rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .select-search input {
-            width: 100%;
-            padding: 0.45rem 0.5rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            outline: none;
-            background: var(--bg);
-            color: var(--text-primary);
-            font-family: inherit;
-        }
-
-        .select-search input:focus {
-            border-color: var(--lite-primary-color);
-            box-shadow: 0 0 0 4px var(--primary-light);
-        }
-
-        .clear-search-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.25rem;
-            border-radius: var(--radius-sm);
-        }
-
-        .clear-search-btn:hover {
-            background: var(--light);
-            color: var(--text-primary);
-        }
-
         .select-options .select-option {
             padding: 0.75rem;
             cursor: pointer;
@@ -211,12 +164,6 @@
             background: var(--light);
         }
 
-        .select-no-results {
-            padding: 0.9rem;
-            color: var(--text-muted);
-            text-align: center;
-        }
-
         .search-input {
             width: 100%;
             padding: 0.6rem;
@@ -227,6 +174,7 @@
             color: var(--text-primary);
             font-family: inherit;
             transition: var(--transition-normal);
+            min-height: 44px;
         }
 
         .search-input:focus {
@@ -234,35 +182,22 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
-        .btn-primary {
-            background: var(--lite-primary-color);
-            color: white;
-            border: none;
-            padding: 0.7rem 1rem;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition-normal);
+        .btn-brand {
+            height: 44px;
         }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
+
 
         .btn-secondary {
             background: var(--light);
             color: var(--text-muted);
             border: 1px solid var(--border);
-            padding: 0.65rem 0.9rem;
+            padding: 0.65rem 1.5rem;
             border-radius: var(--radius-md);
             cursor: pointer;
             font-weight: 600;
             transition: var(--transition-normal);
+            height: 44px;
         }
 
         .btn-secondary:hover {
@@ -270,7 +205,13 @@
             color: var(--text-primary);
         }
 
-        /* scopes Grid */
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Scopes Grid */
         .scopes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -310,74 +251,89 @@
             overflow: hidden;
         }
 
-        .scope-issn {
+        .scope-status {
             font-size: 14px;
             color: white;
             font-weight: 600;
-            background-color: var(--primary-light);
-            padding: 4px 8px;
+            padding: 4px 12px;
             border-radius: var(--radius-sm);
             display: inline-block;
+            text-transform: capitalize;
+        }
+
+        .status-active {
+            background-color: #10b981;
+        }
+
+        .status-inactive {
+            background-color: #ef4444;
         }
 
         .scope-body {
             padding: 20px;
         }
 
+        .scope-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title i {
+            color: var(--lite-primary-color);
+            font-size: 12px;
+        }
+
         .scope-description {
             color: var(--text-muted);
             font-size: 14px;
             line-height: 1.5;
-            margin-bottom: 20px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .scope-meta {
+        .editors-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 20px;
         }
 
-        .meta-item {
+        .editor-type {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 8px;
-            font-size: 14px;
-        }
-
-        .meta-item i {
-            color: var(--lite-primary-color);
-            width: 16px;
-        }
-
-        .meta-label {
-            font-weight: 600;
-            color: var(--text-primary);
-            min-width: 80px;
-        }
-
-        .meta-value {
-            color: var(--text-muted);
         }
 
         .editor-list {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 8px;
         }
 
         .editor-tag {
             background-color: var(--light);
             color: var(--text-primary);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .no-editors {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 13px;
+            padding: 8px 0;
         }
 
         .scope-footer {
@@ -386,6 +342,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .scope-date {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         .scope-actions {
@@ -413,25 +374,25 @@
         }
 
         .view-btn:hover {
-           background-color: var(--primary-light);
+            background-color: var(--primary-light);
             color: white;
             transform: translateY(-2px);
             box-shadow: var(--shadow-sm);
         }
 
         .edit-btn {
-            color:  var(--lite-primary-color);
+            color: var(--lite-primary-color);
             border: 1px solid var(--lite-primary-color);
         }
 
         .edit-btn:hover {
-            background-color:  var(--lite-primary-color);
+            background-color: var(--lite-primary-color);
             color: white;
             transform: translateY(-2px);
             box-shadow: var(--shadow-sm);
         }
 
-        /* Pagination - same as other pages */
+        /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
@@ -591,6 +552,11 @@
             .filter-group {
                 width: 100%;
             }
+
+            .filter-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
 
         @media screen and (max-width: 480px) {
@@ -620,6 +586,14 @@
                 padding: 0.45rem 0.75rem;
                 min-width: 36px;
             }
+
+            .filter-actions {
+                justify-content: stretch;
+            }
+
+            .filter-actions button {
+                flex: 1;
+            }
         }
     </style>
 </head>
@@ -633,18 +607,18 @@
             <main class="main-content">
                 <div class="container page-title">
                     <div>
-                        <h1>scopes</h1>
+                        <h1>Scopes</h1>
                         <p>Manage and view all academic scopes</p>
                     </div>
                     <div class="">
                         <a href="create-scope.html" class="btn-brand">
-                            <i class="fas fa-plus"></i> Create scope
+                            <i class="fas fa-plus"></i> Create Scope
                         </a>
                     </div>
                 </div>
 
                 <div class="scopes-container">
-                    <!-- Header with Create scope button -->
+                    <!-- Header with Create Scope button -->
                     <div class="scopes-header">
                         <div class="header-left">
                         </div>
@@ -658,46 +632,26 @@
                         </div>
 
                         <div class="filter-group">
-                            <label class="filter-label">Review Policy</label>
-                            <div class="custom-select" id="policyFilter">
-                                <input type="hidden" id="selectedPolicy" value="all">
+                            <label class="filter-label">Status</label>
+                            <div class="custom-select" id="statusFilter">
+                                <input type="hidden" id="selectedStatus" value="all">
                                 <div class="select-header">
-                                    <span class="selected-text placeholder">All Policies</span>
+                                    <span class="selected-text placeholder">All Status</span>
                                     <i class="fas fa-chevron-down select-arrow"></i>
                                 </div>
                                 <div class="select-dropdown">
-                                    <div class="select-options" id="policyOptionsContainer"></div>
+                                    <div class="select-options" id="statusOptionsContainer"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="filter-group">
-                            <label class="filter-label">Date Range</label>
-                            <div class="custom-select" id="dateFilter">
-                                <input type="hidden" id="selectedDate" value="all">
-                                <div class="select-header">
-                                    <span class="selected-text placeholder">All Time</span>
-                                    <i class="fas fa-chevron-down select-arrow"></i>
-                                </div>
-                                <div class="select-dropdown">
-                                    <div class="select-options">
-                                        <div class="select-option" data-id="all">All Time</div>
-                                        <div class="select-option" data-id="today">Today</div>
-                                        <div class="select-option" data-id="week">This Week</div>
-                                        <div class="select-option" data-id="month">This Month</div>
-                                        <div class="select-option" data-id="year">This Year</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; padding-top: 1.7rem;">
-                            <button id="applyFilters" class="btn-primary"><i class="fas fa-filter"></i> Apply</button>
+                        <div class="filter-actions">
+                            <button id="applyFilters" class="btn-brand"><i class="fas fa-filter"></i> Apply</button>
                             <button id="clearFilters" class="btn-secondary">Clear</button>
                         </div>
                     </div>
 
-                    <!-- scopes Grid -->
+                    <!-- Scopes Grid -->
                     <div class="scopes-grid" id="scopesGrid">
                         <!-- scopes will be loaded here -->
                         <div class="loading">
@@ -727,7 +681,7 @@
     <script type="module">
         import { BASE_URL, token } from '../assets/js/utility.js';
 
-        class scopesManager {
+        class ScopesManager {
             constructor() {
                 this.currentPage = 1;
                 this.limit = 9;
@@ -736,8 +690,7 @@
 
                 this.currentFilters = {
                     search: '',
-                    policy: 'all',
-                    date: 'all',
+                    isActive: 'all', // 'all', 'true', 'false'
                     sortOrder: 'desc'
                 };
 
@@ -746,7 +699,7 @@
 
             init() {
                 if (!token) {
-                    this.showNoscopes('Please login to view scopes.');
+                    this.showNoScopes('Please login to view scopes.');
                     return;
                 }
 
@@ -756,17 +709,16 @@
             }
 
             setupFilterControls() {
-                const policyContainer = document.getElementById('policyOptionsContainer');
-                if (!policyContainer) return;
+                const statusContainer = document.getElementById('statusOptionsContainer');
+                if (!statusContainer) return;
 
                 const options = [
-                    { id: 'all', title: 'All Policies' },
-                    { id: 'single_blind', title: 'Single Blind' },
-                    { id: 'double_blind', title: 'Double Blind' },
-                    { id: 'open_review', title: 'Open Review' }
+                    { id: 'all', title: 'All Status' },
+                    { id: 'true', title: 'Active' },
+                    { id: 'false', title: 'Inactive' }
                 ];
 
-                policyContainer.innerHTML = options
+                statusContainer.innerHTML = options
                     .map(o => `<div class="select-option" data-id="${o.id}">${o.title}</div>`)
                     .join('');
 
@@ -774,74 +726,87 @@
             }
 
             attachSelectToggles() {
-                document.querySelectorAll('.custom-select').forEach(container => {
-                    const header = container.querySelector('.select-header');
+                const statusFilter = document.getElementById('statusFilter');
+                if (!statusFilter) return;
 
-                    header.addEventListener('click', e => {
-                        e.stopPropagation();
-                        document.querySelectorAll('.custom-select.open').forEach(c => {
-                            if (c !== container) c.classList.remove('open');
-                        });
-                        container.classList.toggle('open');
-                    });
+                const header = statusFilter.querySelector('.select-header');
 
-                    document.addEventListener('click', e => {
-                        if (!container.contains(e.target)) container.classList.remove('open');
-                    });
+                header.addEventListener('click', e => {
+                    e.stopPropagation();
+                    statusFilter.classList.toggle('open');
                 });
 
-                document.getElementById('policyOptionsContainer')?.addEventListener('click', e => {
+                document.addEventListener('click', e => {
+                    if (!statusFilter.contains(e.target)) {
+                        statusFilter.classList.remove('open');
+                    }
+                });
+
+                document.getElementById('statusOptionsContainer')?.addEventListener('click', e => {
                     const opt = e.target.closest('.select-option');
                     if (!opt) return;
 
-                    document.querySelector('#policyFilter .selected-text').textContent = opt.textContent;
-                    document.getElementById('selectedPolicy').value = opt.dataset.id;
-                    this.currentFilters.policy = opt.dataset.id;
-                    document.getElementById('policyFilter').classList.remove('open');
-                });
-
-                document.querySelector('#dateFilter .select-options')?.addEventListener('click', e => {
-                    const opt = e.target.closest('.select-option');
-                    if (!opt) return;
-
-                    document.querySelector('#dateFilter .selected-text').textContent = opt.textContent;
-                    document.getElementById('selectedDate').value = opt.dataset.id;
-                    this.currentFilters.date = opt.dataset.id;
-                    document.getElementById('dateFilter').classList.remove('open');
+                    document.querySelector('#statusFilter .selected-text').textContent = opt.textContent;
+                    document.getElementById('selectedStatus').value = opt.dataset.id;
+                    this.currentFilters.isActive = opt.dataset.id;
+                    statusFilter.classList.remove('open');
                 });
             }
 
             bindEvents() {
-                document.getElementById('searchInput')?.addEventListener('input', e => {
-                    this.currentFilters.search = e.target.value.trim();
-                });
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('input', e => {
+                        this.currentFilters.search = e.target.value.trim();
+                    });
 
-                document.getElementById('applyFilters')?.addEventListener('click', () => {
-                    this.currentPage = 1;
-                    this.fetchAndRender(1);
-                });
+                    // Add Enter key support for search
+                    searchInput.addEventListener('keypress', e => {
+                        if (e.key === 'Enter') {
+                            this.currentPage = 1;
+                            this.fetchAndRender(1);
+                        }
+                    });
+                }
 
-                document.getElementById('clearFilters')?.addEventListener('click', () => this.clearFilters());
+                const applyBtn = document.getElementById('applyFilters');
+                if (applyBtn) {
+                    applyBtn.addEventListener('click', () => {
+                        this.currentPage = 1;
+                        this.fetchAndRender(1);
+                    });
+                }
 
-                document.getElementById('scopesGrid')?.addEventListener('click', e => {
-                    const viewBtn = e.target.closest('.view-more-btn');
-                    if (viewBtn) {
-                        window.location.href = `scope-details.html?id=${viewBtn.dataset.id}`;
-                        return;
-                    }
+                const clearBtn = document.getElementById('clearFilters');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => this.clearFilters());
+                }
 
-                    const editBtn = e.target.closest('.edit-scope-btn');
-                    if (editBtn) {
-                        window.location.href = `edit-scope.html?id=${editBtn.dataset.id}`;
-                    }
-                });
+                const grid = document.getElementById('scopesGrid');
+                if (grid) {
+                    grid.addEventListener('click', e => {
+                        const viewBtn = e.target.closest('.view-more-btn');
+                        if (viewBtn) {
+                            window.location.href = `scope-details.html?id=${viewBtn.dataset.id}`;
+                            return;
+                        }
+
+                        const editBtn = e.target.closest('.edit-scope-btn');
+                        if (editBtn) {
+                            window.location.href = `edit-scope.html?id=${editBtn.dataset.id}`;
+                        }
+                    });
+                }
             }
 
             async fetchAndRender(page = 1) {
                 const grid = document.getElementById('scopesGrid');
+                if (!grid) return;
+
                 grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
 
                 try {
+                    // Build query parameters according to API requirements
                     const params = new URLSearchParams({
                         page,
                         limit: this.limit,
@@ -849,8 +814,15 @@
                         sortOrder: this.currentFilters.sortOrder
                     });
 
-                    if (this.currentFilters.search) params.set('search', this.currentFilters.search);
-                    if (this.currentFilters.policy !== 'all') params.set('reviewPolicy', this.currentFilters.policy);
+                    // Add search parameter if provided
+                    if (this.currentFilters.search) {
+                        params.set('search', this.currentFilters.search);
+                    }
+
+                    // Add isActive parameter if not "all"
+                    if (this.currentFilters.isActive !== 'all') {
+                        params.set('isActive', this.currentFilters.isActive);
+                    }
 
                     const response = await fetch(`${BASE_URL}/scope?${params}`, {
                         headers: {
@@ -865,20 +837,20 @@
                     const scopes = res.scopes || res.data || [];
 
                     this.totalItems = res.total ?? scopes.length;
-                    this.totalPages = res.totalPages ?? Math.ceil(this.totalItems / this.limit);
+                    this.totalPages = res.pages ?? Math.ceil(this.totalItems / this.limit);
                     this.currentPage = res.page ?? page;
 
                     this.renderGrid(scopes);
                 } catch (err) {
-                    console.error(err);
-                    this.showNoscopes('Unable to load scopes.');
+                    console.error('Error fetching scopes:', err);
+                    this.showNoScopes('Unable to load scopes. Please try again later.');
                 }
             }
 
             renderGrid(scopes) {
                 const grid = document.getElementById('scopesGrid');
-                if (!scopes.length) {
-                    this.showNoscopes('No scopes found.');
+                if (!scopes || scopes.length === 0) {
+                    this.showNoScopes('No scopes found matching your criteria.');
                     return;
                 }
 
@@ -891,26 +863,81 @@
                 const el = document.createElement('article');
                 el.className = 'scope-card';
 
+                // Format editors
+                const chiefEditors = scope.editorsInChief || [];
+                const associateEditors = scope.associateEditors || [];
+
+                // Get editor names
+                const getEditorName = (editor) => {
+                    return `${editor.firstName || ''} ${editor.lastName || ''}`.trim() || 'Unknown Editor';
+                };
+
                 el.innerHTML = `
-            <div class="scope-header">
-                <h3 class="scope-title">${scope.title}</h3>
-                <span class="scope-issn">${scope.issn || 'No ISSN'}</span>
-            </div>
-            <div class="scope-body">
-                <p class="scope-description">${scope.description || 'No description'}</p>
-            </div>
-            <div class="scope-footer">
-                <small>Created: ${new Date(scope.createdAt).toDateString()}</small>
-                <div class="scope-actions">
-                    <button class="action-btn view-btn view-more-btn" data-id="${scope._id}">View</button>
-                    <button class="action-btn edit-btn edit-scope-btn" data-id="${scope._id}">Edit</button>
-                </div>
-            </div>
-        `;
+                    <div class="scope-header">
+                        <h3 class="scope-title">${scope.title}</h3>
+                        <span class="scope-status ${scope.isActive ? 'status-active' : 'status-inactive'}">
+                            ${scope.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </div>
+                    <div class="scope-body">
+                        <div class="scope-section">
+                            <div class="section-title">
+                                <i class="fas fa-align-left"></i>
+                                <span>Description</span>
+                            </div>
+                            <p class="scope-description">${scope.description || 'No description available'}</p>
+                        </div>
+                        
+                        <div class="scope-section">
+                            <div class="section-title">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Chief Editor</span>
+                            </div>
+                            <div class="editors-container">
+                                ${chiefEditors.length > 0 ?
+                        `<div class="editor-list">
+                                        ${chiefEditors.map(editor =>
+                            `<span class="editor-tag">${getEditorName(editor)}</span>`
+                        ).join('')}
+                                    </div>` :
+                        `<div class="no-editors">No chief editor assigned</div>`
+                    }
+                            </div>
+                        </div>
+                        
+                        ${associateEditors.length > 0 ? `
+                            <div class="scope-section">
+                                <div class="section-title">
+                                    <i class="fas fa-users"></i>
+                                    <span>Associate Editors</span>
+                                </div>
+                                <div class="editors-container">
+                                    <div class="editor-list">
+                                        ${associateEditors.map(editor =>
+                        `<span class="editor-tag">${getEditorName(editor)}</span>`
+                    ).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="scope-footer">
+                        <div class="scope-date">
+                            Created: ${new Date(scope.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    })}
+                        </div>
+                        <div class="scope-actions">
+                            <button class="action-btn view-btn view-more-btn" data-id="${scope._id}">View</button>
+                            <button class="action-btn edit-btn edit-scope-btn" data-id="${scope._id}">Edit</button>
+                        </div>
+                    </div>
+                `;
                 return el;
             }
 
-            /* ---------- PAGINATION: replaced to match reviews.html exactly (only this changed) ---------- */
             renderPagination() {
                 let paginationContainer = document.getElementById('paginationContainer');
                 if (!paginationContainer) return;
@@ -922,13 +949,13 @@
                 paginationContainer.style.display = 'flex';
 
                 let html = `<div class="pagination-info">
-            Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} of ${this.totalItems} scope${this.totalItems !== 1 ? 's' : ''}
-        </div>
-        <div class="pagination-controls">`;
+                    Showing ${((this.currentPage - 1) * this.limit) + 1} to ${Math.min(this.currentPage * this.limit, this.totalItems)} of ${this.totalItems} scope${this.totalItems !== 1 ? 's' : ''}
+                </div>
+                <div class="pagination-controls">`;
 
                 html += `<button class="pagination-btn" ${this.currentPage === 1 ? 'disabled' : ''} onclick="scopesManager.changePage(${this.currentPage - 1})">
-            <i class="fas fa-chevron-left"></i> Previous
-        </button>`;
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>`;
 
                 const maxVisible = 5;
                 let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
@@ -948,8 +975,8 @@
                 }
 
                 html += `<button class="pagination-btn" ${this.currentPage === this.totalPages ? 'disabled' : ''} onclick="scopesManager.changePage(${this.currentPage + 1})">
-            Next <i class="fas fa-chevron-right"></i>
-        </button>`;
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>`;
                 html += '</div>';
 
                 paginationContainer.innerHTML = html;
@@ -964,22 +991,36 @@
             }
 
             clearFilters() {
-                this.currentFilters = { search: '', policy: 'all', date: 'all', sortOrder: 'desc' };
+                this.currentFilters = { search: '', isActive: 'all', sortOrder: 'desc' };
                 document.getElementById('searchInput').value = '';
+                document.getElementById('selectedStatus').value = 'all';
+                document.querySelector('#statusFilter .selected-text').textContent = 'All Status';
+                this.currentPage = 1;
                 this.fetchAndRender(1);
             }
 
-            showNoscopes(message) {
-                document.getElementById('scopesGrid').innerHTML = `
-            <div class="empty-state">
-                <h3>No scopes</h3>
-                <p>${message}</p>
-            </div>
-        `;
+            showNoScopes(message) {
+                const grid = document.getElementById('scopesGrid');
+                if (!grid) return;
+
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No Scopes Found</h3>
+                        <p>${message}</p>
+                        <button class="btn-secondary" onclick="scopesManager.clearFilters()">Clear Filters</button>
+                    </div>
+                `;
+
+                // Hide pagination when no results
+                const paginationContainer = document.getElementById('paginationContainer');
+                if (paginationContainer) {
+                    paginationContainer.style.display = 'none';
+                }
             }
         }
 
-        window.scopesManager = new scopesManager();
+        window.scopesManager = new ScopesManager();
     </script>
 
 </body>

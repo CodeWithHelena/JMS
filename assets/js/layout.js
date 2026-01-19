@@ -161,7 +161,7 @@ function expandParentDropdowns(el) {
 // Notification API helper functions
 const NOTIFICATION_API = {
   getUnreadCount: function() {
-    return `${API_BASE_URL}notifications/unread-count`;
+    return `${API_BASE_URL}/notifications/unread-count`;
   },
 
   getRecent: function(limit = 3) {
@@ -234,6 +234,7 @@ async function updateNotificationBadge() {
         if (notifCount) {
           notifCount.textContent = count;
           notifCount.style.display = count > 0 ? 'flex' : 'none';
+          notifCount.style.backgroundColor = '#dc2626';
         }
 
         // Update more menu badge

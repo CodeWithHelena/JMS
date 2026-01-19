@@ -610,7 +610,10 @@
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script>
+    <script type="module">
+        import { BASE_URL, token } from '/assets/js/utility.js';
+        console.log(token)
+
         // Reusable Loading Functions
         const LoadingScreen = {
             showTimelineLoading: function () {
@@ -649,13 +652,12 @@
         // Timeline Manager Class
         class TimelineManager {
             constructor() {
-                this.BASE_URL = 'https://fp.247laboratory.net/';
-                this.token = localStorage.getItem('token') || null;
                 this.submissionId = this.getSubmissionIdFromURL();
                 this.submission = null;
                 this.userCache = {}; // Cache for user data
 
-                if (!this.token) {
+                if (!token) {
+                    console.error('No token found');
                     ErrorScreen.show('Authentication required. Please login.');
                     return;
                 }
@@ -693,9 +695,9 @@
                 }
 
                 try {
-                    const response = await fetch(`${this.BASE_URL}/api/v1/user/${userId}`, {
+                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
                         headers: {
-                            'Authorization': `Bearer ${this.token}`,
+                            'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
@@ -723,9 +725,9 @@
 
                 try {
                     // First, get the submission data
-                    const submissionResponse = await fetch(`${this.BASE_URL}/api/v1/submissions/${this.submissionId}`, {
+                    const submissionResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
                         headers: {
-                            'Authorization': `Bearer ${this.token}`,
+                            'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
@@ -758,9 +760,9 @@
 
             async loadTimelineHistory() {
                 try {
-                    const historyResponse = await fetch(`${this.BASE_URL}/api/v1/submissions/${this.submissionId}/history`, {
+                    const historyResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
                         headers: {
-                            'Authorization': `Bearer ${this.token}`,
+                            'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
