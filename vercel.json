@@ -1,3 +1,4 @@
 {
-    "cleanhtml": true
+  "cleanUrls": true,
+  "trailingSlash": false
 }
