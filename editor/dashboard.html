@@ -392,7 +392,7 @@
                 <!-- Stats Overview -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-header">
+                        <div class="stat-header" onclick="location.href='editor-submissions.html';">
                             <div>
                                 <div class="stat-value" id="totalSubmissions"></div>
                                 <div class="stat-label">Total Submissions</div>
@@ -404,7 +404,7 @@
                     </div>
 
                     <div class="stat-card info">
-                        <div class="stat-header">
+                        <div class="stat-header" onclick="location.href='view-issues.html';">
                             <div>
                                 <div class="stat-value" id="totalIssues"></div>
                                 <div class="stat-label">Total Issues</div>
@@ -416,7 +416,7 @@
                     </div>
 
                     <div class="stat-card success">
-                        <div class="stat-header">
+                        <div class="stat-header" onclick="location.href='editor-submissions.html'">
                             <div>
                                 <div class="stat-value" id="published"></div>
                                 <div class="stat-label">Published</div>
@@ -429,7 +429,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="quick-actions-section">
+                <!-- <div class="quick-actions-section">
                     <h2 class="section-title">
                         <i class="fas fa-bolt"></i> Quick Actions
                     </h2>
@@ -458,7 +458,7 @@
                             <p class="action-description">Manage your scope settings and details</p>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Performance Overview -->
                 <div class="charts-section">
@@ -490,390 +490,236 @@
     <!-- Chart.js for graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script type="module">
-        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+<script type="module">
+    import { BASE_URL, token, apiFetch } from '/assets/js/utility.js';
 
-        class EditorDashboardManager {
-            constructor() {
-                this.user = null;
-                this.scopes = [];
-                this.submissions = [];
-                this.issues = [];
-                this.charts = {};
-                this.token = getAuthToken2();
+    class EditorDashboardManager {
+        constructor() {
+            this.user = null;
+            this.scopes = [];
+            this.submissions = [];
+            this.issues = [];
+            this.charts = {};
+            this.token = token;
 
-                this.initializeToastr();
-                this.initializeChart();
-                this.loadDashboardData();
-                this.updateDateTime();
-            }
+            this.initializeToastr();
+            this.showInitialLoading();
+            this.initializeChart();
+            this.loadDashboardData();
+            this.updateDateTime();
+        }
 
-            initializeToastr() {
-                toastr.options = {
-                    closeButton: false,
-                    progressBar: false,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000,
-                    extendedTimeOut: 1000
-                };
-            }
+        initializeToastr() {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 5000
+            };
+        }
 
-            initializeChart() {
-                // Initialize the submissions chart
-                this.charts.submissions = this.createSubmissionsChart();
-            }
+        showInitialLoading() {
+            const spinner = '<i class="fas fa-circle-notch fa-spin"></i>';
+            ['totalSubmissions', 'totalIssues', 'published'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = spinner;
+            });
 
-            createSubmissionsChart() {
-                const ctx = document.getElementById('submissionsChartCanvas')?.getContext('2d');
-                if (!ctx) return null;
-
-                return new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        datasets: [{
-                            label: 'Submissions',
-                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            borderColor: '#ff7a18',
-                            backgroundColor: 'rgba(255, 122, 24, 0.1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointBackgroundColor: '#ff7a18',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: 'white',
-                                bodyColor: 'white',
-                                borderColor: 'rgba(255, 255, 255, 0.2)',
-                                borderWidth: 1,
-                                padding: 12,
-                                displayColors: false,
-                                callbacks: {
-                                    label: function (context) {
-                                        return `Submissions: ${context.raw}`;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                },
-                                ticks: {
-                                    color: '#6b7280',
-                                    stepSize: 1
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Number of Submissions',
-                                    color: '#6b7280'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                },
-                                ticks: {
-                                    color: '#6b7280'
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Month',
-                                    color: '#6b7280'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            updateDateTime() {
-                const now = new Date();
-                const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const timeOptions = { hour: '2-digit', minute: '2-digit' };
-
-                const currentDateElement = document.getElementById('currentDate');
-                if (currentDateElement) {
-                    currentDateElement.textContent =
-                        now.toLocaleDateString('en-US', dateOptions) + ' • ' +
-                        now.toLocaleTimeString('en-US', timeOptions);
-                }
-
-                // Update greeting based on time of day
-                const greetingElement = document.getElementById('greeting');
-                if (greetingElement) {
-                    const hour = now.getHours();
-                    let greeting = 'Good ';
-
-                    if (hour < 12) greeting += 'Morning';
-                    else if (hour < 18) greeting += 'Afternoon';
-                    else greeting += 'Evening';
-
-                    greetingElement.textContent = greeting + '!';
-                }
-
-                // Update every minute
-                setTimeout(() => this.updateDateTime(), 60000);
-            }
-
-            async loadDashboardData() {
-                try {
-                    if (!this.token) {
-                        toastr.error('Authentication required. Please login.');
-                        return;
-                    }
-
-                    // Load user data first
-                    await this.loadUserData();
-
-                    // Load scopes
-                    await this.loadScopes();
-
-                    // Load submissions for each scope
-                    await this.loadSubmissions();
-
-                    // Load issues
-                    await this.loadIssues();
-
-                    // Update chart with real data
-                    this.updateChartWithData();
-
-                } catch (error) {
-                    console.error('Error loading dashboard data:', error);
-                    toastr.error('Failed to load dashboard data. Please refresh.');
-                }
-            }
-
-            async loadUserData() {
-                try {
-                    const response = await fetch(`${BASE_URL}/user/me`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success && data.user) {
-                            this.user = data.user;
-                            // Update welcome message with user name
-                            const dashboardMessageElement = document.getElementById('dashboardMessage');
-                            if (dashboardMessageElement) {
-                                const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
-                                if (userName) {
-                                    dashboardMessageElement.textContent =
-                                        `Welcome back, ${userName}! Here's your Editor Dashboard`;
-                                }
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading user data:', error);
-                }
-            }
-
-            async loadScopes() {
-                try {
-                    const response = await fetch(`${BASE_URL}/editor/scope`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    console.log('Scopes response:', response);
-
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch scopes: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    console.log('Scopes data:', data);
-                    if (!data.success || !data.scopes) {
-                        toastr.warning('No scopes found.');
-                        return;
-                    }
-
-                    this.scopes = data.scopes;
-
-                } catch (error) {
-                    console.error('Error loading scopes:', error);
-                    toastr.error('Failed to load scopes.');
-                }
-            }
-
-            async loadSubmissions() {
-                try {
-                    this.submissions = [];
-
-                    // If no scopes, return empty
-                    if (!this.scopes || this.scopes.length === 0) {
-                        return;
-                    }
-
-                    // Load submissions for each scope
-                    for (const scope of this.scopes) {
-                        const response = await fetch(`${BASE_URL}/editor/submissions?scopeId=${scope._id}`, {
-                            headers: {
-                                'Authorization': `Bearer ${this.token}`,
-                                'Accept': 'application/json'
-                            }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            if (data.success && data.submissions) {
-                                // Add scope info to each submission
-                                const submissionsWithScope = data.submissions.map(sub => ({
-                                    ...sub,
-                                    scopeTitle: scope.title
-                                }));
-                                this.submissions = [...this.submissions, ...submissionsWithScope];
-                            }
-                        }
-                    }
-
-                    // Update stats
-                    this.updateStats();
-
-                } catch (error) {
-                    console.error('Error loading submissions:', error);
-                    toastr.error('Failed to load submissions.');
-                }
-            }
-
-            async loadIssues() {
-                try {
-                    const response = await fetch(`${BASE_URL}/issues`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch issues: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success || !data.issues) {
-                        document.getElementById('totalIssues').textContent = '0';
-                        return;
-                    }
-
-                    this.issues = data.issues;
-
-                    // Update issues count
-                    document.getElementById('totalIssues').textContent = data.total || this.issues.length;
-
-                } catch (error) {
-                    console.error('Error loading issues:', error);
-                    document.getElementById('totalIssues').textContent = '0';
-                }
-            }
-
-            updateStats() {
-                try {
-                    // Total submissions
-                    const totalSubmissions = this.submissions.length;
-                    document.getElementById('totalSubmissions').textContent = totalSubmissions;
-
-                    // Count published submissions
-                    const publishedCount = this.submissions.filter(
-                        submission => submission.status === 'published'
-                    ).length;
-
-                    document.getElementById('published').textContent = publishedCount;
-
-                } catch (error) {
-                    console.error('Error updating stats:', error);
-                }
-            }
-
-            updateChartWithData() {
-                try {
-                    if (!this.charts.submissions || this.submissions.length === 0) {
-                        return;
-                    }
-
-                    // Group submissions by month
-                    const monthlyData = this.groupSubmissionsByMonth();
-
-                    // Update chart data
-                    this.charts.submissions.data.datasets[0].data = monthlyData;
-                    this.charts.submissions.update();
-
-                } catch (error) {
-                    console.error('Error updating chart:', error);
-                }
-            }
-
-            groupSubmissionsByMonth() {
-                // Initialize array with 12 months (0-11)
-                const monthlyCounts = Array(12).fill(0);
-
-                if (!this.submissions || this.submissions.length === 0) {
-                    return monthlyCounts;
-                }
-
-                // Get current year
-                const currentYear = new Date().getFullYear();
-
-                // Count submissions by month
-                this.submissions.forEach(submission => {
-                    try {
-                        const createdAt = new Date(submission.createdAt || submission.updatedAt);
-                        const submissionYear = createdAt.getFullYear();
-
-                        // Only count submissions from current year
-                        if (submissionYear === currentYear) {
-                            const month = createdAt.getMonth(); // 0-11
-                            monthlyCounts[month]++;
-                        }
-                    } catch (error) {
-                        console.error('Error parsing submission date:', error);
-                    }
-                });
-
-                return monthlyCounts;
-            }
-
-            escapeHtml(str) {
-                if (!str && str !== 0) return '';
-                return String(str)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
+            const chartCont = document.getElementById('submissionsChart');
+            if (chartCont && !document.getElementById('chart-loader')) {
+                const loader = document.createElement('div');
+                loader.id = 'chart-loader';
+                loader.className = 'loading-screen';
+                loader.innerHTML = '<div class="spinner"></div><p>Fetching performance data...</p>';
+                loader.style.cssText = 'position:absolute; inset:0; background:rgba(255,255,255,0.8); z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center;';
+                chartCont.style.position = 'relative';
+                chartCont.appendChild(loader);
             }
         }
 
-        // Initialize dashboard when DOM is loaded
-        let editorDashboardManager;
+        hideChartLoading() {
+            const loader = document.getElementById('chart-loader');
+            if (loader) loader.remove();
+        }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            editorDashboardManager = new EditorDashboardManager();
-        });
-    </script>
+        // Sets stats to 0 and clears chart loader for users with no editor scope
+        handleNewUserEmptyState() {
+            const totalSubEl = document.getElementById('totalSubmissions');
+            const publishedEl = document.getElementById('published');
+            if (totalSubEl) totalSubEl.textContent = '0';
+            if (publishedEl) publishedEl.textContent = '0';
+
+            this.hideChartLoading();
+            console.log("Dashboard: User has no editor scopes. Values defaulted to 0.");
+        }
+
+        initializeChart() {
+            const ctx = document.getElementById('submissionsChartCanvas')?.getContext('2d');
+            if (!ctx) return;
+
+            this.charts.submissions = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Submissions',
+                        data: Array(12).fill(0),
+                        borderColor: '#ff7a18',
+                        backgroundColor: 'rgba(255, 122, 24, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+
+        async loadDashboardData() {
+            if (!this.token) return;
+
+            try {
+                // 1. Load User and Issues (Independent)
+                await Promise.all([
+                    this.loadUserData(),
+                    this.loadIssues()
+                ]);
+
+                // 2. Load Scopes
+                const scopeSuccess = await this.loadScopes();
+
+                // 3. If scopes exist, load submissions
+                if (scopeSuccess && this.scopes.length > 0) {
+                    await this.loadSubmissions();
+                    this.updateChartWithData();
+                    this.hideChartLoading();
+                }
+
+            } catch (error) {
+                console.error('Dashboard Error Log:', error.message);
+
+                // Only show Toastr if it's a network/internet issue
+                if (error.message.toLowerCase().includes('network error') ||
+                    error.message.toLowerCase().includes('internet connection')) {
+                    toastr.error(error.message);
+                    // We DO NOT hide spinners or loaders here so they keep spinning
+                }
+            }
+        }
+
+        async loadUserData() {
+            try {
+                const data = await apiFetch(`${BASE_URL}/user/me`, {
+                    headers: { 'Authorization': `Bearer ${this.token}` }
+                });
+                if (data.success && data.user) {
+                    this.user = data.user;
+                    const msgEl = document.getElementById('dashboardMessage');
+                    if (msgEl) {
+                        const name = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
+                        msgEl.textContent = `Welcome back, ${name || 'Editor'}!`;
+                    }
+                }
+            } catch (e) { console.warn("User fetch error:", e.message); }
+        }
+
+        async loadScopes() {
+            try {
+                const data = await apiFetch(`${BASE_URL}/editor/scope`, {
+                    headers: { 'Authorization': `Bearer ${this.token}` }
+                });
+
+                if (data.success) {
+                    this.scopes = data.scopes || [];
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                // Check if this is the "New User" scenario
+                if (error.message.includes("not listed as an editor")) {
+                    this.handleNewUserEmptyState();
+                    return false; // Stop further submission fetching
+                }
+                throw error; // Pass network errors up to loadDashboardData
+            }
+        }
+
+        async loadSubmissions() {
+            this.submissions = [];
+            for (const scope of this.scopes) {
+                try {
+                    const data = await apiFetch(`${BASE_URL}/editor/submissions?scopeId=${scope._id}`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    if (data.success && data.submissions) {
+                        this.submissions.push(...data.submissions);
+                    }
+                } catch (e) { console.warn(`Submissions error for scope ${scope._id}:`, e.message); }
+            }
+            this.updateStats();
+        }
+
+        async loadIssues() {
+            try {
+                const data = await apiFetch(`${BASE_URL}/issues`, {
+                    headers: { 'Authorization': `Bearer ${this.token}` }
+                });
+                const el = document.getElementById('totalIssues');
+                if (el) el.textContent = data.total || (data.issues ? data.issues.length : '0');
+            } catch (error) {
+                // If not a network error, default to 0
+                if (!error.message.toLowerCase().includes('network error')) {
+                    const el = document.getElementById('totalIssues');
+                    if (el) el.textContent = '0';
+                } else {
+                    throw error; // Let the main handler keep the spinner spinning
+                }
+            }
+        }
+
+        updateStats() {
+            const totalSubEl = document.getElementById('totalSubmissions');
+            const publishedEl = document.getElementById('published');
+            if (totalSubEl) totalSubEl.textContent = this.submissions.length;
+            if (publishedEl) {
+                publishedEl.textContent = this.submissions.filter(s => s.status === 'published').length;
+            }
+        }
+
+        updateChartWithData() {
+            if (!this.charts.submissions) return;
+            const counts = Array(12).fill(0);
+            const currentYear = new Date().getFullYear();
+
+            this.submissions.forEach(sub => {
+                const date = new Date(sub.createdAt || sub.updatedAt);
+                if (date.getFullYear() === currentYear) counts[date.getMonth()]++;
+            });
+
+            this.charts.submissions.data.datasets[0].data = counts;
+            this.charts.submissions.update();
+        }
+
+        updateDateTime() {
+            const now = new Date();
+            const dateEl = document.getElementById('currentDate');
+            if (dateEl) {
+                dateEl.textContent = now.toLocaleDateString('en-US', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                }) + ' • ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            }
+            setTimeout(() => this.updateDateTime(), 60000);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        new EditorDashboardManager();
+    });
+</script>
 </body>
 
 </html>

@@ -282,8 +282,8 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.25rem 0.75rem;
-            background: var(--primary-light);
-            color: var(--secondary-color);
+            background: var(--warning-light);
+            color: var(--warning);
             border-radius: 4px;
             font-weight: 600;
             font-size: 0.85rem;
@@ -504,28 +504,12 @@
             box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
         }
 
-        .search-button {
-            background: var(--btn-bg);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
+        .btn-brand {
+            padding: .9rem 1.5rem;
             border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .search-button:hover {
-            background: var(--btn-bg);
-            transform: translateY(-2px);
-        }
 
-        .search-button:active {
-            transform: translateY(0);
-        }
 
         /* small responsive tweak */
         @media (max-width:520px) {
@@ -564,7 +548,7 @@
                 width: 100%;
             }
 
-            .search-button {
+            .btn-brand {
                 width: 100%;
                 justify-content: center;
             }
@@ -589,7 +573,8 @@
                 <div class="d-flex justify-content-between">
                     <div class="container page-title">
                         <div><h1>Review History Timeline</h1>
-                        <p>Track all your completed reviews and recommendations</p></div>
+                        <p>Track all your completed reviews and recommendations</p>
+                    </div>
                     </div>
                 </div>
 
@@ -616,7 +601,7 @@
                     <!-- Search Filter -->
                     <div class="search-filter">
                         <input type="text" id="searchInput" class="search-input" placeholder="Search by title, author name, or email..." value="">
-                        <button id="searchButton" class="search-button">
+                        <button id="searchButton" class="btn-brand">
                             <i class="fas fa-search"></i> Search
                         </button>
                     </div>

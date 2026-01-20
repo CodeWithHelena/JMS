@@ -75,10 +75,11 @@
             transition: var(--transition);
             border: none;
             border-radius: 8px;
-            padding: 10px 12px;
+            padding: 10px 20px;
             font-weight: 500;
             white-space: nowrap;
             min-width: 80px;
+             margin-top: 2px
         }
 
         .add-btn {
@@ -284,8 +285,10 @@
             <div id="header-placeholder"></div>
             <main class="main-content">
                 <div class="container page-title">
-                    <h1>Submit Manuscript</h1>
-                    <p>Create a new submission</p>
+                    <div>
+                        <h1>Submit Manuscript</h1>
+                        <p>Create a new submission</p>
+                    </div>
                 </div>
                 <div class="container my-4">
                     <div class="row justify-content-center">
@@ -371,7 +374,7 @@
 
                                 <!-- Submit Button -->
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" id="submitBtn" class="btn btn-brand">Submit</button>
+                                    <button type="submit" id="submitBtn" class=" btn-brand">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -658,7 +661,7 @@
                         <div class="error-message error-affiliation" style="display:none;">Affiliation error</div>
                     </div>
                     <div class="col-md-1 d-grid">
-                        <button type="button" class="btn add-btn w-100">
+                        <button type="button" class="btn add-btn w-100" style="height: 45px;" title="Add Author">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>

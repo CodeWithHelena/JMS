@@ -26,7 +26,7 @@
         }
 
         .form-title {
-            color: var(--text-color);
+            color: var(--secondary-color);
             font-weight: 700;
             margin-bottom: 5px;
             font-size: 1.25rem;
@@ -40,7 +40,7 @@
 
         .form-label {
             font-weight: 600;
-            color: var(--text-color);
+            color: var(--secondary-color);
             margin-bottom: 8px;
             font-size: 0.95rem;
         }
@@ -50,7 +50,7 @@
             border: 1px solid var(--border-color);
             padding: 10px 15px;
             background-color: var(--sidebar-bg);
-            color: var(--text-color);
+            color: var(--secondary-color);
             transition: var(--transition);
             font-size: 0.95rem;
         }
@@ -80,7 +80,7 @@
             border-radius: 999px;
             background: var(--body-bg);
             border: 1px solid var(--border-color);
-            color: var(--text-color);
+            color: var(--secondary-color);
             font-size: 0.9rem;
             transition: var(--transition);
             animation: fadeIn 0.3s ease-out;
@@ -131,11 +131,6 @@
             opacity: 0.9;
         }
 
-        .btn-brand:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
 
         .btn-add {
             background-color: var(--success-dark);
@@ -232,8 +227,8 @@
         }
 
         .status-saved {
-            background: var(--success-light);
-            color: var(--success-dark);
+            background: var(--warning-light);
+            color: var(--warning);
         }
 
         /* Responsive Design */
@@ -279,8 +274,10 @@
             <div id="header-placeholder"></div>
             <main class="main-content">
                 <div class="container page-title">
-                    <h1>My Keywords</h1>
-                    <p>Manage your research interests and expertise</p>
+                    <div>
+                        <h1>My Keywords</h1>
+                        <p>Manage your research interests and expertise</p>
+                    </div>
                 </div>
                 <div class="container my-4">
                     <div class="row g-4">

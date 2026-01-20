@@ -1108,6 +1108,30 @@ ul {
     background: var(--ligth);
 }
 
+.error-screen i{
+    margin-bottom: 0 !important;
+}
+
+.retry-btn {
+    background: var(--lite-primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center !important;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.retry-btn:hover{
+    opacity: 0.8 !important;
+}
+
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
