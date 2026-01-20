@@ -426,6 +426,9 @@
                 gap: 1rem;
             }
         }
+
+        /* New css for chart-card */
+        
     </style>
 </head>
 
@@ -505,7 +508,7 @@
 
                     <!-- Right Column: Recent Activity -->
                     <div class="recent-activity-section">
-                        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                             <h2 class="section-title">
                                 <i class="fas fa-bell"></i> Recent Activity
                             </h2>
@@ -535,427 +538,697 @@
     <!-- Chart.js for graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script type="module">
-        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+<script type="module">
+    import { BASE_URL, getAuthToken2, apiFetch } from '/assets/js/utility.js';
 
-        class DashboardManager {
-            constructor() {
-                this.user = null;
-                this.dashboardData = null;
-                this.charts = {};
-                this.token = getAuthToken2();
+    class DashboardManager {
+        constructor() {
+            this.user = null;
+            this.dashboardData = null;
+            this.charts = {};
+            this.token = getAuthToken2();
+            this.userId = null;
 
-                this.initializeToastr();
-                this.initializeChart();
-                this.loadDashboardData();
-                this.updateDateTime();
-            }
+            this.initializeToastr();
+            this.initializeChart();
+            this.loadDashboardData();
+            this.updateDateTime();
+        }
 
-            initializeToastr() {
-                toastr.options = {
-                    closeButton: false,
-                    progressBar: false,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000,
-                    extendedTimeOut: 1000
-                };
-            }
+        initializeToastr() {
+            toastr.options = {
+                closeButton: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                timeOut: 3000,
+                extendedTimeOut: 1000
+            };
+        }
 
-            initializeChart() {
-                // Initialize only the submissions chart
-                this.charts.submissions = this.createSubmissionsChart();
-            }
+        initializeChart() {
+            // Initialize only the submissions chart
+            this.charts.submissions = this.createSubmissionsChart();
 
-            createSubmissionsChart() {
-                const ctx = document.getElementById('submissionsChartCanvas')?.getContext('2d');
-                if (!ctx) return null;
+            // Make chart responsive on window resize
+            window.addEventListener('resize', () => {
+                if (this.charts.submissions) {
+                    this.charts.submissions.resize();
+                }
+            });
+        }
 
-                return new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                        datasets: [{
-                            label: 'Submissions',
-                            data: [12, 19, 15, 25, 22, 30, 28],
+        createSubmissionsChart() {
+            const ctx = document.getElementById('submissionsChartCanvas')?.getContext('2d');
+            if (!ctx) return null;
+
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [], // Will be populated with real data
+                    datasets: [{
+                        label: 'Reviews Completed',
+                        data: [], // Will be populated with real data
+                        borderColor: 'var(--primary)',
+                        backgroundColor: 'rgba(255, 122, 24, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'var(--primary)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
                             borderColor: 'var(--primary)',
-                            backgroundColor: 'rgba(255, 122, 24, 0.1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4
-                        }]
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 6
+                        }
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
                             },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: 'white',
-                                bodyColor: 'white',
-                                borderColor: 'var(--primary)',
-                                borderWidth: 1
+                            ticks: {
+                                color: 'var(--muted)',
+                                stepSize: 1,
+                                precision: 0
+                            },
+                            title: {
+                                display: true,
+                                text: 'Number of Reviews',
+                                color: 'var(--muted)',
+                                padding: { top: 10, bottom: 10 }
                             }
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                },
-                                ticks: {
-                                    color: 'var(--muted)'
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Number of Submissions',
-                                    color: 'var(--muted)'
-                                }
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
                             },
-                            x: {
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                },
-                                ticks: {
-                                    color: 'var(--muted)'
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Month',
-                                    color: 'var(--muted)'
-                                }
+                            ticks: {
+                                color: 'var(--muted)',
+                                maxRotation: 45,
+                                minRotation: 45
+                            },
+                            title: {
+                                display: true,
+                                text: 'Month',
+                                color: 'var(--muted)',
+                                padding: { top: 10, bottom: 10 }
                             }
                         }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        async loadChartData() {
+            try {
+                // Get completed reviews for chart data
+                const data = await apiFetch(`${BASE_URL}/reviews/history/list?limit=100`, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
                     }
                 });
-            }
 
-            updateDateTime() {
-                const now = new Date();
-                const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const timeOptions = { hour: '2-digit', minute: '2-digit' };
-
-                const currentDateElement = document.getElementById('currentDate');
-                if (currentDateElement) {
-                    currentDateElement.textContent =
-                        now.toLocaleDateString('en-US', dateOptions) + ' • ' +
-                        now.toLocaleTimeString('en-US', timeOptions);
+                if (!data.success || !data.completedReviews || data.completedReviews.length === 0) {
+                    console.log('No completed reviews data available for chart');
+                    // Show empty state in chart
+                    this.showEmptyChartState();
+                    return;
                 }
 
-                // Update greeting based on time of day
-                const greetingElement = document.getElementById('greeting');
-                if (greetingElement) {
-                    const hour = now.getHours();
-                    let greeting = 'Good ';
+                // Group reviews by month
+                const monthlyData = this.groupReviewsByMonth(data.completedReviews);
 
-                    if (hour < 12) greeting += 'Morning';
-                    else if (hour < 18) greeting += 'Afternoon';
-                    else greeting += 'Evening';
+                // Update chart with real data
+                this.updateChartWithData(monthlyData);
 
-                    greetingElement.textContent = greeting + '!';
-                }
-
-                // Update every minute
-                setTimeout(() => this.updateDateTime(), 60000);
-            }
-
-            async loadDashboardData() {
-                try {
-                    if (!this.token) {
-                        toastr.error('Authentication required. Please login.');
-                        return;
-                    }
-
-                    // Load user data first
-                    await this.loadUserData();
-
-                    // Then load dashboard statistics
-                    await this.loadDashboardStats();
-
-                    // Load recent activity
-                    await this.loadRecentActivity();
-
-                } catch (error) {
-                    console.error('Error loading dashboard data:', error);
-                    toastr.error('Failed to load dashboard data. Please refresh.');
-                }
-            }
-
-            async loadUserData() {
-                try {
-                    const response = await fetch(`${BASE_URL}/profile/me`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success && data.user) {
-                            this.user = data.user;
-                            // Update welcome message with user name
-                            const dashboardMessageElement = document.getElementById('dashboardMessage');
-                            if (dashboardMessageElement) {
-                                const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
-                                if (userName) {
-                                    dashboardMessageElement.textContent =
-                                        `Welcome back, ${userName}! Here's your Journal Management Dashboard`;
-                                }
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading user data:', error);
-                }
-            }
-
-            async loadDashboardStats() {
-                try {
-                    // Load completed reviews count
-                    const completedResponse = await fetch(`${BASE_URL}/reviews/history/list?page=1&limit=10`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (completedResponse.ok) {
-                        const completedData = await completedResponse.json();
-                        if (completedData.success && completedData.pagination) {
-                            document.getElementById('completedReviews').textContent = completedData.pagination.totalResults || 0;
-                        }
-                    }
-
-                    // Load assigned reviews to get total submissions and pending reviews
-                    const assignedResponse = await fetch(`${BASE_URL}/reviews/assigned?limit=20&page=1`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (assignedResponse.ok) {
-                        const assignedData = await assignedResponse.json();
-                        if (assignedData.success) {
-                            // Total submissions
-                            document.getElementById('totalSubmissions').textContent = assignedData.total || 0;
-
-                            // Pending reviews count (invitationStatus: "pending")
-                            const pendingCount = assignedData.reviews ?
-                                assignedData.reviews.filter(review => review.invitationStatus === 'pending').length : 0;
-                            document.getElementById('pendingReviews').textContent = pendingCount;
-                        }
-                    }
-
-                } catch (error) {
-                    console.error('Error loading dashboard stats:', error);
-                    toastr.error('Failed to load dashboard statistics.');
-                }
-            }
-
-            async loadRecentActivity() {
-                try {
-                    const container = document.getElementById('activityList');
-
-                    // Show loading state
-                    container.innerHTML = `
-                        <div class="loading-screen">
-                            <div class="spinner"></div>
-                            <p>Loading recent activity...</p>
-                        </div>
-                    `;
-
-                    // Fetch recent activities
-                    const response = await fetch(`${BASE_URL}/reviews/693a9b15b9fa3a5fce086806`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch recent activity: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success || !data.review || !data.review.manuscript || !data.review.manuscript.history) {
-                        container.innerHTML = `
-                            <div class="no-data" style="text-align: center; padding: 2rem; color: var(--muted);">
-                                <i class="fas fa-bell-slash fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
-                                <p>No recent activity found</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    const history = data.review.manuscript.history;
-
-                    // Display from most recent (bottom of array) to oldest
-                    const recentActivities = history.slice().reverse();
-
-                    if (recentActivities.length === 0) {
-                        container.innerHTML = `
-                            <div class="no-data" style="text-align: center; padding: 2rem; color: var(--muted);">
-                                <i class="fas fa-bell-slash fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
-                                <p>No recent activity found</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    container.innerHTML = recentActivities.map(activity => {
-                        // Determine icon and status class based on status
-                        const { icon, iconColor, statusClass } = this.getActivityIcon(activity.status);
-                        const formattedTime = this.formatTimeAgo(activity.date);
-
-                        // Get the activity text
-                        let activityText = '';
-                        const byUser = activity.by ? 'by Editor' : '';
-
-                        if (activity.comment) {
-                            const cleanComment = this.stripHtml(activity.comment);
-                            activityText = `${cleanComment.substring(0, 120)}${cleanComment.length > 120 ? '...' : ''}`;
-                        } else {
-                            activityText = this.getStatusText(activity.status);
-                        }
-
-                        return `
-                            <div class="activity-item">
-                                <div class="activity-icon" style="background: ${this.getStatusBackgroundColor(activity.status)}; color: ${iconColor};">
-                                    <i class="fas ${icon}"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-text">
-                                        <span class="activity-status ${statusClass}">
-                                            ${this.getStatusDisplayText(activity.status)}
-                                        </span>
-                                        ${this.escapeHtml(activityText)}
-                                    </div>
-                                    <div class="activity-time">
-                                        <i class="far fa-clock"></i> ${formattedTime} ${byUser}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-
-                } catch (error) {
-                    console.error('Error loading recent activity:', error);
-                    const container = document.getElementById('activityList');
-                    container.innerHTML = `
-                        <div class="error-message" style="text-align: center; padding: 2rem; color: var(--danger);">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>Failed to load recent activity</p>
-                        </div>
-                    `;
-                }
-            }
-
-            getActivityIcon(status) {
-                switch (status) {
-                    case 'submitted':
-                        return { icon: 'fa-file-upload', iconColor: 'var(--primary)', statusClass: 'status-submitted' };
-                    case 'under_review':
-                        return { icon: 'fa-user-check', iconColor: 'var(--info)', statusClass: 'status-under_review' };
-                    case 'revision_requested':
-                        return { icon: 'fa-edit', iconColor: 'var(--warning)', statusClass: 'status-revision_requested' };
-                    case 'accepted':
-                        return { icon: 'fa-check-circle', iconColor: 'var(--success)', statusClass: 'status-accepted' };
-                    case 'awaiting_payment':
-                        return { icon: 'fa-money-bill-wave', iconColor: 'var(--warning)', statusClass: 'status-awaiting_payment' };
-                    case 'published':
-                        return { icon: 'fa-book', iconColor: '#8b5cf6', statusClass: 'status-published' };
-                    default:
-                        return { icon: 'fa-bell', iconColor: 'var(--primary)', statusClass: 'status-submitted' };
-                }
-            }
-
-            getStatusBackgroundColor(status) {
-                switch (status) {
-                    case 'submitted': return 'rgba(255, 122, 24, 0.1)';
-                    case 'under_review': return 'rgba(59, 130, 246, 0.1)';
-                    case 'revision_requested': return 'rgba(245, 158, 11, 0.1)';
-                    case 'accepted': return 'rgba(16, 185, 129, 0.1)';
-                    case 'awaiting_payment': return 'rgba(245, 158, 11, 0.1)';
-                    case 'published': return 'rgba(139, 92, 246, 0.1)';
-                    default: return 'rgba(255, 122, 24, 0.1)';
-                }
-            }
-
-            getStatusDisplayText(status) {
-                const statusMap = {
-                    'submitted': 'SUBMITTED',
-                    'under_review': 'UNDER REVIEW',
-                    'revision_requested': 'REVISION',
-                    'accepted': 'ACCEPTED',
-                    'awaiting_payment': 'PAYMENT',
-                    'published': 'PUBLISHED'
-                };
-                return statusMap[status] || status.toUpperCase();
-            }
-
-            getStatusText(status) {
-                const statusMap = {
-                    'submitted': 'Submission received',
-                    'under_review': 'Manuscript is under review',
-                    'revision_requested': 'Revision requested',
-                    'accepted': 'Manuscript accepted',
-                    'awaiting_payment': 'Awaiting payment for publication',
-                    'published': 'Manuscript published'
-                };
-                return statusMap[status] || status.replace('_', ' ');
-            }
-
-            formatTimeAgo(dateString) {
-                try {
-                    const date = new Date(dateString);
-                    const now = new Date();
-                    const diffMs = now - date;
-                    const diffMins = Math.floor(diffMs / 60000);
-                    const diffHours = Math.floor(diffMs / 3600000);
-                    const diffDays = Math.floor(diffMs / 86400000);
-
-                    if (diffMins < 1) return 'Just now';
-                    if (diffMins < 60) return `${diffMins} min ago`;
-                    if (diffHours < 24) return `${diffHours} hr ago`;
-                    if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
-
-                    return date.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                } catch (error) {
-                    return 'Recently';
-                }
-            }
-
-            stripHtml(html) {
-                if (!html) return '';
-                return html.replace(/<[^>]*>/g, '');
-            }
-
-            escapeHtml(str) {
-                if (!str && str !== 0) return '';
-                return String(str)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
+            } catch (error) {
+                console.log('Chart data loading:', error.message);
+                this.showEmptyChartState();
             }
         }
 
-        // Initialize dashboard when DOM is loaded
-        let dashboardManager;
+        showEmptyChartState() {
+            // Update chart to show empty state
+            const now = new Date();
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-        document.addEventListener('DOMContentLoaded', function () {
-            dashboardManager = new DashboardManager();
-        });
-    </script>
+            const labels = [];
+            const data = [];
+
+            // Create last 6 months labels with zero data
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(now.getMonth() - i);
+                labels.push(`${monthNames[date.getMonth()]} ${date.getFullYear()}`);
+                data.push(0);
+            }
+
+            if (this.charts.submissions) {
+                this.charts.submissions.data.labels = labels;
+                this.charts.submissions.data.datasets[0].data = data;
+                this.charts.submissions.update();
+            }
+        }
+
+        groupReviewsByMonth(reviews) {
+            const monthlyCounts = {};
+            const now = new Date();
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            // Initialize all last 6 months with 0
+            for (let i = 0; i < 6; i++) {
+                const date = new Date();
+                date.setMonth(now.getMonth() - i);
+                const monthYear = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+                monthlyCounts[monthYear] = 0;
+            }
+
+            // Count reviews by month
+            reviews.forEach(review => {
+                const date = new Date(review.submittedAt || review.createdAt);
+                const monthYear = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+                if (monthlyCounts.hasOwnProperty(monthYear)) {
+                    monthlyCounts[monthYear]++;
+                }
+            });
+
+            // Sort by date (oldest to newest)
+            const sortedMonths = Object.keys(monthlyCounts).sort((a, b) => {
+                return new Date(a) - new Date(b);
+            });
+
+            return {
+                labels: sortedMonths,
+                data: sortedMonths.map(month => monthlyCounts[month])
+            };
+        }
+
+        updateChartWithData(monthlyData) {
+            if (!this.charts.submissions) {
+                console.log('Chart not initialized');
+                return;
+            }
+
+            try {
+                this.charts.submissions.data.labels = monthlyData.labels;
+                this.charts.submissions.data.datasets[0].data = monthlyData.data;
+                this.charts.submissions.update('none'); // Use 'none' to prevent animation on initial load
+            } catch (error) {
+                console.log('Chart update error:', error.message);
+            }
+        }
+
+        updateDateTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+
+            const currentDateElement = document.getElementById('currentDate');
+            if (currentDateElement) {
+                currentDateElement.textContent =
+                    now.toLocaleDateString('en-US', dateOptions) + ' • ' +
+                    now.toLocaleTimeString('en-US', timeOptions);
+            }
+
+            // Update greeting based on time of day
+            const greetingElement = document.getElementById('greeting');
+            if (greetingElement) {
+                const hour = now.getHours();
+                let greeting = 'Good ';
+
+                if (hour < 12) greeting += 'Morning';
+                else if (hour < 18) greeting += 'Afternoon';
+                else greeting += 'Evening';
+
+                greetingElement.textContent = greeting + '!';
+            }
+
+            // Update every minute
+            setTimeout(() => this.updateDateTime(), 60000);
+        }
+
+        async loadDashboardData() {
+            try {
+                if (!this.token) {
+                    toastr.error('Authentication required. Please login.');
+                    return;
+                }
+
+                // Load user data first
+                await this.loadUserData();
+
+                // Then load dashboard statistics
+                await this.loadDashboardStats();
+
+                // Load chart data
+                await this.loadChartData();
+
+                // Load recent activity
+                await this.loadRecentActivity();
+
+            } catch (error) {
+                console.log('Dashboard loading error:', error.message);
+
+                // Show user-friendly error based on error type
+                if (error.message.includes('Network Error')) {
+                    this.showNetworkErrorState();
+                } else {
+                    toastr.error('Unable to load dashboard data. Please try again.');
+                }
+            }
+        }
+
+        showNetworkErrorState() {
+            // Update stats to show loading error
+            document.getElementById('totalSubmissions').textContent = '--';
+            document.getElementById('pendingReviews').textContent = '--';
+            document.getElementById('completedReviews').textContent = '--';
+
+            // Show network error in activity section
+            const container = document.getElementById('activityList');
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 2rem; color: var(--danger);">
+                        <i class="fas fa-wifi-slash fa-2x" style="margin-bottom: 1rem;"></i>
+                        <p>Network Connection Required</p>
+                        <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;">
+                            Please check your internet connection and refresh the page.
+                        </p>
+                    </div>
+                `;
+            }
+
+            // Show network error in chart area
+            const chartContainer = document.querySelector('.chart-container');
+            if (chartContainer) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'chart-loading';
+                errorDiv.innerHTML = `
+                    <div style="text-align: center; color: var(--danger);">
+                        <i class="fas fa-wifi-slash fa-2x" style="margin-bottom: 1rem;"></i>
+                        <p>Chart data unavailable</p>
+                        <small>Network connection required</small>
+                    </div>
+                `;
+                chartContainer.appendChild(errorDiv);
+            }
+        }
+
+        async loadUserData() {
+            try {
+                // Use the correct profile endpoint with apiFetch
+                const data = await apiFetch(`${BASE_URL}/profile/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (data.success && data.user) {
+                    this.user = data.user;
+                    // Store user ID for other API calls
+                    this.userId = data.user._id;
+
+                    // Update welcome message
+                    const dashboardMessageElement = document.getElementById('dashboardMessage');
+                    if (dashboardMessageElement) {
+                        const userName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim();
+                        if (userName) {
+                            dashboardMessageElement.textContent =
+                                `Welcome back, ${userName}! Here's your Journal Management Dashboard`;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('User data loading:', error.message);
+                // Don't show error toast here - handled in main loadDashboardData
+            }
+        }
+
+        async loadDashboardStats() {
+            try {
+                // Load completed reviews count
+                const completedData = await apiFetch(`${BASE_URL}/reviews/history/list?page=1&limit=10`, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (completedData.success && completedData.pagination) {
+                    document.getElementById('completedReviews').textContent = completedData.pagination.totalResults || 0;
+                }
+
+                // Load assigned reviews to get total submissions and pending reviews
+                const assignedData = await apiFetch(`${BASE_URL}/reviews/assigned?limit=20&page=1`, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (assignedData.success) {
+                    // Total submissions
+                    document.getElementById('totalSubmissions').textContent = assignedData.total || 0;
+
+                    // Pending reviews count (invitationStatus: "pending")
+                    const pendingCount = assignedData.reviews ?
+                        assignedData.reviews.filter(review => review.invitationStatus === 'pending').length : 0;
+                    document.getElementById('pendingReviews').textContent = pendingCount;
+                }
+
+            } catch (error) {
+                console.log('Dashboard stats loading:', error.message);
+                // Set default values
+                document.getElementById('totalSubmissions').textContent = '0';
+                document.getElementById('pendingReviews').textContent = '0';
+                document.getElementById('completedReviews').textContent = '0';
+            }
+        }
+
+        async loadRecentActivity() {
+            try {
+                const container = document.getElementById('activityList');
+
+                // Show loading state
+                container.innerHTML = `
+                    <div class="loading-screen">
+                        <div class="spinner"></div>
+                        <p>Loading recent activity...</p>
+                    </div>
+                `;
+
+                // Get reviews list first to get review IDs
+                const reviewsData = await apiFetch(`${BASE_URL}/reviews/history/list?page=1&limit=5`, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!reviewsData.success || !reviewsData.completedReviews || reviewsData.completedReviews.length === 0) {
+                    this.showNoActivityState(container);
+                    return;
+                }
+
+                // Get the most recent review for activity
+                const recentReview = reviewsData.completedReviews[0];
+
+                try {
+                    // Try to fetch review details to get history
+                    const reviewDetailData = await apiFetch(`${BASE_URL}/reviews/${recentReview._id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (reviewDetailData.success && reviewDetailData.review && reviewDetailData.review.manuscript &&
+                        reviewDetailData.review.manuscript.history) {
+
+                        const history = reviewDetailData.review.manuscript.history;
+                        const recentActivities = history.slice().reverse().slice(0, 5); // Show 5 most recent
+
+                        if (recentActivities.length === 0) {
+                            this.displayReviewActivities(reviewsData.completedReviews, container);
+                            return;
+                        }
+
+                        this.displayHistoryActivities(recentActivities, container);
+
+                    } else {
+                        this.displayReviewActivities(reviewsData.completedReviews, container);
+                    }
+
+                } catch (detailError) {
+                    // If we can't get review details, show review submission activity
+                    console.log('Review detail loading:', detailError.message);
+                    this.displayReviewActivities(reviewsData.completedReviews, container);
+                }
+
+            } catch (error) {
+                console.log('Recent activity loading:', error.message);
+                this.showActivityErrorState(error.message);
+            }
+        }
+
+        showNoActivityState(container) {
+            container.innerHTML = `
+                <div class="no-data" style="text-align: center; padding: 2rem; color: var(--muted);">
+                    <i class="fas fa-bell-slash fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>No recent activity found</p>
+                </div>
+            `;
+        }
+
+        showActivityErrorState(errorMessage) {
+            const container = document.getElementById('activityList');
+            if (!container) return;
+
+            // Check if it's a network error
+            if (errorMessage.includes('Network Error')) {
+                container.innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 2rem; color: var(--warning);">
+                        <i class="fas fa-wifi-slash fa-2x" style="margin-bottom: 1rem;"></i>
+                        <p>Activity data unavailable</p>
+                        <small style="font-size: 0.8rem; opacity: 0.8;">
+                            Network connection required to load activity
+                        </small>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 2rem; color: var(--muted);">
+                        <i class="fas fa-exclamation-circle fa-2x" style="margin-bottom: 1rem;"></i>
+                        <p>Unable to load activity</p>
+                        <button onclick="location.reload()" style="
+                            margin-top: 1rem;
+                            padding: 0.5rem 1rem;
+                            background: var(--primary);
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 0.9rem;
+                        ">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        displayHistoryActivities(activities, container) {
+            container.innerHTML = activities.map(activity => {
+                // Determine icon and status class based on status
+                const { icon, iconColor, statusClass } = this.getActivityIcon(activity.status);
+                const formattedTime = this.formatTimeAgo(activity.date);
+
+                // Get the activity text
+                let activityText = '';
+                const byUser = activity.by ? 'by Editor' : '';
+
+                if (activity.comment) {
+                    const cleanComment = this.stripHtml(activity.comment);
+                    activityText = `${cleanComment.substring(0, 120)}${cleanComment.length > 120 ? '...' : ''}`;
+                } else {
+                    activityText = this.getStatusText(activity.status);
+                }
+
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: ${this.getStatusBackgroundColor(activity.status)}; color: ${iconColor};">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                <span class="activity-status ${statusClass}">
+                                    ${this.getStatusDisplayText(activity.status)}
+                                </span>
+                                ${this.escapeHtml(activityText)}
+                            </div>
+                            <div class="activity-time">
+                                <i class="far fa-clock"></i> ${formattedTime} ${byUser}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        displayReviewActivities(reviews, container) {
+            // Display review submissions as activity if no history available
+            if (reviews.length === 0) {
+                this.showNoActivityState(container);
+                return;
+            }
+
+            container.innerHTML = reviews.slice(0, 5).map(review => {
+                const formattedTime = this.formatTimeAgo(review.submittedAt || review.createdAt);
+                const title = review.submissionId?.title || 'Untitled Manuscript';
+                const shortTitle = title.length > 60 ? title.substring(0, 60) + '...' : title;
+
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                <span class="activity-status status-accepted">
+                                    REVIEW COMPLETED
+                                </span>
+                                Review submitted for "${shortTitle}"
+                            </div>
+                            <div class="activity-time">
+                                <i class="far fa-clock"></i> ${formattedTime}
+                                ${review.score ? `• Score: ${review.score}` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        getActivityIcon(status) {
+            switch (status) {
+                case 'submitted':
+                    return { icon: 'fa-file-upload', iconColor: 'var(--primary)', statusClass: 'status-submitted' };
+                case 'under_review':
+                    return { icon: 'fa-user-check', iconColor: 'var(--info)', statusClass: 'status-under_review' };
+                case 'revision_requested':
+                    return { icon: 'fa-edit', iconColor: 'var(--warning)', statusClass: 'status-revision_requested' };
+                case 'accepted':
+                    return { icon: 'fa-check-circle', iconColor: 'var(--success)', statusClass: 'status-accepted' };
+                case 'awaiting_payment':
+                    return { icon: 'fa-money-bill-wave', iconColor: 'var(--warning)', statusClass: 'status-awaiting_payment' };
+                case 'published':
+                    return { icon: 'fa-book', iconColor: '#8b5cf6', statusClass: 'status-published' };
+                default:
+                    return { icon: 'fa-bell', iconColor: 'var(--primary)', statusClass: 'status-submitted' };
+            }
+        }
+
+        getStatusBackgroundColor(status) {
+            switch (status) {
+                case 'submitted': return 'rgba(255, 122, 24, 0.1)';
+                case 'under_review': return 'rgba(59, 130, 246, 0.1)';
+                case 'revision_requested': return 'rgba(245, 158, 11, 0.1)';
+                case 'accepted': return 'rgba(16, 185, 129, 0.1)';
+                case 'awaiting_payment': return 'rgba(245, 158, 11, 0.1)';
+                case 'published': return 'rgba(139, 92, 246, 0.1)';
+                default: return 'rgba(255, 122, 24, 0.1)';
+            }
+        }
+
+        getStatusDisplayText(status) {
+            const statusMap = {
+                'submitted': 'SUBMITTED',
+                'under_review': 'UNDER REVIEW',
+                'revision_requested': 'REVISION',
+                'accepted': 'ACCEPTED',
+                'awaiting_payment': 'PAYMENT',
+                'published': 'PUBLISHED'
+            };
+            return statusMap[status] || status.toUpperCase();
+        }
+
+        getStatusText(status) {
+            const statusMap = {
+                'submitted': 'Submission received',
+                'under_review': 'Manuscript is under review',
+                'revision_requested': 'Revision requested',
+                'accepted': 'Manuscript accepted',
+                'awaiting_payment': 'Awaiting payment for publication',
+                'published': 'Manuscript published'
+            };
+            return statusMap[status] || status.replace('_', ' ');
+        }
+
+        formatTimeAgo(dateString) {
+            try {
+                if (!dateString) return 'Recently';
+
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins} min ago`;
+                if (diffHours < 24) return `${diffHours} hr ago`;
+                if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return 'Recently';
+            }
+        }
+
+        stripHtml(html) {
+            if (!html) return '';
+            return html.replace(/<[^>]*>/g, '');
+        }
+
+        escapeHtml(str) {
+            if (!str && str !== 0) return '';
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+    }
+
+    // Initialize dashboard when DOM is loaded
+    let dashboardManager;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        dashboardManager = new DashboardManager();
+
+        // Add refresh button functionality if needed
+        const refreshBtn = document.getElementById('refreshDashboard');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                toastr.info('Refreshing dashboard data...');
+                dashboardManager.loadDashboardData();
+            });
+        }
+    });
+</script>
 </body>
 
 </html>
