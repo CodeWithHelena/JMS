@@ -627,7 +627,7 @@
 
     <!-- Editor Submissions JavaScript -->
     <script type="module">
-        import { BASE_URL, getAuthToken2 } from '../../assets/js/utility.js';
+        import { BASE_URL, getAuthToken2, apiFetch } from '../../assets/js/utility.js';
 
         class EditorSubmissionsManager {
             constructor() {
@@ -705,7 +705,7 @@
 
                 } catch (error) {
                     console.error('Error loading data:', error);
-                    this.showError(error);
+                    this.showError(error.message);
                 }
             }
 
@@ -717,34 +717,43 @@
                         return;
                     }
 
-                    const response = await fetch(`${BASE_URL}/editor/scope`, {
+                    // Use apiFetch instead of direct fetch
+                    const data = await apiFetch(`${BASE_URL}/editor/scope`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
-                    //console.log('Scopes response status:', response);
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch scopes: ${response.status}`);
-                    }
 
-                    const data = await response.json();
-
-                    console.log('Scopes response status:', data);
+                    console.log('Scopes response:', data);
 
                     if (!data.success) {
+                        // Check for the specific "no editor scopes" message
+                        if (data.message && data.message.includes("not listed as an editor")) {
+                            // Don't throw an error, just set empty scopes
+                            this.editorscopes = [];
+                            return;
+                        }
                         throw new Error(data.message || 'Failed to load scopes');
                     }
 
                     this.editorscopes = data.scopes || [];
 
+                    // If no scopes, that's fine - we'll show appropriate message
                     if (this.editorscopes.length === 0) {
-                        this.showNoscopesMessage();
-                        return;
+                        console.log('No scopes found for editor');
                     }
 
                 } catch (error) {
                     console.error('Error loading editor scopes:', error);
+
+                    // Check if it's the "no editor scopes" error
+                    if (error.message && error.message.includes("not listed as an editor")) {
+                        this.editorscopes = [];
+                        return;
+                    }
+
+                    // Re-throw other errors
                     throw error;
                 }
             }
@@ -849,7 +858,9 @@
             async fetchSubmissionsForscope(scopeId) {
                 try {
                     const token = getAuthToken2();
-                    const response = await fetch(
+
+                    // Use apiFetch for network error handling
+                    const data = await apiFetch(
                         `${BASE_URL}/editor/submissions?scopeId=${scopeId}&page=1&limit=100`,
                         {
                             headers: {
@@ -859,14 +870,9 @@
                         }
                     );
 
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch submissions for scope ${scopeId}: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
                     if (!data.success) {
-                        throw new Error(data.message || 'Failed to fetch submissions');
+                        console.warn(`Failed to fetch submissions for scope ${scopeId}:`, data.message);
+                        return [];
                     }
 
                     return data.submissions || [];
@@ -969,19 +975,14 @@
 
                 try {
                     const token = getAuthToken2();
-                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
+
+                    // Use apiFetch for network error handling
+                    const data = await apiFetch(`${BASE_URL}/user/${userId}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
-
-                    if (!response.ok) {
-                        console.warn(`Failed to fetch user ${userId}: ${response.status}`);
-                        return null;
-                    }
-
-                    const data = await response.json();
 
                     if (!data.success) {
                         console.warn(`Failed to fetch user ${userId}:`, data.message);
@@ -1048,12 +1049,23 @@
             renderSubmissions() {
                 const cardsGrid = document.getElementById('cardsGrid');
 
+                // Show no scopes message if editor has no scopes
+                if (this.editorscopes.length === 0) {
+                    cardsGrid.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-journal-whills"></i>
+                            <h3>No Submission Assigned</h3>
+                            <p>You are not assigned any submission yet.</p>
+                    `;
+                    return;
+                }
+
                 if (this.filteredSubmissions.length === 0) {
                     cardsGrid.innerHTML = `
                         <div class="no-results">
                             <i class="fas fa-inbox"></i>
                             <h3>No Submissions Found</h3>
-                            <p>${this.allSubmissions.length === 0 ? 'No submissions in your scopes yet.' : 'No submissions match your current filters.'}</p>
+                            <p>${this.allSubmissions.length === 0 ? 'No submissions in your journals yet.' : 'No submissions match your current filters.'}</p>
                             ${this.allSubmissions.length > 0 ? `
                                 <button class="retry-btn" id="clearFiltersBtn2">
                                     <i class="fas fa-filter"></i> Clear Filters
@@ -1354,9 +1366,10 @@
                 const cardsGrid = document.getElementById('cardsGrid');
                 cardsGrid.innerHTML = `
                     <div class="no-results">
-                        <i class="fas fa-scope-whills"></i>
-                        <h3>No scopes Assigned</h3>
-                        <p>You are not assigned as an editor to any scopes yet.</p>
+                        <i class="fas fa-journal-whills"></i>
+                        <h3>No Journals Assigned</h3>
+                        <p>You are not assigned as an editor to any journals yet.</p>
+                        <p>Please contact the administrator if you believe this is an error.</p>
                     </div>
                 `;
             }
@@ -1364,16 +1377,38 @@
             // Show error state
             showError(message) {
                 const cardsGrid = document.getElementById('cardsGrid');
-                cardsGrid.innerHTML = `
-                    <div class="error-screen">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>Failed to Load Submissions</h3>
-                        <p>${message}</p>
-                        <button class="retry-btn" onclick="editorSubmissions.loadData()">
-                            <i class="fas fa-redo"></i> Try Again
-                        </button>
-                    </div>
-                `;
+
+                // Keep spinner spinning if it's a network error
+                if (message.includes('Network Error') || message.includes('Failed to fetch')) {
+                    // Show toastr notification for network errors
+                    toastr.error(message);
+
+                    // Keep the spinner spinning
+                    cardsGrid.innerHTML = `
+                        <div class="loading-screen">
+                            <div class="spinner"></div>
+                            <p>Loading submissions...</p>
+                            <p style="color: var(--danger); margin-top: 1rem;">
+                                <i class="fas fa-wifi-slash"></i> Network issue detected. Trying to reconnect...
+                            </p>
+                            <button class="retry-btn" onclick="editorSubmissions.loadData()">
+                                <i class="fas fa-redo"></i> Try Again
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // For other errors, show error screen
+                    cardsGrid.innerHTML = `
+                        <div class="error-screen">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Failed to Load Submissions</h3>
+                            <p>${message}</p>
+                            <button class="retry-btn" onclick="editorSubmissions.loadData()">
+                                <i class="fas fa-redo"></i> Try Again
+                            </button>
+                        </div>
+                    `;
+                }
             }
 
             // Utility function to format date
