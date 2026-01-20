@@ -165,7 +165,7 @@ const NOTIFICATION_API = {
   },
 
   getRecent: function(limit = 3) {
-    return `${API_BASE_URL}notifications/all?page=1&limit=${limit}`;
+    return `${API_BASE_URL}/notifications/all?page=1&limit=${limit}`;
   },
 
   markAsRead: function(id) {
@@ -291,7 +291,7 @@ async function loadRecentNotifications() {
   try {
     const token = getAuthToken2();
     if (!token) {
-      notifBody.innerHTML = '<div style="padding:12px;color:var(--text-light)">Please login to view notifications</div>';
+      notifBody.innerHTML = '<div class="notif-loading" style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading notifications...</div>';
       return;
     }
 
@@ -307,10 +307,11 @@ async function loadRecentNotifications() {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to load notifications: ${response.status}`);
+      throw new Error(`Failed to load notifications x: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log('Notifications data:', data);
     if (!data.success || !data.notifications) {
       throw new Error('Invalid response format');
     }
@@ -402,7 +403,7 @@ async function loadRecentNotifications() {
 
   } catch (error) {
     console.error('Error loading notifications:', error);
-    notifBody.innerHTML = '<div style="padding:12px;color:var(--text-light)">Failed to load notifications</div>';
+      notifBody.innerHTML = '<div class="notif-loading" style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading notifications...</div>';
   }
 }
 

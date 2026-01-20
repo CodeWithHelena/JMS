@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit scope</title>
+    <title>Edit Scope</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Global CSS (variables, body, main) -->
     <link rel="stylesheet" href="/assets/css/style.css">
 
@@ -30,12 +30,15 @@
             --text-color: #333333;
             --text-light: #666666;
             --border-color: #e0e0e0;
-            --hover-bg: rgba(204, 85, 0, 0.12);
             --active-bg: rgba(204, 85, 0, 0.15);
             --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s ease;
             --brand: var(--lite-primary-color);
             --muted: #6b7280;
+        }
+
+        .container.page-title {
+            margin: 0 2.2rem;
         }
 
         .edit-scope-container {
@@ -50,7 +53,25 @@
             margin-bottom: 30px;
         }
 
+        .scope-back-btn {
+            display: inline-flex;
+            align-items: center;
+            color: var(--brand);
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 20px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
 
+        .scope-back-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .scope-back-btn i {
+            margin-right: 8px;
+        }
 
         .scope-title {
             font-size: 28px;
@@ -69,7 +90,10 @@
             border-radius: 12px;
             box-shadow: var(--shadow);
             padding: 40px;
+            margin: 0 1rem;
             margin-bottom: 40px;
+            position: relative;
+            /* For loading overlay positioning */
         }
 
         .form-section {
@@ -82,7 +106,7 @@
             color: var(--text-color);
             margin-bottom: 20px;
             padding-bottom: 12px;
-            border-bottom: 2px solid var(--secondary-color);
+            border-bottom: 2px solid var(--border-light);
             display: flex;
             align-items: center;
         }
@@ -129,8 +153,8 @@
 
         .form-input:focus {
             outline: none;
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--secondary-color);
+            border-color: var(--warning);
+            box-shadow: 0 0 0 3px var(--warning-light);
         }
 
         .form-textarea {
@@ -149,8 +173,8 @@
 
         .form-textarea:focus {
             outline: none;
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--secondary-color);
+            border-color: var(--warning);
+            box-shadow: 0 0 0 3px var(--warning-light);
         }
 
         /* Custom Select Styles */
@@ -177,8 +201,9 @@
         }
 
         .select-header.active {
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--secondary-color);
+            outline: none;
+            border-color: var(--warning);
+            box-shadow: 0 0 0 3px var(--warning-light);
         }
 
         .select-header .placeholder {
@@ -251,6 +276,12 @@
             color: var(--text-color);
         }
 
+        .select-option-item .option-email {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
         .no-results {
             padding: 20px;
             text-align: center;
@@ -280,7 +311,7 @@
 
         .search-input:focus {
             outline: none;
-            border-color: var(--brand);
+            border-color: var(--light) !important;
         }
 
         .clear-search {
@@ -310,29 +341,6 @@
             opacity: 1;
         }
 
-        .currency-input-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .currency-input-group .form-input {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            border-left: none;
-        }
-
-        .currency-prefix {
-            background-color: var(--secondary-color);
-            padding: 14px 16px;
-            border: 1.5px solid var(--border-color);
-            border-right: none;
-            border-radius: 6px 0 0 6px;
-            color: var(--text-color);
-            font-weight: 600;
-            min-width: 60px;
-            text-align: center;
-        }
-
         /* Editor Tags */
         .editor-section {
             margin-top: 30px;
@@ -351,8 +359,8 @@
         }
 
         .editor-tag {
-            background-color: var(--secondary-color);
-            color: var(--brand);
+            background-color: var(--warning-light);
+            color: var(--warning);
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
@@ -402,99 +410,7 @@
             padding: 10px;
         }
 
-        /* Indexing Display */
-        .indexing-display {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--body-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            min-height: 60px;
-        }
-
-        .indexing-item-display {
-            background-color: var(--bg-white);
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .indexing-item-display:last-child {
-            margin-bottom: 0;
-        }
-
-        .indexing-info {
-            flex: 1;
-        }
-
-        .indexing-name {
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .indexing-url {
-            font-size: 14px;
-            color: var(--text-light);
-            margin-top: 4px;
-            word-break: break-all;
-        }
-
-        .remove-indexing-btn {
-            background-color: #fee;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-            border-radius: 6px;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-left: 10px;
-            border: none;
-        }
-
-        .remove-indexing-btn:hover {
-            background-color: #fecaca;
-        }
-
-        .add-indexing-btn {
-            background-color: var(--secondary-color);
-            color: var(--brand);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .add-indexing-btn:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .add-indexing-btn i {
-            margin-right: 8px;
-        }
-
-        .indexing-input-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .indexing-input-row .form-group {
-            margin-bottom: 0;
-        }
-
+        /* Form Actions */
         .form-actions {
             display: flex;
             justify-content: flex-end;
@@ -502,38 +418,6 @@
             margin-top: 40px;
             padding-top: 30px;
             border-top: 1px solid var(--border-color);
-        }
-
-        .cancel-btn {
-            background-color: var(--body-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .cancel-btn:hover {
-            background-color: #e5e5e5;
-        }
-
-        .submit-btn {
-            background-color: var(--brand);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .submit-btn:hover {
-            background-color: #b34900;
         }
 
         .form-help {
@@ -549,44 +433,53 @@
             color: var(--brand);
         }
 
-        /* Loading State */
-        .loading-state {
+        /* Loading Overlay Styles - Now for main content only */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.95);
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 100px;
+            z-index: 100;
+            border-radius: 12px;
         }
 
         .loading-spinner {
             width: 50px;
             height: 50px;
-            border: 4px solid var(--secondary-color);
-            border-top-color: var(--brand);
+            border: 5px solid var(--border-color);
+            border-top: 5px solid var(--brand);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
+        .loading-text {
+            margin-top: 15px;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
         @keyframes spin {
-            to {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
                 transform: rotate(360deg);
             }
         }
-
-        /* Fix for select placeholder skeleton/grey background */
-#scopeFormWrapper .select-header .placeholder {
-    color: transparent !important;
-    background: none !important;
-}
-
-/* If there's a specific background color on the placeholder */
-#scopeFormWrapper .select-header {
-    background-color: var(--bg-white) !important;
-}
-
-/* Ensure selected value is visible */
-#scopeFormWrapper .select-header .selected-value {
-    color: var(--text-color) !important;
-}
 
         /* Responsive Styles */
         @media screen and (max-width: 768px) {
@@ -597,6 +490,7 @@
 
             .scope-form-wrapper {
                 padding: 25px;
+                margin: 0 0 40px;
             }
 
             .form-row {
@@ -608,17 +502,12 @@
                 font-size: 18px;
             }
 
-            .indexing-input-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-
             .form-actions {
                 flex-direction: column;
             }
 
-            .cancel-btn,
-            .submit-btn {
+            .btn-cancel,
+            .btn-brand {
                 width: 100%;
                 text-align: center;
             }
@@ -630,6 +519,10 @@
                 align-items: flex-start;
             }
 
+            .scope-back-btn {
+                margin-bottom: 15px;
+            }
+
             .scope-title {
                 font-size: 24px;
             }
@@ -639,235 +532,85 @@
 
 <body>
     <div class="dashboard-container">
-        <!-- placeholders for partials -->
+        <!-- Sidebar Included-->
         <div id="sidebar-placeholder"></div>
         <div class="main-content-wrapper">
+            <!-- Header Included-->
             <div id="header-placeholder"></div>
-            <main class="main-content">
-                <div class="container page-title">
-                    <div>
-                        <h1>Edit scope</h1>
-                        <p>Update scope information</p>
-                    </div>
-                    <div>
-                        <a href="javascript:history.back()" class="btn-back">
-                            <i class="fas fa-arrow-left"></i> Back
-                        </a>
-                    </div>
+            <div class="container page-title">
+                <div>
+                    <h1>Edit Scope</h1>
+                    <p>Update scope details and editorial team</p>
                 </div>
-                <div class="container my-4">
-                    <div class="scope-header">
-                        <div>
-                            <p class="scope-subtitle" id="scopeSubtitle">Loading scope details...</p>
+            </div>
+            <main class="main-content">
+                <div class="container my-4 scope-form-wrapper">
+                    <!-- Loading Overlay - Now inside the form wrapper -->
+                    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                        <div class="loading-content">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">Loading scope data...</div>
                         </div>
                     </div>
 
-                    <!-- Loading State -->
-                    <div id="loadingState" class="loading-state">
-                        <div class="loading-spinner"></div>
-                    </div>
+                    <form id="scopeEditForm">
+                        <!-- Basic Information Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-info-circle"></i> Basic Information
+                            </h3>
 
-                    <!-- scope Form (Hidden initially) -->
-                    <div id="scopeFormWrapper" class="scope-form-wrapper" style="display: none;">
-                        <form id="scopeEditForm">
-                            <!-- Basic Information Section -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <i class="fas fa-info-circle"></i> Basic Information
-                                </h3>
-
-                                <div class="form-group">
-                                    <label for="editTitle" class="form-label">
-                                        scope Title <span>*</span>
-                                    </label>
-                                    <input type="text" id="editTitle" name="title" class="form-input" placeholder="Enter scope title" required>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="editIssn" class="form-label">
-                                            ISSN <span>*</span>
-                                        </label>
-                                        <input type="text" id="editIssn" name="issn" class="form-input" placeholder="e.g., 2714-892X" required>
-                                        <div class="form-help">
-                                            <i class="fas fa-info-circle"></i> Format: XXXX-XXXX
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="editDoiPrefix" class="form-label">
-                                            DOI Prefix
-                                        </label>
-                                        <input type="text" id="editDoiPrefix" name="doiPrefix" class="form-input" placeholder="e.g., 10.1234">
-                                        <div class="form-help">
-                                            <i class="fas fa-info-circle"></i> Format: 10.xxxx
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="editDescription" class="form-label">
-                                        Description <span>*</span>
-                                    </label>
-                                    <textarea id="editDescription" name="description" class="form-textarea" placeholder="Describe the scope's focus and mission" required></textarea>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="editPublisher" class="form-label">
-                                            Publisher <span>*</span>
-                                        </label>
-                                        <input type="text" id="editPublisher" name="publisher" class="form-input" placeholder="Enter publisher name" required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="editScope" class="form-label">
-                                            Scope / Topics <span>*</span>
-                                        </label>
-                                        <input type="text" id="editScope" name="scope" class="form-input" placeholder="e.g., AI, Data Science, Networks" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="editWebsite" class="form-label">
-                                            Website
-                                        </label>
-                                        <input type="url" id="editWebsite" name="website" class="form-input" placeholder="https://example.com">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="editEmail" class="form-label">
-                                            Contact Email <span>*</span>
-                                        </label>
-                                        <input type="email" id="editEmail" name="email" class="form-input" placeholder="editor@example.com" required>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="scopeTitle" class="form-label">
+                                    Scope Title <span>*</span>
+                                </label>
+                                <input type="text" id="scopeTitle" name="title" class="form-input" placeholder="Enter scope title" required>
                             </div>
 
-                            <!-- Editorial Team Section -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <i class="fas fa-users"></i> Editorial Team
-                                </h3>
-
-                                <div class="form-group">
-                                    <label class="form-label">Editor-in-Chief <span>*</span></label>
-                                    <div id="editChiefEditorSelectContainer"></div>
-                                    <div class="editor-tags" id="editEditorsInChiefTags">
-                                        <div class="empty-state">No editor-in-chief selected</div>
-                                    </div>
-                                    <input type="hidden" id="editEditorsInChief" name="editorsInChief">
-                                </div>
-
-                                <div class="form-group editor-section">
-                                    <label class="form-label">Associate Editors</label>
-                                    <div id="editAssociateEditorSelectContainer"></div>
-                                    <div class="editor-tags" id="editAssociateEditorsTags">
-                                        <div class="empty-state">No associate editors added</div>
-                                    </div>
-                                    <input type="hidden" id="editAssociateEditors" name="associateEditors">
-                                </div>
-                            </div>
-
-                            <!-- Publication Policy Section -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <i class="fas fa-file-alt"></i> Publication Policy
-                                </h3>
-
-                                <div class="form-group">
-                                    <label class="form-label">Review Policy <span>*</span></label>
-                                    <div id="editReviewPolicySelectContainer"></div>
-                                    <input type="hidden" id="editReviewPolicy" name="reviewPolicy" required>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="editSubmissionFee" class="form-label">
-                                            Submission Fee
-                                        </label>
-                                        <div class="currency-input-group">
-                                            <span class="currency-prefix" id="editCurrencySymbol">NGN</span>
-                                            <input type="number" id="editSubmissionFee" name="submissionFee" class="form-input" placeholder="0" min="0" step="0.01">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="editPublicationFee" class="form-label">
-                                            Publication Fee
-                                        </label>
-                                        <div class="currency-input-group">
-                                            <span class="currency-prefix" id="editCurrencySymbol2">NGN</span>
-                                            <input type="number" id="editPublicationFee" name="publicationFee" class="form-input" placeholder="0" min="0" step="0.01">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        Currency <span>*</span>
-                                    </label>
-                                    <div id="editCurrencySelectContainer"></div>
-                                    <input type="hidden" id="editCurrency" name="currency" required>
-                                </div>
-                            </div>
-
-                            <!-- Indexing Services Section -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <i class="fas fa-search"></i> Indexing Services
-                                </h3>
-
-                                <div class="indexing-display" id="editIndexingDisplay">
-                                    <div class="empty-state">No indexing services added</div>
-                                </div>
-
-                                <div class="indexing-input-row">
-                                    <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" id="editIndexingName" class="form-input" placeholder="e.g., Google Scholar">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="form-label">URL</label>
-                                        <input type="url" id="editIndexingUrl" class="form-input" placeholder="https://example.com">
-                                    </div>
-                                </div>
-
-                                <button type="button" class="add-indexing-btn" id="editAddIndexingBtn">
-                                    <i class="fas fa-plus"></i> Add Indexing Service
-                                </button>
-                                <input type="hidden" id="editIndexingData" name="indexing" value="[]">
-                            </div>
-
-                            <!-- Hidden field for scope ID -->
-                            <input type="hidden" id="editscopeId" name="scopeId">
-
-                            <!-- Form Actions -->
-                            <div class="form-actions">
-                                <button type="button" class="cancel-btn" id="editCancelBtn">Cancel</button>
-                                <button type="submit" class="submit-btn">Update scope</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Error State -->
-                    <div id="errorState" class="scope-form-wrapper" style="display: none;">
-                        <div class="error-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Error Loading scope</h3>
-                            <p id="errorMessage">Failed to load scope details.</p>
-                            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                                <button onclick="window.history.back()" class="action-btn back-list-btn">
-                                    <i class="fas fa-arrow-left"></i> Go Back
-                                </button>
-                                <button onclick="location.reload()" class="action-btn edit-btn">
-                                    <i class="fas fa-redo"></i> Retry
-                                </button>
+                            <div class="form-group">
+                                <label for="scopeDescription" class="form-label">
+                                    Description <span>*</span>
+                                </label>
+                                <textarea id="scopeDescription" name="description" class="form-textarea" placeholder="Describe the scope's focus and mission" required></textarea>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Editorial Team Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-users"></i> Editorial Team
+                            </h3>
+
+                            <div class="form-group">
+                                <label class="form-label">Editor-in-Chief <span>*</span></label>
+                                <div id="chiefEditorSelectContainer"></div>
+                                <div class="editor-tags" id="editorsInChiefTags">
+                                    <div class="empty-state">Loading editor-in-chief...</div>
+                                </div>
+                                <input type="hidden" id="editorsInChief" name="editorsInChief">
+                            </div>
+
+                            <div class="form-group editor-section">
+                                <label class="form-label">Associate Editors</label>
+                                <div id="associateEditorSelectContainer"></div>
+                                <div class="editor-tags" id="associateEditorsTags">
+                                    <div class="empty-state">Loading associate editors...</div>
+                                </div>
+                                <input type="hidden" id="associateEditors" name="associateEditors">
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" id="cancelBtn" class="cancel-btn btn-cancel">Cancel</button>
+                            <button type="submit" class="submit-btn btn-brand">
+                                <span id="submitText">Update Scope</span>
+                                <span id="loadingSpinner" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin"></i> Updating...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </main>
         </div>
@@ -875,9 +618,17 @@
 
     <script>
         window.SIDEBAR_MODULE = 'admin';
-        window.SIDEBAR_ACTIVE_ID = 'view-scopes';
+        window.SIDEBAR_ACTIVE_ID = 'edit-scope';
+
+        // Get scope ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const scopeId = urlParams.get('id');
+
+        if (!scopeId) {
+            toastr.error('No scope ID provided in URL');
+            // Removed problematic redirect
+        }
     </script>
-    <script src="/assets/js/layout.js"></script>
     <!-- jQuery (required for toastr) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JS -->
@@ -887,620 +638,542 @@
     <!-- layout.js loads partials and wires header+sidebar behaviors -->
     <script src="/assets/js/layout.js"></script>
 
-    <!-- Edit scope Script -->
-    <script type="module">
-        // Import utility functions
-            import { createCustomSelect, createEditorSelect, BASE_URL, token } from './utility.js';
-
-
-
-
-            // Get journal ID from URL
-            function getJournalIdFromUrl() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('id');
-            }
-
-            // Fetch journal details for editing
-            async function fetchJournalForEdit(journalId) {
-
-                if (!token) {
-                    throw new Error('Authentication required. Please login.');
-                }
-
-                try {
-                    const response = await fetch(`${BASE_URL}/scope/${journalId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 401) {
-                            window.location.href = 'login.html';
-                            return null;
-                        }
-                        throw new Error(`API error: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    return data;
-                } catch (error) {
-                    console.error('Error fetching journal details:', error);
-                    throw error;
-                }
-            }
-
-            // Extract journal data from API response
-            function extractJournalData(response) {
-                // Handle different response structures
-                if (response._id) {
-                    // Case 1: Direct journal object
-                    return response;
-                } else if (response.data && response.data._id) {
-                    // Case 2: { data: { ...journal... } }
-                    return response.data;
-                } else if (response.journal && response.journal._id) {
-                    // Case 3: { journal: { ...journal... } }
-                    return response.journal;
-                } else if (response.success && response.data && response.data._id) {
-                    // Case 4: { success: true, data: { ...journal... } }
-                    return response.data;
-                } else if (response.success && response.journal && response.journal._id) {
-                    // Case 5: { success: true, journal: { ...journal... } }
-                    return response.journal;
-                } else {
-                    // Try to find any object with _id in the response
-                    for (const key in response) {
-                        if (response[key] && typeof response[key] === 'object' && response[key]._id) {
-                            return response[key];
-                        }
-                    }
-                }
-                return null;
-            }
-
-            // Validate ISSN format
-            function validateISSN(issn) {
-                const issnRegex = /^\d{4}-\d{3}[\dX]$/;
-                return issnRegex.test(issn);
-            }
-
-            // Validate DOI prefix format
-            function validateDOIPrefix(doiPrefix) {
-                if (!doiPrefix) return true; // Optional field
-                const doiRegex = /^10\.\d{4,}$/;
-                return doiRegex.test(doiPrefix);
-            }
-
-            // Validate email format
-            function validateEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
-
-            // Validate URL format
-            function validateURL(url) {
-                if (!url) return true; // Optional field
-                try {
-                    new URL(url);
-                    return true;
-                } catch {
-                    return false;
-                }
-            }
-
-            // Validate form
-            function validateEditForm(formData) {
-                const errors = [];
-
-                // Check required fields
-                if (!formData.title?.trim()) errors.push('Journal title is required');
-                if (!formData.issn?.trim()) errors.push('ISSN is required');
-                if (!formData.description?.trim()) errors.push('Description is required');
-                if (!formData.publisher?.trim()) errors.push('Publisher is required');
-                if (!formData.scope?.trim()) errors.push('Scope/Topics is required');
-                if (!formData.email?.trim()) errors.push('Contact email is required');
-                if (!formData.reviewPolicy?.trim()) errors.push('Review policy is required');
-                if (!formData.currency?.trim()) errors.push('Currency is required');
-
-                // Validate editors-in-chief
-                if (!formData.editorsInChief || formData.editorsInChief.length === 0) {
-                    errors.push('At least one Editor-in-Chief is required');
-                }
-
-                // Validate formats
-                if (formData.issn && !validateISSN(formData.issn)) {
-                    errors.push('ISSN format is invalid. Use format: XXXX-XXXX');
-                }
-
-                if (formData.doiPrefix && !validateDOIPrefix(formData.doiPrefix)) {
-                    errors.push('DOI Prefix format is invalid. Use format: 10.xxxx');
-                }
-
-                if (formData.email && !validateEmail(formData.email)) {
-                    errors.push('Contact email is invalid');
-                }
-
-                if (formData.website && !validateURL(formData.website)) {
-                    errors.push('Website URL is invalid');
-                }
-
-                // Validate fees
-                if (formData.submissionFee && (formData.submissionFee < 0 || isNaN(formData.submissionFee))) {
-                    errors.push('Submission fee must be a positive number');
-                }
-
-                if (formData.publicationFee && (formData.publicationFee < 0 || isNaN(formData.publicationFee))) {
-                    errors.push('Publication fee must be a positive number');
-                }
-
-                return errors;
-            }
-
-            // Initialize the edit form
-            async function initializeEditForm() {
-                const journalId = getJournalIdFromUrl();
-
-                if (!journalId) {
-                    showErrorState('No journal ID specified in URL');
-                    return;
-                }
-
-                try {
-                    // Fetch journal data
-                    const response = await fetchJournalForEdit(journalId);
-
-                    if (!response) {
-                        throw new Error('Failed to load journal data');
-                    }
-
-                    const journalData = extractJournalData(response);
-
-                    if (!journalData) {
-                        throw new Error('Invalid journal data format received');
-                    }
-
-                    // Populate subtitle
-                    document.getElementById('journalSubtitle').textContent = `Editing: ${journalData.title || 'Journal'}`;
-
-                    // Populate form fields
-                    await populateFormFields(journalData);
-
-                    // Hide loading, show form
-                    document.getElementById('loadingState').style.display = 'none';
-                    document.getElementById('journalFormWrapper').style.display = 'block';
-
-                } catch (error) {
-                    console.error('Error initializing edit form:', error);
-                    showErrorState(error.message || 'Failed to load journal details');
-                }
-            }
-
-            // Populate form fields with journal data
-            async function populateFormFields(journalData) {
-                // Set journal ID
-                document.getElementById('editJournalId').value = journalData._id;
-
-                // Basic Information
-                document.getElementById('editTitle').value = journalData.title || '';
-                document.getElementById('editIssn').value = journalData.issn || '';
-                document.getElementById('editDoiPrefix').value = journalData.doiPrefix || '';
-                document.getElementById('editDescription').value = journalData.description || '';
-                document.getElementById('editPublisher').value = journalData.publisher || '';
-                document.getElementById('editScope').value = journalData.scope || '';
-                document.getElementById('editWebsite').value = journalData.website || '';
-                document.getElementById('editEmail').value = journalData.email || '';
-
-                // Fees
-                document.getElementById('editSubmissionFee').value = journalData.submissionFee || '';
-                document.getElementById('editPublicationFee').value = journalData.publicationFee || '';
-
-                // Initialize select components
-                await initializeSelectComponents(journalData);
-
-                // Initialize editor tags
-                initializeEditorTags(journalData);
-
-                // Initialize indexing services
-                initializeIndexingServices(journalData);
-            }
-
-            // Initialize select components
-            async function initializeSelectComponents(journalData) {
-                // Review Policy Options
-                const reviewPolicyOptions = [
-                    { value: 'single-blind', label: 'Single-Blind Review' },
-                    { value: 'double-blind', label: 'Double-Blind Review' },
-                    { value: 'open', label: 'Open Review' },
-                    { value: 'editorial', label: 'Editorial Review' }
-                ];
-
-                // Currency Options
-                const currencyOptions = [
-                    { value: 'NGN', label: 'Nigerian Naira (NGN)' },
-                    { value: 'USD', label: 'US Dollar (USD)' },
-                    { value: 'EUR', label: 'Euro (EUR)' },
-                    { value: 'GBP', label: 'British Pound (GBP)' }
-                ];
-
-                // Initialize Review Policy Select
-                const reviewPolicySelect = createCustomSelect({
-                    container: document.getElementById('editReviewPolicySelectContainer'),
-                    placeholder: 'Select review policy',
-                    options: reviewPolicyOptions,
-                    onSelect: (selected) => {
-                        document.getElementById('editReviewPolicy').value = selected.value;
-                    }
-                });
-
-                // Initialize Currency Select
-                const currencySelect = createCustomSelect({
-                    container: document.getElementById('editCurrencySelectContainer'),
-                    placeholder: 'Select currency',
-                    options: currencyOptions,
-                    onSelect: (selected) => {
-                        document.getElementById('editCurrency').value = selected.value;
-                        document.getElementById('editCurrencySymbol').textContent = selected.value;
-                        document.getElementById('editCurrencySymbol2').textContent = selected.value;
-                    }
-                });
-
-                // Set selected values if they exist
-                if (journalData.reviewPolicy) {
-                    reviewPolicySelect.setSelected(journalData.reviewPolicy);
-                    document.getElementById('editReviewPolicy').value = journalData.reviewPolicy;
-                }
-
-                if (journalData.currency) {
-                    currencySelect.setSelected(journalData.currency);
-                    document.getElementById('editCurrency').value = journalData.currency;
-                    document.getElementById('editCurrencySymbol').textContent = journalData.currency;
-                    document.getElementById('editCurrencySymbol2').textContent = journalData.currency;
-                }
-            }
-
-            // Initialize editor tags
-            function initializeEditorTags(journalData) {
-                // Editors-in-Chief
-                const editorsInChief = journalData.editorsInChief || [];
-                const editorsInChiefTags = document.getElementById('editEditorsInChiefTags');
-
-                if (editorsInChief.length > 0) {
-                    editorsInChiefTags.innerHTML = editorsInChief.map(editor => renderEditorTag(editor, 'chief')).join('');
-                    document.getElementById('editEditorsInChief').value = JSON.stringify(editorsInChief);
-                } else {
-                    editorsInChiefTags.innerHTML = '<div class="empty-state">No editor-in-chief selected</div>';
-                    document.getElementById('editEditorsInChief').value = '[]';
-                }
-
-                // Associate Editors
-                const associateEditors = journalData.associateEditors || [];
-                const associateEditorsTags = document.getElementById('editAssociateEditorsTags');
-
-                if (associateEditors.length > 0) {
-                    associateEditorsTags.innerHTML = associateEditors.map(editor => renderEditorTag(editor, 'associate')).join('');
-                    document.getElementById('editAssociateEditors').value = JSON.stringify(associateEditors);
-                } else {
-                    associateEditorsTags.innerHTML = '<div class="empty-state">No associate editors added</div>';
-                    document.getElementById('editAssociateEditors').value = '[]';
-                }
-            }
-
-            // Initialize indexing services
-            function initializeIndexingServices(journalData) {
-                const indexingServices = journalData.indexing || [];
-                const indexingDisplay = document.getElementById('editIndexingDisplay');
-
-                if (indexingServices.length > 0) {
-                    indexingDisplay.innerHTML = indexingServices.map((service, index) => renderIndexingItem(service, index)).join('');
-                    document.getElementById('editIndexingData').value = JSON.stringify(indexingServices);
-                } else {
-                    indexingDisplay.innerHTML = '<div class="empty-state">No indexing services added</div>';
-                    document.getElementById('editIndexingData').value = '[]';
-                }
-            }
-
-            // Render editor tag
-            function renderEditorTag(editor, type) {
-                const editorName = `${editor.firstName || ''} ${editor.lastName || ''}`.trim() || editor.email;
-                return `
-        <div class="editor-tag" data-id="${editor._id || editor.id}">
-            <div class="tag-content">
-                <span class="tag-name">${editorName}</span>
-                ${editor.email ? `<span class="tag-email">${editor.email}</span>` : ''}
-            </div>
-            <button type="button" onclick="removeEditor('${editor._id || editor.id}', '${type}')" title="Remove editor">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
-            }
-
-            // Render indexing item
-            function renderIndexingItem(service, index) {
-                return `
-        <div class="indexing-item-display" data-index="${index}">
-            <div class="indexing-info">
-                <div class="indexing-name">${service.name || 'Unnamed Service'}</div>
-                ${service.url ? `<div class="indexing-url">${service.url}</div>` : ''}
-            </div>
-            <button type="button" class="remove-indexing-btn" onclick="removeIndexingService(${index})" title="Remove indexing service">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
-            }
-
-            // Remove editor
-            function removeEditor(editorId, type) {
-                const hiddenField = type === 'chief' ? 'editEditorsInChief' : 'editAssociateEditors';
-                const tagsContainer = type === 'chief' ? 'editEditorsInChiefTags' : 'editAssociateEditorsTags';
-
-                // Get current editors
-                let editors = [];
-                try {
-                    editors = JSON.parse(document.getElementById(hiddenField).value || '[]');
-                } catch (e) {
-                    editors = [];
-                }
-
-                // Remove editor
-                editors = editors.filter(editor => (editor._id || editor.id) !== editorId);
-
-                // Update hidden field
-                document.getElementById(hiddenField).value = JSON.stringify(editors);
-
-                // Update tags display
-                const container = document.getElementById(tagsContainer);
-                if (editors.length === 0) {
-                    container.innerHTML = `<div class="empty-state">No ${type === 'chief' ? 'editor-in-chief' : 'associate editors'} selected</div>`;
-                } else {
-                    container.innerHTML = editors.map(editor => renderEditorTag(editor, type)).join('');
-                }
-            }
-
-            // Remove indexing service
-            function removeIndexingService(index) {
-                // Get current indexing services
-                let indexingServices = [];
-                try {
-                    indexingServices = JSON.parse(document.getElementById('editIndexingData').value || '[]');
-                } catch (e) {
-                    indexingServices = [];
-                }
-
-                // Remove service at index
-                indexingServices.splice(index, 1);
-
-                // Update hidden field
-                document.getElementById('editIndexingData').value = JSON.stringify(indexingServices);
-
-                // Update display
-                const indexingDisplay = document.getElementById('editIndexingDisplay');
-                if (indexingServices.length === 0) {
-                    indexingDisplay.innerHTML = '<div class="empty-state">No indexing services added</div>';
-                } else {
-                    indexingDisplay.innerHTML = indexingServices.map((service, idx) => renderIndexingItem(service, idx)).join('');
-                }
-            }
-
-            // Add indexing service
-            function addIndexingService() {
-                const nameInput = document.getElementById('editIndexingName');
-                const urlInput = document.getElementById('editIndexingUrl');
-
-                const name = nameInput.value.trim();
-                const url = urlInput.value.trim();
-
-                // Validate inputs
-                if (!name) {
-                    showError('Please enter a name for the indexing service');
-                    nameInput.focus();
-                    return;
-                }
-
-                if (url && !validateURL(url)) {
-                    showError('Please enter a valid URL');
-                    urlInput.focus();
-                    return;
-                }
-
-                // Get current indexing services
-                let indexingServices = [];
-                try {
-                    indexingServices = JSON.parse(document.getElementById('editIndexingData').value || '[]');
-                } catch (e) {
-                    indexingServices = [];
-                }
-
-                // Add new service
-                indexingServices.push({ name, url: url || undefined });
-
-                // Update hidden field
-                document.getElementById('editIndexingData').value = JSON.stringify(indexingServices);
-
-                // Update display
-                const indexingDisplay = document.getElementById('editIndexingDisplay');
-                indexingDisplay.innerHTML = indexingServices.map((service, index) => renderIndexingItem(service, index)).join('');
-
-                // Clear inputs
-                nameInput.value = '';
-                urlInput.value = '';
-            }
-
-            // Show error using toastr (for form validation)
-            function showError(message) {
-                toastr.error(message, 'Validation Error', {
-                    positionClass: 'toast-top-right',
-                    progressBar: true,
-                    timeOut: 5000,
-                    closeButton: true
-                });
-            }
-
-            // Show success using SweetAlert (for form submission)
-            function showSuccess(message) {
-                return Swal.fire({
-                    title: 'Success!',
-                    text: message,
-                    icon: 'success',
-                    confirmButtonColor: '#cc5500',
-                    confirmButtonText: 'OK'
-                });
-            }
-
-            // Prepare form data for submission
-            function prepareEditFormData() {
-                const formData = {
-                    _id: document.getElementById('editJournalId').value,
-                    title: document.getElementById('editTitle').value.trim(),
-                    issn: document.getElementById('editIssn').value.trim(),
-                    doiPrefix: document.getElementById('editDoiPrefix').value.trim() || undefined,
-                    description: document.getElementById('editDescription').value.trim(),
-                    publisher: document.getElementById('editPublisher').value.trim(),
-                    scope: document.getElementById('editScope').value.trim(),
-                    website: document.getElementById('editWebsite').value.trim() || undefined,
-                    email: document.getElementById('editEmail').value.trim(),
-                    reviewPolicy: document.getElementById('editReviewPolicy').value,
-                    submissionFee: parseFloat(document.getElementById('editSubmissionFee').value) || 0,
-                    publicationFee: parseFloat(document.getElementById('editPublicationFee').value) || 0,
-                    currency: document.getElementById('editCurrency').value
-                };
-
-                // Parse editors
-                try {
-                    formData.editorsInChief = JSON.parse(document.getElementById('editEditorsInChief').value || '[]');
-                    formData.associateEditors = JSON.parse(document.getElementById('editAssociateEditors').value || '[]');
-                } catch (e) {
-                    formData.editorsInChief = [];
-                    formData.associateEditors = [];
-                }
-
-                // Parse indexing services
-                try {
-                    formData.indexing = JSON.parse(document.getElementById('editIndexingData').value || '[]');
-                } catch (e) {
-                    formData.indexing = [];
-                }
-
-                return formData;
-            }
-
-            // Submit edit form
-            async function submitEditForm(event) {
-                event.preventDefault();
-
-                // Prepare form data
-                const formData = prepareEditFormData();
-
-                // Validate form
-                const errors = validateEditForm(formData);
-                if (errors.length > 0) {
-                    errors.forEach(error => showError(error));
-                    return;
-                }
-
-                // Show loading state
-                Swal.fire({
-                    title: 'Updating Journal...',
-                    text: 'Please wait while we update the journal',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                try {
-                    const token = getAuthToken();
-
-                    if (!token) {
-                        throw new Error('Authentication required. Please login.');
-                    }
-
-                    // Make API call to update journal
-                    const response = await fetch(`${BASE_URL}/scope/${formData._id}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || `Server error: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-
-                    // Close loading
-                    Swal.close();
-
-                    // Show success message with SweetAlert
-                    const successAlert = await showSuccess('Journal updated successfully!');
-
-                    if (successAlert.isConfirmed) {
-                        // Redirect to journal details page
-                        window.location.href = `journal-details.html?id=${formData._id}`;
-                    }
-
-                } catch (error) {
-                    // Close loading
-                    Swal.close();
-
-                    // Show error with toastr
-                    console.error('Error updating journal:', error);
-                    showError(error.message || 'Failed to update journal. Please try again.');
-                }
-            }
-
-            // Show error state
-            function showErrorState(message) {
-                document.getElementById('loadingState').style.display = 'none';
-                document.getElementById('errorMessage').textContent = message;
-                document.getElementById('errorState').style.display = 'block';
-            }
-
-            // Main initialization
-            document.addEventListener('DOMContentLoaded', async function () {
-                // Initialize edit form
-                await initializeEditForm();
-
-                // Set up event listeners
-                document.getElementById('journalEditForm').addEventListener('submit', submitEditForm);
-
-                // Cancel button
-                document.getElementById('editCancelBtn').addEventListener('click', () => {
-                    window.history.back();
-                });
-
-                // Add indexing service button
-                document.getElementById('editAddIndexingBtn').addEventListener('click', addIndexingService);
-
-                // Make functions available globally for inline onclick handlers
-                window.removeEditor = removeEditor;
-                window.removeIndexingService = removeIndexingService;
-
-                // Configure toastr for better visibility
-                toastr.options = {
-                    positionClass: 'toast-top-right',
-                    progressBar: true,
-                    timeOut: 5000,
-                    closeButton: true,
-                    newestOnTop: true,
-                    preventDuplicates: true,
-                    showEasing: 'swing',
-                    hideEasing: 'linear',
-                    showMethod: 'fadeIn',
-                    hideMethod: 'fadeOut'
-                };
+<script type="module">
+    import { BASE_URL, token, apiFetch } from '../assets/js/utility.js';
+
+    //////////////////////////////
+    // Edit Scope — Full Module //
+    //////////////////////////////
+
+    // State
+    let allEditors = [];
+    let selectedChiefEditors = [];
+    let selectedAssociateEditors = [];
+
+    // DOM refs populated on DOMContentLoaded
+    let scopeEditForm;
+    let cancelBtn;
+    let loadingOverlay;
+    let loadingText;
+    let submitBtn;
+    let submitText;
+    let loadingSpinner;
+    let chiefEditorSelectContainer;
+    let associateEditorSelectContainer;
+    let editorsInChiefTags;
+    let associateEditorsTags;
+    let hiddenChiefInput;
+    let hiddenAssociateInput;
+
+    document.addEventListener('DOMContentLoaded', initPage);
+
+    function initPage() {
+        // Collect DOM references (defensive)
+        scopeEditForm = document.getElementById('scopeEditForm');
+        cancelBtn = document.getElementById('cancelBtn');
+        loadingOverlay = document.getElementById('loadingOverlay');
+        loadingText = loadingOverlay ? loadingOverlay.querySelector('.loading-text') : null;
+        submitBtn = document.querySelector('.submit-btn');
+        submitText = document.getElementById('submitText');
+        loadingSpinner = document.getElementById('loadingSpinner');
+
+        chiefEditorSelectContainer = document.getElementById('chiefEditorSelectContainer');
+        associateEditorSelectContainer = document.getElementById('associateEditorSelectContainer');
+        editorsInChiefTags = document.getElementById('editorsInChiefTags');
+        associateEditorsTags = document.getElementById('associateEditorsTags');
+        hiddenChiefInput = document.getElementById('editorsInChief');
+        hiddenAssociateInput = document.getElementById('associateEditors');
+
+        if (!scopeEditForm) {
+            console.error('Missing #scopeEditForm — script cannot continue.');
+            return;
+        }
+
+        // Wire cancel
+        if (cancelBtn) cancelBtn.addEventListener('click', () => window.history.back());
+
+        // Ensure selects markup exists before any populate runs
+        initializeCustomSelects();
+
+        // Form submit handler
+        scopeEditForm.addEventListener('submit', handleFormSubmit);
+
+        // Load data
+        loadAllEditors();   // fetch editors first (so selects get populated)
+        loadScopeData();    // then fill scope details (selected editors etc.)
+    }
+
+    /* -------------------------
+       Loading UI helpers
+    ------------------------- */
+    function showLoading(text = 'Loading...') {
+        if (loadingOverlay) {
+            if (loadingText) loadingText.textContent = text;
+            loadingOverlay.style.display = 'flex';
+        }
+    }
+    function hideLoading() {
+        if (loadingOverlay) loadingOverlay.style.display = 'none';
+    }
+
+    /* -------------------------
+       Fetch editors from correct endpoint
+       NOTE: use /user?role=editor (returns data.users)
+    ------------------------- */
+    async function loadAllEditors() {
+        try {
+            showLoading('Loading editors list...');
+            const data = await apiFetch(`${BASE_URL}/user?role=editor`, {
+                headers: { Authorization: `Bearer ${token}` }
             });
-    </script>
+
+            if (!data || !data.success) {
+                throw new Error(data?.message || 'Failed to load editors');
+            }
+
+            // API returns users array
+            allEditors = (data.users || []).map(e => ({
+                _id: e._id || e.id || '',
+                firstName: e.firstName || e.first_name || (e.name ? e.name.split(' ')[0] : ''),
+                lastName: e.lastName || e.last_name || (e.name ? e.name.split(' ')[1] || '' : ''),
+                email: e.email || ''
+            }));
+
+            // Populate dropdowns now that we have allEditors
+            populateSelectOptions('chief');
+            populateSelectOptions('associate');
+
+        } catch (err) {
+            console.error('Error loading editors:', err);
+            toastr.warning('Could not load editor list: ' + (err.message || 'Unknown'));
+        } finally {
+            hideLoading();
+        }
+    }
+
+    /* -------------------------
+       Load scope data
+    ------------------------- */
+    async function loadScopeData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const scopeId = urlParams.get('id');
+        if (!scopeId) {
+            toastr.error('No scope ID provided in URL');
+            return;
+        }
+
+        try {
+            showLoading('Loading scope data...');
+            const data = await apiFetch(`${BASE_URL}/scope/${scopeId}`, {
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+            });
+
+            if (!data || !data.success) throw new Error(data?.message || 'Failed to load scope');
+
+            const scope = data.scope || {};
+
+            // Fill base fields
+            const titleEl = document.getElementById('scopeTitle');
+            const descEl = document.getElementById('scopeDescription');
+            if (titleEl) titleEl.value = scope.title || '';
+            if (descEl) descEl.value = scope.description || '';
+
+            // Normalize selected editors
+            selectedChiefEditors = (scope.editorsInChief || []).map(normalizeEditor);
+            selectedAssociateEditors = (scope.associateEditors || []).map(normalizeEditor);
+
+            // Update UI (tags & selects)
+            updateEditorTags();
+            populateSelectOptions('chief');
+            populateSelectOptions('associate');
+
+        } catch (err) {
+            console.error('Error loading scope:', err);
+            toastr.error(err.message || 'Failed to load scope');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    /* -------------------------
+       Normalize editor object shape
+    ------------------------- */
+    function normalizeEditor(e) {
+        if (!e) return { _id: '', firstName: '', lastName: '', email: '' };
+        return {
+            _id: e._id || e.id || '',
+            firstName: e.firstName || e.first_name || (e.name ? e.name.split(' ')[0] : ''),
+            lastName: e.lastName || e.last_name || (e.name ? e.name.split(' ')[1] || '' : ''),
+            email: e.email || ''
+        };
+    }
+
+    /* -------------------------
+       Initialize select HTML (so later code never touches null)
+    ------------------------- */
+    function initializeCustomSelects() {
+        if (chiefEditorSelectContainer) {
+            chiefEditorSelectContainer.innerHTML = `
+      <div class="custom-select">
+        <div class="select-header" id="chiefSelectHeader">
+          <span class="placeholder">Select editor-in-chief...</span>
+          <i class="fas fa-chevron-down arrow"></i>
+        </div>
+        <div class="select-dropdown" id="chiefSelectDropdown">
+          <div class="search-input-wrapper">
+            <input type="text" class="search-input" id="chiefSearchInput" placeholder="Search editors...">
+            <button class="clear-search" id="clearChiefSearch"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="select-options-list" id="chiefOptionsList"></div>
+        </div>
+      </div>
+    `;
+        }
+
+        if (associateEditorSelectContainer) {
+            associateEditorSelectContainer.innerHTML = `
+      <div class="custom-select">
+        <div class="select-header" id="associateSelectHeader">
+          <span class="placeholder">Add associate editors...</span>
+          <i class="fas fa-chevron-down arrow"></i>
+        </div>
+        <div class="select-dropdown" id="associateSelectDropdown">
+          <div class="search-input-wrapper">
+            <input type="text" class="search-input" id="associateSearchInput" placeholder="Search editors...">
+            <button class="clear-search" id="clearAssociateSearch"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="select-options-list" id="associateOptionsList"></div>
+        </div>
+      </div>
+    `;
+        }
+
+        // Wire selects (safe: will warn if DOM pieces missing)
+        setupCustomSelect('chiefSelectHeader', 'chiefSelectDropdown', 'chiefSearchInput', 'clearChiefSearch', 'chiefOptionsList', 'chief');
+        setupCustomSelect('associateSelectHeader', 'associateSelectDropdown', 'associateSearchInput', 'clearAssociateSearch', 'associateOptionsList', 'associate');
+    }
+
+    /* -------------------------
+       Setup custom select
+    ------------------------- */
+    function setupCustomSelect(headerId, dropdownId, searchInputId, clearSearchId, optionsListId, type) {
+        const selectHeader = document.getElementById(headerId);
+        const selectDropdown = document.getElementById(dropdownId);
+        const searchInput = document.getElementById(searchInputId);
+        const clearSearch = document.getElementById(clearSearchId);
+        const optionsList = document.getElementById(optionsListId);
+
+        if (!selectHeader || !selectDropdown || !searchInput || !clearSearch || !optionsList) {
+            console.warn('Custom select DOM missing for', type);
+            return;
+        }
+
+        selectHeader.addEventListener('click', () => {
+            const open = selectDropdown.classList.toggle('active');
+            selectHeader.classList.toggle('active', open);
+            if (open) {
+                searchInput.value = '';
+                clearSearch.classList.remove('visible');
+                searchInput.focus();
+                populateSelectOptions(type);
+            }
+        });
+
+        document.addEventListener('click', (evt) => {
+            if (!selectHeader.contains(evt.target) && !selectDropdown.contains(evt.target)) {
+                selectDropdown.classList.remove('active');
+                selectHeader.classList.remove('active');
+            }
+        });
+
+        searchInput.addEventListener('input', function () {
+            clearSearch.classList.toggle('visible', this.value.length > 0);
+            filterOptions(this.value || '', optionsListId, type);
+        });
+
+        clearSearch.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearch.classList.remove('visible');
+            populateSelectOptions(type);
+            searchInput.focus();
+        });
+    }
+
+    /* -------------------------
+       Populate select options (chief / associate)
+    ------------------------- */
+    function populateSelectOptions(type = 'associate') {
+        const listId = type === 'chief' ? 'chiefOptionsList' : 'associateOptionsList';
+        const optionsList = document.getElementById(listId);
+        if (!optionsList) {
+            console.warn('Options list not found:', listId);
+            return;
+        }
+
+        if (!allEditors || !allEditors.length) {
+            optionsList.innerHTML = '<div class="no-results">No editors available</div>';
+            return;
+        }
+
+        let available = allEditors.slice();
+        if (type === 'associate' && selectedChiefEditors.length) {
+            const chiefIds = selectedChiefEditors.map(c => c._id);
+            available = available.filter(e => !chiefIds.includes(e._id));
+        }
+
+        const selectedForType = (type === 'chief') ? selectedChiefEditors : selectedAssociateEditors;
+
+        optionsList.innerHTML = available.map(editor => {
+            const fullName = `${editor.firstName} ${editor.lastName}`.trim();
+            const isSelected = selectedForType.some(s => s._id === editor._id);
+            return `
+      <div class="select-option-item ${isSelected ? 'selected' : ''}" data-id="${editor._id}" data-name="${escapeHtml(fullName)}" data-email="${escapeHtml(editor.email)}">
+        <div class="option-text">
+          <span class="option-name">${escapeHtml(fullName)}</span>
+          <span class="option-email">${escapeHtml(editor.email || '')}</span>
+        </div>
+        ${!isSelected ? '<i class="fas fa-plus add-icon"></i>' : ''}
+      </div>
+    `;
+        }).join('');
+
+        // Attach click handlers
+        optionsList.querySelectorAll('.select-option-item').forEach(option => {
+            option.addEventListener('click', function () {
+                const editorId = this.getAttribute('data-id');
+                const editorName = this.getAttribute('data-name') || '';
+                const editorEmail = this.getAttribute('data-email') || '';
+
+                if (type === 'chief') {
+                    selectedChiefEditors = [{
+                        _id: editorId,
+                        firstName: (editorName.split(' ')[0] || ''),
+                        lastName: (editorName.split(' ')[1] || ''),
+                        email: editorEmail
+                    }];
+                } else {
+                    if (!selectedAssociateEditors.some(a => a._id === editorId)) {
+                        selectedAssociateEditors.push({
+                            _id: editorId,
+                            firstName: (editorName.split(' ')[0] || ''),
+                            lastName: (editorName.split(' ')[1] || ''),
+                            email: editorEmail
+                        });
+                    }
+                }
+
+                updateEditorTags();
+                // close dropdown
+                const dropdownEl = document.getElementById(`${type}SelectDropdown`);
+                const headerEl = document.getElementById(`${type}SelectHeader`);
+                if (dropdownEl) dropdownEl.classList.remove('active');
+                if (headerEl) headerEl.classList.remove('active');
+
+                populateSelectOptions('chief');
+                populateSelectOptions('associate');
+            });
+        });
+    }
+
+    /* -------------------------
+       Filter options (search)
+    ------------------------- */
+    function filterOptions(searchTerm = '', optionsListId, type) {
+        const term = (searchTerm || '').trim().toLowerCase();
+        const listEl = document.getElementById(optionsListId);
+        if (!listEl) return;
+
+        const filtered = allEditors.filter(editor => {
+            const name = `${editor.firstName} ${editor.lastName}`.toLowerCase();
+            const email = (editor.email || '').toLowerCase();
+            return name.includes(term) || email.includes(term);
+        });
+
+        if (!filtered.length) {
+            listEl.innerHTML = '<div class="no-results">No editors found</div>';
+            return;
+        }
+
+        let available = filtered;
+        if (type === 'associate' && selectedChiefEditors.length) {
+            const chiefIds = selectedChiefEditors.map(c => c._id);
+            available = filtered.filter(e => !chiefIds.includes(e._id));
+        }
+
+        listEl.innerHTML = available.map(editor => {
+            const fullName = `${editor.firstName} ${editor.lastName}`.trim();
+            const isSelected = (type === 'chief' ? selectedChiefEditors : selectedAssociateEditors).some(s => s._id === editor._id);
+            return `
+      <div class="select-option-item ${isSelected ? 'selected' : ''}" data-id="${editor._id}" data-name="${escapeHtml(fullName)}" data-email="${escapeHtml(editor.email || '')}">
+        <div class="option-text">
+          <span class="option-name">${escapeHtml(fullName)}</span>
+          <span class="option-email">${escapeHtml(editor.email || '')}</span>
+        </div>
+        ${!isSelected ? '<i class="fas fa-plus add-icon"></i>' : ''}
+      </div>
+    `;
+        }).join('');
+
+        // Reattach listeners
+        listEl.querySelectorAll('.select-option-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const editorId = this.getAttribute('data-id');
+                const editorName = this.getAttribute('data-name') || '';
+                const editorEmail = this.getAttribute('data-email') || '';
+
+                if (type === 'chief') {
+                    selectedChiefEditors = [{
+                        _id: editorId,
+                        firstName: (editorName.split(' ')[0] || ''),
+                        lastName: (editorName.split(' ')[1] || ''),
+                        email: editorEmail
+                    }];
+                } else {
+                    if (!selectedAssociateEditors.some(a => a._id === editorId)) {
+                        selectedAssociateEditors.push({
+                            _id: editorId,
+                            firstName: (editorName.split(' ')[0] || ''),
+                            lastName: (editorName.split(' ')[1] || ''),
+                            email: editorEmail
+                        });
+                    }
+                }
+
+                updateEditorTags();
+                populateSelectOptions('chief');
+                populateSelectOptions('associate');
+            });
+        });
+    }
+
+    /* -------------------------
+       Update tags and hidden inputs
+    ------------------------- */
+    function updateEditorTags() {
+        // Chief tags
+        if (editorsInChiefTags) {
+            if (selectedChiefEditors.length) {
+                editorsInChiefTags.innerHTML = selectedChiefEditors.map(editor => `
+        <div class="editor-tag" data-id="${editor._id}">
+          <div class="tag-content">
+            <span class="tag-name">${escapeHtml(editor.firstName)} ${escapeHtml(editor.lastName)}</span>
+            <span class="tag-email">${escapeHtml(editor.email)}</span>
+          </div>
+          <button type="button" class="remove-chief" data-id="${editor._id}" title="Remove"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+            } else {
+                editorsInChiefTags.innerHTML = '<div class="empty-state">No editor-in-chief selected</div>';
+            }
+        }
+
+        // Associate tags
+        if (associateEditorsTags) {
+            if (selectedAssociateEditors.length) {
+                associateEditorsTags.innerHTML = selectedAssociateEditors.map(editor => `
+        <div class="editor-tag" data-id="${editor._id}">
+          <div class="tag-content">
+            <span class="tag-name">${escapeHtml(editor.firstName)} ${escapeHtml(editor.lastName)}</span>
+            <span class="tag-email">${escapeHtml(editor.email)}</span>
+          </div>
+          <button type="button" class="remove-associate" data-id="${editor._id}" title="Remove"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+            } else {
+                associateEditorsTags.innerHTML = '<div class="empty-state">No associate editors added</div>';
+            }
+        }
+
+        // Wire remove buttons
+        document.querySelectorAll('.remove-chief').forEach(btn => {
+            btn.removeEventListener('click', onRemoveChiefClick);
+            btn.addEventListener('click', onRemoveChiefClick);
+        });
+        document.querySelectorAll('.remove-associate').forEach(btn => {
+            btn.removeEventListener('click', onRemoveAssociateClick);
+            btn.addEventListener('click', onRemoveAssociateClick);
+        });
+
+        // Update hidden inputs
+        if (hiddenChiefInput) hiddenChiefInput.value = JSON.stringify(selectedChiefEditors.map(e => e._id));
+        if (hiddenAssociateInput) hiddenAssociateInput.value = JSON.stringify(selectedAssociateEditors.map(e => e._id));
+    }
+
+    function onRemoveChiefClick(e) {
+        const id = e.currentTarget.getAttribute('data-id');
+        selectedChiefEditors = selectedChiefEditors.filter(c => c._id !== id);
+        updateEditorTags();
+        populateSelectOptions('chief');
+        populateSelectOptions('associate');
+    }
+    function onRemoveAssociateClick(e) {
+        const id = e.currentTarget.getAttribute('data-id');
+        selectedAssociateEditors = selectedAssociateEditors.filter(a => a._id !== id);
+        updateEditorTags();
+        populateSelectOptions('associate');
+        populateSelectOptions('chief');
+    }
+
+    /* -------------------------
+       Handle submit
+    ------------------------- */
+    async function handleFormSubmit(evt) {
+        evt.preventDefault();
+
+        const title = (document.getElementById('scopeTitle')?.value || '').trim();
+        const description = (document.getElementById('scopeDescription')?.value || '').trim();
+        if (!title) { toastr.error('Scope title is required'); return; }
+        if (!description) { toastr.error('Scope description is required'); return; }
+        if (!selectedChiefEditors.length) { toastr.error('At least one editor-in-chief is required'); return; }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const scopeId = urlParams.get('id');
+        if (!scopeId) { toastr.error('Missing scope id'); return; }
+
+        const payload = {
+            title,
+            description,
+            editorsInChief: selectedChiefEditors.map(e => e._id),
+            associateEditors: selectedAssociateEditors.map(e => e._id)
+        };
+
+        if (submitText) submitText.style.display = 'none';
+        if (loadingSpinner) loadingSpinner.style.display = 'inline';
+        if (submitBtn) submitBtn.disabled = true;
+
+        try {
+            showLoading('Updating scope...');
+            const result = await apiFetch(`${BASE_URL}/scope/${scopeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
+
+            if (!result || !result.success) throw new Error(result?.message || 'Failed to update scope');
+
+            Swal.fire({ title: 'Success!', text: 'Scope updated successfully', icon: 'success', confirmButtonColor: '#3085d6' })
+                .then(() => window.history.back());
+
+        } catch (err) {
+            console.error('Error updating scope:', err);
+            toastr.error('Failed to update scope: ' + (err.message || 'Unknown error'));
+        } finally {
+            if (submitText) submitText.style.display = 'inline';
+            if (loadingSpinner) loadingSpinner.style.display = 'none';
+            if (submitBtn) submitBtn.disabled = false;
+            hideLoading();
+        }
+    }
+
+    /* -------------------------
+       Small helpers
+    ------------------------- */
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+</script>
+
 </body>
 
 </html>

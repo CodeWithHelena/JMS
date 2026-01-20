@@ -569,6 +569,12 @@
                 justify-content: center;
             }
         }
+
+        @media (min-width: 576px) {
+    .container, .container-sm {
+        max-width: none !important;
+    }
+}
     </style>
 </head>
 
@@ -582,8 +588,8 @@
             <main class="main-content">
                 <div class="d-flex justify-content-between">
                     <div class="container page-title">
-                        <h1>Review History Timeline</h1>
-                        <p>Track all your completed reviews and recommendations</p>
+                        <div><h1>Review History Timeline</h1>
+                        <p>Track all your completed reviews and recommendations</p></div>
                     </div>
                 </div>
 
@@ -661,7 +667,10 @@
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script>
+    <script type="module">
+
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
         // Reusable Loading Functions
         const LoadingScreen = {
             showTimelineLoading: function () {
@@ -701,18 +710,11 @@
         // Review Timeline Manager Class
         class ReviewTimelineManager {
             constructor() {
-                this.BASE_URL = 'https://fp.247laboratory.net/api/v1';
-                this.token = localStorage.getItem('token') || null;
                 this.completedReviews = [];
                 this.filteredReviews = [];
                 this.userCache = {}; // Cache for user data
                 this.currentSearch = '';
                 this.isLoading = false;
-
-                if (!this.token) {
-                    ErrorScreen.show('Authentication required. Please login.');
-                    return;
-                }
 
                 this.initializeToastr();
                 this.bindEvents();
@@ -764,9 +766,9 @@
                 }
 
                 try {
-                    const response = await fetch(`${this.BASE_URL}/user/${userId}`, {
+                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
                         headers: {
-                            'Authorization': `Bearer ${this.token}`,
+                            'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
@@ -795,14 +797,14 @@
 
                 try {
                     // Build URL with search parameter if available
-                    let url = `${this.BASE_URL}/reviews/history/list`;
+                    let url = `${BASE_URL}/reviews/history/list`;
                     if (this.currentSearch) {
                         url += `?search=${encodeURIComponent(this.currentSearch)}`;
                     }
 
                     const response = await fetch(url, {
                         headers: {
-                            'Authorization': `Bearer ${this.token}`,
+                            'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });

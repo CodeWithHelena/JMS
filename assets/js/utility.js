@@ -18,6 +18,39 @@ export function getAuthToken2() {
     return localStorage.getItem('token');
 }
 
+
+//CHECK NETWORK CONNECTION
+export async function apiFetch(url, options = {}) {
+  try {
+    const response = await fetch(url, options);
+
+    // Server reached but returned error
+    if (!response.ok) {
+      let errorMsg = `Request failed (${response.status})`;
+
+      try {
+        const data = await response.json();
+        if (data?.message) errorMsg = data.message;
+      } catch (_) {}
+
+      throw new Error(errorMsg);
+    }
+
+    return await response.json();
+
+  } catch (error) {
+    // No internet / DNS / timeout
+    if (!navigator.onLine || error.message === 'Failed to fetch') {
+      throw new Error('Network Error. Please check your internet connection.');
+    }
+
+    throw error;
+  }
+}
+
+
+
+
 // Reusable Custom Select Component (without search)
 export function createCustomSelect(options) {
     const {

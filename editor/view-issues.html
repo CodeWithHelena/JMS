@@ -53,48 +53,8 @@
             transform: translateY(-1px);
         }
 
-        /* Page Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
 
-        .page-title h1 {
-            font-size: var(--font-size-3xl);
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
 
-        .page-title p {
-            color: var(--text-muted);
-            font-size: var(--font-size-lg);
-        }
-
-        .create-new-btn {
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .create-new-btn:hover {
-            background: var(--btn-primary-hover);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
 
         /* Filter Controls */
         .filter-controls {
@@ -161,31 +121,6 @@
             padding-top: 1.7rem;
         }
 
-        .btn-filter {
-            background: var(--light);
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-filter:hover {
-            background: var(--btn-secondary-hover);
-            border-color: var(--text-light);
-        }
-
-        .btn-filter.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
         /* Issues Grid */
         .issues-grid {
             display: grid;
@@ -205,7 +140,6 @@
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--card-shadow);
-            padding: 1.5rem;
             transition: var(--transition-normal);
             border: 1px solid var(--border);
             height: 100%;
@@ -220,8 +154,9 @@
         }
 
         .issue-header {
+            background: rgb(223, 229, 251);
             margin-bottom: 1rem;
-            padding-bottom: 1rem;
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
             border-bottom: 2px solid var(--light);
         }
 
@@ -233,8 +168,8 @@
             line-height: 1.3;
         }
 
-        .issue-journal {
-            color: var(--primary);
+        .issue-scope {
+            color: var(--warning);
             font-size: var(--font-size-sm);
             font-weight: 600;
             display: flex;
@@ -247,6 +182,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             margin-bottom: 1.5rem;
+            padding: 0 1.5rem;
         }
 
         .meta-item {
@@ -273,7 +209,7 @@
             background: var(--light);
             border-radius: var(--radius-sm);
             padding: 1rem;
-            margin-bottom: 1.5rem;
+            margin: 0 1.5rem;
         }
 
         .submissions-count {
@@ -300,29 +236,7 @@
             margin-top: auto;
             display: flex;
             gap: 0.75rem;
-        }
-
-        .btn-edit {
-            background: var(--primary-light);
-            color: white;
-            border: 1px solid var(--primary);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: var(--font-size-sm);
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex: 1;
-            justify-content: center;
-            text-decoration: none;
-        }
-
-        .btn-edit:hover {
-            background: var(--primary);
-            color: white;
+            padding: 1.5rem;
         }
 
         .btn-delete {
@@ -651,16 +565,6 @@
                 padding: 0 0.5rem;
             }
 
-            .page-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .create-new-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
             .filter-controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -693,48 +597,41 @@
             <div id="header-placeholder"></div>
 
             <main class="main-content">
-                <!-- Back Button -->
-                <div class="back-button-wrap">
-                    <a href="dashboard.html" class="back-button">
-                        <i class="fas fa-arrow-left"></i>Back to Dashboard
-                    </a>
-                </div>
-
                 <div class="view-issues-container">
                     <!-- Page Header -->
-                    <div class="page-header">
-                        <div class="page-title">
-                            <h1>Journal Issues</h1>
-                            <p>Manage and view all journal issues</p>
+                    <div class="container page-title">
+                        <div>
+                            <h1>Scope Issues</h1>
+                            <p>Manage and view all scope issues</p>
                         </div>
-                        <a href="create-issue.html" class="create-new-btn">
+                        <div><a href="create-issue.html" class="btn-brand">
                             <i class="fas fa-plus-circle"></i> Create New Issue
-                        </a>
+                        </a></div>
                     </div>
 
                     <!-- Filter Controls -->
                     <div class="filter-controls">
                         <div class="filter-group">
-                            <label class="filter-label">Journal</label>
-                            <div class="custom-select with-search" id="journalFilter">
-                                <input type="hidden" name="journalId" id="selectedJournalFilterId" value="">
+                            <label class="filter-label">Scope</label>
+                            <div class="custom-select with-search" id="scopeFilter">
+                                <input type="hidden" name="scopeId" id="selectedScopeFilterId" value="">
                                 <div class="select-header">
-                                    <span class="selected-text placeholder">All Journals</span>
+                                    <span class="selected-text placeholder">All Scopes</span>
                                     <i class="fas fa-chevron-down select-arrow"></i>
                                 </div>
                                 <div class="select-dropdown">
                                     <div class="select-search">
                                         <i class="fas fa-search"></i>
-                                        <input type="text" class="select-search-input" placeholder="Search journals...">
+                                        <input type="text" class="select-search-input" placeholder="Search scopes...">
                                         <button type="button" class="clear-search-btn">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
-                                    <div class="select-options" id="journalFilterOptions">
+                                    <div class="select-options" id="scopeFilterOptions">
                                         <!-- Options will be populated here -->
                                     </div>
-                                    <div class="select-loading" id="journalFilterLoading">
-                                        <i class="fas fa-spinner fa-spin"></i> Loading journals...
+                                    <div class="select-loading" id="scopeFilterLoading">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading scopes...
                                     </div>
                                 </div>
                             </div>
@@ -765,7 +662,7 @@
                         </div>
 
                         <div class="filter-actions">
-                            <button type="button" id="clearFiltersBtn" class="btn-filter">
+                            <button type="button" id="clearFiltersBtn" class="btn-clear">
                                 <i class="fas fa-times"></i> Clear
                             </button>
                         </div>
@@ -857,7 +754,7 @@
     </div>
 
     <script>
-        window.SIDEBAR_MODULE = 'editor';
+        window.SIDEBAR_MODULE = 'admin';
         window.SIDEBAR_ACTIVE_ID = 'view-issues';
     </script>
     <!-- layout.js loads partials and wires header+sidebar behaviors -->
@@ -875,19 +772,19 @@
 
         class ViewIssueManager {
             constructor() {
-                this.journals = [];
+                this.scopes = [];
                 this.issues = [];
                 this.currentPage = 1;
                 this.totalPages = 1;
                 this.totalItems = 0;
                 this.pageSize = 9;
                 this.filters = {
-                    journalId: '',
+                    scopeId: '',
                     status: '',
                     search: ''
                 };
 
-                this.journalFilterSelect = null;
+                this.scopeFilterSelect = null;
                 this.statusFilterSelect = null;
                 this.editingIssueId = null;
 
@@ -913,23 +810,23 @@
             }
 
             async initializeFilters() {
-                // Initialize journal filter (with search)
-                const journalFilter = document.getElementById('journalFilter');
-                if (journalFilter) {
-                    this.journalFilterSelect = new CustomSelect(journalFilter, true);
-                    this.journalFilterSelect.showLoading();
-                    await this.loadJournals();
-                    this.journalFilterSelect.hideLoading();
+                // Initialize scope filter (with search)
+                const scopeFilter = document.getElementById('scopeFilter');
+                if (scopeFilter) {
+                    this.scopeFilterSelect = new CustomSelect(scopeFilter, true);
+                    this.scopeFilterSelect.showLoading();
+                    await this.loadScopes();
+                    this.scopeFilterSelect.hideLoading();
 
-                    // Listen for journal selection changes
-                    const journalHiddenInput = document.getElementById('selectedJournalFilterId');
-                    if (journalHiddenInput) {
+                    // Listen for scope selection changes
+                    const scopeHiddenInput = document.getElementById('selectedScopeFilterId');
+                    if (scopeHiddenInput) {
                         const observer = new MutationObserver(() => {
-                            this.filters.journalId = journalHiddenInput.value;
+                            this.filters.scopeId = scopeHiddenInput.value;
                             this.currentPage = 1;
                             this.loadIssues();
                         });
-                        observer.observe(journalHiddenInput, { attributes: true, attributeFilter: ['value'] });
+                        observer.observe(scopeHiddenInput, { attributes: true, attributeFilter: ['value'] });
                     }
                 }
 
@@ -1030,8 +927,8 @@
 
                 // Window resize for dropdown positioning
                 window.addEventListener('resize', () => {
-                    if (this.journalFilterSelect && this.journalFilterSelect.isOpen) {
-                        this.journalFilterSelect.positionDropdown();
+                    if (this.scopeFilterSelect && this.scopeFilterSelect.isOpen) {
+                        this.scopeFilterSelect.positionDropdown();
                     }
                     if (this.statusFilterSelect && this.statusFilterSelect.isOpen) {
                         this.statusFilterSelect.positionDropdown();
@@ -1046,14 +943,14 @@
                 });
             }
 
-            async loadJournals() {
+            async loadScopes() {
                 try {
                     if (!token) {
                         toastr.error('Authentication required. Please login.');
                         return;
                     }
 
-                    const response = await fetch(`${BASE_URL}/editor/journals`, {
+                    const response = await fetch(`${BASE_URL}/scope`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
@@ -1061,38 +958,38 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Failed to fetch journals: ${response.status}`);
+                        throw new Error(`Failed to fetch scopes: ${response.status}`);
                     }
 
                     const data = await response.json();
 
                     if (!data.success) {
-                        throw new Error(data.message || 'Failed to load journals');
+                        throw new Error(data.message || 'Failed to load scopes');
                     }
 
-                    this.journals = (data.journals || []).map(journal => ({
-                        id: journal._id,
-                        title: journal.title,
-                        issn: journal.issn,
-                        publisher: journal.publisher
+                    this.scopes = (data.scopes || []).map(scope => ({
+                        id: scope._id,
+                        title: scope.title,
+                        issn: scope.issn,
+                        publisher: scope.publisher
                     }));
 
-                    // Add "All Journals" option
-                    const allJournalsOption = {
+                    // Add "All Scopes" option
+                    const allScopesOption = {
                         id: '',
-                        title: 'All Journals'
+                        title: 'All Scopes'
                     };
 
-                    if (this.journalFilterSelect) {
-                        this.journalFilterSelect.setOptions([allJournalsOption, ...this.journals]);
+                    if (this.scopeFilterSelect) {
+                        this.scopeFilterSelect.setOptions([allScopesOption, ...this.scopes]);
                     }
 
                 } catch (error) {
-                    console.error('Error loading journals:', error);
-                    toastr.error('Failed to load journals. Please refresh the page.');
+                    console.error('Error loading scopes:', error);
+                    toastr.error('Failed to load scopes. Please refresh the page.');
 
-                    if (this.journalFilterSelect) {
-                        this.journalFilterSelect.showError('Failed to load journals');
+                    if (this.scopeFilterSelect) {
+                        this.scopeFilterSelect.showError('Failed to load scopes');
                     }
                 }
             }
@@ -1126,8 +1023,8 @@
                         limit: this.pageSize
                     });
 
-                    if (this.filters.journalId) {
-                        params.append('journalId', this.filters.journalId);
+                    if (this.filters.scopeId) {
+                        params.append('scopeId', this.filters.scopeId);
                     }
 
                     if (this.filters.status) {
@@ -1197,10 +1094,11 @@
                 }
 
                 issuesGrid.innerHTML = this.issues.map(issue => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const publicationDate = new Date(issue.publicationDate);
+                    const today = new Date().setHours(0, 0, 0, 0);
+                    const publicationDate = new Date(issue.publicationDate).setHours(0, 0, 0, 0);
+
                     const isPublished = publicationDate <= today;
+
                     const status = isPublished ? 'Published' : 'Upcoming';
 
                     return `
@@ -1208,9 +1106,9 @@
                             <div class="issue-header">
                                 <div>
                                     <div class="issue-title">${this.escapeHtml(issue.title)}</div>
-                                    <div class="issue-journal">
+                                    <div class="issue-scope">
                                         <i class="fas fa-book"></i>
-                                        ${this.escapeHtml(issue.journalId?.title || 'Unknown Journal')}
+                                        ${this.escapeHtml(issue.scopeId?.title || 'Unknown Scope')}
                                     </div>
                                 </div>
                             </div>
@@ -1221,7 +1119,7 @@
                                     <div class="meta-value">${issue.volume}</div>
                                 </div>
                                 <div class="meta-item">
-                                    <div class="meta-label">Issue</div>
+                                    <div class="meta-label">Issue Number</div>
                                     <div class="meta-value">${issue.issueNumber}</div>
                                 </div>
                                 <div class="meta-item">
@@ -1245,10 +1143,10 @@
                             </div>
                             
                             <div class="issue-actions">
-                                <a href="issue-detail.html?id=${issue._id}" class="btn-view">
+                                <a href="issue-submission.html?id=${issue._id}" class="btn-view">
                                     <i class="fas fa-eye"></i> View
                                 </a>
-                                <button class="btn-edit" data-id="${issue._id}">
+                                <button class="btn-edit btn-light" data-id="${issue._id}">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
                                 <button class="btn-delete" data-id="${issue._id}" data-title="${this.escapeHtml(issue.title)}">
@@ -1341,10 +1239,10 @@
                     this.filters.search = '';
                 }
 
-                // Clear journal filter
-                if (this.journalFilterSelect) {
-                    this.journalFilterSelect.clear();
-                    this.filters.journalId = '';
+                // Clear scope filter
+                if (this.scopeFilterSelect) {
+                    this.scopeFilterSelect.clear();
+                    this.filters.scopeId = '';
                 }
 
                 // Clear status filter

@@ -193,6 +193,10 @@
             .charts-activity-layout {
                 grid-template-columns: 1fr;
             }
+
+            .recent-activity-section{
+                margin-top: 4rem;
+            }
         }
 
         /* Charts Section */
@@ -681,7 +685,7 @@
 
             async loadUserData() {
                 try {
-                    const response = await fetch(`${BASE_URL}/user/me`, {
+                    const response = await fetch(`${BASE_URL}/profile/me`, {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
                             'Accept': 'application/json'
