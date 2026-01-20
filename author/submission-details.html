@@ -2526,7 +2526,7 @@ body.modal-open {
                     paymentScopeName.textContent = this.submission.scopeId?.title || 'Unknown Scope';
                     paymentSubmissionId.textContent = this.submissionId;
 
-                    const fee = this.publicationFee || 15000;
+                    const fee = this.publicationFee || '';
                     paymentAmount.innerHTML = this.formatCurrency(fee, this.currency || 'NGN');
 
                     this.resetPaymentModal();
@@ -3021,20 +3021,21 @@ body.modal-open {
                     if (!scopeId) return null;
                     if (this.scopeCache.has(scopeId)) {
                         const scope = this.scopeCache.get(scopeId);
-                        this.publicationFee = scope.publicationFee || this.publicationFee || 15000;
+                        this.publicationFee = scope.publicationFee || this.publicationFee || '';
                         this.currency = scope.currency || this.currency || 'NGN';
                         return scope;
                     }
                     try {
                         const token = getAuthToken2();
                         if (!token) return null;
-                        const response = await fetch(`${BASE_URL}/scope/${scopeId}`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
+                        const response = await fetch(`${BASE_URL}/journal`, { method: 'GET', headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' } });
                         if (!response.ok) { console.warn(`Failed to fetch scope ${scopeId}: ${response.status}`); return null; }
                         const data = await response.json();
+                        console.log('scope data:', data);
                         if (!data.success) return null;
-                        const scope = data.scope || data;
+                        const scope = data.mainJournal || data;                        
                         this.scopeCache.set(scopeId, scope);
-                        this.publicationFee = scope.publicationFee || this.publicationFee || 15000;
+                        this.publicationFee = scope.publicationFee || this.publicationFee || '';
                         this.currency = scope.currency || this.currency || 'NGN';
                         return scope;
                     } catch (error) {
@@ -3072,7 +3073,7 @@ body.modal-open {
                     <span class="header-status-badge" style="${statusStyle}">${this.escapeHtml(statusDisplay)}</span>
                     <div class="header-meta">
                         <div class="meta-item"><i class="fas fa-book-open"></i><span>Scope: ${this.escapeHtml(scopeName)}</span></div>
-                        <div class="meta-item"><i class="fas fa-hashtag"></i><span>ISSN: ${this.escapeHtml(scopeISSN)}</span></div>
+                        
                         <div class="meta-item"><i class="fas fa-user"></i><span>Submitted by: ${this.escapeHtml(submittedByName)}</span></div>
                         <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
                     </div>

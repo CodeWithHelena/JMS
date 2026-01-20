@@ -798,7 +798,7 @@
 
                 const formattedDate = this.formatDate(this.submission.createdAt);
                 const statusDisplay = this.capitalizeFirstLetter(this.submission.status);
-                const journalName = this.submission.journalId?.title || 'Unknown Journal';
+                const ScopeName = this.submission.ScopeId?.title || 'Unknown Scope';
 
                 manuscriptHeader.innerHTML = `
                     <h1>${this.escapeHtml(this.submission.title)}</h1>
@@ -806,7 +806,7 @@
                     <div class="header-meta">
                         <div class="meta-item">
                             <i class="fas fa-book-open"></i>
-                            <span>Journal: ${this.escapeHtml(journalName)}</span>
+                            <span>Scope: ${this.escapeHtml(ScopeName)}</span>
                         </div>
                         <div class="meta-item">
                             <i class="far fa-calendar"></i>

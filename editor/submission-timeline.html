@@ -567,317 +567,343 @@
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script type="module">
-        import { BASE_URL, token } from '../assets/js/utility.js';
+<script type="module">
+    import { BASE_URL } from '../assets/js/utility.js';
 
-        // Loading Functions
-        const LoadingScreen = {
-            showTimelineLoading: function () {
-                document.getElementById('timelineLoading').style.display = 'block';
-                document.getElementById('timelineContainer').style.display = 'none';
-                document.getElementById('noDataMessage').style.display = 'none';
-            },
+    // Loading Functions
+    const LoadingScreen = {
+        showTimelineLoading() {
+            document.getElementById('timelineLoading').style.display = 'block';
+            document.getElementById('timelineContainer').style.display = 'none';
+            document.getElementById('noDataMessage').style.display = 'none';
+        },
+        hideTimelineLoading() {
+            document.getElementById('timelineLoading').style.display = 'none';
+        }
+    };
 
-            hideTimelineLoading: function () {
-                document.getElementById('timelineLoading').style.display = 'none';
-            },
+    const ErrorScreen = {
+        show(message) {
+            const msgEl = document.getElementById('errorMessage');
+            if (msgEl) msgEl.textContent = message;
+            const screen = document.getElementById('errorScreen');
+            if (screen) screen.style.display = 'block';
+            LoadingScreen.hideTimelineLoading();
+            const tc = document.getElementById('timelineContainer');
+            if (tc) tc.style.display = 'none';
+            const nd = document.getElementById('noDataMessage');
+            if (nd) nd.style.display = 'none';
+        },
+        hide() {
+            const screen = document.getElementById('errorScreen');
+            if (screen) screen.style.display = 'none';
+        }
+    };
 
-            showHeaderLoading: function () {
-                // Header already shows skeleton by default
-            },
+    class TimelineManager {
+        constructor() {
+            this.token = (typeof getAuthToken2 === 'function') ? getAuthToken2() : null;
+            this.submissionId = this.getSubmissionIdFromURL();
+            this.submission = null;
+            this.userCache = new Map();
 
-            hideHeaderLoading: function () {
-                // Skeleton will be replaced with real data
-            }
-        };
-
-        const ErrorScreen = {
-            show: function (message, elementId = 'errorScreen') {
-                document.getElementById('errorMessage').textContent = message;
-                document.getElementById(elementId).style.display = 'block';
-                LoadingScreen.hideTimelineLoading();
-                document.getElementById('timelineContainer').style.display = 'none';
-                document.getElementById('noDataMessage').style.display = 'none';
-            },
-
-            hide: function (elementId = 'errorScreen') {
-                document.getElementById(elementId).style.display = 'none';
-            }
-        };
-
-        // Timeline Manager Class
-        class TimelineManager {
-            constructor() {
-                this.token = getAuthToken2();
-                this.submissionId = this.getSubmissionIdFromURL();
-                this.submission = null;
-                this.userCache = new Map(); // Cache for user data
-
-                if (!this.token) {
-                    ErrorScreen.show('Authentication required. Please login.');
-                    return;
-                }
-
-                if (!this.submissionId) {
-                    ErrorScreen.show('No submission ID provided in URL');
-                    return;
-                }
-
-                this.initializeToastr();
-                this.loadTimeline();
+            if (!this.token) {
+                ErrorScreen.show('Authentication required. Please login.');
+                return;
             }
 
-            initializeToastr() {
+            if (!this.submissionId) {
+                ErrorScreen.show('No submission ID provided.');
+                return;
+            }
+
+            this.initializeToastr();
+            this.loadTimeline();
+        }
+
+        initializeToastr() {
+            if (window.toastr) {
                 toastr.options = {
                     closeButton: true,
                     progressBar: true,
                     positionClass: "toast-top-right",
-                    timeOut: 5000,
-                    extendedTimeOut: 2000
+                    timeOut: 5000
                 };
-            }
-
-            getSubmissionIdFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('id');
-            }
-
-            async getUserDetails(userId) {
-                if (!userId) return null;
-
-                // Check cache first
-                if (this.userCache.has(userId)) {
-                    return this.userCache.get(userId);
-                }
-
-                try {
-                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success && data.user) {
-                            // Cache the user data
-                            this.userCache.set(userId, data.user);
-                            return data.user;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error fetching user details:', error);
-                }
-
-                return null;
-            }
-
-            async loadTimeline() {
-                // Show timeline loading immediately
-                LoadingScreen.showTimelineLoading();
-
-                // Manuscript header already shows skeleton loading by default
-
-                try {
-                    // Get the submission history data
-                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch timeline: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success || !data.submission) {
-                        throw new Error(data.message || 'Failed to load timeline data');
-                    }
-
-                    this.submission = data.submission;
-
-                    // Render manuscript header immediately with real data
-                    this.renderManuscriptHeader();
-
-                    // Then render timeline with user details
-                    await this.renderTimeline(this.submission.history || []);
-
-                } catch (error) {
-                    console.error('Error loading timeline data:', error);
-                    ErrorScreen.show('Failed to load timeline data. Please try again.');
-                    // Still show manuscript header even if timeline fails
-                    this.renderManuscriptHeader();
-                }
-            }
-
-            renderManuscriptHeader() {
-                const manuscriptHeader = document.getElementById('manuscriptHeader');
-
-                if (!this.submission) return;
-
-                const formattedDate = this.formatDate(this.submission.createdAt);
-                const statusDisplay = this.formatStatus(this.submission.currentStatus || this.submission.status);
-                const statusClass = this.getStatusClass(this.submission.currentStatus || this.submission.status);
-
-                manuscriptHeader.innerHTML = `
-                    <h1>${this.escapeHtml(this.submission.title)}</h1>
-                    <span class="header-status-badge ${statusClass}">Current Status: ${statusDisplay}</span>
-                    <div class="header-meta">
-                        <div class="meta-item">
-                            <i class="far fa-calendar"></i>
-                            <span>Submitted On: ${formattedDate}</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-history"></i>
-                            <span>Last Updated: ${this.formatDate(this.submission.updatedAt)}</span>
-                        </div>
-                    </div>
-                `;
-            }
-
-            async renderTimeline(history) {
-                const timelineContainer = document.getElementById('timelineContainer');
-                const noDataMessage = document.getElementById('noDataMessage');
-
-                if (!history || history.length === 0) {
-                    noDataMessage.style.display = 'block';
-                    timelineContainer.style.display = 'none';
-                    LoadingScreen.hideTimelineLoading();
-                    return;
-                }
-
-                // Sort history by date (oldest first for timeline)
-                const sortedHistory = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                // Create document fragment for better performance
-                const fragment = document.createDocumentFragment();
-
-                // Process each timeline item
-                for (let i = 0; i < sortedHistory.length; i++) {
-                    const item = sortedHistory[i];
-                    const timelineItem = await this.createTimelineItem(item, i, sortedHistory.length);
-                    fragment.appendChild(timelineItem);
-                }
-
-                timelineContainer.innerHTML = '';
-                timelineContainer.appendChild(fragment);
-                timelineContainer.style.display = 'block';
-                noDataMessage.style.display = 'none';
-
-                LoadingScreen.hideTimelineLoading();
-            }
-
-            async createTimelineItem(item, index, totalItems) {
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'timeline-item';
-
-                // Format date
-                const formattedDate = this.formatDate(item.date || item.createdAt);
-
-                // Format status for display
-                const statusDisplay = this.formatStatus(item.status);
-
-                // Get status class
-                const statusClass = this.getStatusClass(item.status);
-
-                // Get user details if available
-                let updatedByText = '';
-                if (item.by) {
-                    const user = await this.getUserDetails(item.by);
-                    if (user) {
-                        const userName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'System User';
-                        updatedByText = `<div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(userName)}</strong></div>`;
-                    } else {
-                        updatedByText = `<div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: System</strong></div>`;
-                    }
-                }
-
-                timelineItem.innerHTML = `
-                    <div class="card">
-                        <span class="status-badge ${statusClass}">
-                            ${statusDisplay}
-                        </span>
-                        <p class="timeline-comment">${this.escapeHtml(item.comment || 'No comment provided.')}</p>
-                        <p class="timeline-date">
-                            <i class="far fa-clock"></i> ${formattedDate}
-                        </p>
-                        ${updatedByText}
-                    </div>
-                `;
-
-                return timelineItem;
-            }
-
-            getStatusClass(status) {
-                // Map status to CSS class
-                const statusMap = {
-                    'submitted': 'status-submitted',
-                    'under_review': 'status-under_review',
-                    'reviewed': 'status-reviewed',
-                    'accepted': 'status-accepted',
-                    'rejected': 'status-rejected',
-                    'revision_requested': 'status-revision_requested',
-                    'revised': 'status-revised',
-                    'awaiting_payment': 'status-awaiting_payment',
-                    'published': 'status-published'
-                };
-                return statusMap[status] || 'status-submitted';
-            }
-
-            formatStatus(status) {
-                const statusMap = {
-                    'submitted': 'Submitted',
-                    'under_review': 'Under Review',
-                    'reviewed': 'Reviewed',
-                    'accepted': 'Accepted',
-                    'rejected': 'Rejected',
-                    'revision_requested': 'Revision Requested',
-                    'revised': 'Revised',
-                    'awaiting_payment': 'Awaiting Payment',
-                    'published': 'Published'
-                };
-                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
-            }
-
-            formatDate(dateString) {
-                try {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-                } catch (error) {
-                    console.error('Error formatting date:', error);
-                    return dateString;
-                }
-            }
-
-            escapeHtml(str) {
-                if (!str && str !== 0) return '';
-                return String(str)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
             }
         }
 
-        // Initialize timeline manager when DOM is loaded
-        let timelineManager;
+        getSubmissionIdFromURL() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('id');
+            } catch (e) {
+                return null;
+            }
+        }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            timelineManager = new TimelineManager();
-        });
-    </script>
+        async getUserDetails(userId) {
+            if (!userId) return null;
+            if (this.userCache.has(userId)) return this.userCache.get(userId);
+
+            try {
+                const res = await fetch(`${BASE_URL}/user/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        Accept: 'application/json'
+                    }
+                });
+
+                if (!res.ok) return null;
+                const data = await res.json();
+                if (data?.success && data.user) {
+                    this.userCache.set(userId, data.user);
+                    return data.user;
+                }
+            } catch (err) {
+                console.error('getUserDetails error:', err);
+            }
+            return null;
+        }
+
+        async loadTimeline() {
+            LoadingScreen.showTimelineLoading();
+
+            try {
+                const res = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        Accept: 'application/json'
+                    }
+                });
+
+                if (!res.ok) throw new Error(`Failed to fetch timeline: ${res.status}`);
+
+                const data = await res.json();
+
+                if (!data?.success || !data.submission) {
+                    throw new Error(data?.message || 'Invalid timeline response');
+                }
+
+                this.submission = data.submission;
+                this.renderManuscriptHeader();
+                await this.renderTimeline(this.submission.history || []);
+            } catch (err) {
+                console.error('loadTimeline error:', err);
+                ErrorScreen.show('Failed to load timeline.');
+                // attempt to at least render header if any partial data exists
+                if (this.submission) this.renderManuscriptHeader();
+            }
+        }
+
+        renderManuscriptHeader() {
+            const el = document.getElementById('manuscriptHeader');
+            if (!el || !this.submission) return;
+
+            const title = this.escapeHtml(this.submission.title || 'Untitled');
+            const status = this.formatStatus(this.submission.status);
+            const statusClass = this.getStatusClass(this.submission.status);
+
+            const created = this.formatDate(this.submission.createdAt);
+            const updated = this.formatDate(this.submission.updatedAt);
+
+            el.innerHTML = `
+                <h1>${title}</h1>
+                <span class="header-status-badge ${statusClass}">
+                    Current Status: ${this.escapeHtml(status)}
+                </span>
+                <div class="header-meta">
+                    <div class="meta-item">
+                        <i class="far fa-calendar"></i>
+                        <span>Submitted On: ${this.escapeHtml(created)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-history"></i>
+                        <span>Last Updated: ${this.escapeHtml(updated)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async renderTimeline(history) {
+            const container = document.getElementById('timelineContainer');
+            const noData = document.getElementById('noDataMessage');
+
+            if (!Array.isArray(history) || history.length === 0) {
+                if (noData) noData.style.display = 'block';
+                if (container) container.style.display = 'none';
+                LoadingScreen.hideTimelineLoading();
+                return;
+            }
+
+            // sort oldest -> newest
+            history.sort((a, b) => new Date(a.date || a.createdAt) - new Date(b.date || b.createdAt));
+
+            if (container) container.innerHTML = '';
+
+            for (let i = 0; i < history.length; i++) {
+                try {
+                    const item = history[i];
+                    const el = await this.createTimelineItem(item);
+                    if (container && el) container.appendChild(el);
+                } catch (err) {
+                    console.error('Error creating timeline item:', err);
+                }
+            }
+
+            if (container) container.style.display = 'block';
+            if (noData) noData.style.display = 'none';
+            LoadingScreen.hideTimelineLoading();
+        }
+
+        async createTimelineItem(item) {
+            const div = document.createElement('div');
+            div.className = 'timeline-item';
+
+            const statusText = this.formatStatus(item?.status);
+            const statusClass = this.getStatusClass(item?.status);
+
+            // Determine 'updatedBy' (safe)
+            let updatedBy = 'System';
+            if (item?.by) {
+                const user = await this.getUserDetails(item.by);
+                if (user) {
+                    updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'System';
+                }
+            }
+
+            const commentHtml = this.sanitizeHtml(item?.comment || '<em>No comment provided.</em>');
+            const formattedDate = this.formatDate(item?.date || item?.createdAt || '');
+
+            div.innerHTML = `
+                <div class="card">
+                    <span class="status-badge ${statusClass}">
+                        ${this.escapeHtml(statusText)}
+                    </span>
+
+                    <div class="timeline-comment">
+                        ${commentHtml}
+                    </div>
+
+                    <p class="timeline-date">
+                        <i class="far fa-clock"></i> ${this.escapeHtml(formattedDate)}
+                    </p>
+
+                    <div class="updated-by">
+                        <strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong>
+                    </div>
+                </div>
+            `;
+
+            return div;
+        }
+
+        /* =========================
+           SANITIZER (SAFE FORMATTING)
+           - Whitelists tags
+           - Removes all attributes (prevent inline JS/styles)
+           - Preserves text and allowed tag structure
+        ========================== */
+        sanitizeHtml(input) {
+            if (input === null || input === undefined) return '';
+
+            const allowedTags = ['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'UL', 'OL', 'LI'];
+            const temp = document.createElement('div');
+            // Use textContent first for plain strings that accidentally contain scripts then parse allowed markup.
+            // But we want to allow simple HTML, so set innerHTML and then clean attributes/tags.
+            temp.innerHTML = String(input);
+
+            const sanitizeNode = (node) => {
+                // iterate backwards because we'll be modifying children
+                for (let i = node.children.length - 1; i >= 0; i--) {
+                    const child = node.children[i];
+
+                    // Recurse first to clean grandchildren
+                    sanitizeNode(child);
+
+                    if (!allowedTags.includes(child.tagName)) {
+                        // Move child nodes (text / allowed elements) out, before removing the parent
+                        while (child.firstChild) {
+                            node.insertBefore(child.firstChild, child);
+                        }
+                        child.remove();
+                    } else {
+                        // Allowed tag -> strip all attributes for safety
+                        const attrs = [...child.attributes];
+                        for (const a of attrs) {
+                            child.removeAttribute(a.name);
+                        }
+                        // continue recursion already happened
+                    }
+                }
+            };
+
+            sanitizeNode(temp);
+            // Finally return sanitized innerHTML (only allowed tags remain, without attributes)
+            return temp.innerHTML;
+        }
+
+        escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        getStatusClass(status) {
+            const map = {
+                submitted: 'status-submitted',
+                under_review: 'status-under_review',
+                reviewed: 'status-reviewed',
+                accepted: 'status-accepted',
+                rejected: 'status-rejected',
+                revision_requested: 'status-revision_requested',
+                revised: 'status-revised',
+                awaiting_payment: 'status-awaiting_payment',
+                published: 'status-published'
+            };
+            if (!status && status !== 0) return 'status-submitted';
+            const key = String(status).toLowerCase();
+            return map[key] || 'status-submitted';
+        }
+
+        formatStatus(status) {
+            // Defensive: ensure status is a string before using replace
+            if (status === null || status === undefined) return 'Unknown';
+            let s = String(status);
+            // replace underscores, trim, and title-case
+            s = s.replace(/_/g, ' ').trim();
+            // Title case each word
+            return s.replace(/\b\w/g, c => c.toUpperCase());
+        }
+
+        formatDate(dateInput) {
+            if (!dateInput) return '';
+            try {
+                const d = new Date(dateInput);
+                if (isNaN(d.getTime())) return '';
+                return d.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            } catch (err) {
+                return '';
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Delay instantiation until DOM exists
+        new TimelineManager();
+    });
+</script>
+
+
 </body>
 
 </html>

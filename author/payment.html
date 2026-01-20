@@ -892,7 +892,7 @@
 
                 // Reset custom select
                 const allOption = document.querySelector('.select-option[data-value=""]');
-                this.selectOption(allOption);
+                if (allOption) this.selectOption(allOption);
 
                 this.searchQuery = '';
                 this.statusFilter = '';
@@ -1010,20 +1010,21 @@
                     : submissionTitle;
 
                 // Determine status
-                let statusText = payment.status || 'pending';
+                let statusRaw = (payment.status || '').toString().toLowerCase();
+                let statusText = 'Pending';
                 let statusClass = 'pending';
-
-                if (statusText === 'success') {
+                if (statusRaw === 'success' || statusRaw === 'paid') {
                     statusClass = 'success';
                     statusText = 'Success';
-                } else if (statusText === 'failed') {
+                } else if (statusRaw === 'failed' || statusRaw === 'error') {
                     statusClass = 'failed';
                     statusText = 'Failed';
                 } else {
+                    statusClass = 'pending';
                     statusText = 'Pending';
                 }
 
-                // Determine payment method (unchanged)
+                // Determine payment method
                 const meta = payment.metadata || {};
                 const paymentMethodRaw =
                     (meta.authorization && meta.authorization.channel) ||
@@ -1033,7 +1034,7 @@
                     'N/A';
                 const paymentMethod = String(paymentMethodRaw).toLowerCase() === 'n/a' ? 'N/A' : this.capitalize(String(paymentMethodRaw));
 
-                // Format amount correctly (unchanged)
+                // Format amount correctly
                 let amountMajor = 0;
                 if (meta.amount !== undefined && meta.amount !== null && !isNaN(Number(meta.amount))) {
                     let a = Number(meta.amount);
@@ -1051,6 +1052,12 @@
 
                 // IMPORTANT: always pass the payment _id as the "reference" value expected by the receipt page
                 const receiptId = payment._id || '';
+
+                // Only show view button for successful payments; otherwise show "No receipt"
+                const isSuccess = statusRaw === 'success' || statusRaw === 'paid';
+                const actionHtml = isSuccess
+                    ? `<button class="btn btn-view-receipt view-receipt-btn" data-payment-id="${this.escapeHtml(receiptId)}"><i class="fas fa-receipt"></i> View Receipt</button>`
+                    : `<span style="color: var(--muted); font-size: 0.9rem; display:inline-block; padding:0.5rem 0;">No receipt</span>`;
 
                 row.innerHTML = `
         <td>
@@ -1082,34 +1089,22 @@
         </td>
         <td>
             <div class="action-buttons">
-                <button class="btn btn-view-receipt view-receipt-btn" 
-                        data-payment-id="${this.escapeHtml(receiptId)}">
-                    <i class="fas fa-receipt"></i> View Receipt
-                </button>
+                ${actionHtml}
             </div>
         </td>
     `;
 
-                // Use the payment _id (data-payment-id) when opening receipt
+                // Attach click handler only if button exists
                 const viewReceiptBtn = row.querySelector('.view-receipt-btn');
-                viewReceiptBtn.addEventListener('click', () => {
-                    const id = viewReceiptBtn.getAttribute('data-payment-id');
-                    this.viewReceipt(id);
-                });
+                if (viewReceiptBtn) {
+                    viewReceiptBtn.addEventListener('click', () => {
+                        const id = viewReceiptBtn.getAttribute('data-payment-id');
+                        this.viewReceipt(id);
+                    });
+                }
 
                 return row;
             }
-
-            viewReceipt(reference) {
-                if (!reference) {
-                    toastr.error('No payment id found', 'Error');
-                    return;
-                }
-
-                // Receipt page expects ?reference=<payment._id>
-                window.location.href = `/author/payment-receipt.html?reference=${encodeURIComponent(reference)}`;
-            }
-
 
             viewReceipt(reference) {
                 if (!reference) {
@@ -1117,10 +1112,9 @@
                     return;
                 }
 
-                // Use encodeURIComponent and pass reference param — receipt page expects ?reference=...
+                // Redirect to receipt page by reference (this matches the receipt endpoint)
                 window.location.href = `/author/payment-receipt.html?reference=${encodeURIComponent(reference)}`;
             }
-
 
             // Format currency from major unit (Naira) passed in amountMajor
             formatCurrencyMajor(amountMajor, currency = 'NGN') {
@@ -1177,16 +1171,6 @@
                     });
                     pageNumbers.appendChild(pageBtn);
                 }
-            }
-
-            viewReceipt(reference) {
-                if (!reference) {
-                    toastr.error('No payment reference found', 'Error');
-                    return;
-                }
-
-                // Redirect to receipt page by reference (this matches the receipt endpoint)
-                window.location.href = `/author/payment-receipt.html?reference=${encodeURIComponent(reference)}`;
             }
 
             showLoading() {
