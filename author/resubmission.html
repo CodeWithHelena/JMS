@@ -47,8 +47,6 @@
             --dark-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 
             /* Form specific colors */
-            --primary-color: #cc5500;
-            --primary-hover: #b34a00;
             --success-color: #28a745;
             --success-hover: #218838;
             --danger-color: #dc3545;
@@ -516,7 +514,7 @@
                                     <a href="#" id="cancelBtn" class="btn cancel-btn">
                                         <i class="fas fa-times"></i> Cancel
                                     </a>
-                                    <button type="submit" id="submitBtn" class="btn submit-btn">
+                                    <button type="submit" id="submitBtn" class="btn-brand">
                                         <i class="fas fa-paper-plane"></i> Submit Revision
                                     </button>
                                 </div>
@@ -858,9 +856,9 @@
                     ).join('')}</div>`
                     : '<div style="color: var(--text-light);">No authors listed</div>';
 
-                // Format journal info
-                const journalName = submission.journalId?.title || submission.journalTitle || 'Unknown Journal';
-                const journalIssn = submission.journalId?.issn || 'N/A';
+                // Format scope info
+                const scopeName = submission.scopeId?.title || submission.scopeTitle || 'Unknown Scope';
+                const scopeIssn = submission.scopeId?.issn || '';
 
                 card.innerHTML = `
                     <h3><i class="fas fa-file-alt"></i> Original Manuscript Details</h3>
@@ -876,10 +874,10 @@
                         
                         <div class="detail-group">
                             <div class="detail-label">
-                                <i class="fas fa-book"></i> Journal
+                                <i class="fas fa-book"></i> Scope
                             </div>
                             <div class="detail-content">
-                                ${escapeHtml(journalName)} <span style="color: var(--text-light);">(ISSN: ${escapeHtml(journalIssn)})</span>
+                                ${escapeHtml(scopeName)} <span style="color: var(--text-light);">(ISSN: ${escapeHtml(scopeIssn)})</span>
                             </div>
                         </div>
                         
