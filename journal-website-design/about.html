@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - FedponekIJRD</title>
+  <meta name="description" content="Learn about FedponekIJRD's mission, values, and commitment to advancing academic research through open access publishing.">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="currentColor"/>
+          <path d="M8 10h16M8 16h12M8 22h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        FedponekIJRD
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="issues.html">Issues</a></li>
+        <li><a href="guidelines.html">Guidelines</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="moon-icon" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <a href="#register" class="btn btn-outline">Register</a>
+        <a href="#login" class="btn btn-primary">Login</a>
+      </div>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="issues.html">Issues</a>
+      <a href="guidelines.html">Guidelines</a>
+      <a href="#register">Register</a>
+      <a href="#login">Login</a>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <h1>About Us</h1>
+    <p>Learn about our commitment to advancing academic research through open access publishing</p>
+  </header>
+
+  <!-- About Section -->
+  <section class="mission">
+    <div class="container">
+      <div class="mission-content">
+        <div class="mission-text animate-on-scroll">
+          <h2>Who We Are</h2>
+          <p>FedponekIJRD (International Journal of Research & Development) is a leading peer-reviewed, open access journal dedicated to publishing high-quality research across multiple disciplines.</p>
+          <p>Founded with the vision of democratizing knowledge, we provide researchers, academicians, and professionals a global platform to share their innovative work with the scientific community worldwide.</p>
+          <p>Our rigorous review process ensures that every published article meets the highest standards of scholarly excellence while maintaining accessibility for readers everywhere.</p>
+        </div>
+        <div class="about-image animate-on-scroll">
+          <div class="about-image-placeholder">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission & Scope Section -->
+  <section class="features" style="background: var(--background-secondary);">
+    <div class="container">
+      <div class="mission-content" style="grid-template-columns: 1fr 1fr;">
+        <div class="about-image animate-on-scroll">
+          <div class="about-image-placeholder" style="background: linear-gradient(135deg, var(--primary), var(--accent));">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+          </div>
+        </div>
+        <div class="mission-text animate-on-scroll">
+          <h2>Our Mission & Scope</h2>
+          <p>Our mission is to foster the dissemination of knowledge by providing a platform for researchers to publish groundbreaking work that contributes to the advancement of science, technology, and society.</p>
+          <p><strong>Scope:</strong> We publish original research articles, review papers, technical notes, and case studies across a wide range of disciplines including:</p>
+          <ul style="list-style: none; margin-top: 1rem;">
+            <li style="padding: 0.5rem 0; color: var(--foreground-muted); display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Computer Science & Engineering
+            </li>
+            <li style="padding: 0.5rem 0; color: var(--foreground-muted); display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Medical & Health Sciences
+            </li>
+            <li style="padding: 0.5rem 0; color: var(--foreground-muted); display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Business & Management
+            </li>
+            <li style="padding: 0.5rem 0; color: var(--foreground-muted); display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Environmental & Social Sciences
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Values Section -->
+  <section class="core-values">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <h2>Our Core Values</h2>
+        <p>The principles that guide our commitment to academic excellence</p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card animate-on-scroll">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <h3>Academic Integrity</h3>
+          <p>We uphold the highest standards of scholarly rigor, transparency, and ethical publishing practices in every publication.</p>
+        </div>
+        <div class="value-card animate-on-scroll">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3>Collaboration</h3>
+          <p>We believe great research happens through teamwork and shared knowledge across disciplines and borders.</p>
+        </div>
+        <div class="value-card animate-on-scroll">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </div>
+          <h3>Innovation</h3>
+          <p>We continuously evolve our platform to meet the changing needs of the academic community and publishing landscape.</p>
+        </div>
+        <div class="value-card animate-on-scroll">
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3>Security</h3>
+          <p>We protect research data and intellectual property with enterprise-grade security measures and strict confidentiality.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us Section -->
+  <section class="why-choose" style="background: var(--background-secondary);">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <h2>Why Choose Us</h2>
+        <p>Discover the advantages of publishing with FedponekIJRD</p>
+      </div>
+      <div class="choose-grid">
+        <div class="choose-card animate-on-scroll">
+          <h3>Global Indexing</h3>
+          <p>FedponekIJRD is indexed in Google Scholar, Index Copernicus, Slideshare, Scribd, Academia, ResearchGate and many more prestigious databases ensuring maximum visibility for your research.</p>
+        </div>
+        <div class="choose-card animate-on-scroll">
+          <h3>Peer Reviewed</h3>
+          <p>An international, peer-reviewed, open access journal with a rigorous review process and a streamlined publishing workflow that ensures quality while maintaining efficiency.</p>
+        </div>
+        <div class="choose-card animate-on-scroll">
+          <h3>e-Certificate</h3>
+          <p>Provides individual eCertificates to each author, ensuring formal recognition of their authorship and contribution to published work for professional portfolios.</p>
+        </div>
+        <div class="choose-card animate-on-scroll">
+          <h3>Online Submission</h3>
+          <p>Authors can submit their papers at any time through the online submission system, ensuring a convenient and uninterrupted submission process 24/7.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="cta" style="background: var(--background);">
+    <div class="container">
+      <div class="cta-content animate-on-scroll">
+        <h2>Join Our Community of Researchers</h2>
+        <p>Become part of a global network of scholars and researchers dedicated to advancing knowledge. Submit your research today and make an impact.</p>
+        <div class="cta-buttons">
+          <a href="#submit" class="btn btn-primary">Submit Your Paper</a>
+          <a href="guidelines.html" class="btn btn-outline">View Guidelines</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>FedponekIJRD</h3>
+        <p>An international, peer-reviewed, open access journal dedicated to publishing high-quality research that advances knowledge across multiple disciplines.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="issues.html">Issues</a></li>
+          <li><a href="guidelines.html">Guidelines</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Submit Paper</a></li>
+          <li><a href="#">Author Guidelines</a></li>
+          <li><a href="#">Reviewer Portal</a></li>
+          <li><a href="#">FAQs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:info@fedponekijrd.com">info@fedponekijrd.com</a></li>
+          <li><a href="#">Support Center</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FedponekIJRD. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Twitter">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="LinkedIn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
