@@ -740,623 +740,625 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- page logic -->
-    <script type="module">
-        import { BASE_URL, token } from '../assets/js/utility.js';
+<script type="module">
+    import { BASE_URL, token } from '../assets/js/utility.js';
 
-        class PublishedManuscriptsManager {
-            constructor() {
+    class PublishedManuscriptsManager {
+        constructor() {
+            this.currentPage = 1;
+            this.limit = 9;
+            this.totalItems = 0;
+            this.totalPages = 0;
+
+            this.currentFilters = {
+                search: ''
+            };
+
+            // modal related
+            this.certificateModalOverlay = null;
+            this.certificateModalSubmitBtn = null;
+            this.certificateModalCloseBtn = null;
+            this.certificateModalCancelBtn = null;
+            this.certificateCustomSelect = null;
+            this.certificateSelectedType = 'digital';
+            this.selectedSubmissionIdForCertificate = null;
+            this.certificateIsSubmitting = false;
+
+            this.init();
+        }
+
+        init() {
+            this.initToastr();
+            this.bindEvents();
+            this.cacheModalElements();
+            this.fetchAndRender(1); // Initial load with status=published
+        }
+
+        initToastr() {
+            toastr.options = {
+                closeButton: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                timeOut: 3000,
+                extendedTimeOut: 1000
+            };
+        }
+
+        bindEvents() {
+            // Search input
+            document.getElementById('searchInput')?.addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    this.currentFilters.search = e.target.value.trim();
+                    this.currentPage = 1;
+                    this.fetchAndRender(1);
+                }
+            });
+
+            // Apply filters button
+            document.getElementById('applyFilters')?.addEventListener('click', () => {
+                this.currentFilters.search = document.getElementById('searchInput').value.trim();
                 this.currentPage = 1;
-                this.limit = 9;
-                this.totalItems = 0;
-                this.totalPages = 0;
+                this.fetchAndRender(1);
+            });
 
-                this.currentFilters = {
-                    search: ''
-                };
+            // Clear filters button
+            document.getElementById('clearFilters')?.addEventListener('click', () => {
+                this.currentFilters = { search: '' };
+                document.getElementById('searchInput').value = '';
+                this.currentPage = 1;
+                this.fetchAndRender(1);
+            });
 
-                // modal related
-                this.certificateModalOverlay = null;
-                this.certificateModalSubmitBtn = null;
-                this.certificateModalCloseBtn = null;
-                this.certificateModalCancelBtn = null;
-                this.certificateCustomSelect = null;
-                this.certificateSelectedType = 'digital';
-                this.selectedSubmissionIdForCertificate = null;
-                this.certificateIsSubmitting = false;
+            // Pagination
+            document.getElementById('paginationContainer')?.addEventListener('click', e => {
+                const pageBtn = e.target.closest('.page-btn');
+                if (pageBtn) {
+                    if (pageBtn.classList.contains('disabled')) return;
 
-                this.init();
-            }
-
-            init() {
-                this.initToastr();
-                this.bindEvents();
-                this.cacheModalElements();
-                this.fetchAndRender(1); // Initial load with status=published
-            }
-
-            initToastr() {
-                toastr.options = {
-                    closeButton: false,
-                    progressBar: false,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000,
-                    extendedTimeOut: 1000
-                };
-            }
-
-            bindEvents() {
-                // Search input
-                document.getElementById('searchInput')?.addEventListener('keypress', e => {
-                    if (e.key === 'Enter') {
-                        this.currentFilters.search = e.target.value.trim();
-                        this.currentPage = 1;
-                        this.fetchAndRender(1);
+                    if (pageBtn.classList.contains('prev-btn')) {
+                        this.changePage(this.currentPage - 1);
+                    } else if (pageBtn.classList.contains('next-btn')) {
+                        this.changePage(this.currentPage + 1);
+                    } else if (pageBtn.hasAttribute('data-page')) {
+                        this.changePage(parseInt(pageBtn.getAttribute('data-page')));
                     }
-                });
-
-                // Apply filters button
-                document.getElementById('applyFilters')?.addEventListener('click', () => {
-                    this.currentFilters.search = document.getElementById('searchInput').value.trim();
-                    this.currentPage = 1;
-                    this.fetchAndRender(1);
-                });
-
-                // Clear filters button
-                document.getElementById('clearFilters')?.addEventListener('click', () => {
-                    this.currentFilters = { search: '' };
-                    document.getElementById('searchInput').value = '';
-                    this.currentPage = 1;
-                    this.fetchAndRender(1);
-                });
-
-                // Pagination
-                document.getElementById('paginationContainer')?.addEventListener('click', e => {
-                    const pageBtn = e.target.closest('.page-btn');
-                    if (pageBtn) {
-                        if (pageBtn.classList.contains('disabled')) return;
-
-                        if (pageBtn.classList.contains('prev-btn')) {
-                            this.changePage(this.currentPage - 1);
-                        } else if (pageBtn.classList.contains('next-btn')) {
-                            this.changePage(this.currentPage + 1);
-                        } else if (pageBtn.hasAttribute('data-page')) {
-                            this.changePage(parseInt(pageBtn.getAttribute('data-page')));
-                        }
-                    }
-                });
-
-                // Card actions
-                document.getElementById('cardsGrid')?.addEventListener('click', e => {
-                    const downloadBtn = e.target.closest('[data-action="download"]');
-                    if (downloadBtn) {
-                        e.preventDefault();
-                        this.downloadFile(downloadBtn.dataset.id);
-                        return;
-                    }
-
-                    const viewBtn = e.target.closest('[data-action="view"]');
-                    if (viewBtn) {
-                        e.preventDefault();
-                        this.viewDetails(viewBtn.dataset.id);
-                        return;
-                    }
-
-                    const requestCertBtn = e.target.closest('[data-action="request-certificate"]');
-                    if (requestCertBtn) {
-                        e.preventDefault();
-                        const id = requestCertBtn.dataset.id;
-                        this.openCertificateModal(id);
-                        return;
-                    }
-                });
-            }
-
-            cacheModalElements() {
-                this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
-                this.certificateModalSubmitBtn = document.getElementById('certificateModalSubmit');
-                this.certificateModalCloseBtn = document.getElementById('certificateModalClose');
-                this.certificateModalCancelBtn = document.getElementById('certificateModalCancel');
-
-                // custom select elements
-                this.certificateCustomSelect = document.getElementById('certificateCustomSelect');
-                const header = document.getElementById('certificateCustomSelectHeader');
-                const dropdown = document.getElementById('certificateCustomSelectDropdown');
-
-                // set up listeners
-                if (this.certificateModalCloseBtn) {
-                    this.certificateModalCloseBtn.addEventListener('click', () => this.closeCertificateModal());
                 }
-                if (this.certificateModalCancelBtn) {
-                    this.certificateModalCancelBtn.addEventListener('click', () => this.closeCertificateModal());
-                }
-                if (this.certificateModalOverlay) {
-                    // close when clicking on overlay (but not when clicking inside modal)
-                    this.certificateModalOverlay.addEventListener('click', (ev) => {
-                        if (ev.target === this.certificateModalOverlay) this.closeCertificateModal();
-                    });
-                }
-                if (this.certificateModalSubmitBtn) {
-                    this.certificateModalSubmitBtn.addEventListener('click', () => this.submitCertificateRequest());
+            });
+
+            // Card actions
+            document.getElementById('cardsGrid')?.addEventListener('click', e => {
+                const downloadBtn = e.target.closest('[data-action="download"]');
+                if (downloadBtn) {
+                    e.preventDefault();
+                    this.downloadFile(downloadBtn.dataset.id);
+                    return;
                 }
 
-                // Custom select logic
-                if (header && dropdown && this.certificateCustomSelect) {
-                    const options = Array.from(dropdown.querySelectorAll('.select-option'));
-
-                    const closeDropdown = () => {
-                        this.certificateCustomSelect.classList.remove('open');
-                        this.certificateCustomSelect.setAttribute('aria-expanded', 'false');
-                    };
-
-                    const openDropdown = () => {
-                        this.certificateCustomSelect.classList.add('open');
-                        this.certificateCustomSelect.setAttribute('aria-expanded', 'true');
-                        // focus first option
-                        const selected = dropdown.querySelector('.select-option[aria-selected="true"]');
-                        if (selected) selected.scrollIntoView({ block: 'nearest' });
-                    };
-
-                    header.addEventListener('click', (ev) => {
-                        ev.stopPropagation();
-                        const isOpen = this.certificateCustomSelect.classList.contains('open');
-                        if (isOpen) closeDropdown();
-                        else openDropdown();
-                    });
-
-                    // option click
-                    options.forEach(opt => {
-                        opt.addEventListener('click', (ev) => {
-                            ev.stopPropagation();
-                            this.selectCertificateType(opt.dataset.value);
-                            closeDropdown();
-                        });
-                    });
-
-                    // keyboard support
-                    this.certificateCustomSelect.addEventListener('keydown', (ev) => {
-                        const isOpen = this.certificateCustomSelect.classList.contains('open');
-
-                        if (ev.key === ' ' || ev.key === 'Enter') {
-                            ev.preventDefault();
-                            if (!isOpen) openDropdown();
-                            else {
-                                // if open and Enter/Space pressed on focused option, trigger selection
-                                const focused = document.activeElement;
-                                if (focused && focused.classList.contains('select-option')) {
-                                    this.selectCertificateType(focused.dataset.value);
-                                    closeDropdown();
-                                }
-                            }
-                            return;
-                        }
-
-                        if (ev.key === 'Escape') {
-                            if (isOpen) closeDropdown();
-                            else this.closeCertificateModal();
-                            return;
-                        }
-
-                        if (ev.key === 'ArrowDown' || ev.key === 'Down') {
-                            ev.preventDefault();
-                            if (!isOpen) {
-                                openDropdown();
-                            } else {
-                                // move focus to next option
-                                const opts = Array.from(dropdown.querySelectorAll('.select-option'));
-                                let idx = opts.findIndex(o => o === document.activeElement);
-                                if (idx === -1) idx = opts.findIndex(o => o.getAttribute('aria-selected') === 'true');
-                                const next = opts[Math.min(opts.length - 1, Math.max(0, idx + 1))];
-                                if (next) next.focus();
-                            }
-                            return;
-                        }
-
-                        if (ev.key === 'ArrowUp' || ev.key === 'Up') {
-                            ev.preventDefault();
-                            if (!isOpen) {
-                                openDropdown();
-                            } else {
-                                const opts = Array.from(dropdown.querySelectorAll('.select-option'));
-                                let idx = opts.findIndex(o => o === document.activeElement);
-                                if (idx === -1) idx = opts.findIndex(o => o.getAttribute('aria-selected') === 'true');
-                                const prev = opts[Math.min(opts.length - 1, Math.max(0, idx - 1))];
-                                if (prev) prev.focus();
-                            }
-                            return;
-                        }
-                    });
-
-                    // click outside custom select closes it
-                    document.addEventListener('click', (ev) => {
-                        if (!this.certificateCustomSelect) return;
-                        if (!this.certificateCustomSelect.contains(ev.target)) {
-                            closeDropdown();
-                        }
-                    });
-
-                    // make options focusable
-                    options.forEach(o => o.setAttribute('tabindex', '0'));
+                const viewBtn = e.target.closest('[data-action="view"]');
+                if (viewBtn) {
+                    e.preventDefault();
+                    this.viewDetails(viewBtn.dataset.id);
+                    return;
                 }
 
-                // close on Escape (modal level)
-                document.addEventListener('keydown', (ev) => {
-                    if (ev.key === 'Escape' && this.certificateModalOverlay && this.certificateModalOverlay.classList.contains('open')) {
-                        this.closeCertificateModal();
-                    }
+                const requestCertBtn = e.target.closest('[data-action="request-certificate"]');
+                if (requestCertBtn) {
+                    e.preventDefault();
+                    const id = requestCertBtn.dataset.id;
+                    this.openCertificateModal(id);
+                    return;
+                }
+
+                // NEW: Handle View Certificate button click
+                const viewCertBtn = e.target.closest('.view-certificate-btn');
+                if (viewCertBtn) {
+                    e.preventDefault();
+                    const id = viewCertBtn.dataset.id;
+                    this.viewCertificate(id);
+                    return;
+                }
+            });
+        }
+
+        cacheModalElements() {
+            this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
+            this.certificateModalSubmitBtn = document.getElementById('certificateModalSubmit');
+            this.certificateModalCloseBtn = document.getElementById('certificateModalClose');
+            this.certificateModalCancelBtn = document.getElementById('certificateModalCancel');
+
+            // custom select elements
+            this.certificateCustomSelect = document.getElementById('certificateCustomSelect');
+            const header = document.getElementById('certificateCustomSelectHeader');
+            const dropdown = document.getElementById('certificateCustomSelectDropdown');
+
+            // set up listeners
+            if (this.certificateModalCloseBtn) {
+                this.certificateModalCloseBtn.addEventListener('click', () => this.closeCertificateModal());
+            }
+            if (this.certificateModalCancelBtn) {
+                this.certificateModalCancelBtn.addEventListener('click', () => this.closeCertificateModal());
+            }
+            if (this.certificateModalOverlay) {
+                // close when clicking on overlay (but not when clicking inside modal)
+                this.certificateModalOverlay.addEventListener('click', (ev) => {
+                    if (ev.target === this.certificateModalOverlay) this.closeCertificateModal();
                 });
             }
-
-            selectCertificateType(value) {
-                this.certificateSelectedType = value;
-                const dropdown = document.getElementById('certificateCustomSelectDropdown');
-                const display = document.getElementById('certificateCustomSelectValue');
-                if (display) display.textContent = value.charAt(0).toUpperCase() + value.slice(1);
-                if (dropdown) {
-                    const opts = dropdown.querySelectorAll('.select-option');
-                    opts.forEach(opt => {
-                        if (opt.dataset.value === value) opt.setAttribute('aria-selected', 'true');
-                        else opt.setAttribute('aria-selected', 'false');
-                    });
-                }
+            if (this.certificateModalSubmitBtn) {
+                this.certificateModalSubmitBtn.addEventListener('click', () => this.submitCertificateRequest());
             }
 
-            openCertificateModal(submissionId) {
-                this.selectedSubmissionIdForCertificate = submissionId;
-                // reset to default
-                this.selectCertificateType('digital');
+            // Custom select logic
+            if (header && dropdown && this.certificateCustomSelect) {
+                const options = Array.from(dropdown.querySelectorAll('.select-option'));
 
-                if (!this.certificateModalOverlay) this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
-                this.certificateModalOverlay?.classList.add('open');
-                this.certificateModalOverlay?.setAttribute('aria-hidden', 'false');
-
-                // ensure custom select closed
-                if (this.certificateCustomSelect) {
+                const closeDropdown = () => {
                     this.certificateCustomSelect.classList.remove('open');
                     this.certificateCustomSelect.setAttribute('aria-expanded', 'false');
-                }
+                };
+
+                const openDropdown = () => {
+                    this.certificateCustomSelect.classList.add('open');
+                    this.certificateCustomSelect.setAttribute('aria-expanded', 'true');
+                    // focus first option
+                    const selected = dropdown.querySelector('.select-option[aria-selected="true"]');
+                    if (selected) selected.scrollIntoView({ block: 'nearest' });
+                };
+
+                header.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    const isOpen = this.certificateCustomSelect.classList.contains('open');
+                    if (isOpen) closeDropdown();
+                    else openDropdown();
+                });
+
+                // option click
+                options.forEach(opt => {
+                    opt.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        this.selectCertificateType(opt.dataset.value);
+                        closeDropdown();
+                    });
+                });
+
+                // keyboard support
+                this.certificateCustomSelect.addEventListener('keydown', (ev) => {
+                    const isOpen = this.certificateCustomSelect.classList.contains('open');
+
+                    if (ev.key === ' ' || ev.key === 'Enter') {
+                        ev.preventDefault();
+                        if (!isOpen) openDropdown();
+                        else {
+                            // if open and Enter/Space pressed on focused option, trigger selection
+                            const focused = document.activeElement;
+                            if (focused && focused.classList.contains('select-option')) {
+                                this.selectCertificateType(focused.dataset.value);
+                                closeDropdown();
+                            }
+                        }
+                        return;
+                    }
+
+                    if (ev.key === 'Escape') {
+                        if (isOpen) closeDropdown();
+                        else this.closeCertificateModal();
+                        return;
+                    }
+
+                    if (ev.key === 'ArrowDown' || ev.key === 'Down') {
+                        ev.preventDefault();
+                        if (!isOpen) {
+                            openDropdown();
+                        } else {
+                            // move focus to next option
+                            const opts = Array.from(dropdown.querySelectorAll('.select-option'));
+                            let idx = opts.findIndex(o => o === document.activeElement);
+                            if (idx === -1) idx = opts.findIndex(o => o.getAttribute('aria-selected') === 'true');
+                            const next = opts[Math.min(opts.length - 1, Math.max(0, idx + 1))];
+                            if (next) next.focus();
+                        }
+                        return;
+                    }
+
+                    if (ev.key === 'ArrowUp' || ev.key === 'Up') {
+                        ev.preventDefault();
+                        if (!isOpen) {
+                            openDropdown();
+                        } else {
+                            const opts = Array.from(dropdown.querySelectorAll('.select-option'));
+                            let idx = opts.findIndex(o => o === document.activeElement);
+                            if (idx === -1) idx = opts.findIndex(o => o.getAttribute('aria-selected') === 'true');
+                            const prev = opts[Math.min(opts.length - 1, Math.max(0, idx - 1))];
+                            if (prev) prev.focus();
+                        }
+                        return;
+                    }
+                });
+
+                // click outside custom select closes it
+                document.addEventListener('click', (ev) => {
+                    if (!this.certificateCustomSelect) return;
+                    if (!this.certificateCustomSelect.contains(ev.target)) {
+                        closeDropdown();
+                    }
+                });
+
+                // make options focusable
+                options.forEach(o => o.setAttribute('tabindex', '0'));
             }
 
-            closeCertificateModal() {
-                if (!this.certificateModalOverlay) this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
-                this.certificateModalOverlay?.classList.remove('open');
-                this.certificateModalOverlay?.setAttribute('aria-hidden', 'true');
-                this.selectedSubmissionIdForCertificate = null;
+            // close on Escape (modal level)
+            document.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Escape' && this.certificateModalOverlay && this.certificateModalOverlay.classList.contains('open')) {
+                    this.closeCertificateModal();
+                }
+            });
+        }
+
+        selectCertificateType(value) {
+            this.certificateSelectedType = value;
+            const dropdown = document.getElementById('certificateCustomSelectDropdown');
+            const display = document.getElementById('certificateCustomSelectValue');
+            if (display) display.textContent = value.charAt(0).toUpperCase() + value.slice(1);
+            if (dropdown) {
+                const opts = dropdown.querySelectorAll('.select-option');
+                opts.forEach(opt => {
+                    if (opt.dataset.value === value) opt.setAttribute('aria-selected', 'true');
+                    else opt.setAttribute('aria-selected', 'false');
+                });
+            }
+        }
+
+        openCertificateModal(submissionId) {
+            this.selectedSubmissionIdForCertificate = submissionId;
+            // reset to default
+            this.selectCertificateType('digital');
+
+            if (!this.certificateModalOverlay) this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
+            this.certificateModalOverlay?.classList.add('open');
+            this.certificateModalOverlay?.setAttribute('aria-hidden', 'false');
+
+            // ensure custom select closed
+            if (this.certificateCustomSelect) {
+                this.certificateCustomSelect.classList.remove('open');
+                this.certificateCustomSelect.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        closeCertificateModal() {
+            if (!this.certificateModalOverlay) this.certificateModalOverlay = document.getElementById('certificateModalOverlay');
+            this.certificateModalOverlay?.classList.remove('open');
+            this.certificateModalOverlay?.setAttribute('aria-hidden', 'true');
+            this.selectedSubmissionIdForCertificate = null;
+            this.certificateIsSubmitting = false;
+            if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
+        }
+
+        async submitCertificateRequest() {
+            if (this.certificateIsSubmitting) return;
+            const subId = this.selectedSubmissionIdForCertificate;
+            if (!subId) {
+                toastr.error('No submission selected for certificate request.');
+                return;
+            }
+
+            const type = this.certificateSelectedType || 'digital';
+            if (!['digital', 'hardcopy'].includes(type)) {
+                toastr.error('Invalid certificate type.');
+                return;
+            }
+
+            if (!token) {
+                toastr.error('Authentication token not found. Please login again.');
+                return;
+            }
+
+            this.certificateIsSubmitting = true;
+            if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = true;
+            toastr.info('Sending certificate request...');
+
+            try {
+                const payload = {
+                    submissionId: subId,
+                    type: type
+                };
+
+                const res = await fetch(`${BASE_URL}/certificate/request`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    // try to read error message if any
+                    let errMsg = 'Failed to request certificate.';
+                    try {
+                        const errJson = await res.json();
+                        if (errJson && errJson.message) errMsg = errJson.message;
+                    } catch { /* ignore */ }
+                    toastr.error(errMsg);
+                    this.certificateIsSubmitting = false;
+                    if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
+                    return;
+                }
+
+                const data = await res.json();
+                const okMsg = (data && data.message) ? data.message : 'Certificate requested successfully.';
+                toastr.success(okMsg);
+                this.closeCertificateModal();
+                this.fetchAndRender(1);
+            } catch (err) {
+                console.error('Certificate request error', err);
+                toastr.error('An error occurred while requesting certificate.');
                 this.certificateIsSubmitting = false;
                 if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
             }
+        }
 
-            async submitCertificateRequest() {
-                if (this.certificateIsSubmitting) return;
-                const subId = this.selectedSubmissionIdForCertificate;
-                if (!subId) {
-                    toastr.error('No submission selected for certificate request.');
-                    return;
+        async fetchAndRender(page = 1) {
+            const grid = document.getElementById('cardsGrid');
+            if (grid) grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
+
+            try {
+                const params = new URLSearchParams({
+                    page,
+                    limit: this.limit,
+                    sortBy: 'createdAt',
+                    sortOrder: 'desc',
+                    status: 'published' // Always filter by published status
+                });
+
+                if (this.currentFilters.search) {
+                    params.set('search', this.currentFilters.search);
                 }
 
-                const type = this.certificateSelectedType || 'digital';
-                if (!['digital', 'hardcopy'].includes(type)) {
-                    toastr.error('Invalid certificate type.');
-                    return;
-                }
-
-                if (!token) {
-                    toastr.error('Authentication token not found. Please login again.');
-                    return;
-                }
-
-                this.certificateIsSubmitting = true;
-                if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = true;
-                toastr.info('Sending certificate request...');
-
-                try {
-                    const payload = {
-                        submissionId: subId,
-                        type: type
-                    };
-
-                    const res = await fetch(`${BASE_URL}/certificate/request`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!res.ok) {
-                        // try to read error message if any
-                        let errMsg = 'Failed to request certificate.';
-                        try {
-                            const errJson = await res.json();
-                            if (errJson && errJson.message) errMsg = errJson.message;
-                        } catch { /* ignore */ }
-                        toastr.error(errMsg);
-                        this.certificateIsSubmitting = false;
-                        if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
-                        return;
+                const response = await fetch(`${BASE_URL}/submissions/my-submissions?${params.toString()}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json'
                     }
+                });
 
-                   
+                if (!response.ok) throw new Error('Failed to fetch published manuscripts');
 
-                    
+                const res = await response.json();
+                const submissions = res.submissions || res.data || [];
 
-                    const data = await res.json();
-                    const okMsg = (data && data.message) ? data.message : 'Certificate requested successfully.';
-                    toastr.success(okMsg);
-                    this.closeCertificateModal();
-                    this.fetchAndRender(1);
-                } catch (err) {
-                    console.error('Certificate request error', err);
-                    toastr.error('An error occurred while requesting certificate.');
-                    this.certificateIsSubmitting = false;
-                    if (this.certificateModalSubmitBtn) this.certificateModalSubmitBtn.disabled = false;
-                }
-            }
+                this.totalItems = res.total ?? submissions.length;
+                this.totalPages = res.totalPages ?? Math.ceil(this.totalItems / this.limit);
+                this.currentPage = res.page ?? page;
 
-            async fetchAndRender(page = 1) {
-                const grid = document.getElementById('cardsGrid');
-                if (grid) grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div></div>`;
-
-                try {
-                    const params = new URLSearchParams({
-                        page,
-                        limit: this.limit,
-                        sortBy: 'createdAt',
-                        sortOrder: 'desc',
-                        status: 'published' // Always filter by published status
-                    });
-
-                    if (this.currentFilters.search) {
-                        params.set('search', this.currentFilters.search);
-                    }
-
-                    const response = await fetch(`${BASE_URL}/submissions/my-submissions?${params.toString()}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            Accept: 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) throw new Error('Failed to fetch published manuscripts');
-
-                    const res = await response.json();
-                    const submissions = res.submissions || res.data || [];
-
-                    this.totalItems = res.total ?? submissions.length;
-                    this.totalPages = res.totalPages ?? Math.ceil(this.totalItems / this.limit);
-                    this.currentPage = res.page ?? page;
-
-                    this.renderGrid(submissions);
-                    this.renderPagination();
-                } catch (err) {
-                    console.error(err);
-                    this.showNoManuscripts('Unable to load published manuscripts.');
-                }
-            }
-
-            renderGrid(submissions) {
-                const grid = document.getElementById('cardsGrid');
-                if (!submissions.length) {
-                    this.showNoManuscripts('No published manuscripts found.');
-                    return;
-                }
-
-                grid.innerHTML = '';
-                submissions.forEach(submission => grid.appendChild(this.createCardElement(submission)));
-            }
-
-            createCardElement(sub) {
-                const article = document.createElement('article');
-                article.className = 'submission-card';
-
-                const title = sub.title || 'Untitled';
-                const authors = Array.isArray(sub.authors) ? sub.authors : [];
-
-                article.innerHTML = `
-                    <div class="status-badge">Published</div>
-    
-                    <div class="card-header">
-                        <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 80))}</div>
-                    </div>
-    
-                    <div class="card-content">
-                        <div>
-                            <div style="font-weight:600; font-size:0.95rem; margin-bottom:0.25rem;">Authors</div>
-                            <div class="authors">
-                                ${authors.length ? authors.map(a => `<span class="author">${this.escapeHtml(a.name)}</span>`).join('') : '<div style="color:var(--text-light)">No authors listed</div>'}
-                            </div>
-                        </div>
-    
-                        <div class="action-links">
-                            <button class="link" data-action="download" data-id="${sub._id}" title="Download published manuscript">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-    
-                            <button class="link" data-action="view" data-id="${sub._id}" title="View publication details">
-                                <i class="fas fa-external-link-alt"></i> View Publication
-                            </button>
-                        </div>
-                    </div>
-    
-                    <div class="card-footer">
-                        ${sub.isCertRequested ? `<button class="btn-view">
-                            <i class="fas fa-certificate"></i>
-                            View Certificate
-                        </button>` : `<button class="btn-view" data-action="request-certificate" data-id="${sub._id}" title="Request certificate">
-                            <i class="fas fa-certificate"></i>
-                            Request Certificate
-                        </button>`}
-    
-                        <div class="published-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Published: ${this.formatDate(sub.updatedAt || sub.createdAt)}</span>
-                        </div>
-                    </div>
-                `;
-
-                return article;
-            }
-
-            renderPagination() {
-                const paginationContainer = document.getElementById('paginationContainer');
-                if (!paginationContainer) return;
-
-                let html = '';
-
-                if (this.totalPages <= 1) {
-                    html = `
-                        <div class="pagination-info">
-                            Showing ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
-                        </div>
-                    `;
-                } else {
-                    const startItem = ((this.currentPage - 1) * this.limit) + 1;
-                    const endItem = Math.min(this.currentPage * this.limit, this.totalItems);
-
-                    html += `
-                        <button class="page-btn prev-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
-                                ${this.currentPage === 1 ? 'disabled' : ''}>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                    `;
-
-                    const maxVisiblePages = 5;
-                    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-                    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
-
-                    if (endPage - startPage + 1 < maxVisiblePages) {
-                        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-                    }
-
-                    if (startPage > 1) {
-                        html += `
-                            <button class="page-btn" data-page="1">1</button>
-                            ${startPage > 2 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
-                        `;
-                    }
-
-                    for (let i = startPage; i <= endPage; i++) {
-                        html += `
-                            <button class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">
-                                ${i}
-                            </button>
-                        `;
-                    }
-
-                    if (endPage < this.totalPages) {
-                        html += `
-                            ${endPage < this.totalPages - 1 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
-                            <button class="page-btn" data-page="${this.totalPages}">${this.totalPages}</button>
-                        `;
-                    }
-
-                    html += `
-                        <button class="page-btn next-btn ${this.currentPage === this.totalPages ? 'disabled' : ''}" 
-                                ${this.currentPage === this.totalPages ? 'disabled' : ''}>
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    `;
-
-                    html += `
-                        <div class="pagination-info">
-                            Showing ${startItem}-${endItem} of ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
-                        </div>
-                    `;
-                }
-
-                paginationContainer.innerHTML = html;
-            }
-
-            changePage(page) {
-                if (!page || page < 1) page = 1;
-                if (page > this.totalPages) page = this.totalPages;
-                this.currentPage = page;
-                this.fetchAndRender(page);
-                document.getElementById('cardsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            async downloadFile(subId) {
-                try {
-                    toastr.info('Preparing download...');
-                    const response = await fetch(`${BASE_URL}/submissions/${subId}/download`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-
-                    if (!response.ok) {
-                        toastr.error('Failed to download file.');
-                        return;
-                    }
-
-                    const blob = await response.blob();
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `published-${subId}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    URL.revokeObjectURL(url);
-                    toastr.success('Download started');
-                } catch (err) {
-                    console.error('Download error', err);
-                    toastr.error('Failed to download file.');
-                }
-            }
-
-            viewDetails(subId) {
-                window.open(`/author/submission-details.html?id=${subId}`, '_blank');
-            }
-
-            showNoManuscripts(message) {
-                const grid = document.getElementById('cardsGrid');
-                grid.innerHTML = `
-                    <div class="no-results">
-                        <i class="fas fa-book"></i>
-                        <h3>No Published Manuscripts</h3>
-                        <p>${message}</p>
-                    </div>
-                `;
+                this.renderGrid(submissions);
                 this.renderPagination();
+            } catch (err) {
+                console.error(err);
+                this.showNoManuscripts('Unable to load published manuscripts.');
+            }
+        }
+
+        renderGrid(submissions) {
+            const grid = document.getElementById('cardsGrid');
+            if (!submissions.length) {
+                this.showNoManuscripts('No published manuscripts found.');
+                return;
             }
 
-            truncate(str, n) {
-                if (!str) return '';
-                return str.length <= n ? str : str.slice(0, n - 3) + '...';
-            }
+            grid.innerHTML = '';
+            submissions.forEach(submission => grid.appendChild(this.createCardElement(submission)));
+        }
 
-            formatDate(iso) {
-                if (!iso) return 'N/A';
-                try {
-                    const d = new Date(iso);
-                    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                } catch {
-                    return iso;
+        createCardElement(sub) {
+            const article = document.createElement('article');
+            article.className = 'submission-card';
+
+            const title = sub.title || 'Untitled';
+            const authors = Array.isArray(sub.authors) ? sub.authors : [];
+
+            article.innerHTML = `
+                <div class="status-badge">Published</div>
+
+                <div class="card-header">
+                    <div class="card-title" title="${this.escapeHtml(title)}">${this.escapeHtml(this.truncate(title, 80))}</div>
+                </div>
+
+                <div class="card-content">
+                    <div>
+                        <div style="font-weight:600; font-size:0.95rem; margin-bottom:0.25rem;">Authors</div>
+                        <div class="authors">
+                            ${authors.length ? authors.map(a => `<span class="author">${this.escapeHtml(a.name)}</span>`).join('') : '<div style="color:var(--text-light)">No authors listed</div>'}
+                        </div>
+                    </div>
+
+                    <div class="action-links">
+                        <button class="link" data-action="download" data-id="${sub._id}" title="Download published manuscript">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+
+                        <button class="link" data-action="view" data-id="${sub._id}" title="View publication details">
+                            <i class="fas fa-external-link-alt"></i> View Publication
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    ${sub.isCertRequested ? `<button class="btn-view view-certificate-btn" data-id="${sub._id}" title="View Certificate">
+                        <i class="fas fa-certificate"></i>
+                        View Certificate
+                    </button>` : `<button class="btn-view" data-action="request-certificate" data-id="${sub._id}" title="Request certificate">
+                        <i class="fas fa-certificate"></i>
+                        Request Certificate
+                    </button>`}
+
+                    <div class="published-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Published: ${this.formatDate(sub.updatedAt || sub.createdAt)}</span>
+                    </div>
+                </div>
+            `;
+
+            return article;
+        }
+
+        renderPagination() {
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (!paginationContainer) return;
+
+            let html = '';
+
+            if (this.totalPages <= 1) {
+                html = `
+                    <div class="pagination-info">
+                        Showing ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
+                    </div>
+                `;
+            } else {
+                const startItem = ((this.currentPage - 1) * this.limit) + 1;
+                const endItem = Math.min(this.currentPage * this.limit, this.totalItems);
+
+                html += `
+                    <button class="page-btn prev-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
+                            ${this.currentPage === 1 ? 'disabled' : ''}>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                `;
+
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
                 }
+
+                if (startPage > 1) {
+                    html += `
+                        <button class="page-btn" data-page="1">1</button>
+                        ${startPage > 2 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
+                    `;
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    html += `
+                        <button class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">
+                            ${i}
+                        </button>
+                    `;
+                }
+
+                if (endPage < this.totalPages) {
+                    html += `
+                        ${endPage < this.totalPages - 1 ? '<span style="padding: 10px; color: var(--muted);">...</span>' : ''}
+                        <button class="page-btn" data-page="${this.totalPages}">${this.totalPages}</button>
+                    `;
+                }
+
+                html += `
+                    <button class="page-btn next-btn ${this.currentPage === this.totalPages ? 'disabled' : ''}" 
+                            ${this.currentPage === this.totalPages ? 'disabled' : ''}>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+
+                html += `
+                    <div class="pagination-info">
+                        Showing ${startItem}-${endItem} of ${this.totalItems} published manuscript${this.totalItems !== 1 ? 's' : ''}
+                    </div>
+                `;
             }
 
-            escapeHtml(s) {
-                if (!s && s !== 0) return '';
-                const div = document.createElement('div');
-                div.textContent = s;
-                return div.innerHTML;
+            paginationContainer.innerHTML = html;
+        }
+
+        changePage(page) {
+            if (!page || page < 1) page = 1;
+            if (page > this.totalPages) page = this.totalPages;
+            this.currentPage = page;
+            this.fetchAndRender(page);
+            document.getElementById('cardsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        async downloadFile(subId) {
+            try {
+                toastr.info('Preparing download...');
+                const response = await fetch(`${BASE_URL}/submissions/${subId}/download`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    toastr.error('Failed to download file.');
+                    return;
+                }
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `published-${subId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                toastr.success('Download started');
+            } catch (err) {
+                console.error('Download error', err);
+                toastr.error('Failed to download file.');
             }
         }
 
-        // Initialize manager globally
-        window.publishedManager = new PublishedManuscriptsManager();
-
-
-        //create a function that takes and id and return the submission\
-        /*
-        function getSubmissionById(id) {
-            fetch(`${BASE_URL}/submissions/${id}`, {
-                headers: {
+        viewDetails(subId) {
+            window.open(`/author/submission-details.html?id=${subId}`, '_blank');
         }
-                */
-    </script>
+
+        // NEW: Add viewCertificate method
+        viewCertificate(subId) {
+            // Redirect to certificate-details.html with the submission ID
+            window.location.href = `certificate-details.html?id=${subId}`;
+        }
+
+        showNoManuscripts(message) {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-book"></i>
+                    <h3>No Published Manuscripts</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+            this.renderPagination();
+        }
+
+        truncate(str, n) {
+            if (!str) return '';
+            return str.length <= n ? str : str.slice(0, n - 3) + '...';
+        }
+
+        formatDate(iso) {
+            if (!iso) return 'N/A';
+            try {
+                const d = new Date(iso);
+                return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            } catch {
+                return iso;
+            }
+        }
+
+        escapeHtml(s) {
+            if (!s && s !== 0) return '';
+            const div = document.createElement('div');
+            div.textContent = s;
+            return div.innerHTML;
+        }
+    }
+
+    // Initialize manager globally
+    window.publishedManager = new PublishedManuscriptsManager();
+</script>
 
 </body>
 

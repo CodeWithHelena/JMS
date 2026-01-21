@@ -4,11 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Review History Timeline</title>
+    <title>Review Progress & Versions</title>
     <script type="module" src="../assets/js/checkAuth.js"></script>
     <!-- Font Awesome (icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Bootstrap CSS -->
+    <!-- Toastr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
     <!-- Global CSS (variables, body, main) -->
@@ -66,18 +66,6 @@
             line-height: 1.3;
         }
 
-        .header-status-badge {
-            display: inline-block;
-            padding: 0.5rem 1.2rem;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border-radius: 20px;
-            background: var(--badge-status);
-            color: white;
-            margin-bottom: 1rem;
-            text-transform: capitalize;
-        }
-
         .header-meta {
             display: flex;
             flex-wrap: wrap;
@@ -97,17 +85,135 @@
             color: var(--primary);
         }
 
-        /* Page title styling */
-        .page-title h1 {
+        #contentContainer{
+            padding: 0 1rem;
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            display: none;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .summary-card h3 {
             font-size: 2rem;
             font-weight: 700;
             color: #111827;
             margin-bottom: 0.5rem;
         }
 
-        .page-title p {
+        .summary-card p {
             color: var(--muted);
-            font-size: 1.1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Reviewer Card */
+        .reviewer-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .reviewer-header {
+            background: rgb(223, 229, 251);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .reviewer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .reviewer-details h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .reviewer-details h3 i {
+            color: var(--primary);
+        }
+
+        .reviewer-email {
+            color: var(--muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reviewer-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: capitalize;
+        }
+
+        .badge-accepted {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-declined {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-completed {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .review-version {
+            background: var(--warning-light);
+            color: var(--warning);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
         }
 
         /* Back Button */
@@ -137,9 +243,9 @@
             transform: translateY(-1px);
         }
 
-        /* timeline container */
+        /* Timeline container */
         .timeline-wrap {
-            margin: 0 auto;
+            padding: 1.5rem;
         }
 
         /* vertical line */
@@ -250,7 +356,7 @@
         }
 
         .card:hover {
-            transform: translateY(-12px);
+            transform: translateY(-8px);
             box-shadow: var(--card-shadow-hover);
         }
 
@@ -291,20 +397,7 @@
             color: var(--info);
         }
 
-        /* Score display */
-        .score-display {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            background: var(--primary-light);
-            color: var(--primary);
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-left: 0.5rem;
-        }
-
+        /* Version badge */
         .version-badge {
             display: inline-block;
             padding: 0.28rem 1rem;
@@ -317,16 +410,16 @@
             color: white;
         }
 
-        /* NEW: Visible to Author badge */
+        /* Visibility badge */
         .visibility-badge {
-    width: fit-content;
-    display: inline-block;
-    padding: 0.28rem 1rem;
-    font-weight: 700;
-    font-size: 0.78rem;
-    border-radius: 4px;
-    margin-bottom: 12px;
-    text-transform: capitalize;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
         }
 
         .visibility-visible {
@@ -428,7 +521,7 @@
             color: var(--primary);
         }
 
-        /* NEW: File attachment section */
+        /* File attachment section */
         .file-attachment-section {
             background: var(--light);
             border: 1px solid var(--border);
@@ -526,6 +619,10 @@
             text-align: center;
             padding: 3rem;
             color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
         }
 
         .retry-btn {
@@ -538,6 +635,9 @@
             margin-top: 1rem;
             font-weight: 600;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .retry-btn:hover {
@@ -572,6 +672,40 @@
             }
         }
 
+        /* Connection Error Screen */
+        .connection-error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        .connection-error-screen i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--danger);
+        }
+
+        /* No data message */
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
         /* Skeleton Loading */
         .skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
@@ -593,23 +727,6 @@
             100% {
                 background-position: -200% 0;
             }
-        }
-
-        /* No data message */
-        .no-data {
-            text-align: center;
-            padding: 3rem;
-            color: var(--muted);
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            margin-top: 2rem;
-        }
-
-        .no-data i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
         }
 
         /* Modal styles */
@@ -729,6 +846,22 @@
         }
 
         /* small responsive tweak */
+        @media (max-width:768px) {
+            .summary-cards {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .reviewer-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .reviewer-status {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
         @media (max-width:520px) {
             .timeline::before {
                 left: 28px;
@@ -741,10 +874,6 @@
             .card {
                 margin-left: 48px;
                 padding: 14px;
-            }
-
-            .timeline-wrap {
-                padding: 0 0.5rem;
             }
 
             .back-button-wrap {
@@ -799,24 +928,21 @@
             <main class="main-content">
                 <div class="d-flex justify-content-between">
                     <div class="container page-title">
-                        <h1>Review History Timeline</h1>
-                        <p>Track all your completed reviews and recommendations</p>
+                        <h1>Review Progress & Versions</h1>
+                        <p>Track reviewer progress and review history versions</p>
                     </div>
                     <div class="back-button-wrap">
-                        <a href="reviews.html" class="back-button">
-                            <i class="fas fa-arrow-left"></i>Back to Reviews
+                        <a href="javascript:history.back()" class="back-button">
+                            <i class="fas fa-arrow-left"></i>Back
                         </a>
                     </div>
                 </div>
 
-                <div class="timeline-wrap">
+                <div id="contentContainer">
                     <!-- Manuscript Header Card -->
                     <div id="manuscriptHeader" class="manuscript-header-card">
                         <!-- Title skeleton -->
                         <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
-
-                        <!-- Status badge skeleton -->
-                        <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1rem;"></div>
 
                         <!-- Metadata with icon skeletons -->
                         <div class="header-meta">
@@ -824,39 +950,50 @@
                                 <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
                                 <div class="skeleton" style="height: 20px; width: 150px;"></div>
                             </div>
-                            <div class="meta-item">
-                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
-                                <div class="skeleton" style="height: 20px; width: 180px;"></div>
-                            </div>
                         </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div id="summaryCards" class="summary-cards" style="display: none !important;">
+                        <!-- Summary cards will be populated here -->
                     </div>
 
                     <!-- Timeline Loading Screen -->
                     <div id="timelineLoading" class="loading-screen">
                         <div class="spinner"></div>
-                        <p>Loading review history...</p>
+                        <p>Loading review progress...</p>
+                    </div>
+
+                    <!-- Connection Error Screen -->
+                    <div id="connectionErrorScreen" class="connection-error-screen" style="display: none;">
+                        <i class="fas fa-wifi-slash fa-3x"></i>
+                        <h3>Network Connection Error</h3>
+                        <p>Unable to connect to the server. Please check your internet connection and try again.</p>
+                        <button class="retry-btn" onclick="loadReviewProgress()">
+                            <i class="fas fa-redo"></i> Retry Connection
+                        </button>
                     </div>
 
                     <!-- Error Screen -->
                     <div id="errorScreen" class="error-screen" style="display: none;">
                         <i class="fas fa-exclamation-triangle fa-3x" style="color: var(--danger); margin-bottom: 1rem;"></i>
-                        <h3>Failed to load review history</h3>
-                        <p id="errorMessage">An error occurred while loading the review history.</p>
-                        <button class="retry-btn" onclick="loadReviewTimeline()">
+                        <h3 id="errorTitle">Failed to load review progress</h3>
+                        <p id="errorMessage">An error occurred while loading the review progress.</p>
+                        <button class="retry-btn" onclick="loadReviewProgress()">
                             <i class="fas fa-redo"></i> Try Again
                         </button>
                     </div>
 
-                    <!-- Timeline Container -->
-                    <div class="timeline" id="timelineContainer" style="display: none;">
-                        <!-- Timeline items will be injected here -->
+                    <!-- Reviewers Container -->
+                    <div id="reviewersContainer" style="display: none;">
+                        <!-- Reviewer cards will be populated here -->
                     </div>
 
                     <!-- No Data Message -->
                     <div id="noDataMessage" class="no-data" style="display: none;">
-                        <i class="fas fa-history"></i>
-                        <h3>No Review History</h3>
-                        <p>No review history found for this review.</p>
+                        <i class="fas fa-users-slash"></i>
+                        <h3>No Reviewers Assigned</h3>
+                        <p>No reviewers have been assigned to review this manuscript yet.</p>
                     </div>
                 </div>
             </main>
@@ -879,8 +1016,8 @@
     </div>
 
     <script>
-        window.SIDEBAR_MODULE = 'reviewer';
-        window.SIDEBAR_ACTIVE_ID = 'review-history';
+        window.SIDEBAR_MODULE = 'editor';
+        window.SIDEBAR_ACTIVE_ID = 'review-progress';
     </script>
     <script src="/assets/js/layout.js"></script>
 
@@ -893,58 +1030,30 @@
     <script type="module">
         import { BASE_URL, token } from '../assets/js/utility.js';
 
-        // Reusable Loading Functions
-        const LoadingScreen = {
-            showTimelineLoading: function () {
-                document.getElementById('timelineLoading').style.display = 'block';
-                document.getElementById('timelineContainer').style.display = 'none';
-                document.getElementById('noDataMessage').style.display = 'none';
-                document.getElementById('manuscriptHeader').style.display = 'block';
-            },
-
-            hideTimelineLoading: function () {
-                document.getElementById('timelineLoading').style.display = 'none';
-            }
-        };
-
-        const ErrorScreen = {
-            show: function (message, elementId = 'errorScreen') {
-                document.getElementById('errorMessage').textContent = message;
-                document.getElementById(elementId).style.display = 'block';
-                LoadingScreen.hideTimelineLoading();
-                document.getElementById('timelineContainer').style.display = 'none';
-                document.getElementById('noDataMessage').style.display = 'none';
-            },
-
-            hide: function (elementId = 'errorScreen') {
-                document.getElementById(elementId).style.display = 'none';
-            }
-        };
-
-        // Review History Manager Class
-        class ReviewHistoryManager {
+        // Review Progress Manager Class
+        class ReviewProgressManager {
             constructor() {
                 // Use imported values
                 this.BASE_URL = BASE_URL;
                 this.token = token;
 
-                this.reviewId = this.getReviewIdFromURL();
-                this.reviewData = null;
+                this.submissionId = this.getSubmissionIdFromURL();
+                this.progressData = null;
                 this.currentContent = null;
 
                 if (!this.token) {
-                    ErrorScreen.show('Authentication required. Please login.');
+                    this.showError('Authentication required. Please login.', true);
                     return;
                 }
 
-                if (!this.reviewId) {
-                    ErrorScreen.show('No review ID provided in URL');
+                if (!this.submissionId) {
+                    this.showError('No submission ID provided in URL', true);
                     return;
                 }
 
                 this.initializeToastr();
                 this.bindModalEvents();
-                this.loadReviewData();
+                this.loadReviewProgress();
             }
 
             initializeToastr() {
@@ -984,158 +1093,233 @@
                 });
             }
 
-            getReviewIdFromURL() {
+            getSubmissionIdFromURL() {
                 const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('id');
+                return urlParams.get('submissionId');
             }
 
-            async loadReviewData() {
+            async loadReviewProgress() {
                 // Show loading immediately
-                LoadingScreen.showTimelineLoading();
+                this.showLoading();
 
                 try {
-                    // Get review data
-                    const response = await fetch(`${this.BASE_URL}/reviews/${this.reviewId}`, {
+                    // Check for internet connection first
+                    if (!navigator.onLine) {
+                        throw new Error('NETWORK_ERROR');
+                    }
+
+                    // Get review progress data
+                    const response = await fetch(`${this.BASE_URL}/editor/review-progress?submissionId=${this.submissionId}`, {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
                             'Accept': 'application/json'
                         }
                     });
 
+                    // Handle network errors
                     if (!response.ok) {
+                        if (response.status === 0 || response.status >= 500) {
+                            throw new Error('NETWORK_ERROR');
+                        }
+
                         const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.message || `Failed to fetch review data: ${response.status}`);
+                        throw new Error(errorData.message || `Failed to fetch review progress: ${response.status}`);
                     }
 
                     const data = await response.json();
 
-                    if (!data.success || !data.review) {
-                        throw new Error(data.message || 'Failed to load review data');
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load review progress data');
                     }
 
-                    this.reviewData = data.review;
+                    this.progressData = data;
 
-                    // Render manuscript header immediately with real data
+                    // Render all data
                     this.renderManuscriptHeader();
+                    this.renderSummaryCards();
+                    this.renderReviewers();
 
-                    // Then render the review history timeline
-                    this.renderReviewHistory();
+                    this.hideLoading();
+                    this.hideError();
 
                 } catch (error) {
-                    console.error('Error loading review data:', error);
-                    ErrorScreen.show(error.message || 'Failed to load review data. Please try again.');
-                    // Still show manuscript header if we have partial data
-                    this.renderManuscriptHeader();
+                    console.error('Error loading review progress:', error);
+
+                    if (error.message === 'NETWORK_ERROR' || error.message.includes('Network') || error.message.includes('network')) {
+                        this.showConnectionError();
+                    } else {
+                        this.showError(error.message || 'Failed to load review progress. Please try again.');
+                    }
+                    this.hideLoading();
                 }
             }
 
             renderManuscriptHeader() {
                 const manuscriptHeader = document.getElementById('manuscriptHeader');
 
-                if (!this.reviewData || !this.reviewData.manuscript) {
-                    // Show empty state if no data
+                if (!this.progressData) {
                     manuscriptHeader.innerHTML = `
                     <h1>Unable to load manuscript details</h1>
-                    <span class="header-status-badge">Status: Unknown</span>
                     <div class="header-meta">
                         <div class="meta-item">
                             <i class="fas fa-book-open"></i>
                             <span>Scope: Unknown</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="far fa-calendar"></i>
-                            <span>Submitted On: Unknown</span>
                         </div>
                     </div>
                 `;
                     return;
                 }
 
-                const manuscript = this.reviewData.manuscript;
-                const formattedDate = this.formatDate(manuscript.createdAt);
-                const statusDisplay = this.capitalizeFirstLetter(manuscript.status);
-                const scopeName = manuscript.scope?.title || 'Unknown Scope';
-
                 manuscriptHeader.innerHTML = `
-                <h1>${this.escapeHtml(manuscript.title)}</h1>
-                <span class="header-status-badge" style="${this.getStatusStyle(manuscript.status)}">
-                    ${statusDisplay}
-                </span>
+                <h1>${this.escapeHtml(this.progressData.submissionTitle || 'Unknown Title')}</h1>
                 <div class="header-meta">
                     <div class="meta-item">
                         <i class="fas fa-book-open"></i>
-                        <span>Scope: ${this.escapeHtml(scopeName)}</span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="far fa-calendar"></i>
-                        <span>Submitted On: ${formattedDate}</span>
+                        <span>Scope: ${this.escapeHtml(this.progressData.scope || 'Unknown Scope')}</span>
                     </div>
                 </div>
             `;
             }
 
-            getStatusStyle(status) {
-                const style = getComputedStyle(document.documentElement);
+            renderSummaryCards() {
+                const summaryCards = document.getElementById('summaryCards');
 
-                const colorMap = {
-                    'submitted': style.getPropertyValue('--status-submitted') || '#3b82f6',
-                    'under_review': style.getPropertyValue('--status-under-review') || '#f59e0b',
-                    'reviewed': style.getPropertyValue('--status-reviewed') || '#10b981',
-                    'accepted': style.getPropertyValue('--status-accepted') || '#10b981',
-                    'rejected': style.getPropertyValue('--status-rejected') || '#ef4444',
-                    'revised': style.getPropertyValue('--status-revised') || '#8b5cf6',
-                    'awaiting_payment': style.getPropertyValue('--status-awaiting-payment') || '#f59e0b',
-                    'published': style.getPropertyValue('--status-published') || '#06b6d4',
-                    'accept': style.getPropertyValue('--status-accept') || '#10b981',
-                    'reject': style.getPropertyValue('--status-reject') || '#ef4444',
-                    'minor_revision': style.getPropertyValue('--status-minor-revision') || '#f59e0b',
-                    'major_revision': style.getPropertyValue('--status-major-revision') || '#f97316',
-                    'revision_requested': style.getPropertyValue('--status-revision-requested') || '#8b5cf6'
-                };
-
-                const color = colorMap[status] || style.getPropertyValue('--muted') || '#6b7280';
-                return `background-color: ${color}; color: white;`;
-            }
-
-            renderReviewHistory() {
-                const timelineContainer = document.getElementById('timelineContainer');
-                const noDataMessage = document.getElementById('noDataMessage');
-
-                // Get reviewHistory from the review data
-                if (!this.reviewData || !this.reviewData.reviewHistory || this.reviewData.reviewHistory.length === 0) {
-                    noDataMessage.style.display = 'block';
-                    timelineContainer.style.display = 'none';
-                    LoadingScreen.hideTimelineLoading();
+                if (!this.progressData || !this.progressData.summary) {
+                    summaryCards.innerHTML = '';
                     return;
                 }
 
-                // Sort review history by submittedAt date (newest first for timeline)
-                const sortedHistory = [...this.reviewData.reviewHistory].sort((a, b) =>
-                    new Date(b.submittedAt) - new Date(a.submittedAt)
-                );
+                const summary = this.progressData.summary;
+
+                summaryCards.innerHTML = `
+                <div class="summary-card">
+                    <h3>${summary.total || 0}</h3>
+                    <p>Total Reviewers</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${summary.accepted || 0}</h3>
+                    <p>Accepted</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${summary.declined || 0}</h3>
+                    <p>Declined</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${summary.pending || 0}</h3>
+                    <p>Pending</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${summary.completed || 0}</h3>
+                    <p>Completed</p>
+                </div>
+            `;
+            }
+
+            renderReviewers() {
+                const reviewersContainer = document.getElementById('reviewersContainer');
+                const noDataMessage = document.getElementById('noDataMessage');
+
+                if (!this.progressData || !this.progressData.reviewers || this.progressData.reviewers.length === 0) {
+                    noDataMessage.style.display = 'block';
+                    reviewersContainer.style.display = 'none';
+                    return;
+                }
+
+                noDataMessage.style.display = 'none';
+                reviewersContainer.style.display = 'block';
 
                 // Create document fragment for better performance
                 const fragment = document.createDocumentFragment();
 
-                // Process each review history item
-                for (let i = 0; i < sortedHistory.length; i++) {
-                    const reviewItem = sortedHistory[i];
-                    const timelineItem = this.createTimelineItem(reviewItem, i, sortedHistory.length);
-                    fragment.appendChild(timelineItem);
+                // Process each reviewer
+                for (let i = 0; i < this.progressData.reviewers.length; i++) {
+                    const reviewer = this.progressData.reviewers[i];
+                    const reviewerCard = this.createReviewerCard(reviewer, i);
+                    fragment.appendChild(reviewerCard);
                 }
 
-                timelineContainer.innerHTML = '';
-                timelineContainer.appendChild(fragment);
-                timelineContainer.style.display = 'block';
-                noDataMessage.style.display = 'none';
+                reviewersContainer.innerHTML = '';
+                reviewersContainer.appendChild(fragment);
 
                 // Bind view more button events after rendering
                 this.bindViewMoreButtons();
-
-                LoadingScreen.hideTimelineLoading();
             }
 
-            createTimelineItem(reviewItem, index, totalItems) {
+            createReviewerCard(reviewer, index) {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'reviewer-card';
+
+                // Get status badge class
+                let statusBadgeClass = 'badge-pending';
+                if (reviewer.invitationStatus === 'accepted') {
+                    statusBadgeClass = reviewer.recommendation ? 'badge-completed' : 'badge-accepted';
+                } else if (reviewer.invitationStatus === 'declined') {
+                    statusBadgeClass = 'badge-declined';
+                }
+
+                // Get status text
+                let statusText = 'Pending';
+                if (reviewer.invitationStatus === 'accepted') {
+                    statusText = reviewer.recommendation ? 'Review Submitted' : 'Accepted';
+                } else if (reviewer.invitationStatus === 'declined') {
+                    statusText = 'Declined';
+                }
+
+                // Format dates
+                const createdAt = this.formatDate(reviewer.createdAt);
+                const submittedAt = reviewer.submittedAt ? this.formatDate(reviewer.submittedAt) : 'Not submitted';
+
+                cardDiv.innerHTML = `
+                <div class="reviewer-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-details">
+                            <h3><i class="fas fa-user-edit"></i> ${this.escapeHtml(reviewer.reviewerName)}</h3>
+                            <div class="reviewer-email">
+                                <i class="fas fa-envelope"></i> ${this.escapeHtml(reviewer.reviewerEmail)}
+                            </div>
+                        </div>
+                        <div class="reviewer-status">
+                            <span class="status-badge ${statusBadgeClass}">${statusText}</span>
+                            ${reviewer.reviewVersion ? `<span class="review-version">Version ${reviewer.reviewVersion}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-wrap">
+                    <div class="timeline" id="timeline-${index}">
+                        <!-- Timeline items will be injected here -->
+                    </div>
+                </div>
+            `;
+
+                // Add timeline items
+                const timelineContainer = cardDiv.querySelector(`#timeline-${index}`);
+
+                if (reviewer.reviewHistory && reviewer.reviewHistory.length > 0) {
+                    // Sort review history by submittedAt date (newest first)
+                    const sortedHistory = [...reviewer.reviewHistory].sort((a, b) =>
+                        new Date(b.submittedAt) - new Date(a.submittedAt)
+                    );
+
+                    // Create timeline items
+                    for (let j = 0; j < sortedHistory.length; j++) {
+                        const reviewItem = sortedHistory[j];
+                        const timelineItem = this.createTimelineItem(reviewItem, j, sortedHistory.length, index);
+                        timelineContainer.appendChild(timelineItem);
+                    }
+                } else {
+                    // Show no history message
+                    timelineContainer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--muted);">
+                        <i class="fas fa-history fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>No review history available</p>
+                    </div>
+                `;
+                }
+
+                return cardDiv;
+            }
+
+            createTimelineItem(reviewItem, index, totalItems, reviewerIndex) {
                 const timelineItem = document.createElement('div');
                 timelineItem.className = 'timeline-item';
 
@@ -1195,7 +1379,7 @@
                                 ${authorCommentsTruncated}
                             </div>
                             ${showAuthorMore ? `
-                                <button class="view-more-btn" data-type="authorComments">
+                                <button class="view-more-btn" data-type="authorComments" data-reviewer-index="${reviewerIndex}" data-review-index="${index}">
                                     <i class="fas fa-eye"></i> View Full
                                 </button>
                             ` : ''}
@@ -1212,7 +1396,7 @@
                                 ${editorCommentsTruncated}
                             </div>
                             ${showEditorMore ? `
-                                <button class="view-more-btn" data-type="editorComments">
+                                <button class="view-more-btn" data-type="editorComments" data-reviewer-index="${reviewerIndex}" data-review-index="${index}">
                                     <i class="fas fa-eye"></i> View Full
                                 </button>
                             ` : ''}
@@ -1344,13 +1528,13 @@
                     };
                 }
 
-                // Clean the text - remove extra quotes and escape characters
+                // Clean the text
                 let cleanedText = text;
                 if (cleanedText.startsWith('"') && cleanedText.endsWith('"')) {
                     cleanedText = cleanedText.slice(1, -1);
                 }
 
-                // Replace escaped newlines with actual newlines
+                // Replace escaped characters
                 cleanedText = cleanedText.replace(/\\n/g, '\n');
                 cleanedText = cleanedText.replace(/\\r/g, '\r');
                 cleanedText = cleanedText.replace(/\\t/g, '\t');
@@ -1379,7 +1563,7 @@
             truncateText(text, maxLength) {
                 if (text.length <= maxLength) return text;
 
-                // Find a good breaking point (end of sentence or word)
+                // Find a good breaking point
                 let truncated = text.substring(0, maxLength);
                 const lastSpace = truncated.lastIndexOf(' ');
                 const lastPeriod = truncated.lastIndexOf('.');
@@ -1421,14 +1605,14 @@
 
             formatDate(dateString) {
                 try {
+                    if (!dateString) return 'Not available';
                     const date = new Date(dateString);
                     return date.toLocaleDateString('en-US', {
                         year: 'numeric',
-                        month: 'long',
+                        month: 'short',
                         day: 'numeric',
                         hour: 'numeric',
-                        minute: '2-digit',
-                        second: '2-digit'
+                        minute: '2-digit'
                     });
                 } catch (error) {
                     console.error('Error formatting date:', error);
@@ -1455,29 +1639,69 @@
                     .replace(/'/g, '&#39;');
             }
 
-            capitalizeFirstLetter(string) {
-                if (!string) return '';
-                return string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ');
+            showLoading() {
+                document.getElementById('timelineLoading').style.display = 'block';
+                document.getElementById('reviewersContainer').style.display = 'none';
+                document.getElementById('connectionErrorScreen').style.display = 'none';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'none';
+                document.getElementById('summaryCards').style.display = 'none';
+                document.getElementById('manuscriptHeader').style.display = 'block';
+            }
+
+            hideLoading() {
+                document.getElementById('timelineLoading').style.display = 'none';
+                document.getElementById('summaryCards').style.display = 'block';
+            }
+
+            showConnectionError() {
+                document.getElementById('connectionErrorScreen').style.display = 'block';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('reviewersContainer').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'none';
+            }
+
+            showError(message, isAuthError = false) {
+                const errorTitle = document.getElementById('errorTitle');
+                const errorMessage = document.getElementById('errorMessage');
+
+                if (isAuthError) {
+                    errorTitle.textContent = 'Authentication Required';
+                    errorMessage.textContent = message;
+                } else {
+                    errorTitle.textContent = 'Failed to Load Review Progress';
+                    errorMessage.textContent = message;
+                }
+
+                document.getElementById('errorScreen').style.display = 'block';
+                document.getElementById('connectionErrorScreen').style.display = 'none';
+                document.getElementById('reviewersContainer').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'none';
+            }
+
+            hideError() {
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('connectionErrorScreen').style.display = 'none';
             }
         }
 
-        // Initialize review history manager when DOM is loaded
-        let reviewHistoryManager;
+        // Initialize review progress manager when DOM is loaded
+        let reviewProgressManager;
 
         document.addEventListener('DOMContentLoaded', function () {
-            reviewHistoryManager = new ReviewHistoryManager();
+            reviewProgressManager = new ReviewProgressManager();
 
-            // expose to window so HTML onclicks (retry) continue to work
-            window.reviewHistoryManager = reviewHistoryManager;
-            window.loadReviewTimeline = function () {
-                if (window.reviewHistoryManager) {
-                    window.reviewHistoryManager.loadReviewData();
+            // expose to window for retry functionality
+            window.reviewProgressManager = reviewProgressManager;
+            window.loadReviewProgress = function () {
+                if (window.reviewProgressManager) {
+                    window.reviewProgressManager.loadReviewProgress();
                 }
             };
         });
 
-        // For safety: also expose a direct load function (used by your retry button if referenced)
-        window.loadReviewTimeline = window.loadReviewTimeline || (() => { });
+        // For safety: also expose a direct load function
+        window.loadReviewProgress = window.loadReviewProgress || (() => { });
     </script>
 
 </body>

@@ -1035,20 +1035,10 @@
                 const paymentMethod = String(paymentMethodRaw).toLowerCase() === 'n/a' ? 'N/A' : this.capitalize(String(paymentMethodRaw));
 
                 // Format amount correctly
-                let amountMajor = 0;
-                if (meta.amount !== undefined && meta.amount !== null && !isNaN(Number(meta.amount))) {
-                    let a = Number(meta.amount);
-                    if (a > 100000) a = a / 100;
-                    amountMajor = a;
-                } else if (payment.amount !== undefined && payment.amount !== null && !isNaN(Number(payment.amount))) {
-                    let a = Number(payment.amount);
-                    if (a > 100000) a = a / 100;
-                    amountMajor = a;
-                } else {
-                    amountMajor = 0;
-                }
-                const currency = payment.currency || meta.currency || 'NGN';
+                const amountMajor = Number(payment.amount ?? 0);
+                const currency = payment.currency || 'NGN';
                 const formattedAmount = this.formatCurrencyMajor(amountMajor, currency);
+
 
                 // IMPORTANT: always pass the payment _id as the "reference" value expected by the receipt page
                 const receiptId = payment._id || '';

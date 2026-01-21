@@ -1228,7 +1228,7 @@
 
                     // Redirect to submission details
                     if (entityId) {
-                        window.location.href = `submission-details.html?id=${entityId}`;
+                        window.location.href = `review-details.html?id=${entityId}`;
                     } else {
                         toastr.info('No submission linked to this notification');
                     }
@@ -1237,7 +1237,7 @@
                     console.error('Error viewing notification:', error);
                     // Still try to redirect if we have entityId
                     if (entityId) {
-                        window.location.href = `submission-details.html?id=${entityId}`;
+                        window.location.href = `review-details.html?id=${entityId}`;
                     }
                 }
             }

@@ -459,6 +459,29 @@
         .clear-all-filters:hover {
             background: var(--light);
         }
+
+                        .type-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: capitalize;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .type-digital {
+            background-color: rgba(23, 162, 184, 0.15);
+            color: #17a2b8;
+            border: 1px solid rgba(23, 162, 184, 0.3);
+        }
+
+        .type-hardcopy {
+            background-color: rgba(255, 87, 34, 0.15);
+            color: #ff5722;
+            border: 1px solid rgba(255, 87, 34, 0.3);
+        }
     </style>
 </head>
 
@@ -715,7 +738,9 @@
                         closeDropdown();
                     }
                 });
+ 
             }
+
 
             bindEvents() {
                 // Filter buttons
@@ -744,20 +769,23 @@
                     const viewBtn = e.target.closest('.btn-view');
                     if (!viewBtn) return;
 
+                    // Get the submission ID (priority) or certificate ID (fallback)
+                    const submissionId = viewBtn.dataset.submissionId;
                     const certId = viewBtn.dataset.certId;
 
-                    if (!certId) {
-                        toastr.error('Certificate ID not found');
+                    // Use submission ID if available, otherwise use certificate ID
+                    const idToPass = submissionId || certId;
+
+                    if (!idToPass) {
+                        toastr.error('No ID found for this certificate');
                         return;
                     }
 
-                    // Redirect with certificate ID
-                    window.location.href = `certificate-details.html?id=${certId}`;
+                    // Redirect to certificate details page with the ID
+                    window.location.href = `certificate-details.html?id=${idToPass}`;
                 });
-
-
             }
-
+ 
             async loadCertificates() {
                 if (this.isLoading) return;
 
@@ -915,32 +943,35 @@
                     const title = submission.title || 'Untitled';
                     const truncatedTitle = this.truncateText(title, 43);
 
+                    // Get the submission ID - it could be an object with _id property or a string
+                    const submissionId = submission._id || submission;
+                    const certificateId = cert._id;
+
                     return `
-                        <tr>
-                            <td>${serial}</td>
-                            <td title="${this.escapeHtml(title)}" class="text-truncate">
-                                ${this.escapeHtml(truncatedTitle)}
-                            </td>
-                            <td>
-                                <code>${this.escapeHtml(cert.certificateNumber || 'N/A')}</code>
-                            </td>
-                           <td>
-                                <span class="type-badge type-${cert.type}">
-                                    ${cert.type}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-view btn-brand" data-cert-id="${cert._id}">
-                                        <i class="fas fa-eye"></i> View
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
+            <tr>
+                <td>${serial}</td>
+                <td title="${this.escapeHtml(title)}" class="text-truncate">
+                    ${this.escapeHtml(truncatedTitle)}
+                </td>
+                <td>
+                    <code>${this.escapeHtml(cert.certificateNumber || 'N/A')}</code>
+                </td>
+                <td>
+                    <span class="type-badge type-${cert.type}">
+                        ${cert.type}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-view btn-brand" data-submission-id="${submissionId}" data-cert-id="${certificateId}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
                 }).join('');
             }
-
             renderPagination() {
                 const container = document.getElementById('paginationContainer');
                 const pagination = container.querySelector('.pagination');

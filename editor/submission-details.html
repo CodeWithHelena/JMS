@@ -166,6 +166,115 @@
             font-weight: 600;
         }
 
+        /* Manuscript File Section (Added from review details page) */
+        .file-info-card {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .file-text h3 {
+            margin: 0 0 0.25rem 0;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .file-text p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .btn-light {
+            max-height: 39px;
+        }
+
+        .btn-brand {
+            height: 39px;
+        }
+
+        /* Abstract Section Styling (Added from review details page) */
+        .abstract-content {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .abstract-content p {
+            margin: 0 0 1rem 0;
+        }
+
+        .abstract-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .abstract-content .abstract-text {
+            line-height: 1.6;
+            color: #374151;
+            word-wrap: break-word;
+        }
+
+        .abstract-content .abstract-text.truncated {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 8;
+            -webkit-box-orient: vertical;
+            max-height: 12.8em;
+            position: relative;
+        }
+
+        .abstract-content .abstract-text.truncated::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 30%;
+            height: 1.6em;
+            background: linear-gradient(to right, rgba(248, 250, 252, 0), var(--light) 50%);
+        }
+
+        .abstract-content .view-more-link {
+            margin-top: 0.5rem;
+            display: inline-block;
+            color: var(--info);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .abstract-content .view-more-link:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .fa-file-pdf {
+            color: var(--danger);
+        }
+
         /* Authors Section */
         .authors-list {
             display: flex;
@@ -559,7 +668,7 @@
             border-color: #9ca3af;
         }
 
-        #publishBtn{
+        #publishBtn {
             margin-top: 1rem;
         }
 
@@ -1031,6 +1140,146 @@
             min-height: 150px;
         }
 
+        /* Content Modal Styles (Added from review details page) */
+        .content-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-modal .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .content-modal .modal-content {
+            z-index: 10001;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .content-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content-modal-header h3 {
+            margin: 0;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content-type {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+            font-weight: normal;
+        }
+
+        .content-modal-body {
+            padding: 1.5rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .content-display {
+            line-height: 1.6;
+            color: #374151;
+            word-wrap: break-word;
+        }
+
+        .content-display p {
+            margin: 0 0 1rem 0;
+        }
+
+        .content-display p:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-display strong,
+        .content-display b {
+            font-weight: 600;
+        }
+
+        .content-display em,
+        .content-display i {
+            font-style: italic;
+        }
+
+        .content-display u {
+            text-decoration: underline;
+        }
+
+        .content-display ul,
+        .content-display ol {
+            margin: 0 0 1rem 1.5rem;
+            padding: 0;
+        }
+
+        .content-display li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-display li:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-display h1,
+        .content-display h2,
+        .content-display h3,
+        .content-display h4,
+        .content-display h5,
+        .content-display h6 {
+            margin: 1.5rem 0 1rem 0;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .content-display h1 {
+            font-size: 1.8rem;
+        }
+
+        .content-display h2 {
+            font-size: 1.5rem;
+        }
+
+        .content-display h3 {
+            font-size: 1.3rem;
+        }
+
+        .content-display h4 {
+            font-size: 1.1rem;
+        }
+
+        .content-display h5 {
+            font-size: 1rem;
+        }
+
+        .content-display h6 {
+            font-size: 0.9rem;
+        }
+
         /* Loading and Error States */
         .loading-screen {
             text-align: center;
@@ -1173,6 +1422,24 @@
                 width: 95%;
                 margin: 1rem;
             }
+
+            /* File info card responsive */
+            .file-info-card {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .btn-download,
+            .btn-light {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .content-modal .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
         }
     </style>
 </head>
@@ -1229,6 +1496,42 @@
 
                     <!-- Content (hidden until loaded) -->
                     <div id="contentContainer" style="display: none;">
+                        <!-- Manuscript File Section (Added from review details page) -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-file-alt"></i> Manuscript Document
+                            </h2>
+                            <div id="fileInfoCard" class="file-info-card">
+                                <div class="file-details">
+                                    <div class="file-icon">
+                                        <i class="fas fa-file-word"></i>
+                                    </div>
+                                    <div class="file-text">
+                                        <h3 id="fileName">Loading...</h3>
+                                        <p id="fileSize">Original file: loading...</p>
+                                    </div>
+                                </div>
+                                <div class="file-actions">
+                                    <a id="viewDocumentLink" class="btn-light" href="#" target="_blank">
+                                        <i class="fas fa-external-link-alt"></i> View Document
+                                    </a>
+                                    <button id="downloadDocumentBtn" class="btn-brand">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Abstract Section (Added from review details page) -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-align-left"></i> Abstract
+                            </h2>
+                            <div id="abstractContent" class="abstract-content">
+                                <!-- Abstract will be populated here -->
+                            </div>
+                        </div>
+
                         <!-- Authors Section -->
                         <div class="content-section">
                             <h2 class="section-title">
@@ -1320,6 +1623,27 @@
         </div>
     </div>
 
+    <!-- Content Display Modal (Added from review details page) -->
+    <div id="contentModal" class="modal content-modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="content-modal-header">
+                <div>
+                    <h3 id="contentModalTitle">Content Details</h3>
+                    <div id="contentModalType" class="modal-content-type"></div>
+                </div>
+                <button class="modal-close" id="closeContentModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="content-modal-body">
+                <div id="contentDisplay" class="content-display">
+                    <!-- Content will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.SIDEBAR_MODULE = 'editor';
         window.SIDEBAR_ACTIVE_ID = 'editor-submission';
@@ -1336,287 +1660,318 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
     <!-- Submission Details JavaScript (self-contained) -->
-<script type="module">
-    import { BASE_URL, token } from '../assets/js/utility.js';
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
 
-    class SubmissionDetailsManager {
-        constructor() {
-            this.submissionId = this.getSubmissionIdFromURL();
-            this.submission = null;
-            this.selectedReviewers = [];
-            this.scopeId = null;
-            this.allReviewers = [];
-            this.userCache = new Map();
-            this.issues = [];
-            this.filteredIssues = [];
-            this.selectedIssue = null;
-            this.decisionQuill = null;
+        class SubmissionDetailsManager {
+            constructor() {
+                this.submissionId = this.getSubmissionIdFromURL();
+                this.submission = null;
+                this.selectedReviewers = [];
+                this.scopeId = null;
+                this.allReviewers = [];
+                this.userCache = new Map();
+                this.issues = [];
+                this.filteredIssues = [];
+                this.selectedIssue = null;
+                this.decisionQuill = null;
+                this.currentModalContent = '';
+                this.currentModalType = '';
+                this.currentModalTitle = '';
 
-            // flags/handlers
-            this._issuesFetched = false;
-            this._searchTimeout = null;
-            this._globalClickHandler = null;
-            this._issueOutsideHandler = null;
-            this._modalKeyHandler = null;
+                // flags/handlers
+                this._issuesFetched = false;
+                this._searchTimeout = null;
+                this._globalClickHandler = null;
+                this._issueOutsideHandler = null;
+                this._modalKeyHandler = null;
 
-            if (!this.submissionId) {
-                this.showError('No submission ID provided');
-                return;
-            }
-
-            this.initializeToastr();
-            this.bindEvents();
-            this.initialize();
-        }
-
-        initializeToastr() {
-            toastr.options = {
-                closeButton: false,
-                progressBar: false,
-                positionClass: "toast-top-right",
-                timeOut: 3000,
-                extendedTimeOut: 1000
-            };
-        }
-
-        bindEvents() {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => this._attachDOMEvents());
-            } else {
-                this._attachDOMEvents();
-            }
-        }
-
-        _attachDOMEvents() {
-            document.getElementById('assignReviewersBtn')?.addEventListener('click', () => this.assignReviewers());
-            document.getElementById('clearSelectionBtn')?.addEventListener('click', () => this.clearSelection());
-
-            document.getElementById('viewTimelineBtn')?.addEventListener('click', () => {
-                window.location.href = `submission-timeline.html?id=${this.submissionId}`;
-            });
-
-            // delegate remove button clicks inside selected reviewers preview
-            document.getElementById('selectedReviewersList')?.addEventListener('click', (e) => {
-                const btn = e.target.closest('.remove-selected-btn');
-                if (!btn) return;
-                const tag = btn.closest('.selected-reviewer-tag');
-                if (!tag) return;
-                const id = tag.getAttribute('data-id');
-                if (id) this.removeSelectedReviewer(id);
-            });
-        }
-
-        getSubmissionIdFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
-        }
-
-        async initialize() {
-            try {
-                this.showLoading();
-                await this.loadSubmissionData();
-
-                // scopeId: API may return object or id
-                this.scopeId = this.submission?.scopeId?._id || this.submission?.scopeId || null;
-
-                if (this.scopeId) {
-                    await this.loadAvailableReviewers();
-                    this.initializeReviewerSelect();
-                } else {
-                    // still create select area empty so it doesn't break UI
-                    this.initializeReviewerSelect();
+                if (!this.submissionId) {
+                    this.showError('No submission ID provided');
+                    return;
                 }
 
-                this.initializeEditorialDecision();
-                await this.loadLatestTimelineEvent();
-
-                this.hideLoading();
-                this.showContent();
-            } catch (error) {
-                console.error('Error initializing:', error);
-                this.showError('Failed to load submission details. Please try again.');
+                this.initializeToastr();
+                this.bindEvents();
+                this.initialize();
             }
-        }
 
-        async loadSubmissionData() {
-            try {
-                const token = getAuthToken2();
-                if (!token) throw new Error('Authentication token not found');
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
 
-                const submissionResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
+            bindEvents() {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => this._attachDOMEvents());
+                } else {
+                    this._attachDOMEvents();
+                }
+            }
+
+            _attachDOMEvents() {
+                document.getElementById('assignReviewersBtn')?.addEventListener('click', () => this.assignReviewers());
+                document.getElementById('clearSelectionBtn')?.addEventListener('click', () => this.clearSelection());
+
+                document.getElementById('viewTimelineBtn')?.addEventListener('click', () => {
+                    window.location.href = `submission-timeline.html?id=${this.submissionId}`;
+                });
+
+                // delegate remove button clicks inside selected reviewers preview
+                document.getElementById('selectedReviewersList')?.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.remove-selected-btn');
+                    if (!btn) return;
+                    const tag = btn.closest('.selected-reviewer-tag');
+                    if (!tag) return;
+                    const id = tag.getAttribute('data-id');
+                    if (id) this.removeSelectedReviewer(id);
+                });
+
+                // Content modal close button
+                document.getElementById('closeContentModal')?.addEventListener('click', () => {
+                    this.closeContentModal();
+                });
+
+                // Close modal when clicking outside
+                document.getElementById('contentModal')?.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        this.closeContentModal();
                     }
                 });
 
-                if (!submissionResponse.ok) {
-                    throw new Error(`Failed to fetch submission: ${submissionResponse.status}`);
-                }
+                // Close modal with Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeContentModal();
+                    }
+                });
 
-                const submissionData = await submissionResponse.json();
-                // accommodating several possible shapes
-                this.submission = submissionData.submission || submissionData.data || submissionData;
+                // Download document button
+                document.getElementById('downloadDocumentBtn')?.addEventListener('click', () => {
+                    this.downloadDocument();
+                });
+            }
 
-                // attempt to get currentStatus from history endpoint (non-fatal)
+            getSubmissionIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
+            }
+
+            async initialize() {
                 try {
-                    const historyResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                    this.showLoading();
+                    await this.loadSubmissionData();
+
+                    // scopeId: API may return object or id
+                    this.scopeId = this.submission?.scopeId?._id || this.submission?.scopeId || null;
+
+                    if (this.scopeId) {
+                        await this.loadAvailableReviewers();
+                        this.initializeReviewerSelect();
+                    } else {
+                        // still create select area empty so it doesn't break UI
+                        this.initializeReviewerSelect();
+                    }
+
+                    this.initializeEditorialDecision();
+                    await this.loadLatestTimelineEvent();
+
+                    // Render document and abstract sections
+                    this.renderFileInfo();
+                    this.renderAbstract();
+
+                    this.hideLoading();
+                    this.showContent();
+                } catch (error) {
+                    console.error('Error initializing:', error);
+                    this.showError('Failed to load submission details. Please try again.');
+                }
+            }
+
+            async loadSubmissionData() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) throw new Error('Authentication token not found');
+
+                    const submissionResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
-                    if (historyResponse.ok) {
-                        const historyData = await historyResponse.json();
-                        if (historyData?.submission?.currentStatus) {
-                            this.submission.currentStatus = historyData.submission.currentStatus;
+
+                    if (!submissionResponse.ok) {
+                        throw new Error(`Failed to fetch submission: ${submissionResponse.status}`);
+                    }
+
+                    const submissionData = await submissionResponse.json();
+                    // accommodating several possible shapes
+                    this.submission = submissionData.submission || submissionData.data || submissionData;
+
+                    // attempt to get currentStatus from history endpoint (non-fatal)
+                    try {
+                        const historyResponse = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (historyResponse.ok) {
+                            const historyData = await historyResponse.json();
+                            if (historyData?.submission?.currentStatus) {
+                                this.submission.currentStatus = historyData.submission.currentStatus;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('history fetch non-fatal', e);
+                    }
+
+                    // get submitter info from history 'submitted' event if available
+                    const submittedEvent = (this.submission.history || []).find(ev => ev.status === 'submitted');
+                    if (submittedEvent?.by) {
+                        const submitter = await this.getUserDetails(submittedEvent.by);
+                        if (submitter) {
+                            this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
+                            this.submission.submitterEmail = submitter.email;
                         }
                     }
-                } catch (e) {
-                    console.warn('history fetch non-fatal', e);
-                }
 
-                // get submitter info from history 'submitted' event if available
-                const submittedEvent = (this.submission.history || []).find(ev => ev.status === 'submitted');
-                if (submittedEvent?.by) {
-                    const submitter = await this.getUserDetails(submittedEvent.by);
-                    if (submitter) {
-                        this.submission.submitterName = `${submitter.firstName || ''} ${submitter.lastName || ''}`.trim();
-                        this.submission.submitterEmail = submitter.email;
+                    // assignedReviewers may already come from the submission: no API enrichment required, but we enrich for names/emails
+                    if (Array.isArray(this.submission.assignedReviewers) && this.submission.assignedReviewers.length) {
+                        await this.enrichAssignedReviewers();
                     }
+
+                    this.renderManuscriptHeader();
+                    this.renderAuthors();
+                    this.renderCurrentReviewers();
+
+                } catch (error) {
+                    console.error('Error loading submission data:', error);
+                    throw error;
                 }
-
-                // assignedReviewers may already come from the submission: no API enrichment required, but we enrich for names/emails
-                if (Array.isArray(this.submission.assignedReviewers) && this.submission.assignedReviewers.length) {
-                    await this.enrichAssignedReviewers();
-                }
-
-                this.renderManuscriptHeader();
-                this.renderAuthors();
-                this.renderCurrentReviewers();
-
-            } catch (error) {
-                console.error('Error loading submission data:', error);
-                throw error;
             }
-        }
 
-        async getUserDetails(userId) {
-            if (!userId) return null;
-            if (this.userCache.has(userId)) return this.userCache.get(userId);
+            async getUserDetails(userId) {
+                if (!userId) return null;
+                if (this.userCache.has(userId)) return this.userCache.get(userId);
 
-            try {
-                const token = getAuthToken2();
-                if (!token) return null;
-                const response = await fetch(`${BASE_URL}/user/${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return null;
+                    const response = await fetch(`${BASE_URL}/user/${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch user ${userId}: ${response.status}`);
+                        return null;
                     }
-                });
 
-                if (!response.ok) {
-                    console.warn(`Failed to fetch user ${userId}: ${response.status}`);
+                    const data = await response.json();
+                    const user = data.user || data.data || data;
+                    if (!user) return null;
+                    this.userCache.set(userId, user);
+                    return user;
+                } catch (error) {
+                    console.error(`Error fetching user ${userId}:`, error);
                     return null;
                 }
-
-                const data = await response.json();
-                const user = data.user || data.data || data;
-                if (!user) return null;
-                this.userCache.set(userId, user);
-                return user;
-            } catch (error) {
-                console.error(`Error fetching user ${userId}:`, error);
-                return null;
             }
-        }
 
-        async enrichAssignedReviewers() {
-            const assignedReviewers = this.submission.assignedReviewers || [];
-            const enrichedReviewers = [];
+            async enrichAssignedReviewers() {
+                const assignedReviewers = this.submission.assignedReviewers || [];
+                const enrichedReviewers = [];
 
-            for (const assignment of assignedReviewers) {
-                // assignment might have reviewerId or reviewer
-                const reviewerId = assignment.reviewerId || assignment.reviewer || assignment.userId || assignment._id || assignment.id;
-                if (reviewerId) {
-                    const user = await this.getUserDetails(reviewerId);
-                    if (user) {
-                        enrichedReviewers.push({
-                            ...assignment,
-                            name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-                            email: user.email
-                        });
+                for (const assignment of assignedReviewers) {
+                    // assignment might have reviewerId or reviewer
+                    const reviewerId = assignment.reviewerId || assignment.reviewer || assignment.userId || assignment._id || assignment.id;
+                    if (reviewerId) {
+                        const user = await this.getUserDetails(reviewerId);
+                        if (user) {
+                            enrichedReviewers.push({
+                                ...assignment,
+                                name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+                                email: user.email
+                            });
+                        } else {
+                            enrichedReviewers.push({
+                                ...assignment,
+                                name: assignment.name || 'Unknown Reviewer',
+                                email: assignment.email || 'N/A'
+                            });
+                        }
                     } else {
-                        enrichedReviewers.push({
-                            ...assignment,
-                            name: assignment.name || 'Unknown Reviewer',
-                            email: assignment.email || 'N/A'
-                        });
+                        enrichedReviewers.push(assignment);
                     }
-                } else {
-                    enrichedReviewers.push(assignment);
+                }
+
+                this.submission.assignedReviewers = enrichedReviewers;
+            }
+
+            async loadAvailableReviewers() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token || !this.scopeId) {
+                        this.allReviewers = [];
+                        return;
+                    }
+
+                    const response = await fetch(`${BASE_URL}/editor/scope-reviewers?scopeId=${this.scopeId}&isApproved=true`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    console.log('Available reviewers response:', response);
+
+                    if (!response.ok) {
+                        this.allReviewers = [];
+                        return;
+                    }
+
+                    const data = await response.json();
+                    const reviewers = data.reviewers || data.data || [];
+                    this.allReviewers = reviewers.map(r => ({
+                        id: r._id || r.id || r.userId || r.email,
+                        name: `${r.firstName || ''} ${r.lastName || ''}`.trim(),
+                        email: r.email || ''
+                    }));
+
+                    // update the options list if the select exists
+                    const optionsList = document.querySelector('.custom-search-select .select-options-list');
+                    if (optionsList) optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
+                } catch (error) {
+                    console.error('Error loading available reviewers:', error);
+                    this.allReviewers = [];
                 }
             }
 
-            this.submission.assignedReviewers = enrichedReviewers;
-        }
-
-        async loadAvailableReviewers() {
-            try {
-                const token = getAuthToken2();
-                if (!token || !this.scopeId) {
-                    this.allReviewers = [];
-                    return;
-                }
-
-                const response = await fetch(`${BASE_URL}/editor/scope-reviewers?scopeId=${this.scopeId}&isApproved=true`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                console.log('Available reviewers response:', response);
-
-                if (!response.ok) {
-                    this.allReviewers = [];
-                    return;
-                }
-
-                const data = await response.json();
-                const reviewers = data.reviewers || data.data || [];
-                this.allReviewers = reviewers.map(r => ({
-                    id: r._id || r.id || r.userId || r.email,
-                    name: `${r.firstName || ''} ${r.lastName || ''}`.trim(),
-                    email: r.email || ''
-                }));
-
-                // update the options list if the select exists
-                const optionsList = document.querySelector('.custom-search-select .select-options-list');
-                if (optionsList) optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
-            } catch (error) {
-                console.error('Error loading available reviewers:', error);
-                this.allReviewers = [];
+            initializeReviewerSelect() {
+                const container = document.getElementById('reviewerSearchContainer');
+                if (!container) return;
+                this.createCustomSearchSelect(container);
             }
-        }
 
-        initializeReviewerSelect() {
-            const container = document.getElementById('reviewerSearchContainer');
-            if (!container) return;
-            this.createCustomSearchSelect(container);
-        }
+            createCustomSearchSelect(container) {
+                // remove previous if exists
+                const existing = container.querySelector('.custom-search-select');
+                if (existing) existing.remove();
 
-        createCustomSearchSelect(container) {
-            // remove previous if exists
-            const existing = container.querySelector('.custom-search-select');
-            if (existing) existing.remove();
-
-            const selectId = 'reviewerSearchSelect_' + Math.random().toString(36).substr(2, 9);
-            const html = `
+                const selectId = 'reviewerSearchSelect_' + Math.random().toString(36).substr(2, 9);
+                const html = `
     <div class="custom-search-select" id="${selectId}">
         <div class="select-header" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
             <span class="placeholder">Search for reviewers...</span>
@@ -1634,108 +1989,108 @@
         </div>
     </div>
 `;
-            container.insertAdjacentHTML('beforeend', html);
+                container.insertAdjacentHTML('beforeend', html);
 
-            const selectElement = document.getElementById(selectId);
-            const header = selectElement.querySelector('.select-header');
-            const dropdown = selectElement.querySelector('.select-dropdown');
-            const searchInput = selectElement.querySelector('.search-input');
-            const clearBtn = selectElement.querySelector('.clear-search');
-            const optionsList = selectElement.querySelector('.select-options-list');
-            const selectedValueSpan = selectElement.querySelector('.selected-value');
-            const placeholderSpan = selectElement.querySelector('.placeholder');
+                const selectElement = document.getElementById(selectId);
+                const header = selectElement.querySelector('.select-header');
+                const dropdown = selectElement.querySelector('.select-dropdown');
+                const searchInput = selectElement.querySelector('.search-input');
+                const clearBtn = selectElement.querySelector('.clear-search');
+                const optionsList = selectElement.querySelector('.select-options-list');
+                const selectedValueSpan = selectElement.querySelector('.selected-value');
+                const placeholderSpan = selectElement.querySelector('.placeholder');
 
-            // global click close handler
-            if (!this._globalClickHandler) {
-                this._globalClickHandler = (e) => {
-                    document.querySelectorAll('.custom-search-select .select-dropdown.active').forEach(dd => {
-                        const parent = dd.closest('.custom-search-select');
-                        if (!parent.contains(e.target)) {
-                            dd.classList.remove('active');
-                            parent.querySelector('.select-header')?.classList.remove('active');
-                            parent.querySelector('.select-header')?.setAttribute('aria-expanded', 'false');
-                        }
-                    });
-                };
-                document.addEventListener('click', this._globalClickHandler);
-            }
-
-            const filterReviewers = (term) => {
-                if (!term || !term.trim()) {
-                    optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
-                    clearBtn.style.display = 'none';
-                    return;
+                // global click close handler
+                if (!this._globalClickHandler) {
+                    this._globalClickHandler = (e) => {
+                        document.querySelectorAll('.custom-search-select .select-dropdown.active').forEach(dd => {
+                            const parent = dd.closest('.custom-search-select');
+                            if (!parent.contains(e.target)) {
+                                dd.classList.remove('active');
+                                parent.querySelector('.select-header')?.classList.remove('active');
+                                parent.querySelector('.select-header')?.setAttribute('aria-expanded', 'false');
+                            }
+                        });
+                    };
+                    document.addEventListener('click', this._globalClickHandler);
                 }
-                const s = term.toLowerCase();
-                const filtered = this.allReviewers.filter(r => (r.name || '').toLowerCase().includes(s) || (r.email || '').toLowerCase().includes(s));
-                optionsList.innerHTML = this.renderReviewerOptions(filtered);
-                clearBtn.style.display = 'inline-flex';
-            };
 
-            const selectReviewer = (reviewer) => {
-                const isSelected = this.selectedReviewers.some(r => String(r.id) === String(reviewer.id));
-                if (!isSelected) {
-                    this.selectedReviewers.push(reviewer);
-                    this.renderSelectedReviewers();
-                    this.updateAssignButton();
-
-                    if (this.selectedReviewers.length === 1) {
-                        selectedValueSpan.textContent = reviewer.name;
-                        selectedValueSpan.style.display = 'inline';
-                        placeholderSpan.style.display = 'none';
-                    } else {
-                        selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`;
-                        selectedValueSpan.style.display = 'inline';
-                        placeholderSpan.style.display = 'none';
+                const filterReviewers = (term) => {
+                    if (!term || !term.trim()) {
+                        optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
+                        clearBtn.style.display = 'none';
+                        return;
                     }
-                }
+                    const s = term.toLowerCase();
+                    const filtered = this.allReviewers.filter(r => (r.name || '').toLowerCase().includes(s) || (r.email || '').toLowerCase().includes(s));
+                    optionsList.innerHTML = this.renderReviewerOptions(filtered);
+                    clearBtn.style.display = 'inline-flex';
+                };
 
-                dropdown.classList.remove('active');
-                header.classList.remove('active');
-                header.setAttribute('aria-expanded', 'false');
-            };
+                const selectReviewer = (reviewer) => {
+                    const isSelected = this.selectedReviewers.some(r => String(r.id) === String(reviewer.id));
+                    if (!isSelected) {
+                        this.selectedReviewers.push(reviewer);
+                        this.renderSelectedReviewers();
+                        this.updateAssignButton();
 
-            header.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                const isOpen = dropdown.classList.contains('active');
-                if (isOpen) {
+                        if (this.selectedReviewers.length === 1) {
+                            selectedValueSpan.textContent = reviewer.name;
+                            selectedValueSpan.style.display = 'inline';
+                            placeholderSpan.style.display = 'none';
+                        } else {
+                            selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`;
+                            selectedValueSpan.style.display = 'inline';
+                            placeholderSpan.style.display = 'none';
+                        }
+                    }
+
                     dropdown.classList.remove('active');
                     header.classList.remove('active');
                     header.setAttribute('aria-expanded', 'false');
-                } else {
-                    dropdown.classList.add('active');
-                    header.classList.add('active');
-                    header.setAttribute('aria-expanded', 'true');
-                    searchInput.focus();
-                }
-            });
+                };
 
-            header.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
-            });
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const isOpen = dropdown.classList.contains('active');
+                    if (isOpen) {
+                        dropdown.classList.remove('active');
+                        header.classList.remove('active');
+                        header.setAttribute('aria-expanded', 'false');
+                    } else {
+                        dropdown.classList.add('active');
+                        header.classList.add('active');
+                        header.setAttribute('aria-expanded', 'true');
+                        searchInput.focus();
+                    }
+                });
 
-            searchInput.addEventListener('input', (e) => filterReviewers(e.target.value));
-            clearBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); searchInput.value = ''; filterReviewers(''); searchInput.focus(); });
+                header.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
+                });
 
-            optionsList.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const optionItem = e.target.closest('.select-option-item');
-                if (!optionItem) return;
-                const reviewerId = optionItem.getAttribute('data-id');
-                const reviewer = this.allReviewers.find(r => String(r.id) === String(reviewerId));
-                if (reviewer) selectReviewer(reviewer);
-            });
+                searchInput.addEventListener('input', (e) => filterReviewers(e.target.value));
+                clearBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); searchInput.value = ''; filterReviewers(''); searchInput.focus(); });
 
-            // initial filter to render current options
-            filterReviewers('');
-        }
+                optionsList.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const optionItem = e.target.closest('.select-option-item');
+                    if (!optionItem) return;
+                    const reviewerId = optionItem.getAttribute('data-id');
+                    const reviewer = this.allReviewers.find(r => String(r.id) === String(reviewerId));
+                    if (reviewer) selectReviewer(reviewer);
+                });
 
-        renderReviewerOptions(reviewers) {
-            if (!reviewers || reviewers.length === 0) {
-                return '<div class="no-results" style="padding:12px;text-align:center;color:var(--muted)">No reviewers available for this scope</div>';
+                // initial filter to render current options
+                filterReviewers('');
             }
-            return reviewers.map(reviewer => `
+
+            renderReviewerOptions(reviewers) {
+                if (!reviewers || reviewers.length === 0) {
+                    return '<div class="no-results" style="padding:12px;text-align:center;color:var(--muted)">No reviewers available for this scope</div>';
+                }
+                return reviewers.map(reviewer => `
     <div class="select-option-item" data-id="${this.escapeHtml(reviewer.id)}" style="padding:0.6rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.03);">
         <div style="flex:1;">
             <div class="option-name" style="font-weight:600;">${this.escapeHtml(reviewer.name)}</div>
@@ -1744,20 +2099,20 @@
         <div style="padding-left:8px;"><i class="fas fa-plus"></i></div>
     </div>
 `).join('');
-        }
+            }
 
-        renderManuscriptHeader() {
-            const header = document.getElementById('manuscriptHeader');
-            if (!header || !this.submission) return;
+            renderManuscriptHeader() {
+                const header = document.getElementById('manuscriptHeader');
+                if (!header || !this.submission) return;
 
-            const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
-            const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
-            const statusDisplay = this.formatStatus(statusToDisplay);
-            const scopeName = this.submission.scopeId?.title || this.submission.scopeTitle || 'Unknown scope';
-            const scopeISSN = this.submission.scopeId?.issn || 'N/A';
-            const submittedByName = this.submission.submitterName || 'Unknown';
+                const formattedDate = this.formatDate(this.submission.createdAt || this.submission.created_at || this.submission.date);
+                const statusToDisplay = this.submission.currentStatus || this.submission.status || '';
+                const statusDisplay = this.formatStatus(statusToDisplay);
+                const scopeName = this.submission.scopeId?.title || this.submission.scopeTitle || 'Unknown scope';
+                const scopeISSN = this.submission.scopeId?.issn || 'N/A';
+                const submittedByName = this.submission.submitterName || 'Unknown';
 
-            header.innerHTML = `
+                header.innerHTML = `
     <h1>${this.escapeHtml(this.submission.title || 'Untitled')}</h1>
     <span class="header-status-badge">${this.escapeHtml(statusDisplay)}</span>
     <div class="header-meta">
@@ -1766,46 +2121,144 @@
         <div class="meta-item"><i class="far fa-calendar"></i><span>Submitted on: ${this.escapeHtml(formattedDate)}</span></div>
     </div>
 `;
-        }
-
-        renderAuthors() {
-            const authorsList = document.getElementById('authorsList');
-            if (!authorsList || !this.submission) return;
-
-            const authors = this.submission.authors || [];
-            if (authors.length === 0) {
-                authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
-                return;
             }
 
-            authorsList.innerHTML = authors.map(author => `
+            renderFileInfo() {
+                const fileInfoCard = document.getElementById('fileInfoCard');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+                const viewDocumentLink = document.getElementById('viewDocumentLink');
+
+                if (!this.submission?.file) return;
+
+                const file = this.submission.file;
+                const fileUrl = this.buildFileUrl(file.url);
+                // Use Office Online viewer for Word documents
+                const viewUrl = this.getDocumentViewUrl(fileUrl);
+                const originalName = file.originalName || 'Unknown file';
+
+                fileName.textContent = originalName;
+                fileSize.textContent = `Original file: ${originalName}`;
+                viewDocumentLink.href = viewUrl;
+                viewDocumentLink.target = '_blank';
+            }
+
+            downloadDocument() {
+                if (!this.submission?.file) {
+                    toastr.error('No document available to download', 'Error');
+                    return;
+                }
+
+                const file = this.submission.file;
+                const fileUrl = this.buildFileUrl(file.url);
+                const fileName = file.originalName || 'document.pdf';
+
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = fileName;
+                link.target = '_blank';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            buildFileUrl(filePath) {
+                if (!filePath) return null;
+
+                const baseUrl = BASE_URL.replace('/api/v1', '');
+
+                try {
+                    const url = new URL(filePath);
+                    return url.toString();
+                } catch {
+                    const normalizedPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
+                    return `${baseUrl}${normalizedPath}`;
+                }
+            }
+
+            getDocumentViewUrl(fileUrl) {
+                if (!fileUrl) return null;
+
+                const url = fileUrl.toLowerCase();
+                const isOfficeDoc = url.endsWith(".docx") || url.endsWith(".doc");
+
+                if (isOfficeDoc) {
+                    return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
+                }
+
+                return fileUrl;
+            }
+
+            renderAbstract() {
+                const abstractContent = document.getElementById('abstractContent');
+                if (!abstractContent || !this.submission) return;
+
+                const abstract = this.submission.abstract || 'No abstract provided.';
+
+                if (abstract && abstract.trim() !== '') {
+                    const processedAbstract = this.processContentForDisplay(abstract);
+                    const isAbstractLong = processedAbstract.plainText.length > 300;
+                    const abstractPreview = isAbstractLong ?
+                        processedAbstract.plainText.substring(0, 300) + '...' :
+                        processedAbstract.plainText;
+                    const abstractDisplayHtml = isAbstractLong ?
+                        this.processContentForDisplay(abstractPreview).displayHtml :
+                        processedAbstract.displayHtml;
+
+                    abstractContent.innerHTML = `
+                    <div class="abstract-text ${isAbstractLong ? 'truncated' : ''}">
+                        ${abstractDisplayHtml}
+                    </div>
+                    ${isAbstractLong ? `
+                        <a class="view-more-link" onclick="window.submissionDetails.showFullContent('${this.encodeForModal(processedAbstract.displayHtml)}', 'abstract', 'Abstract')">
+                            <i class="fas fa-eye"></i> View full abstract
+                        </a>
+                    ` : ''}
+                `;
+                } else {
+                    abstractContent.innerHTML = '<span style="color: #9ca3af;">No abstract provided.</span>';
+                }
+            }
+
+            renderAuthors() {
+                const authorsList = document.getElementById('authorsList');
+                if (!authorsList || !this.submission) return;
+
+                const authors = this.submission.authors || [];
+                if (authors.length === 0) {
+                    authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
+                    return;
+                }
+
+                authorsList.innerHTML = authors.map(author => `
     <div class="author-item">
         <div class="author-name">${this.escapeHtml(author.name)}</div>
         <div class="author-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(author.email)}</div>
     </div>
 `).join('');
-        }
+            }
 
-        renderCurrentReviewers() {
-            const reviewersContainer = document.getElementById('currentReviewers');
-            const reviewersCount = document.getElementById('reviewersCount');
-            if (!reviewersContainer || !this.submission) return;
+            renderCurrentReviewers() {
+                const reviewersContainer = document.getElementById('currentReviewers');
+                const reviewersCount = document.getElementById('reviewersCount');
+                if (!reviewersContainer || !this.submission) return;
 
-            const reviewers = this.submission.assignedReviewers || [];
-            if (reviewersCount) reviewersCount.textContent = reviewers.length;
+                const reviewers = this.submission.assignedReviewers || [];
+                if (reviewersCount) reviewersCount.textContent = reviewers.length;
 
-            if (reviewers.length === 0) {
-                reviewersContainer.innerHTML = `
+                if (reviewers.length === 0) {
+                    reviewersContainer.innerHTML = `
         <div class="no-reviewers">
             <i class="fas fa-user-slash"></i>
             <p>No reviewers assigned yet</p>
         </div>
     `;
-                return;
-            }
+                    return;
+                }
 
-            // Render reviewer cards
-            let reviewersHTML = reviewers.map(reviewer => `
+                // Render reviewer cards
+                let reviewersHTML = reviewers.map(reviewer => `
     <div class="reviewer-card">
         <div class="reviewer-name">${this.escapeHtml(reviewer.name)}</div>
         <div class="reviewer-email"><i class="fas fa-envelope"></i> ${this.escapeHtml(reviewer.email)}</div>
@@ -1813,201 +2266,201 @@
     </div>
 `).join('');
 
-            // Show View Progress when there's at least one assigned reviewer (only submission id required)
-            if (reviewers.length > 0) {
-                reviewersHTML += `
+                // Show View Progress when there's at least one assigned reviewer (only submission id required)
+                if (reviewers.length > 0) {
+                    reviewersHTML += `
         <div class="view-progress-container">
             <button class="btn-view-progress" id="btnViewProgress"><i class="fas fa-chart-line"></i> View Progress</button>
         </div>
     `;
+                }
+
+                reviewersContainer.innerHTML = reviewersHTML;
+
+                // now bind view progress button to correct URL (only submission id)
+                const vp = document.getElementById('btnViewProgress');
+                if (vp) {
+                    vp.addEventListener('click', () => {
+                        // Only pass submission id parameter (page expects ?id=...)
+                        window.location.href = `view-progress.html?id=${this.submissionId}`;
+                    });
+                }
             }
 
-            reviewersContainer.innerHTML = reviewersHTML;
+            renderSelectedReviewers() {
+                const previewContainer = document.getElementById('selectedReviewersPreview');
+                const selectedList = document.getElementById('selectedReviewersList');
+                const selectedCount = document.getElementById('selectedCount');
 
-            // now bind view progress button to correct URL (only submission id)
-            const vp = document.getElementById('btnViewProgress');
-            if (vp) {
-                vp.addEventListener('click', () => {
-                    // Only pass submission id parameter (page expects ?id=...)
-                    window.location.href = `view-progress.html?id=${this.submissionId}`;
-                });
-            }
-        }
+                if (!previewContainer || !selectedList || !selectedCount) return;
 
-        renderSelectedReviewers() {
-            const previewContainer = document.getElementById('selectedReviewersPreview');
-            const selectedList = document.getElementById('selectedReviewersList');
-            const selectedCount = document.getElementById('selectedCount');
+                if (this.selectedReviewers.length === 0) {
+                    previewContainer.style.display = 'none';
+                    selectedList.innerHTML = '';
+                    selectedCount.textContent = '0';
+                    return;
+                }
 
-            if (!previewContainer || !selectedList || !selectedCount) return;
+                previewContainer.style.display = 'block';
+                selectedCount.textContent = this.selectedReviewers.length;
 
-            if (this.selectedReviewers.length === 0) {
-                previewContainer.style.display = 'none';
-                selectedList.innerHTML = '';
-                selectedCount.textContent = '0';
-                return;
-            }
-
-            previewContainer.style.display = 'block';
-            selectedCount.textContent = this.selectedReviewers.length;
-
-            selectedList.innerHTML = this.selectedReviewers.map(reviewer => `
+                selectedList.innerHTML = this.selectedReviewers.map(reviewer => `
     <div class="selected-reviewer-tag" data-id="${this.escapeHtml(reviewer.id)}">
         ${this.escapeHtml(reviewer.name)}
         <button class="remove-selected-btn" aria-label="Remove reviewer"><i class="fas fa-times"></i></button>
     </div>
 `).join('');
-        }
+            }
 
-        removeSelectedReviewer(reviewerId) {
-            this.selectedReviewers = this.selectedReviewers.filter(r => String(r.id) !== String(reviewerId));
-            this.renderSelectedReviewers();
-            this.updateAssignButton();
+            removeSelectedReviewer(reviewerId) {
+                this.selectedReviewers = this.selectedReviewers.filter(r => String(r.id) !== String(reviewerId));
+                this.renderSelectedReviewers();
+                this.updateAssignButton();
 
-            const selectElement = document.querySelector('.custom-search-select');
-            if (selectElement) {
-                const selectedValueSpan = selectElement.querySelector('.selected-value');
-                const placeholderSpan = selectElement.querySelector('.placeholder');
+                const selectElement = document.querySelector('.custom-search-select');
+                if (selectElement) {
+                    const selectedValueSpan = selectElement.querySelector('.selected-value');
+                    const placeholderSpan = selectElement.querySelector('.placeholder');
 
-                if (this.selectedReviewers.length === 0) {
+                    if (this.selectedReviewers.length === 0) {
+                        if (selectedValueSpan) { selectedValueSpan.textContent = ''; selectedValueSpan.style.display = 'none'; }
+                        if (placeholderSpan) placeholderSpan.style.display = 'inline';
+                    } else if (this.selectedReviewers.length === 1) {
+                        if (selectedValueSpan) { selectedValueSpan.textContent = this.selectedReviewers[0].name; selectedValueSpan.style.display = 'inline'; }
+                        if (placeholderSpan) placeholderSpan.style.display = 'none';
+                    } else {
+                        if (selectedValueSpan) { selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`; selectedValueSpan.style.display = 'inline'; }
+                        if (placeholderSpan) placeholderSpan.style.display = 'none';
+                    }
+                }
+            }
+
+            updateAssignButton() {
+                const assignBtn = document.getElementById('assignReviewersBtn');
+                if (assignBtn) assignBtn.disabled = this.selectedReviewers.length === 0;
+            }
+
+            async assignReviewers() {
+                if (this.selectedReviewers.length === 0) return;
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        return;
+                    }
+
+                    const reviewerIds = this.selectedReviewers.map(r => r.id);
+
+                    const assignBtn = document.getElementById('assignReviewersBtn');
+                    if (assignBtn) { assignBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...'; assignBtn.disabled = true; }
+
+                    const response = await fetch(`${BASE_URL}/editor/assign-reviewers`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ submissionId: this.submissionId, reviewerIds })
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorMessage = `Failed to assign reviewers: ${response.status}`;
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) { }
+                        throw new Error(errorMessage);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to assign reviewers');
+                    }
+
+                    toastr.success(`Successfully assigned ${this.selectedReviewers.length} reviewer(s)`, 'Success');
+
+                    // Refresh local state shortly after success
+                    setTimeout(async () => {
+                        await this.loadSubmissionData();
+                        await this.loadAvailableReviewers();
+                        this.clearSelection();
+                    }, 700);
+
+                } catch (error) {
+                    console.error('Error assigning reviewers:', error);
+                    toastr.error(error.message || 'Failed to assign reviewers', 'Error');
+                } finally {
+                    const assignBtn = document.getElementById('assignReviewersBtn');
+                    if (assignBtn) { assignBtn.innerHTML = '<i class="fas fa-user-check"></i> Assign Selected Reviewers'; assignBtn.disabled = this.selectedReviewers.length === 0; }
+                }
+            }
+
+            clearSelection() {
+                this.selectedReviewers = [];
+                this.renderSelectedReviewers();
+                this.updateAssignButton();
+
+                const selectElement = document.querySelector('.custom-search-select');
+                if (selectElement) {
+                    const selectedValueSpan = selectElement.querySelector('.selected-value');
+                    const placeholderSpan = selectElement.querySelector('.placeholder');
+                    const searchInput = selectElement.querySelector('.search-input');
+                    const optionsList = selectElement.querySelector('.select-options-list');
+
                     if (selectedValueSpan) { selectedValueSpan.textContent = ''; selectedValueSpan.style.display = 'none'; }
                     if (placeholderSpan) placeholderSpan.style.display = 'inline';
-                } else if (this.selectedReviewers.length === 1) {
-                    if (selectedValueSpan) { selectedValueSpan.textContent = this.selectedReviewers[0].name; selectedValueSpan.style.display = 'inline'; }
-                    if (placeholderSpan) placeholderSpan.style.display = 'none';
-                } else {
-                    if (selectedValueSpan) { selectedValueSpan.textContent = `${this.selectedReviewers.length} selected`; selectedValueSpan.style.display = 'inline'; }
-                    if (placeholderSpan) placeholderSpan.style.display = 'none';
+                    if (searchInput) searchInput.value = '';
+                    if (optionsList) optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
                 }
             }
-        }
 
-        updateAssignButton() {
-            const assignBtn = document.getElementById('assignReviewersBtn');
-            if (assignBtn) assignBtn.disabled = this.selectedReviewers.length === 0;
-        }
+            async loadLatestTimelineEvent() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
 
-        async assignReviewers() {
-            if (this.selectedReviewers.length === 0) return;
-            try {
-                const token = getAuthToken2();
-                if (!token) {
-                    toastr.error('Authentication required. Please login again.', 'Error');
-                    return;
-                }
+                    const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
+                        method: 'GET',
+                        headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+                    });
 
-                const reviewerIds = this.selectedReviewers.map(r => r.id);
+                    if (!response.ok) {
+                        console.warn(`Failed to fetch timeline: ${response.status}`);
+                        this.renderTimeline([]);
+                        return;
+                    }
 
-                const assignBtn = document.getElementById('assignReviewersBtn');
-                if (assignBtn) { assignBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...'; assignBtn.disabled = true; }
+                    const data = await response.json();
+                    const timelineData = data.submission || data;
+                    const history = timelineData.history || [];
 
-                const response = await fetch(`${BASE_URL}/editor/assign-reviewers`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ submissionId: this.submissionId, reviewerIds })
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    let errorMessage = `Failed to assign reviewers: ${response.status}`;
-                    try {
-                        const errorData = JSON.parse(errorText);
-                        errorMessage = errorData.message || errorMessage;
-                    } catch (e) { }
-                    throw new Error(errorMessage);
-                }
-
-                const data = await response.json();
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to assign reviewers');
-                }
-
-                toastr.success(`Successfully assigned ${this.selectedReviewers.length} reviewer(s)`, 'Success');
-
-                // Refresh local state shortly after success
-                setTimeout(async () => {
-                    await this.loadSubmissionData();
-                    await this.loadAvailableReviewers();
-                    this.clearSelection();
-                }, 700);
-
-            } catch (error) {
-                console.error('Error assigning reviewers:', error);
-                toastr.error(error.message || 'Failed to assign reviewers', 'Error');
-            } finally {
-                const assignBtn = document.getElementById('assignReviewersBtn');
-                if (assignBtn) { assignBtn.innerHTML = '<i class="fas fa-user-check"></i> Assign Selected Reviewers'; assignBtn.disabled = this.selectedReviewers.length === 0; }
-            }
-        }
-
-        clearSelection() {
-            this.selectedReviewers = [];
-            this.renderSelectedReviewers();
-            this.updateAssignButton();
-
-            const selectElement = document.querySelector('.custom-search-select');
-            if (selectElement) {
-                const selectedValueSpan = selectElement.querySelector('.selected-value');
-                const placeholderSpan = selectElement.querySelector('.placeholder');
-                const searchInput = selectElement.querySelector('.search-input');
-                const optionsList = selectElement.querySelector('.select-options-list');
-
-                if (selectedValueSpan) { selectedValueSpan.textContent = ''; selectedValueSpan.style.display = 'none'; }
-                if (placeholderSpan) placeholderSpan.style.display = 'inline';
-                if (searchInput) searchInput.value = '';
-                if (optionsList) optionsList.innerHTML = this.renderReviewerOptions(this.allReviewers);
-            }
-        }
-
-        async loadLatestTimelineEvent() {
-            try {
-                const token = getAuthToken2();
-                if (!token) return;
-
-                const response = await fetch(`${BASE_URL}/submissions/${this.submissionId}/history`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
-                });
-
-                if (!response.ok) {
-                    console.warn(`Failed to fetch timeline: ${response.status}`);
-                    this.renderTimeline([]);
-                    return;
-                }
-
-                const data = await response.json();
-                const timelineData = data.submission || data;
-                const history = timelineData.history || [];
-
-                const latestEvent = history.length > 0 ? history[0] : null;
-                if (latestEvent) {
-                    await this.renderLatestTimelineEvent(latestEvent);
-                } else {
+                    const latestEvent = history.length > 0 ? history[0] : null;
+                    if (latestEvent) {
+                        await this.renderLatestTimelineEvent(latestEvent);
+                    } else {
+                        this.renderTimeline([]);
+                    }
+                } catch (error) {
+                    console.error('Error loading timeline data:', error);
                     this.renderTimeline([]);
                 }
-            } catch (error) {
-                console.error('Error loading timeline data:', error);
-                this.renderTimeline([]);
             }
-        }
 
-        async renderLatestTimelineEvent(event) {
-            const timelineContainer = document.getElementById('recentTimeline');
-            if (!timelineContainer) return;
+            async renderLatestTimelineEvent(event) {
+                const timelineContainer = document.getElementById('recentTimeline');
+                if (!timelineContainer) return;
 
-            let updatedBy = 'System';
-            if (event.by) {
-                const user = await this.getUserDetails(event.by);
-                if (user) {
-                    updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+                let updatedBy = 'System';
+                if (event.by) {
+                    const user = await this.getUserDetails(event.by);
+                    if (user) {
+                        updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+                    }
                 }
-            }
 
-            timelineContainer.innerHTML = `
+                timelineContainer.innerHTML = `
     <div class="timeline-item">
         <div class="card">
             <span class="status-badge" style="${this.getStatusStyle(event.status)}">
@@ -2019,31 +2472,128 @@
         </div>
     </div>
 `;
-        }
-
-        // Editorial decision / publishing logic
-        initializeEditorialDecision() {
-            if (!document.getElementById('editorialDecisionSection')) {
-                const decisionContainer = document.createElement('div');
-                decisionContainer.id = 'editorialDecisionSection';
-                decisionContainer.className = 'content-section editorial-decision-section';
-                const insertAfter = document.querySelector('.assign-reviewers-section');
-                if (insertAfter) insertAfter.parentNode.insertBefore(decisionContainer, insertAfter.nextSibling);
-                else document.querySelector('.submission-details-container')?.appendChild(decisionContainer);
             }
-            this.renderEditorialDecision();
-        }
 
-        renderEditorialDecision() {
-            const decisionContainer = document.getElementById('editorialDecisionSection');
-            if (!decisionContainer || !this.submission) return;
+            // Content display methods (Added from review details page)
+            processContentForDisplay(content) {
+                if (!content || content.trim() === '') {
+                    return {
+                        plainText: '',
+                        displayHtml: '<span style="color: #9ca3af;">No content provided.</span>'
+                    };
+                }
 
-            const currentStatus = this.submission.currentStatus || this.submission.status || '';
-            decisionContainer.style.display = 'block';
-            decisionContainer.innerHTML = '';
+                const sanitizedHtml = this.sanitizeHTML(content);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = sanitizedHtml;
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
 
-            if (currentStatus === 'reviewed') {
-                decisionContainer.innerHTML = `
+                return {
+                    plainText: plainText,
+                    displayHtml: sanitizedHtml
+                };
+            }
+
+            sanitizeHTML(html) {
+                if (!html) return '';
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
+                scripts.forEach(script => script.remove());
+
+                const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+                const allElements = tempDiv.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                        const text = document.createTextNode(el.textContent);
+                        el.parentNode.replaceChild(text, el);
+                    }
+                });
+
+                return tempDiv.innerHTML.trim() || html;
+            }
+
+            encodeForModal(content) {
+                return String(content)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;')
+                    .replaceAll('\n', ' ')
+                    .replaceAll('\r', '');
+            }
+
+            showFullContent(contentHtml, contentType, title) {
+                this.currentModalContent = contentHtml;
+                this.currentModalType = contentType;
+                this.currentModalTitle = title;
+
+                const modal = document.getElementById('contentModal');
+                const modalTitle = document.getElementById('contentModalTitle');
+                const modalType = document.getElementById('contentModalType');
+                const contentDisplay = document.getElementById('contentDisplay');
+
+                if (!modal || !modalTitle || !modalType || !contentDisplay) return;
+
+                modalTitle.textContent = title;
+
+                const typeMap = {
+                    'cover-letter': 'Cover Letter',
+                    'changes-summary': 'Changes Summary',
+                    'abstract': 'Abstract',
+                    'timeline-comment': 'Timeline Comment'
+                };
+
+                modalType.textContent = typeMap[contentType] || 'Content';
+
+                contentDisplay.innerHTML = `
+                <div class="content-display">
+                    ${contentHtml || '<div class="empty">No content available</div>'}
+                </div>
+            `;
+
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            closeContentModal() {
+                const modal = document.getElementById('contentModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    this.currentModalContent = '';
+                    this.currentModalType = '';
+                    this.currentModalTitle = '';
+                }
+            }
+
+            // Editorial decision / publishing logic
+            initializeEditorialDecision() {
+                if (!document.getElementById('editorialDecisionSection')) {
+                    const decisionContainer = document.createElement('div');
+                    decisionContainer.id = 'editorialDecisionSection';
+                    decisionContainer.className = 'content-section editorial-decision-section';
+                    const insertAfter = document.querySelector('.assign-reviewers-section');
+                    if (insertAfter) insertAfter.parentNode.insertBefore(decisionContainer, insertAfter.nextSibling);
+                    else document.querySelector('.submission-details-container')?.appendChild(decisionContainer);
+                }
+                this.renderEditorialDecision();
+            }
+
+            renderEditorialDecision() {
+                const decisionContainer = document.getElementById('editorialDecisionSection');
+                if (!decisionContainer || !this.submission) return;
+
+                const currentStatus = this.submission.currentStatus || this.submission.status || '';
+                decisionContainer.style.display = 'block';
+                decisionContainer.innerHTML = '';
+
+                if (currentStatus === 'reviewed') {
+                    decisionContainer.innerHTML = `
         <h2 class="section-title"><i class="fas fa-gavel"></i> Editorial Decision</h2>
         <div class="decision-buttons-container">
             <button id="makeDecisionBtn" class="btn-primary"><i class="fas fa-edit"></i> Make Editorial Decision</button>
@@ -2072,9 +2622,9 @@
             </form>
         </div>
     `;
-                this.bindDecisionEvents();
-            } else if (currentStatus === 'accepted') {
-                decisionContainer.innerHTML = `
+                    this.bindDecisionEvents();
+                } else if (currentStatus === 'accepted') {
+                    decisionContainer.innerHTML = `
         <h2 class="section-title"><i class="fas fa-check-circle"></i> Editorial Decision</h2>
         <div class="decision-status-message accepted">
             <i class="fas fa-check"></i>
@@ -2083,115 +2633,115 @@
             <button id="publishBtn" class="btn-primary"><i class="fas fa-upload"></i> Publish Manuscript</button>
         </div>
     `;
-                document.getElementById('publishBtn')?.addEventListener('click', () => this.showPublishModal());
-            } else if (['revised', 'revision_requested'].includes(currentStatus)) {
-                const text = currentStatus === 'revised' ? 'Revision Submitted' : 'Revision Requested';
-                decisionContainer.innerHTML = `<h2 class="section-title"><i class="fas fa-redo"></i> Editorial Decision</h2><div class="decision-status-message revision"><i class="fas fa-edit"></i><h3>${text}</h3></div>`;
-            } else if (currentStatus === 'awaiting_payment' || currentStatus === 'published') {
-                decisionContainer.innerHTML = `<h2 class="section-title"><i class="fas fa-clock"></i> Published</h2><div class="published-status-message ${currentStatus === 'published' ? 'published' : 'awaiting-payment'}"><i class="fas ${currentStatus === 'published' ? 'fa-check-double' : 'fa-money-bill-wave'}"></i><h3>${currentStatus === 'published' ? 'Published Successfully' : 'Awaiting Payment'}</h3><p>${currentStatus === 'published' ? 'This manuscript has been published successfully.' : 'This manuscript is scheduled for publication and awaiting payment.'}</p><p><strong>Issue:</strong> <span id="issueInfo">Loading issue information...</span></p></div>`;
-                this.loadIssueInfo();
-            } else {
-                decisionContainer.style.display = 'none';
-            }
-        }
-
-        bindDecisionEvents() {
-            if (typeof Quill !== 'undefined') {
-                const editorContainer = document.getElementById('decisionEditor');
-                if (editorContainer) {
-                    this.decisionQuill = new Quill(editorContainer, {
-                        theme: 'snow',
-                        modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered' }, { 'list': 'bullet' }], ['clean']] }
-                    });
-                    this.decisionQuill.on('text-change', () => {
-                        const ta = document.getElementById('decisionComment');
-                        if (ta) ta.value = this.decisionQuill.root.innerHTML;
-                    });
+                    document.getElementById('publishBtn')?.addEventListener('click', () => this.showPublishModal());
+                } else if (['revised', 'revision_requested'].includes(currentStatus)) {
+                    const text = currentStatus === 'revised' ? 'Revision Submitted' : 'Revision Requested';
+                    decisionContainer.innerHTML = `<h2 class="section-title"><i class="fas fa-redo"></i> Editorial Decision</h2><div class="decision-status-message revision"><i class="fas fa-edit"></i><h3>${text}</h3></div>`;
+                } else if (currentStatus === 'awaiting_payment' || currentStatus === 'published') {
+                    decisionContainer.innerHTML = `<h2 class="section-title"><i class="fas fa-clock"></i> Published</h2><div class="published-status-message ${currentStatus === 'published' ? 'published' : 'awaiting-payment'}"><i class="fas ${currentStatus === 'published' ? 'fa-check-double' : 'fa-money-bill-wave'}"></i><h3>${currentStatus === 'published' ? 'Published Successfully' : 'Awaiting Payment'}</h3><p>${currentStatus === 'published' ? 'This manuscript has been published successfully.' : 'This manuscript is scheduled for publication and awaiting payment.'}</p><p><strong>Issue:</strong> <span id="issueInfo">Loading issue information...</span></p></div>`;
+                    this.loadIssueInfo();
+                } else {
+                    decisionContainer.style.display = 'none';
                 }
             }
 
-            const makeDecisionBtn = document.getElementById('makeDecisionBtn');
-            if (makeDecisionBtn) makeDecisionBtn.addEventListener('click', () => {
-                document.getElementById('decisionFormSection').style.display = 'block';
-                makeDecisionBtn.style.display = 'none';
-            });
-
-            const cancelDecisionBtn = document.getElementById('cancelDecisionBtn');
-            if (cancelDecisionBtn) cancelDecisionBtn.addEventListener('click', () => {
-                document.getElementById('decisionFormSection').style.display = 'none';
-                document.getElementById('makeDecisionBtn').style.display = 'block';
-                const df = document.getElementById('decisionForm');
-                if (df) df.reset();
-                if (this.decisionQuill) this.decisionQuill.setText('');
-            });
-
-            const decisionForm = document.getElementById('decisionForm');
-            if (decisionForm) decisionForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.submitEditorialDecision();
-            });
-        }
-
-        async submitEditorialDecision() {
-            try {
-                const token = getAuthToken2();
-                if (!token) {
-                    toastr.error('Authentication required. Please login again.', 'Error');
-                    return;
+            bindDecisionEvents() {
+                if (typeof Quill !== 'undefined') {
+                    const editorContainer = document.getElementById('decisionEditor');
+                    if (editorContainer) {
+                        this.decisionQuill = new Quill(editorContainer, {
+                            theme: 'snow',
+                            modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered' }, { 'list': 'bullet' }], ['clean']] }
+                        });
+                        this.decisionQuill.on('text-change', () => {
+                            const ta = document.getElementById('decisionComment');
+                            if (ta) ta.value = this.decisionQuill.root.innerHTML;
+                        });
+                    }
                 }
 
-                const decision = document.querySelector('input[name="decision"]:checked')?.value;
-                const comment = document.getElementById('decisionComment')?.value?.trim();
-
-                if (!decision) { toastr.error('Please select a decision', 'Validation Error'); return; }
-                if (!comment) { toastr.error('Please provide comments for the author', 'Validation Error'); return; }
-
-                const submitBtn = document.getElementById('submitDecisionBtn');
-                if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...'; submitBtn.disabled = true; }
-
-                const response = await fetch(`${BASE_URL}/editor/decision?submissionId=${this.submissionId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ decision, comment })
+                const makeDecisionBtn = document.getElementById('makeDecisionBtn');
+                if (makeDecisionBtn) makeDecisionBtn.addEventListener('click', () => {
+                    document.getElementById('decisionFormSection').style.display = 'block';
+                    makeDecisionBtn.style.display = 'none';
                 });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    let errorMessage = `Failed to submit decision: ${response.status}`;
-                    try { const errorData = JSON.parse(errorText); errorMessage = errorData.message || errorMessage; } catch { }
-                    throw new Error(errorMessage);
-                }
+                const cancelDecisionBtn = document.getElementById('cancelDecisionBtn');
+                if (cancelDecisionBtn) cancelDecisionBtn.addEventListener('click', () => {
+                    document.getElementById('decisionFormSection').style.display = 'none';
+                    document.getElementById('makeDecisionBtn').style.display = 'block';
+                    const df = document.getElementById('decisionForm');
+                    if (df) df.reset();
+                    if (this.decisionQuill) this.decisionQuill.setText('');
+                });
 
-                const data = await response.json();
-                if (!data.success) throw new Error(data.message || 'Failed to submit decision');
-
-                await Swal.fire({ title: 'Decision Submitted Successfully!', text: 'The author has been notified of your decision.', icon: 'success', confirmButtonColor: 'var(--success)' });
-
-                await this.loadSubmissionData();
-                this.renderEditorialDecision();
-
-            } catch (error) {
-                console.error('Error submitting editorial decision:', error);
-                toastr.error(error.message || 'Failed to submit decision', 'Error');
-            } finally {
-                const submitBtn = document.getElementById('submitDecisionBtn');
-                if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Decision'; submitBtn.disabled = false; }
+                const decisionForm = document.getElementById('decisionForm');
+                if (decisionForm) decisionForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.submitEditorialDecision();
+                });
             }
-        }
 
-        /* ------------------ FIXED PUBLISH MODAL WITH BACKEND SEARCH ------------------ */
+            async submitEditorialDecision() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        return;
+                    }
 
-        showPublishModal() {
-            // Remove existing modal if any to prevent duplicates
-            const existingModal = document.getElementById('publishModal');
-            if (existingModal) existingModal.remove();
+                    const decision = document.querySelector('input[name="decision"]:checked')?.value;
+                    const comment = document.getElementById('decisionComment')?.value?.trim();
 
-            // Build modal HTML
-            const modalHtml = `
+                    if (!decision) { toastr.error('Please select a decision', 'Validation Error'); return; }
+                    if (!comment) { toastr.error('Please provide comments for the author', 'Validation Error'); return; }
+
+                    const submitBtn = document.getElementById('submitDecisionBtn');
+                    if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...'; submitBtn.disabled = true; }
+
+                    const response = await fetch(`${BASE_URL}/editor/decision?submissionId=${this.submissionId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ decision, comment })
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorMessage = `Failed to submit decision: ${response.status}`;
+                        try { const errorData = JSON.parse(errorText); errorMessage = errorData.message || errorMessage; } catch { }
+                        throw new Error(errorMessage);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) throw new Error(data.message || 'Failed to submit decision');
+
+                    await Swal.fire({ title: 'Decision Submitted Successfully!', text: 'The author has been notified of your decision.', icon: 'success', confirmButtonColor: 'var(--success)' });
+
+                    await this.loadSubmissionData();
+                    this.renderEditorialDecision();
+
+                } catch (error) {
+                    console.error('Error submitting editorial decision:', error);
+                    toastr.error(error.message || 'Failed to submit decision', 'Error');
+                } finally {
+                    const submitBtn = document.getElementById('submitDecisionBtn');
+                    if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Decision'; submitBtn.disabled = false; }
+                }
+            }
+
+            /* ------------------ FIXED PUBLISH MODAL WITH BACKEND SEARCH ------------------ */
+
+            showPublishModal() {
+                // Remove existing modal if any to prevent duplicates
+                const existingModal = document.getElementById('publishModal');
+                if (existingModal) existingModal.remove();
+
+                // Build modal HTML
+                const modalHtml = `
 <div class="modal" id="publishModal">
     <div class="modal-overlay" id="publishModalOverlay"></div>
     <div class="modal-content">
@@ -2239,175 +2789,156 @@
 </div>
 `;
 
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-            // Reset state
-            this._issuesFetched = false;
-            this.issues = [];
-            this.filteredIssues = [];
-            this.selectedIssue = null;
+                // Reset state
+                this._issuesFetched = false;
+                this.issues = [];
+                this.filteredIssues = [];
+                this.selectedIssue = null;
 
-            // Initialize modal
-            this.initializePublishModal();
-        }
-
-        initializePublishModal() {
-            const modal = document.getElementById('publishModal');
-            const closeBtn = document.getElementById('publishModalClose');
-            const cancelBtn = document.getElementById('cancelPublishBtn');
-            const overlay = document.getElementById('publishModalOverlay');
-            const confirmBtn = document.getElementById('confirmPublishBtn');
-
-            // Show modal
-            modal.style.display = 'block';
-
-            // Close handlers
-            const closeModal = () => {
-                modal.style.display = 'none';
-                modal.remove();
-                if (this._searchTimeout) {
-                    clearTimeout(this._searchTimeout);
-                    this._searchTimeout = null;
-                }
-                document.removeEventListener('keydown', this._modalKeyHandler);
-            };
-
-            if (closeBtn) closeBtn.addEventListener('click', closeModal);
-            if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-            if (overlay) overlay.addEventListener('click', closeModal);
-
-            // Initialize issue select
-            this.initializeIssueSelect();
-
-            // Publish button handler
-            if (confirmBtn) {
-                confirmBtn.addEventListener('click', async () => {
-                    await this.publishToIssue();
-                });
+                // Initialize modal
+                this.initializePublishModal();
             }
 
-            // Trap focus and ESC key
-            this._modalKeyHandler = (e) => {
-                if (e.key === 'Escape') closeModal();
+            initializePublishModal() {
+                const modal = document.getElementById('publishModal');
+                const closeBtn = document.getElementById('publishModalClose');
+                const cancelBtn = document.getElementById('cancelPublishBtn');
+                const overlay = document.getElementById('publishModalOverlay');
+                const confirmBtn = document.getElementById('confirmPublishBtn');
 
-                // Trap focus within modal
-                if (e.key === 'Tab') {
-                    const focusable = modal.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
-                    const first = focusable[0];
-                    const last = focusable[focusable.length - 1];
+                // Show modal
+                modal.style.display = 'block';
 
-                    if (e.shiftKey && document.activeElement === first) {
-                        e.preventDefault();
-                        last.focus();
-                    } else if (!e.shiftKey && document.activeElement === last) {
-                        e.preventDefault();
-                        first.focus();
+                // Close handlers
+                const closeModal = () => {
+                    modal.style.display = 'none';
+                    modal.remove();
+                    if (this._searchTimeout) {
+                        clearTimeout(this._searchTimeout);
+                        this._searchTimeout = null;
                     }
+                    document.removeEventListener('keydown', this._modalKeyHandler);
+                };
+
+                if (closeBtn) closeBtn.addEventListener('click', closeModal);
+                if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+                if (overlay) overlay.addEventListener('click', closeModal);
+
+                // Initialize issue select
+                this.initializeIssueSelect();
+
+                // Publish button handler
+                if (confirmBtn) {
+                    confirmBtn.addEventListener('click', async () => {
+                        await this.publishToIssue();
+                    });
                 }
-            };
 
-            document.addEventListener('keydown', this._modalKeyHandler);
+                // Trap focus and ESC key
+                this._modalKeyHandler = (e) => {
+                    if (e.key === 'Escape') closeModal();
 
-            // Focus search input when dropdown opens
-            setTimeout(() => {
+                    // Trap focus within modal
+                    if (e.key === 'Tab') {
+                        const focusable = modal.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+                        const first = focusable[0];
+                        const last = focusable[focusable.length - 1];
+
+                        if (e.shiftKey && document.activeElement === first) {
+                            e.preventDefault();
+                            last.focus();
+                        } else if (!e.shiftKey && document.activeElement === last) {
+                            e.preventDefault();
+                            first.focus();
+                        }
+                    }
+                };
+
+                document.addEventListener('keydown', this._modalKeyHandler);
+
+                // Focus search input when dropdown opens
+                setTimeout(() => {
+                    const searchInput = document.getElementById('issueSearchInput');
+                    if (searchInput) searchInput.focus();
+                }, 100);
+            }
+
+            initializeIssueSelect() {
+                const selectHeader = document.getElementById('issueSelectHeader');
+                const dropdown = document.getElementById('issueDropdown');
                 const searchInput = document.getElementById('issueSearchInput');
-                if (searchInput) searchInput.focus();
-            }, 100);
-        }
+                const clearBtn = document.getElementById('clearIssueSearch');
+                const optionsContainer = document.getElementById('issueOptionsList');
 
-        initializeIssueSelect() {
-            const selectHeader = document.getElementById('issueSelectHeader');
-            const dropdown = document.getElementById('issueDropdown');
-            const searchInput = document.getElementById('issueSearchInput');
-            const clearBtn = document.getElementById('clearIssueSearch');
-            const optionsContainer = document.getElementById('issueOptionsList');
+                if (!selectHeader || !dropdown || !searchInput || !optionsContainer) return;
 
-            if (!selectHeader || !dropdown || !searchInput || !optionsContainer) return;
+                // Click handler for select header
+                selectHeader.addEventListener('click', async (e) => {
+                    e.stopPropagation();
 
-            // Click handler for select header
-            selectHeader.addEventListener('click', async (e) => {
-                e.stopPropagation();
+                    const isOpen = dropdown.style.display === 'block';
 
-                const isOpen = dropdown.style.display === 'block';
+                    if (isOpen) {
+                        // Close dropdown
+                        dropdown.style.display = 'none';
+                        selectHeader.setAttribute('aria-expanded', 'false');
+                        searchInput.value = '';
+                        clearBtn.style.display = 'none';
+                    } else {
+                        // Open dropdown
+                        dropdown.style.display = 'block';
+                        selectHeader.setAttribute('aria-expanded', 'true');
 
-                if (isOpen) {
-                    // Close dropdown
-                    dropdown.style.display = 'none';
-                    selectHeader.setAttribute('aria-expanded', 'false');
-                    searchInput.value = '';
-                    clearBtn.style.display = 'none';
-                } else {
-                    // Open dropdown
-                    dropdown.style.display = 'block';
-                    selectHeader.setAttribute('aria-expanded', 'true');
+                        // Clear previous search
+                        searchInput.value = '';
+                        clearBtn.style.display = 'none';
 
-                    // Clear previous search
-                    searchInput.value = '';
-                    clearBtn.style.display = 'none';
+                        // Load initial issues (no search term)
+                        await this.loadIssues('');
 
-                    // Load initial issues (no search term)
-                    await this.loadIssues('');
+                        // Focus search input
+                        setTimeout(() => searchInput.focus(), 10);
+                    }
+                });
 
-                    // Focus search input
-                    setTimeout(() => searchInput.focus(), 10);
-                }
-            });
+                // Keyboard navigation for select header
+                selectHeader.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectHeader.click();
+                    }
+                });
 
-            // Keyboard navigation for select header
-            selectHeader.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    selectHeader.click();
-                }
-            });
+                // Search input handler with debounce for backend search
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.trim();
+                    clearBtn.style.display = searchTerm ? 'inline-flex' : 'none';
 
-            // Search input handler with debounce for backend search
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.trim();
-                clearBtn.style.display = searchTerm ? 'inline-flex' : 'none';
+                    // Clear previous timeout
+                    if (this._searchTimeout) {
+                        clearTimeout(this._searchTimeout);
+                    }
 
-                // Clear previous timeout
-                if (this._searchTimeout) {
-                    clearTimeout(this._searchTimeout);
-                }
-
-                // Set loading state
-                optionsContainer.innerHTML = `
+                    // Set loading state
+                    optionsContainer.innerHTML = `
                     <div class="no-results" style="padding: 1rem; text-align: center;">
                         <i class="fas fa-spinner fa-spin"></i> Searching...
                     </div>
                 `;
 
-                // Debounce search to avoid too many API calls
-                this._searchTimeout = setTimeout(async () => {
-                    await this.loadIssues(searchTerm);
-                    this._searchTimeout = null;
-                }, 500); // 500ms debounce
-            });
+                    // Debounce search to avoid too many API calls
+                    this._searchTimeout = setTimeout(async () => {
+                        await this.loadIssues(searchTerm);
+                        this._searchTimeout = null;
+                    }, 500); // 500ms debounce
+                });
 
-            // Clear search button
-            clearBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                searchInput.value = '';
-                clearBtn.style.display = 'none';
-
-                // Clear any pending timeout
-                if (this._searchTimeout) {
-                    clearTimeout(this._searchTimeout);
-                    this._searchTimeout = null;
-                }
-
-                // Load issues without search term
-                this.loadIssues('');
-                searchInput.focus();
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('#issueSelect')) {
-                    dropdown.style.display = 'none';
-                    selectHeader.setAttribute('aria-expanded', 'false');
+                // Clear search button
+                clearBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     searchInput.value = '';
                     clearBtn.style.display = 'none';
 
@@ -2416,67 +2947,86 @@
                         clearTimeout(this._searchTimeout);
                         this._searchTimeout = null;
                     }
-                }
-            });
-        }
 
-        async loadIssues(searchTerm = '') {
-            const optionsContainer = document.getElementById('issueOptionsList');
-            if (!optionsContainer) return;
-
-            try {
-                const token = getAuthToken2();
-                if (!token) {
-                    throw new Error('Authentication required');
-                }
-
-                // Build URL with search parameter if provided
-                let url = `${BASE_URL}/issues?page=1&limit=50`;
-                if (searchTerm && searchTerm.trim() !== '') {
-                    url += `&search=${encodeURIComponent(searchTerm.trim())}`;
-                }
-
-                console.log('Fetching issues from:', url);
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
+                    // Load issues without search term
+                    this.loadIssues('');
+                    searchInput.focus();
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch issues: ${response.status}`);
-                }
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#issueSelect')) {
+                        dropdown.style.display = 'none';
+                        selectHeader.setAttribute('aria-expanded', 'false');
+                        searchInput.value = '';
+                        clearBtn.style.display = 'none';
 
-                const data = await response.json();
-                console.log('Issues API response:', data);
-
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to load issues');
-                }
-
-                // Extract issues from response
-                this.issues = data.issues || data.data || [];
-                this._issuesFetched = true;
-
-                // Update placeholder if no issues
-                const placeholder = document.querySelector('#issueSelectHeader .placeholder');
-                if (this.issues.length === 0 && placeholder) {
-                    if (searchTerm) {
-                        placeholder.textContent = 'No matching issues found';
-                    } else {
-                        placeholder.textContent = 'No issues available';
+                        // Clear any pending timeout
+                        if (this._searchTimeout) {
+                            clearTimeout(this._searchTimeout);
+                            this._searchTimeout = null;
+                        }
                     }
-                }
+                });
+            }
 
-                // Render issues
-                this.renderIssueOptions();
+            async loadIssues(searchTerm = '') {
+                const optionsContainer = document.getElementById('issueOptionsList');
+                if (!optionsContainer) return;
 
-            } catch (error) {
-                console.error('Error loading issues:', error);
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        throw new Error('Authentication required');
+                    }
 
-                // Show error message
-                optionsContainer.innerHTML = `
+                    // Build URL with search parameter if provided
+                    let url = `${BASE_URL}/issues?page=1&limit=50`;
+                    if (searchTerm && searchTerm.trim() !== '') {
+                        url += `&search=${encodeURIComponent(searchTerm.trim())}`;
+                    }
+
+                    console.log('Fetching issues from:', url);
+                    const response = await fetch(url, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch issues: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Issues API response:', data);
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load issues');
+                    }
+
+                    // Extract issues from response
+                    this.issues = data.issues || data.data || [];
+                    this._issuesFetched = true;
+
+                    // Update placeholder if no issues
+                    const placeholder = document.querySelector('#issueSelectHeader .placeholder');
+                    if (this.issues.length === 0 && placeholder) {
+                        if (searchTerm) {
+                            placeholder.textContent = 'No matching issues found';
+                        } else {
+                            placeholder.textContent = 'No issues available';
+                        }
+                    }
+
+                    // Render issues
+                    this.renderIssueOptions();
+
+                } catch (error) {
+                    console.error('Error loading issues:', error);
+
+                    // Show error message
+                    optionsContainer.innerHTML = `
                     <div class="no-results" style="padding: 1rem; text-align: center; color: var(--danger);">
                         <i class="fas fa-exclamation-triangle"></i>
                         <div style="margin-top: 0.5rem;">Failed to load issues</div>
@@ -2484,31 +3034,31 @@
                     </div>
                 `;
 
-                // Update placeholder
-                const placeholder = document.querySelector('#issueSelectHeader .placeholder');
-                if (placeholder) {
-                    placeholder.textContent = 'Failed to load issues';
+                    // Update placeholder
+                    const placeholder = document.querySelector('#issueSelectHeader .placeholder');
+                    if (placeholder) {
+                        placeholder.textContent = 'Failed to load issues';
+                    }
                 }
             }
-        }
 
-        renderIssueOptions() {
-            const optionsContainer = document.getElementById('issueOptionsList');
-            if (!optionsContainer) return;
+            renderIssueOptions() {
+                const optionsContainer = document.getElementById('issueOptionsList');
+                if (!optionsContainer) return;
 
-            if (!this.issues || this.issues.length === 0) {
-                const message = 'No issues found';
+                if (!this.issues || this.issues.length === 0) {
+                    const message = 'No issues found';
 
-                optionsContainer.innerHTML = `
+                    optionsContainer.innerHTML = `
                     <div class="no-results" style="padding: 1rem; text-align: center; color: var(--muted);">
                         <i class="fas fa-folder-open"></i>
                         <div style="margin-top: 0.5rem;">${message}</div>
                     </div>
                 `;
-                return;
-            }
+                    return;
+                }
 
-            optionsContainer.innerHTML = this.issues.map(issue => `
+                optionsContainer.innerHTML = this.issues.map(issue => `
                 <div class="select-option-item" 
                      data-id="${this.escapeHtml(issue._id)}" 
                      data-title="${this.escapeHtml(issue.title)}"
@@ -2528,224 +3078,224 @@
                 </div>
             `).join('');
 
-            // Add click handlers for issue selection
-            optionsContainer.querySelectorAll('.select-option-item').forEach(option => {
-                option.addEventListener('click', (e) => {
-                    const issueId = option.getAttribute('data-id');
-                    const issueTitle = option.getAttribute('data-title');
+                // Add click handlers for issue selection
+                optionsContainer.querySelectorAll('.select-option-item').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        const issueId = option.getAttribute('data-id');
+                        const issueTitle = option.getAttribute('data-title');
 
-                    // Find the selected issue
-                    this.selectedIssue = this.issues.find(issue => issue._id === issueId);
+                        // Find the selected issue
+                        this.selectedIssue = this.issues.find(issue => issue._id === issueId);
 
-                    if (this.selectedIssue) {
-                        // Update select header
-                        const placeholder = document.querySelector('#issueSelectHeader .placeholder');
-                        if (placeholder) {
-                            placeholder.textContent = issueTitle;
-                            placeholder.style.color = '#111827';
+                        if (this.selectedIssue) {
+                            // Update select header
+                            const placeholder = document.querySelector('#issueSelectHeader .placeholder');
+                            if (placeholder) {
+                                placeholder.textContent = issueTitle;
+                                placeholder.style.color = '#111827';
+                            }
+
+                            // Set hidden input value
+                            document.getElementById('selectedIssueId').value = issueId;
+
+                            // Clear error message
+                            document.getElementById('issueError').style.display = 'none';
+
+                            // Enable publish button
+                            document.getElementById('confirmPublishBtn').disabled = false;
+
+                            // Close dropdown
+                            document.getElementById('issueDropdown').style.display = 'none';
+                            document.getElementById('issueSelectHeader').setAttribute('aria-expanded', 'false');
                         }
-
-                        // Set hidden input value
-                        document.getElementById('selectedIssueId').value = issueId;
-
-                        // Clear error message
-                        document.getElementById('issueError').style.display = 'none';
-
-                        // Enable publish button
-                        document.getElementById('confirmPublishBtn').disabled = false;
-
-                        // Close dropdown
-                        document.getElementById('issueDropdown').style.display = 'none';
-                        document.getElementById('issueSelectHeader').setAttribute('aria-expanded', 'false');
-                    }
+                    });
                 });
-            });
-        }
-
-        async publishToIssue() {
-            try {
-                const token = getAuthToken2();
-                if (!token) {
-                    toastr.error('Authentication required. Please login again.', 'Error');
-                    return;
-                }
-
-                const issueId = document.getElementById('selectedIssueId')?.value;
-                if (!issueId) {
-                    document.getElementById('issueError').style.display = 'block';
-                    return;
-                }
-
-                const confirmBtn = document.getElementById('confirmPublishBtn');
-                if (confirmBtn) {
-                    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
-                    confirmBtn.disabled = true;
-                }
-
-                const response = await fetch(`${BASE_URL}/editor/schedule-issue`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        submissionId: this.submissionId,
-                        issueId: issueId
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    let errorMessage = `Failed to publish: ${response.status}`;
-                    try {
-                        const errorData = JSON.parse(errorText);
-                        errorMessage = errorData.message || errorMessage;
-                    } catch { }
-                    throw new Error(errorMessage);
-                }
-
-                const data = await response.json();
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to publish');
-                }
-
-                await Swal.fire({
-                    title: 'Published Successfully!',
-                    text: 'The manuscript has been scheduled for publication.',
-                    icon: 'success',
-                    confirmButtonColor: 'var(--success)'
-                });
-
-                // Close modal
-                document.getElementById('publishModal').style.display = 'none';
-                document.getElementById('publishModal').remove();
-
-                // Refresh submission data
-                await this.loadSubmissionData();
-                this.renderEditorialDecision();
-
-            } catch (error) {
-                console.error('Error publishing to issue:', error);
-                toastr.error(error.message || 'Failed to publish', 'Error');
-            } finally {
-                const confirmBtn = document.getElementById('confirmPublishBtn');
-                if (confirmBtn) {
-                    confirmBtn.innerHTML = '<i class="fas fa-upload"></i> Publish';
-                    confirmBtn.disabled = !document.getElementById('selectedIssueId')?.value;
-                }
             }
-        }
 
-        async loadIssueInfo() {
-            try {
-                const token = getAuthToken2();
-                if (!token) return;
+            async publishToIssue() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        return;
+                    }
 
-                const response = await fetch(`${BASE_URL}/issues?page=1&limit=50`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) return;
+                    const issueId = document.getElementById('selectedIssueId')?.value;
+                    if (!issueId) {
+                        document.getElementById('issueError').style.display = 'block';
+                        return;
+                    }
 
-                const data = await response.json();
-                if (!data.success) return;
+                    const confirmBtn = document.getElementById('confirmPublishBtn');
+                    if (confirmBtn) {
+                        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+                        confirmBtn.disabled = true;
+                    }
 
-                const issues = data.issues || data.data || [];
-                const issueWithSubmission = issues.find(issue =>
-                    (issue.submissions || []).some(sub =>
-                        String(sub.submissionId || sub) === String(this.submissionId)
-                    )
-                );
+                    const response = await fetch(`${BASE_URL}/editor/schedule-issue`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            submissionId: this.submissionId,
+                            issueId: issueId
+                        })
+                    });
 
-                if (issueWithSubmission) {
-                    const issueInfo = document.getElementById('issueInfo');
-                    if (issueInfo) {
-                        issueInfo.innerHTML = `${this.escapeHtml(issueWithSubmission.title)} (Vol. ${issueWithSubmission.volume}, Issue ${issueWithSubmission.issueNumber}) - ${issueWithSubmission.scopeId?.title || ''}`;
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorMessage = `Failed to publish: ${response.status}`;
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.message || errorMessage;
+                        } catch { }
+                        throw new Error(errorMessage);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to publish');
+                    }
+
+                    await Swal.fire({
+                        title: 'Published Successfully!',
+                        text: 'The manuscript has been scheduled for publication.',
+                        icon: 'success',
+                        confirmButtonColor: 'var(--success)'
+                    });
+
+                    // Close modal
+                    document.getElementById('publishModal').style.display = 'none';
+                    document.getElementById('publishModal').remove();
+
+                    // Refresh submission data
+                    await this.loadSubmissionData();
+                    this.renderEditorialDecision();
+
+                } catch (error) {
+                    console.error('Error publishing to issue:', error);
+                    toastr.error(error.message || 'Failed to publish', 'Error');
+                } finally {
+                    const confirmBtn = document.getElementById('confirmPublishBtn');
+                    if (confirmBtn) {
+                        confirmBtn.innerHTML = '<i class="fas fa-upload"></i> Publish';
+                        confirmBtn.disabled = !document.getElementById('selectedIssueId')?.value;
                     }
                 }
-            } catch (error) {
-                console.error('Error loading issue info:', error);
+            }
+
+            async loadIssueInfo() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    const response = await fetch(`${BASE_URL}/issues?page=1&limit=50`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) return;
+
+                    const data = await response.json();
+                    if (!data.success) return;
+
+                    const issues = data.issues || data.data || [];
+                    const issueWithSubmission = issues.find(issue =>
+                        (issue.submissions || []).some(sub =>
+                            String(sub.submissionId || sub) === String(this.submissionId)
+                        )
+                    );
+
+                    if (issueWithSubmission) {
+                        const issueInfo = document.getElementById('issueInfo');
+                        if (issueInfo) {
+                            issueInfo.innerHTML = `${this.escapeHtml(issueWithSubmission.title)} (Vol. ${issueWithSubmission.volume}, Issue ${issueWithSubmission.issueNumber}) - ${issueWithSubmission.scopeId?.title || ''}`;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading issue info:', error);
+                }
+            }
+
+            /* ------------------ Utilities & UI helpers ------------------ */
+
+            getStatusStyle(status) {
+                const colors = {
+                    'submitted': 'background-color: #3b82f6; color: white;',
+                    'under_review': 'background-color: #f59e0b; color: white;',
+                    'reviewed': 'background-color: #8b5cf6; color: white;',
+                    'accepted': 'background-color: #10b981; color: white;',
+                    'rejected': 'background-color: #ef4444; color: white;',
+                    'revised': 'background-color: #8b5cf6; color: white;',
+                    'awaiting_payment': 'background-color: #f59e0b; color: white;',
+                    'published': 'background-color: #10b981; color: white;'
+                };
+                return colors[status] || 'background-color: #6b7280; color: white;';
+            }
+
+            formatStatus(status) {
+                if (!status) return '';
+                const statusMap = {
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected',
+                    'revised': 'Revised',
+                    'awaiting_payment': 'Awaiting Payment',
+                    'published': 'Published',
+                    'minor_revision': 'Minor Revision',
+                    'major_revision': 'Major Revision',
+                    'revision_requested': 'Revision Requested'
+                };
+                return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
+            }
+
+            formatDate(dateString) {
+                try {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                } catch (error) {
+                    return dateString;
+                }
+            }
+
+            showLoading() {
+                document.getElementById('loadingScreen')?.style.setProperty('display', 'block');
+                document.getElementById('errorScreen')?.style.setProperty('display', 'none');
+                document.getElementById('contentContainer')?.style.setProperty('display', 'none');
+            }
+            hideLoading() { document.getElementById('loadingScreen')?.style.setProperty('display', 'none'); }
+            showContent() { document.getElementById('contentContainer')?.style.setProperty('display', 'block'); }
+            showError(message) {
+                document.getElementById('loadingScreen')?.style.setProperty('display', 'none');
+                document.getElementById('errorScreen')?.style.setProperty('display', 'block');
+                const em = document.getElementById('errorMessage');
+                if (em) em.textContent = message;
+            }
+
+            escapeHtml(str) {
+                if (str === undefined || str === null) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
             }
         }
 
-        /* ------------------ Utilities & UI helpers ------------------ */
-
-        getStatusStyle(status) {
-            const colors = {
-                'submitted': 'background-color: #3b82f6; color: white;',
-                'under_review': 'background-color: #f59e0b; color: white;',
-                'reviewed': 'background-color: #8b5cf6; color: white;',
-                'accepted': 'background-color: #10b981; color: white;',
-                'rejected': 'background-color: #ef4444; color: white;',
-                'revised': 'background-color: #8b5cf6; color: white;',
-                'awaiting_payment': 'background-color: #f59e0b; color: white;',
-                'published': 'background-color: #10b981; color: white;'
-            };
-            return colors[status] || 'background-color: #6b7280; color: white;';
-        }
-
-        formatStatus(status) {
-            if (!status) return '';
-            const statusMap = {
-                'submitted': 'Submitted',
-                'under_review': 'Under Review',
-                'reviewed': 'Reviewed',
-                'accepted': 'Accepted',
-                'rejected': 'Rejected',
-                'revised': 'Revised',
-                'awaiting_payment': 'Awaiting Payment',
-                'published': 'Published',
-                'minor_revision': 'Minor Revision',
-                'major_revision': 'Major Revision',
-                'revision_requested': 'Revision Requested'
-            };
-            return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
-        }
-
-        formatDate(dateString) {
-            try {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit'
-                });
-            } catch (error) {
-                return dateString;
-            }
-        }
-
-        showLoading() {
-            document.getElementById('loadingScreen')?.style.setProperty('display', 'block');
-            document.getElementById('errorScreen')?.style.setProperty('display', 'none');
-            document.getElementById('contentContainer')?.style.setProperty('display', 'none');
-        }
-        hideLoading() { document.getElementById('loadingScreen')?.style.setProperty('display', 'none'); }
-        showContent() { document.getElementById('contentContainer')?.style.setProperty('display', 'block'); }
-        showError(message) {
-            document.getElementById('loadingScreen')?.style.setProperty('display', 'none');
-            document.getElementById('errorScreen')?.style.setProperty('display', 'block');
-            const em = document.getElementById('errorMessage');
-            if (em) em.textContent = message;
-        }
-
-        escapeHtml(str) {
-            if (str === undefined || str === null) return '';
-            return String(str)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;');
-        }
-    }
-
-    /* instantiate */
-    window.submissionDetails = new SubmissionDetailsManager();
-</script>
+        /* instantiate */
+        window.submissionDetails = new SubmissionDetailsManager();
+    </script>
 
 
 </body>

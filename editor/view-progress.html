@@ -776,6 +776,38 @@
             opacity: 0.5;
         }
 
+        /* NEW: View Versions Button */
+.view-versions-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    margin-left: 1rem;
+}
+
+.view-versions-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .view-versions-btn {
+        margin-left: 0;
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .reviewers-table {
@@ -906,12 +938,19 @@
 
                 <div class="review-progress-container">
                     <!-- Manuscript Header Card -->
+                    <!-- Manuscript Header Card -->
                     <div id="manuscriptHeader" class="manuscript-header-card">
                         <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
                         <div class="header-meta">
                             <div class="meta-item">
                                 <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
                                 <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <!-- NEW: Add View Versions button here -->
+                            <div id="viewVersionsButton" style="display: none;">
+                                <a href="#" class="view-versions-btn" id="viewVersionsLink">
+                                    <i class="fas fa-history"></i> View All Versions
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1154,17 +1193,39 @@
                 if (!header || !this.progressData) return;
 
                 const submissionTitle = this.progressData.submissionTitle || 'Unknown Title';
-                const journal = this.progressData.journal || 'Unknown Journal';
+                const scope = this.progressData.scope || 'Unknown Scope';
+
+                // NEW: Create View Versions button
+                const viewVersionsButton = document.createElement('div');
+                viewVersionsButton.id = 'viewVersionsButton';
+                viewVersionsButton.style.marginLeft = 'auto'; // Pushes it to the right
+                viewVersionsButton.style.display = 'flex';
+                viewVersionsButton.style.alignItems = 'center';
+
+                // Create the button link
+                const versionsLink = document.createElement('a');
+                versionsLink.href = `version.html?submissionId=${this.submissionId}`;
+                versionsLink.className = 'view-versions-btn';
+                versionsLink.innerHTML = '<i class="fas fa-history"></i> View All Versions';
+
+                viewVersionsButton.appendChild(versionsLink);
 
                 header.innerHTML = `
-                    <h1>${this.escapeHtml(submissionTitle)}</h1>
-                    <div class="header-meta">
-                        <div class="meta-item">
-                            <i class="fas fa-book-open"></i>
-                            <span>Journal: ${this.escapeHtml(journal)}</span>
-                        </div>
-                    </div>
-                `;
+        <h1>${this.escapeHtml(submissionTitle)}</h1>
+        <div class="header-meta" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div class="meta-item" style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-book-open"></i>
+                <span>Scope: ${this.escapeHtml(scope)}</span>
+            </div>
+            <!-- View Versions button will be appended here -->
+        </div>
+    `;
+
+                // Find the header-meta div and append the button
+                const headerMeta = header.querySelector('.header-meta');
+                if (headerMeta) {
+                    headerMeta.appendChild(viewVersionsButton);
+                }
             }
 
             renderReviewersTable() {

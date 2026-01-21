@@ -2023,6 +2023,7 @@
             this.currentModalType = '';
             this.currentModalTitle = '';
             this.selectedFile = null;
+            this.isFileSelectionActive = false; // NEW: Track file selection state
 
             if (!this.reviewId) {
                 this.showError('No review ID provided');
@@ -2081,16 +2082,30 @@
 
                 document.getElementById('resetFormBtn')?.addEventListener('click', () => this.resetForm());
 
-                // File upload
+                // File upload - FIXED: Prevent multiple file selector openings
                 const fileInput = document.getElementById('reviewFile');
                 const fileUploadArea = document.getElementById('fileUploadArea');
 
                 if (fileInput) {
-                    fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+                    fileInput.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent event bubbling
+                    });
+
+                    fileInput.addEventListener('change', (e) => {
+                        if (!this.isFileSelectionActive) {
+                            this.isFileSelectionActive = true;
+                            this.handleFileSelect(e);
+                            // Reset the flag after a short delay
+                            setTimeout(() => {
+                                this.isFileSelectionActive = false;
+                            }, 100);
+                        }
+                    });
                 }
 
                 if (fileUploadArea) {
-                    fileUploadArea.addEventListener('click', () => fileInput.click());
+                    // Remove the direct click event that was causing the issue
+                    // Only use the label's natural behavior
 
                     // Drag and drop events
                     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -2114,8 +2129,12 @@
 
                     fileUploadArea.addEventListener('drop', (e) => {
                         const files = e.dataTransfer.files;
-                        if (files.length > 0) {
+                        if (files.length > 0 && !this.isFileSelectionActive) {
+                            this.isFileSelectionActive = true;
                             this.handleFileSelect({ target: { files } });
+                            setTimeout(() => {
+                                this.isFileSelectionActive = false;
+                            }, 100);
                         }
                     });
                 }
@@ -2402,6 +2421,9 @@
             const fileUrl = this.buildFileUrl(latestRevision.file?.url || latestRevision.file);
             const fileName = latestRevision.file?.originalName || `Revision_${version}.pdf`;
 
+            // NEW: Use Office Online viewer for Word documents
+            const viewUrl = this.getDocumentViewUrl(fileUrl);
+
             const processedCoverLetter = this.processContentForDisplay(coverLetter);
             const isCoverLetterLong = processedCoverLetter.plainText.length > 100;
             const coverLetterPreview = isCoverLetterLong ?
@@ -2467,8 +2489,8 @@
                             <div class="revision-date">
                                 <i class="far fa-calendar"></i> Submitted on: ${submittedAt}
                             </div>
-                            ${fileUrl ? `
-                                <a href="${fileUrl}" target="_blank" class="view-document-btn">
+                            ${viewUrl ? `
+                                <a href="${viewUrl}" target="_blank" class="view-document-btn">
                                     <i class="fas fa-file-pdf"></i> View Document
                                 </a>
                             ` : '<span class="score-empty">No document</span>'}
@@ -2492,6 +2514,20 @@
                 const normalizedPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
                 return `${baseUrl}${normalizedPath}`;
             }
+        }
+
+        // NEW: Get document view URL with Office Online viewer for Word documents
+        getDocumentViewUrl(fileUrl) {
+            if (!fileUrl) return null;
+
+            const url = fileUrl.toLowerCase();
+            const isOfficeDoc = url.endsWith(".docx") || url.endsWith(".doc");
+
+            if (isOfficeDoc) {
+                return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
+            }
+
+            return fileUrl;
         }
 
         updateReviewFormVisibility() {
@@ -2525,7 +2561,7 @@
             if (!header || !this.review) return;
 
             const manuscript = this.review.manuscript;
-            const formattedDate = this.formatDate(manuscript.createdAt); // FIXED: Changed formformedDate to formattedDate
+            const formattedDate = this.formatDate(manuscript.createdAt);
             const statusDisplay = this.formatStatus(manuscript.status);
             const scopeTitle = manuscript.scope?.title || 'No Scope Assigned';
 
@@ -2580,11 +2616,13 @@
 
             const file = this.review.manuscript.file;
             const fileUrl = this.buildFileUrl(file.url);
+            // NEW: Use Office Online viewer for Word documents
+            const viewUrl = this.getDocumentViewUrl(fileUrl);
             const originalName = file.originalName || 'Unknown file';
 
             fileName.textContent = originalName;
             fileSize.textContent = `Original file: ${originalName}`;
-            viewDocumentLink.href = fileUrl;
+            viewDocumentLink.href = viewUrl; // Use the view URL instead of direct file URL
             viewDocumentLink.target = '_blank';
         }
 
@@ -2926,18 +2964,43 @@
                     score: parseInt(document.getElementById('score').value)
                 };
 
-                if (!formData.commentsToEditor) {
-                    toastr.error('Please provide comments to the editor', 'Validation Error');
-                    return;
+                // NEW: Enhanced validation
+                let isValid = true;
+                let errorMessage = '';
+
+                // Convert HTML to plain text for validation
+                const stripHtml = (html) => {
+                    const tmp = document.createElement('div');
+                    tmp.innerHTML = html;
+                    return tmp.textContent || tmp.innerText || '';
+                };
+
+                const editorCommentPlain = stripHtml(formData.commentsToEditor).trim();
+                const authorCommentPlain = stripHtml(formData.commentsToAuthor).trim();
+
+                // Validate comments to editor
+                if (!editorCommentPlain) {
+                    isValid = false;
+                    errorMessage = 'Please provide comments to the editor';
+                }
+                // Validate comments to author
+                else if (!authorCommentPlain) {
+                    isValid = false;
+                    errorMessage = 'Please provide comments to the author';
+                }
+                // Validate recommendation
+                else if (!formData.recommendation) {
+                    isValid = false;
+                    errorMessage = 'Please select a recommendation';
+                }
+                // Validate score (should be between 0-100)
+                else if (isNaN(formData.score) || formData.score < 0 || formData.score > 100) {
+                    isValid = false;
+                    errorMessage = 'Please provide a valid score between 0-100';
                 }
 
-                if (!formData.commentsToAuthor) {
-                    toastr.error('Please provide comments to the author', 'Validation Error');
-                    return;
-                }
-
-                if (!formData.recommendation) {
-                    toastr.error('Please select a recommendation', 'Validation Error');
+                if (!isValid) {
+                    toastr.error(errorMessage, 'Please fill out the review form');
                     return;
                 }
 

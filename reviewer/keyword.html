@@ -501,6 +501,18 @@
                     container.appendChild(chip);
                 });
             }
+            
+            function removeNewKeyword(index) {
+                if (index < 0 || index >= newKeywords.length) return;
+
+                // Remove keyword from array
+                newKeywords.splice(index, 1);
+
+                // Update UI
+                displayNewKeywords();
+                updateNewKeywordsUI();
+            }
+
 
             function createNewKeywordChip(keyword, index) {
                 const chip = document.createElement('div');

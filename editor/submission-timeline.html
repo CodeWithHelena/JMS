@@ -586,17 +586,13 @@
         show(message) {
             const msgEl = document.getElementById('errorMessage');
             if (msgEl) msgEl.textContent = message;
-            const screen = document.getElementById('errorScreen');
-            if (screen) screen.style.display = 'block';
+            document.getElementById('errorScreen').style.display = 'block';
             LoadingScreen.hideTimelineLoading();
-            const tc = document.getElementById('timelineContainer');
-            if (tc) tc.style.display = 'none';
-            const nd = document.getElementById('noDataMessage');
-            if (nd) nd.style.display = 'none';
+            document.getElementById('timelineContainer').style.display = 'none';
+            document.getElementById('noDataMessage').style.display = 'none';
         },
         hide() {
-            const screen = document.getElementById('errorScreen');
-            if (screen) screen.style.display = 'none';
+            document.getElementById('errorScreen').style.display = 'none';
         }
     };
 
@@ -633,12 +629,8 @@
         }
 
         getSubmissionIdFromURL() {
-            try {
-                const params = new URLSearchParams(window.location.search);
-                return params.get('id');
-            } catch (e) {
-                return null;
-            }
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
         }
 
         async getUserDetails(userId) {
@@ -655,6 +647,7 @@
 
                 if (!res.ok) return null;
                 const data = await res.json();
+
                 if (data?.success && data.user) {
                     this.userCache.set(userId, data.user);
                     return data.user;
@@ -679,9 +672,8 @@
                 if (!res.ok) throw new Error(`Failed to fetch timeline: ${res.status}`);
 
                 const data = await res.json();
-
                 if (!data?.success || !data.submission) {
-                    throw new Error(data?.message || 'Invalid timeline response');
+                    throw new Error('Invalid timeline response');
                 }
 
                 this.submission = data.submission;
@@ -690,18 +682,24 @@
             } catch (err) {
                 console.error('loadTimeline error:', err);
                 ErrorScreen.show('Failed to load timeline.');
-                // attempt to at least render header if any partial data exists
-                if (this.submission) this.renderManuscriptHeader();
             }
         }
 
+        /* =========================
+           HEADER RENDER (FIXED)
+        ========================== */
         renderManuscriptHeader() {
             const el = document.getElementById('manuscriptHeader');
             if (!el || !this.submission) return;
 
             const title = this.escapeHtml(this.submission.title || 'Untitled');
-            const status = this.formatStatus(this.submission.status);
-            const statusClass = this.getStatusClass(this.submission.status);
+
+            // ✅ FIX: use currentStatus (with fallback)
+            const rawStatus =
+                this.submission.currentStatus || this.submission.status;
+
+            const status = this.formatStatus(rawStatus);
+            const statusClass = this.getStatusClass(rawStatus);
 
             const created = this.formatDate(this.submission.createdAt);
             const updated = this.formatDate(this.submission.updatedAt);
@@ -729,29 +727,27 @@
             const noData = document.getElementById('noDataMessage');
 
             if (!Array.isArray(history) || history.length === 0) {
-                if (noData) noData.style.display = 'block';
-                if (container) container.style.display = 'none';
+                noData.style.display = 'block';
+                container.style.display = 'none';
                 LoadingScreen.hideTimelineLoading();
                 return;
             }
 
-            // sort oldest -> newest
-            history.sort((a, b) => new Date(a.date || a.createdAt) - new Date(b.date || b.createdAt));
+            history.sort(
+                (a, b) =>
+                    new Date(a.date || a.createdAt) -
+                    new Date(b.date || b.createdAt)
+            );
 
-            if (container) container.innerHTML = '';
+            container.innerHTML = '';
 
-            for (let i = 0; i < history.length; i++) {
-                try {
-                    const item = history[i];
-                    const el = await this.createTimelineItem(item);
-                    if (container && el) container.appendChild(el);
-                } catch (err) {
-                    console.error('Error creating timeline item:', err);
-                }
+            for (const item of history) {
+                const el = await this.createTimelineItem(item);
+                if (el) container.appendChild(el);
             }
 
-            if (container) container.style.display = 'block';
-            if (noData) noData.style.display = 'none';
+            container.style.display = 'block';
+            noData.style.display = 'none';
             LoadingScreen.hideTimelineLoading();
         }
 
@@ -762,17 +758,23 @@
             const statusText = this.formatStatus(item?.status);
             const statusClass = this.getStatusClass(item?.status);
 
-            // Determine 'updatedBy' (safe)
             let updatedBy = 'System';
             if (item?.by) {
                 const user = await this.getUserDetails(item.by);
                 if (user) {
-                    updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'System';
+                    updatedBy =
+                        `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                        user.email ||
+                        'System';
                 }
             }
 
-            const commentHtml = this.sanitizeHtml(item?.comment || '<em>No comment provided.</em>');
-            const formattedDate = this.formatDate(item?.date || item?.createdAt || '');
+            const commentHtml = this.sanitizeHtml(
+                item?.comment || '<em>No comment provided.</em>'
+            );
+            const formattedDate = this.formatDate(
+                item?.date || item?.createdAt
+            );
 
             div.innerHTML = `
                 <div class="card">
@@ -780,16 +782,17 @@
                         ${this.escapeHtml(statusText)}
                     </span>
 
-                    <div class="timeline-comment">
-                        ${commentHtml}
-                    </div>
+                    <div class="timeline-comment">${commentHtml}</div>
 
                     <p class="timeline-date">
                         <i class="far fa-clock"></i> ${this.escapeHtml(formattedDate)}
                     </p>
 
                     <div class="updated-by">
-                        <strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong>
+                        <strong>
+                            <i class="fas fa-user"></i>
+                            Updated by: ${this.escapeHtml(updatedBy)}
+                        </strong>
                     </div>
                 </div>
             `;
@@ -797,54 +800,35 @@
             return div;
         }
 
-        /* =========================
-           SANITIZER (SAFE FORMATTING)
-           - Whitelists tags
-           - Removes all attributes (prevent inline JS/styles)
-           - Preserves text and allowed tag structure
-        ========================== */
         sanitizeHtml(input) {
-            if (input === null || input === undefined) return '';
-
+            if (!input) return '';
             const allowedTags = ['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'UL', 'OL', 'LI'];
             const temp = document.createElement('div');
-            // Use textContent first for plain strings that accidentally contain scripts then parse allowed markup.
-            // But we want to allow simple HTML, so set innerHTML and then clean attributes/tags.
             temp.innerHTML = String(input);
 
-            const sanitizeNode = (node) => {
-                // iterate backwards because we'll be modifying children
+            const clean = (node) => {
                 for (let i = node.children.length - 1; i >= 0; i--) {
                     const child = node.children[i];
-
-                    // Recurse first to clean grandchildren
-                    sanitizeNode(child);
-
+                    clean(child);
                     if (!allowedTags.includes(child.tagName)) {
-                        // Move child nodes (text / allowed elements) out, before removing the parent
                         while (child.firstChild) {
                             node.insertBefore(child.firstChild, child);
                         }
                         child.remove();
                     } else {
-                        // Allowed tag -> strip all attributes for safety
-                        const attrs = [...child.attributes];
-                        for (const a of attrs) {
-                            child.removeAttribute(a.name);
-                        }
-                        // continue recursion already happened
+                        [...child.attributes].forEach(a =>
+                            child.removeAttribute(a.name)
+                        );
                     }
                 }
             };
 
-            sanitizeNode(temp);
-            // Finally return sanitized innerHTML (only allowed tags remain, without attributes)
+            clean(temp);
             return temp.innerHTML;
         }
 
         escapeHtml(str) {
-            if (str === null || str === undefined) return '';
-            return String(str)
+            return String(str || '')
                 .replaceAll('&', '&amp;')
                 .replaceAll('<', '&lt;')
                 .replaceAll('>', '&gt;')
@@ -864,44 +848,36 @@
                 awaiting_payment: 'status-awaiting_payment',
                 published: 'status-published'
             };
-            if (!status && status !== 0) return 'status-submitted';
-            const key = String(status).toLowerCase();
+            const key = String(status || 'submitted').toLowerCase();
             return map[key] || 'status-submitted';
         }
 
         formatStatus(status) {
-            // Defensive: ensure status is a string before using replace
-            if (status === null || status === undefined) return 'Unknown';
-            let s = String(status);
-            // replace underscores, trim, and title-case
-            s = s.replace(/_/g, ' ').trim();
-            // Title case each word
-            return s.replace(/\b\w/g, c => c.toUpperCase());
+            if (!status) return 'Unknown';
+            return String(status)
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, c => c.toUpperCase());
         }
 
         formatDate(dateInput) {
             if (!dateInput) return '';
-            try {
-                const d = new Date(dateInput);
-                if (isNaN(d.getTime())) return '';
-                return d.toLocaleString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit'
-                });
-            } catch (err) {
-                return '';
-            }
+            const d = new Date(dateInput);
+            if (isNaN(d.getTime())) return '';
+            return d.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Delay instantiation until DOM exists
         new TimelineManager();
     });
 </script>
+
 
 
 </body>
