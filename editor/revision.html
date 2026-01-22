@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Submission Revisions</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+    <!-- Global CSS (variables, body, main) -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Header + Sidebar CSS -->
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card-bg: #ffffff;
+            --accent: #4f46e5;
+            --primary: var(--secondary-color2);
+            --muted: #6b7280;
+            --line-color: #e6e9f2;
+            --dot-color: var(--primary);
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+            --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+            --radius: 12px;
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.1);
+            --border: #e2e8f0;
+            --light: #f8fafc;
+            --primary-light: rgba(255, 122, 24, 0.1);
+        }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Manuscript Header Card */
+        .manuscript-header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .manuscript-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary);
+        }
+
+        #contentContainer {
+            padding: 0 1rem;
+        }
+
+        /* Version Tabs */
+        .version-tabs {
+            display: none;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .version-tabs-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .version-tabs-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .version-tabs-header h2 i {
+            color: var(--primary);
+        }
+
+        .version-tab-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .version-tab {
+            padding: 0.75rem 1.5rem;
+            background: #f3f4f6;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--muted);
+        }
+
+        .version-tab:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        .version-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Version Content */
+        .version-content {
+            display: none;
+            padding: 1.5rem;
+        }
+
+        .version-content.active {
+            display: block;
+        }
+
+        /* Version Info Cards */
+        .version-info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .version-info-card {
+            background: #f8fafc;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .version-info-card h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .version-info-card .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .version-info-card .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: capitalize;
+            margin-top: 0.5rem;
+        }
+
+        .status-accept {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-minor_revision {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-major_revision {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-reject {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .status-pending {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        /* Resubmission Section */
+        .resubmission-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-header i {
+            color: var(--primary);
+        }
+
+        /* File Attachment */
+        .file-attachment {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-attachment-label {
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-attachment-label i {
+            color: var(--primary);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+            color: var(--danger);
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            word-break: break-all;
+        }
+
+        .file-size {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-view-file,
+        .btn-download-file {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            border: 1px solid var(--border);
+        }
+
+        .btn-view-file {
+            background: var(--info);
+            color: white;
+            border-color: var(--info);
+        }
+
+        .btn-view-file:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-download-file {
+            background: var(--light);
+            color: var(--muted);
+        }
+
+        .btn-download-file:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+
+        /* Content Section */
+        .content-section {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-label {
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-label i {
+            color: var(--primary);
+        }
+
+        .content-text {
+            color: #111827;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+
+        .truncated-text {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            margin-bottom: 0.5rem;
+        }
+
+        .view-more-btn {
+            background: none;
+            border: none;
+            color: var(--info);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: underline;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .view-more-btn:hover {
+            color: #2563eb;
+        }
+
+        /* Reviewer Tabs */
+        .reviewer-tabs-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .reviewer-tab-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .reviewer-tab {
+            padding: 0.75rem 1.5rem;
+            background: #f3f4f6;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reviewer-tab:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        .reviewer-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .reviewer-content {
+            display: none;
+            padding: 1.5rem;
+        }
+
+        .reviewer-content.active {
+            display: block;
+        }
+
+        /* Timeline container */
+        .timeline-wrap {
+            padding: 1.5rem;
+        }
+
+        /* vertical line */
+        .timeline {
+            position: relative;
+            padding-left: 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--line-color);
+            border-radius: 4px;
+        }
+
+        /* each timeline item */
+        .timeline-item {
+            position: relative;
+            margin: 28px 0;
+            display: block;
+            padding-top: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* the dot - unified color */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 34px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 6px rgba(255, 122, 24, 0.1);
+            transform: translateX(-50%);
+            transition: background .25s, transform .25s, box-shadow .25s;
+            z-index: 2;
+        }
+
+        /* the card itself */
+        .card {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            transition: transform .35s cubic-bezier(.16, .84, .24, 1), box-shadow .35s ease;
+            will-change: transform;
+            position: relative;
+            min-height: 78px;
+            margin-left: 56px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* Review status badges */
+        .review-status-badge {
+            width: fit-content;
+            display: inline-block;
+            padding: 0.28rem 1rem;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+
+        .badge-accept {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-minor_revision {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-major_revision {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-reject {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-pending {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        /* Visibility badge */
+        .visibility-badge {
+            width: fit-content;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            padding: 0.28rem 1rem;
+            margin-bottom: 12px;
+        }
+
+        .visibility-visible {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .visibility-hidden {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .review-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .review-title i {
+            color: var(--primary);
+        }
+
+        .comments-section {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.75rem 0;
+        }
+
+        .comments-label {
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comments-content {
+            color: #111827;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Decision Info */
+        .decision-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+        }
+
+        .decision-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .decision-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .decision-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* No Revision Message */
+        .no-revision-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .no-revision-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Back Button */
+        .back-button-wrap {
+            width: 20%;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-button:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
+        /* Error screen */
+        .error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        .retry-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .retry-btn:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        /* Loading screen */
+        .loading-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .loading-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Connection Error Screen */
+        .connection-error-screen {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        .connection-error-screen i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--danger);
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-icon {
+            background: #f0f0f0;
+            border-radius: 50%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+            opacity: 0;
+            transition: opacity 0.3s;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow-hover);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #111827;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-header h3 i {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1.25rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+
+        .modal-content-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-content-label {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content-label i {
+            color: var(--primary);
+        }
+
+        .modal-content-text {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        /* small responsive tweak */
+        @media (max-width:768px) {
+            .version-info-cards {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .version-tab-list,
+            .reviewer-tab-list {
+                flex-direction: column;
+            }
+
+            .version-tab,
+            .reviewer-tab {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width:520px) {
+            .timeline::before {
+                left: 28px;
+            }
+
+            .timeline-item::before {
+                left: 28px;
+            }
+
+            .card {
+                margin-left: 48px;
+                padding: 14px;
+            }
+
+            .back-button-wrap {
+                width: 100%;
+            }
+
+            .manuscript-header-card {
+                padding: 1.5rem;
+            }
+
+            .manuscript-header-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .modal {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .file-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .file-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .btn-view-file,
+            .btn-download-file {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .decision-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- placeholders for partials -->
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="d-flex justify-content-between">
+                    <div class="container page-title">
+                        <h1>Submission Revisions</h1>
+                        <p>Track all revisions and review history for this submission</p>
+                    </div>
+                    <div class="back-button-wrap">
+                        <a href="javascript:history.back()" class="back-button">
+                            <i class="fas fa-arrow-left"></i>Back
+                        </a>
+                    </div>
+                </div>
+
+                <div id="contentContainer">
+                    <!-- Manuscript Header Card -->
+                    <div id="manuscriptHeader" class="manuscript-header-card">
+                        <!-- Title skeleton -->
+                        <div class="skeleton" style="height: 32px; width: 70%; margin-bottom: 1rem;"></div>
+
+                        <!-- Metadata with icon skeletons -->
+                        <div class="header-meta">
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="skeleton-icon" style="width: 16px; height: 16px; min-width: 16px;"></div>
+                                <div class="skeleton" style="height: 20px; width: 150px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decision Info -->
+                    <div id="decisionInfo" class="decision-info" style="display: none;">
+                        <!-- Decision info will be populated here -->
+                    </div>
+
+                    <!-- Version Tabs -->
+                    <div id="versionTabs" class="version-tabs" style="display: none;">
+                        <div class="version-tabs-header">
+                            <h2><i class="fas fa-code-branch"></i> Versions</h2>
+                        </div>
+                        <div class="version-tab-list" id="versionTabList">
+                            <!-- Version tabs will be populated here -->
+                        </div>
+
+                        <!-- Version Contents -->
+                        <div id="versionContents">
+                            <!-- Version contents will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- No Revision Message -->
+                    <div id="noRevisionMessage" class="no-revision-message" style="display: none;">
+                        <i class="fas fa-file-export"></i>
+                        <h3>No Revisions Available</h3>
+                        <p>This submission has not been revised yet.</p>
+                    </div>
+
+                    <!-- Loading Screen -->
+                    <div id="loadingScreen" class="loading-screen">
+                        <div class="spinner"></div>
+                        <p>Loading submission data...</p>
+                    </div>
+
+                    <!-- Connection Error Screen -->
+                    <div id="connectionErrorScreen" class="connection-error-screen" style="display: none;">
+                        <i class="fas fa-wifi-slash fa-3x"></i>
+                        <h3>Network Connection Error</h3>
+                        <p>Unable to connect to the server. Please check your internet connection and try again.</p>
+                        <button class="retry-btn" onclick="loadSubmissionData()">
+                            <i class="fas fa-redo"></i> Retry Connection
+                        </button>
+                    </div>
+
+                    <!-- Error Screen -->
+                    <div id="errorScreen" class="error-screen" style="display: none;">
+                        <i class="fas fa-exclamation-triangle fa-3x" style="color: var(--danger); margin-bottom: 1rem;"></i>
+                        <h3 id="errorTitle">Failed to load submission data</h3>
+                        <p id="errorMessage">Check Internet Connection and try again.</p>
+                        <button class="retry-btn" onclick="loadSubmissionData()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal for viewing full content -->
+    <div class="modal-overlay" id="contentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-file-alt"></i> Full Content</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'editor';
+        window.SIDEBAR_ACTIVE_ID = 'revisions';
+    </script>
+    <script src="/assets/js/layout.js"></script>
+
+    <!-- jQuery (for toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script type="module">
+        import { BASE_URL, token } from '../assets/js/utility.js';
+
+        // Submission Revisions Manager Class
+        class SubmissionRevisionsManager {
+            constructor() {
+                // Use imported values
+                this.BASE_URL = BASE_URL;
+                this.token = token;
+
+                this.submissionId = this.getSubmissionIdFromURL();
+                this.submissionData = null;
+                this.reviewProgressData = null;
+                this.currentContent = null;
+                this.currentVersion = null;
+
+                if (!this.token) {
+                    this.showError('Authentication required. Please login.', true);
+                    return;
+                }
+
+                if (!this.submissionId) {
+                    this.showError('No submission ID provided in URL', true);
+                    return;
+                }
+
+                this.initializeToastr();
+                this.bindModalEvents();
+                this.loadSubmissionData();
+            }
+
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 5000,
+                    extendedTimeOut: 2000
+                };
+            }
+
+            bindModalEvents() {
+                // Modal close button
+                const closeModalBtn = document.getElementById('closeModal');
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', () => {
+                        this.closeModal();
+                    });
+                }
+
+                // Close modal when clicking outside
+                const modalOverlay = document.getElementById('contentModal');
+                if (modalOverlay) {
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) {
+                            this.closeModal();
+                        }
+                    });
+                }
+
+                // Close modal with Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeModal();
+                    }
+                });
+            }
+
+            getSubmissionIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('submissionId') || urlParams.get('id');
+            }
+
+            async loadSubmissionData() {
+                // Show loading immediately
+                this.showLoading();
+
+                try {
+                    // Check for internet connection first
+                    if (!navigator.onLine) {
+                        throw new Error('NETWORK_ERROR');
+                    }
+
+                    // Get submission data
+                    const submissionResponse = await fetch(`${this.BASE_URL}/submissions/${this.submissionId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    // Handle network errors
+                    if (!submissionResponse.ok) {
+                        if (submissionResponse.status === 0 || submissionResponse.status >= 500) {
+                            throw new Error('NETWORK_ERROR');
+                        }
+
+                        const errorData = await submissionResponse.json().catch(() => ({}));
+                        throw new Error(errorData.message || `Failed to fetch submission data: ${submissionResponse.status}`);
+                    }
+
+                    const submissionData = await submissionResponse.json();
+
+                    if (!submissionData.success) {
+                        throw new Error(submissionData.message || 'Failed to load submission data');
+                    }
+
+                    this.submissionData = submissionData.submission;
+
+                    // Load review progress data
+                    await this.loadReviewProgressData();
+
+                    // Render all data
+                    this.renderManuscriptHeader();
+                    this.renderDecisionInfo();
+                    this.renderVersions();
+
+                    this.hideLoading();
+                    this.hideError();
+
+                } catch (error) {
+                    console.error('Error loading submission data:', error);
+
+                    if (error.message === 'NETWORK_ERROR' || error.message.includes('Network') || error.message.includes('network')) {
+                        this.showConnectionError();
+                    } else {
+                        this.showError(error.message || 'Failed to load submission data. Please try again.');
+                    }
+                    this.hideLoading();
+                }
+            }
+
+            async loadReviewProgressData() {
+                try {
+                    const response = await fetch(`${this.BASE_URL}/editor/review-progress?submissionId=${this.submissionId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.reviewProgressData = data;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading review progress:', error);
+                    // Continue without review progress data
+                }
+            }
+
+            renderManuscriptHeader() {
+                const manuscriptHeader = document.getElementById('manuscriptHeader');
+
+                if (!this.submissionData) {
+                    manuscriptHeader.innerHTML = `
+                    <h1>Unable to load manuscript details</h1>
+                    <div class="header-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-book-open"></i>
+                            <span>Scope: Unknown</span>
+                        </div>
+                    </div>
+                `;
+                    return;
+                }
+
+                const formattedDate = this.formatDate(this.submissionData.createdAt);
+
+                manuscriptHeader.innerHTML = `
+                <h1>${this.escapeHtml(this.submissionData.title || 'Unknown Title')}</h1>
+                <div class="header-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-book-open"></i>
+                        <span>Scope: ${this.escapeHtml(this.submissionData.scopeId?.title || 'Unknown Scope')}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Submitted: ${formattedDate}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span>Status: ${this.capitalizeFirst(this.submissionData.status || 'unknown')}</span>
+                    </div>
+                </div>
+            `;
+            }
+
+            renderDecisionInfo() {
+                const decisionInfo = document.getElementById('decisionInfo');
+
+                if (!this.submissionData) {
+                    decisionInfo.style.display = 'none';
+                    return;
+                }
+
+                // Format last decision
+                const lastDecision = this.submissionData.lastDecisionType ?
+                    this.capitalizeFirst(this.submissionData.lastDecisionType) : 'Not available';
+
+                // Format revision deadline
+                let revisionDeadline = 'No deadline set';
+                if (this.submissionData.revisionDeadline) {
+                    revisionDeadline = this.formatDate(this.submissionData.revisionDeadline);
+                }
+
+                decisionInfo.innerHTML = `
+                <div class="decision-item">
+                    <span class="decision-label">Last Decision</span>
+                    <span class="decision-value">${lastDecision}</span>
+                </div>
+                <div class="decision-item">
+                    <span class="decision-label">Resubmission Deadline</span>
+                    <span class="decision-value">${revisionDeadline}</span>
+                </div>
+            `;
+
+                decisionInfo.style.display = 'grid';
+            }
+
+            renderVersions() {
+                const versionTabs = document.getElementById('versionTabs');
+                const noRevisionMessage = document.getElementById('noRevisionMessage');
+
+                if (!this.submissionData || !this.submissionData.revisions || this.submissionData.revisions.length === 0) {
+                    versionTabs.style.display = 'none';
+                    noRevisionMessage.style.display = 'block';
+                    return;
+                }
+
+                versionTabs.style.display = 'block';
+                noRevisionMessage.style.display = 'none';
+
+                // Sort revisions by version (ascending)
+                const sortedRevisions = [...this.submissionData.revisions].sort((a, b) => a.version - b.version);
+
+                // Create version tabs
+                const versionTabList = document.getElementById('versionTabList');
+                versionTabList.innerHTML = '';
+
+                // Create version contents container
+                const versionContents = document.getElementById('versionContents');
+                versionContents.innerHTML = '';
+
+                sortedRevisions.forEach((revision, index) => {
+                    // Create tab
+                    const tab = document.createElement('div');
+                    tab.className = `version-tab ${index === sortedRevisions.length - 1 ? 'active' : ''}`;
+                    tab.textContent = `Version ${revision.version}`;
+                    tab.dataset.version = revision.version;
+                    tab.addEventListener('click', () => this.switchVersion(revision.version));
+                    versionTabList.appendChild(tab);
+
+                    // Create content
+                    const content = document.createElement('div');
+                    content.className = `version-content ${index === sortedRevisions.length - 1 ? 'active' : ''}`;
+                    content.id = `versionContent-${revision.version}`;
+                    content.innerHTML = this.createVersionContent(revision);
+                    versionContents.appendChild(content);
+                });
+
+                // Set current version to the latest one
+                this.currentVersion = sortedRevisions[sortedRevisions.length - 1].version;
+
+                // Bind view more buttons for the active version
+                this.bindViewMoreButtons();
+            }
+
+            createVersionContent(revision) {
+                // Get review data for this version
+                const reviewData = this.getReviewDataForVersion(revision.version);
+                const reviewers = this.getReviewersForVersion(revision.version);
+
+                // Get current status from review data
+                const currentStatus = this.getCurrentStatusForVersion(revision.version);
+
+                return `
+                <!-- Version Info Cards -->
+                <div class="version-info-cards">
+                    <div class="version-info-card">
+                        <h4>Current Status</h4>
+                        <div class="value">${this.formatRecommendation(currentStatus)}</div>
+                        <span class="status-badge status-${currentStatus}">
+                            ${this.formatRecommendation(currentStatus)}
+                        </span>
+                    </div>
+                    <div class="version-info-card">
+                        <h4>Reviewers</h4>
+                        <div class="value">${reviewers.length}</div>
+                    </div>
+                    <div class="version-info-card">
+                        <h4>Version</h4>
+                        <div class="value">${revision.version}</div>
+                    </div>
+                </div>
+
+                <!-- Resubmission Section -->
+                <div class="resubmission-section">
+                    <div class="section-header">
+                        <i class="fas fa-upload"></i> Resubmission
+                    </div>
+                    
+                    <!-- Submitted Date -->
+                    <div class="content-section">
+                        <div class="content-label">
+                            <i class="far fa-calendar"></i> Date Resubmitted
+                        </div>
+                        <div class="content-text">
+                            ${this.formatDate(revision.submittedAt)}
+                        </div>
+                    </div>
+                    
+                    <!-- Submitted File -->
+                    <div class="file-attachment">
+                        <div class="file-attachment-label">
+                            <i class="fas fa-paperclip"></i> Resubmitted File
+                        </div>
+                        ${this.createFileAttachment(revision.file)}
+                    </div>
+                    
+                    <!-- Cover Letter -->
+                    <div class="content-section">
+                        <div class="content-label">
+                            <i class="fas fa-envelope-open-text"></i> Cover Letter
+                        </div>
+                        <div class="content-text">
+                            ${this.processContentForDisplay(revision.coverLetter || 'No cover letter provided.', 'coverLetter', revision.version)}
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="content-section">
+                        <div class="content-label">
+                            <i class="fas fa-align-left"></i> Description of Changes
+                        </div>
+                        <div class="content-text">
+                            ${this.processContentForDisplay(revision.changesSummary || 'No description provided.', 'description', revision.version)}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviewers Section -->
+                <div class="reviewer-tabs-section" id="reviewers-${revision.version}">
+                    ${this.createReviewerTabsSection(reviewers, revision.version)}
+                </div>
+            `;
+            }
+
+            createFileAttachment(file) {
+                if (!file || !file.url) {
+                    return '<div style="color: var(--muted);">No file attached</div>';
+                }
+
+                const fileName = file.originalName || file.filename || 'Download file';
+                const fileUrl = this.buildFileUrl(file.url);
+                const viewFileUrl = this.getDocumentViewUrl(fileUrl);
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+                const isPDF = fileExtension === 'pdf';
+                const isWord = fileExtension === 'docx' || fileExtension === 'doc';
+
+                let fileIcon = 'fa-file';
+                if (isPDF) fileIcon = 'fa-file-pdf';
+                if (isWord) fileIcon = 'fa-file-word';
+
+                return `
+                <div class="file-info">
+                    <div class="file-icon">
+                        <i class="fas ${fileIcon}"></i>
+                    </div>
+                    <div class="file-details">
+                        <div class="file-name">${this.escapeHtml(fileName)}</div>
+                        <div class="file-size">Resubmitted file</div>
+                    </div>
+                    <div class="file-actions">
+                        ${viewFileUrl ? `
+                            <a href="${viewFileUrl}" target="_blank" class="btn-view-file">
+                                <i class="fas fa-external-link-alt"></i> View
+                            </a>
+                        ` : ''}
+                        <a href="${fileUrl}" download="${this.escapeHtml(fileName)}" class="btn-download-file">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </div>
+                </div>
+            `;
+            }
+
+            createReviewerTabsSection(reviewers, version) {
+                if (!reviewers || reviewers.length === 0) {
+                    return `
+                    <div class="reviewer-tab-list" style="justify-content: center;">
+                        <div style="text-align: center; padding: 2rem; color: var(--muted);">
+                            <i class="fas fa-users-slash fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>No reviewers for this version</p>
+                        </div>
+                    </div>
+                `;
+                }
+
+                let tabsHTML = `
+                <div class="reviewer-tab-list" id="reviewerTabList-${version}">
+            `;
+
+                reviewers.forEach((reviewer, index) => {
+                    tabsHTML += `
+                    <div class="reviewer-tab ${index === 0 ? 'active' : ''}" 
+                         data-reviewer-id="${reviewer.reviewId}" 
+                         data-version="${version}"
+                         onclick="window.submissionRevisionsManager.switchReviewer('${reviewer.reviewId}', ${version})">
+                        <i class="fas fa-user-edit"></i> Reviewer ${index + 1}
+                    </div>
+                `;
+                });
+
+                tabsHTML += `
+                </div>
+                <div id="reviewerContent-${version}">
+                    ${reviewers.length > 0 ? this.createReviewerContent(reviewers[0], version) : ''}
+                </div>
+            `;
+
+                return tabsHTML;
+            }
+
+            createReviewerContent(reviewer, version) {
+                // Get review history for this version
+                const reviewHistory = this.getReviewHistoryForVersion(reviewer, version);
+
+                if (!reviewHistory || reviewHistory.length === 0) {
+                    return `
+                    <div class="reviewer-content active">
+                        <div style="text-align: center; padding: 3rem; color: var(--muted);">
+                            <i class="fas fa-history fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <h4>No Review History</h4>
+                            <p>This reviewer has not submitted a review for version ${version} yet.</p>
+                        </div>
+                    </div>
+                `;
+                }
+
+                // Get the most recent review for this version
+                const latestReview = reviewHistory[0];
+
+                return `
+                <div class="reviewer-content active">
+                    <div class="timeline-wrap">
+                        <div class="timeline">
+                            ${this.createTimelineItem(latestReview, reviewer, version)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+
+            createTimelineItem(reviewItem, reviewer, version) {
+                // Format date
+                const formattedDate = this.formatDate(reviewItem.submittedAt);
+
+                // Process comments for truncated display
+                const { truncated: editorCommentsTruncated, full: editorCommentsFull, showMore: showEditorMore } = this.processTextContent(reviewItem.commentsToEditor || reviewItem.commentToEditor || 'No comments provided to editor.');
+                const { truncated: authorCommentsTruncated, full: authorCommentsFull, showMore: showAuthorMore } = this.processTextContent(reviewItem.commentsToAuthor || reviewItem.commentToAuthor || 'No comments provided to author.');
+
+                // Determine badge class based on recommendation
+                let badgeClass = 'badge-pending';
+                let badgeText = 'Pending';
+                if (reviewItem.recommendation) {
+                    badgeClass = `badge-${reviewItem.recommendation}`;
+                    badgeText = this.formatRecommendation(reviewItem.recommendation);
+                }
+
+                // Check if review is visible to author
+                const isVisibleToAuthor = reviewItem.visibleToAuthor === true;
+                const visibilityBadgeClass = isVisibleToAuthor ? 'visibility-visible' : 'visibility-hidden';
+                const visibilityIcon = isVisibleToAuthor ? 'fa-eye' : 'fa-eye-slash';
+                const visibilityText = isVisibleToAuthor ? 'Visible to Author' : 'Hidden from Author';
+
+                // Check if file exists
+                const hasFile = reviewItem.reviewFile && reviewItem.reviewFile.url;
+                const fileUrl = hasFile ? this.buildFileUrl(reviewItem.reviewFile.url) : null;
+                const viewFileUrl = hasFile ? this.getDocumentViewUrl(fileUrl) : null;
+
+                return `
+                <div class="timeline-item">
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 12px; flex-wrap: wrap;">
+                            <span class="review-status-badge ${badgeClass}">
+                                <i class="fas fa-check-circle"></i> ${badgeText}
+                            </span>
+                            <span class="visibility-badge ${visibilityBadgeClass}">
+                                <i class="fas ${visibilityIcon}"></i> ${visibilityText}
+                            </span>
+                        </div>
+                        
+                        <p class="timeline-date">
+                            <i class="far fa-clock"></i> Submitted on: ${formattedDate}
+                        </p>
+                        
+                        <div class="review-title">
+                            <i class="fas fa-star"></i> Score: ${reviewItem.score || 'Not scored'}
+                        </div>
+                        
+                        <!-- Comments to Author Section -->
+                        <div class="comments-section">
+                            <div class="comments-label">
+                                <i class="fas fa-comments"></i> Comments to Author
+                            </div>
+                            <div class="comments-content">
+                                <div class="truncated-text">
+                                    ${authorCommentsTruncated}
+                                </div>
+                                ${showAuthorMore ? `
+                                    <button class="view-more-btn" data-type="authorComments" data-version="${version}" data-reviewer="${reviewer.reviewId}">
+                                        <i class="fas fa-eye"></i> View Full
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- Comments to Editor Section -->
+                        <div class="comments-section">
+                            <div class="comments-label">
+                                <i class="fas fa-comment-dots"></i> Confidential Comments to Editor
+                            </div>
+                            <div class="comments-content">
+                                <div class="truncated-text">
+                                    ${editorCommentsTruncated}
+                                </div>
+                                ${showEditorMore ? `
+                                    <button class="view-more-btn" data-type="editorComments" data-version="${version}" data-reviewer="${reviewer.reviewId}">
+                                        <i class="fas fa-eye"></i> View Full
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- File Attachment Section -->
+                        ${hasFile ? `
+                        <div class="file-attachment">
+                            <div class="file-attachment-label">
+                                <i class="fas fa-paperclip"></i> Review Attachment
+                            </div>
+                            ${this.createReviewFileAttachment(reviewItem.reviewFile)}
+                        </div>
+                        ` : ''}
+                        
+                        ${reviewItem.reasonForUpdate ? `
+                        <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem;">
+                            <i class="fas fa-info-circle"></i>
+                            <span>${this.escapeHtml(reviewItem.reasonForUpdate)}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            }
+
+            createReviewFileAttachment(file) {
+                if (!file || !file.url) {
+                    return '<div style="color: var(--muted);">No file attached</div>';
+                }
+
+                const fileName = file.originalName || file.filename || 'Download file';
+                const fileUrl = this.buildFileUrl(file.url);
+                const viewFileUrl = this.getDocumentViewUrl(fileUrl);
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+                const isPDF = fileExtension === 'pdf';
+                const isWord = fileExtension === 'docx' || fileExtension === 'doc';
+
+                let fileIcon = 'fa-file';
+                if (isPDF) fileIcon = 'fa-file-pdf';
+                if (isWord) fileIcon = 'fa-file-word';
+
+                return `
+                <div class="file-info">
+                    <div class="file-icon">
+                        <i class="fas ${fileIcon}"></i>
+                    </div>
+                    <div class="file-details">
+                        <div class="file-name">${this.escapeHtml(fileName)}</div>
+                        <div class="file-size">Attachment uploaded with review</div>
+                    </div>
+                    <div class="file-actions">
+                        ${viewFileUrl ? `
+                            <a href="${viewFileUrl}" target="_blank" class="btn-view-file">
+                                <i class="fas fa-external-link-alt"></i> View
+                            </a>
+                        ` : ''}
+                        <a href="${fileUrl}" download="${this.escapeHtml(fileName)}" class="btn-download-file">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </div>
+                </div>
+            `;
+            }
+
+            switchVersion(version) {
+                // Update active tab
+                document.querySelectorAll('.version-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.version === version.toString());
+                });
+
+                // Update active content
+                document.querySelectorAll('.version-content').forEach(content => {
+                    content.classList.toggle('active', content.id === `versionContent-${version}`);
+                });
+
+                this.currentVersion = version;
+
+                // Bind view more buttons for the new active version
+                this.bindViewMoreButtons();
+            }
+
+            switchReviewer(reviewerId, version) {
+                const tabList = document.getElementById(`reviewerTabList-${version}`);
+                if (!tabList) return;
+
+                // Update active tab
+                tabList.querySelectorAll('.reviewer-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.reviewerId === reviewerId);
+                });
+
+                // Get reviewer data
+                const reviewer = this.getReviewerById(reviewerId);
+                if (!reviewer) return;
+
+                // Update content
+                const contentContainer = document.getElementById(`reviewerContent-${version}`);
+                if (contentContainer) {
+                    contentContainer.innerHTML = this.createReviewerContent(reviewer, version);
+                    this.bindViewMoreButtons();
+                }
+            }
+
+            processContentForDisplay(content, type, version) {
+                const { truncated, full, showMore } = this.processTextContent(content);
+
+                if (showMore) {
+                    return `
+                    <div class="truncated-text">
+                        ${truncated}
+                    </div>
+                    <button class="view-more-btn" data-type="${type}" data-version="${version}">
+                        <i class="fas fa-eye"></i> View Full
+                    </button>
+                `;
+                }
+
+                return `
+                <div class="content-text">
+                    ${truncated}
+                </div>
+            `;
+            }
+
+            bindViewMoreButtons() {
+                // Remove existing event listeners
+                const viewMoreButtons = document.querySelectorAll('.view-more-btn');
+                viewMoreButtons.forEach(button => {
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
+                });
+
+                // Add new event listeners
+                const newButtons = document.querySelectorAll('.view-more-btn');
+                newButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const type = button.dataset.type;
+                        const version = button.dataset.version;
+                        const reviewerId = button.dataset.reviewer;
+
+                        // Get content based on type
+                        let content = '';
+                        let title = '';
+
+                        if (type === 'coverLetter') {
+                            const revision = this.submissionData.revisions.find(r => r.version.toString() === version);
+                            content = revision?.coverLetter || 'No content available';
+                            title = `Version ${version} - Cover Letter`;
+                        } else if (type === 'description') {
+                            const revision = this.submissionData.revisions.find(r => r.version.toString() === version);
+                            content = revision?.changesSummary || 'No content available';
+                            title = `Version ${version} - Description of Changes`;
+                        } else if (type === 'authorComments' || type === 'editorComments') {
+                            const reviewer = this.getReviewerById(reviewerId);
+                            if (reviewer) {
+                                const reviewHistory = this.getReviewHistoryForVersion(reviewer, version);
+                                if (reviewHistory && reviewHistory.length > 0) {
+                                    const reviewItem = reviewHistory[0];
+                                    content = type === 'authorComments' ?
+                                        (reviewItem.commentsToAuthor || reviewItem.commentToAuthor || 'No comments provided.') :
+                                        (reviewItem.commentsToEditor || reviewItem.commentToEditor || 'No comments provided.');
+                                    title = `Version ${version} - ${type === 'authorComments' ? 'Comments to Author' : 'Comments to Editor'}`;
+                                }
+                            }
+                        }
+
+                        this.viewFullContent(title, content);
+                    });
+                });
+            }
+
+            viewFullContent(title, content) {
+                const modalOverlay = document.getElementById('contentModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+
+                if (!modalOverlay || !modalTitle || !modalBody) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+
+                modalTitle.innerHTML = `<i class="fas fa-file-alt"></i> ${title}`;
+                modalBody.innerHTML = `
+                <div class="modal-content-section">
+                    <div class="modal-content-text">
+                        ${this.formatHTMLContent(content) || '<span style="color: var(--muted);">No content available.</span>'}
+                    </div>
+                </div>
+            `;
+
+                // Show modal
+                modalOverlay.classList.add('active');
+            }
+
+            getReviewDataForVersion(version) {
+                if (!this.reviewProgressData || !this.reviewProgressData.reviewers) {
+                    return null;
+                }
+
+                const reviewData = [];
+                this.reviewProgressData.reviewers.forEach(reviewer => {
+                    const reviewHistory = reviewer.reviewHistory || [];
+                    const reviewForVersion = reviewHistory.find(item => item.version.toString() === version.toString());
+                    if (reviewForVersion) {
+                        reviewData.push({
+                            reviewer: reviewer,
+                            review: reviewForVersion
+                        });
+                    }
+                });
+
+                return reviewData;
+            }
+
+            getReviewersForVersion(version) {
+                if (!this.reviewProgressData || !this.reviewProgressData.reviewers) {
+                    return [];
+                }
+
+                return this.reviewProgressData.reviewers.filter(reviewer => {
+                    const reviewHistory = reviewer.reviewHistory || [];
+                    return reviewHistory.some(item => item.version.toString() === version.toString());
+                });
+            }
+
+            getCurrentStatusForVersion(version) {
+                const reviewData = this.getReviewDataForVersion(version);
+                if (!reviewData || reviewData.length === 0) {
+                    return 'pending';
+                }
+
+                // Get the most recent recommendation
+                let latestRecommendation = 'pending';
+                let latestDate = null;
+
+                reviewData.forEach(item => {
+                    if (item.review.recommendation && item.review.submittedAt) {
+                        const reviewDate = new Date(item.review.submittedAt);
+                        if (!latestDate || reviewDate > latestDate) {
+                            latestDate = reviewDate;
+                            latestRecommendation = item.review.recommendation;
+                        }
+                    }
+                });
+
+                return latestRecommendation;
+            }
+
+            getReviewHistoryForVersion(reviewer, version) {
+                if (!reviewer || !reviewer.reviewHistory) {
+                    return [];
+                }
+
+                return reviewer.reviewHistory.filter(item => item.version.toString() === version.toString())
+                    .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+            }
+
+            getReviewerById(reviewerId) {
+                if (!this.reviewProgressData || !this.reviewProgressData.reviewers) {
+                    return null;
+                }
+
+                return this.reviewProgressData.reviewers.find(r => r.reviewId === reviewerId);
+            }
+
+            processTextContent(text) {
+                if (!text || text.trim() === '') {
+                    return {
+                        truncated: '<span style="color: var(--muted);">No content provided.</span>',
+                        full: '<span style="color: var(--muted);">No content provided.</span>',
+                        showMore: false
+                    };
+                }
+
+                // Format the HTML content
+                const formattedText = this.formatHTMLContent(text);
+
+                // Remove HTML tags for character count
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = formattedText;
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+                // Check if text is longer than 400 characters
+                if (plainText.length > 400) {
+                    // Create truncated version (show with HTML formatting)
+                    const truncated = this.truncateHTMLContent(formattedText, 400);
+                    return {
+                        truncated: truncated + '...',
+                        full: formattedText,
+                        showMore: true
+                    };
+                } else {
+                    return {
+                        truncated: formattedText,
+                        full: formattedText,
+                        showMore: false
+                    };
+                }
+            }
+
+            formatHTMLContent(html) {
+                if (!html) return '';
+
+                // Decode HTML entities
+                const txt = document.createElement('textarea');
+                txt.innerHTML = html;
+                let content = txt.value;
+
+                // Replace &nbsp; with regular space
+                content = content.replace(/&nbsp;/g, ' ');
+
+                // Remove script and style tags
+                content = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                content = content.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+
+                // Handle formatting tags properly
+                content = content.replace(/<b>/g, '<strong>').replace(/<\/b>/g, '</strong>');
+                content = content.replace(/<i>/g, '<em>').replace(/<\/i>/g, '</em>');
+
+                // Handle line breaks
+                content = content.replace(/\\n/g, '<br>');
+                content = content.replace(/\\r/g, '');
+                content = content.replace(/\\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+
+                // Ensure proper paragraph formatting
+                if (!content.includes('<p>') && !content.includes('<div>')) {
+                    // Wrap in paragraph if no block elements
+                    content = '<p>' + content + '</p>';
+                }
+
+                return content;
+            }
+
+            truncateHTMLContent(html, maxLength) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                let text = '';
+                let length = 0;
+                const walker = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
+
+                let node;
+                while ((node = walker.nextNode())) {
+                    const nodeText = node.textContent;
+                    const remaining = maxLength - length;
+
+                    if (remaining <= 0) break;
+
+                    if (nodeText.length <= remaining) {
+                        text += nodeText;
+                        length += nodeText.length;
+                    } else {
+                        text += nodeText.substring(0, remaining);
+                        length += remaining;
+                        break;
+                    }
+                }
+
+                // Find where to cut and preserve HTML structure
+                let result = '';
+                let currentLength = 0;
+
+                const walker2 = document.createTreeWalker(tempDiv, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, null, false);
+
+                let currentNode;
+                while ((currentNode = walker2.nextNode())) {
+                    if (currentLength >= maxLength) break;
+
+                    if (currentNode.nodeType === Node.TEXT_NODE) {
+                        const remaining = maxLength - currentLength;
+                        const textContent = currentNode.textContent;
+
+                        if (textContent.length <= remaining) {
+                            result += textContent;
+                            currentLength += textContent.length;
+                        } else {
+                            result += textContent.substring(0, remaining);
+                            currentLength = maxLength;
+                        }
+                    } else if (currentNode.nodeType === Node.ELEMENT_NODE) {
+                        const tagName = currentNode.tagName.toLowerCase();
+
+                        // Open tag
+                        result += `<${tagName}`;
+
+                        // Add attributes
+                        for (let attr of currentNode.attributes) {
+                            result += ` ${attr.name}="${attr.value}"`;
+                        }
+
+                        result += '>';
+
+                        // If we've reached max length, close the tag
+                        if (currentLength >= maxLength) {
+                            result += `</${tagName}>`;
+                        }
+                    }
+                }
+
+                // Close any unclosed tags
+                return result;
+            }
+
+            buildFileUrl(filePath) {
+                if (!filePath) return null;
+
+                const baseUrl = this.BASE_URL.replace('/api/v1', '');
+
+                try {
+                    const url = new URL(filePath);
+                    return url.toString();
+                } catch {
+                    const normalizedPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
+                    return `${baseUrl}${normalizedPath}`;
+                }
+            }
+
+            getDocumentViewUrl(fileUrl) {
+                if (!fileUrl) return null;
+
+                const url = fileUrl.toLowerCase();
+                const isOfficeDoc = url.endsWith(".docx") || url.endsWith(".doc");
+
+                if (isOfficeDoc) {
+                    return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
+                }
+
+                return fileUrl;
+            }
+
+            formatDate(dateString) {
+                try {
+                    if (!dateString) return 'Not available';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                } catch (error) {
+                    console.error('Error formatting date:', error);
+                    return dateString;
+                }
+            }
+
+            formatRecommendation(recommendation) {
+                const recommendationMap = {
+                    'accept': 'Accept',
+                    'minor_revision': 'Minor Revision',
+                    'major_revision': 'Major Revision',
+                    'reject': 'Reject',
+                    'pending': 'Pending Review'
+                };
+                return recommendationMap[recommendation] || this.capitalizeFirst(recommendation);
+            }
+
+            capitalizeFirst(str) {
+                if (!str) return '';
+                return str.charAt(0).toUpperCase() + str.slice(1).replace(/_/g, ' ');
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            showLoading() {
+                document.getElementById('loadingScreen').style.display = 'block';
+                document.getElementById('versionTabs').style.display = 'none';
+                document.getElementById('noRevisionMessage').style.display = 'none';
+                document.getElementById('connectionErrorScreen').style.display = 'none';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('decisionInfo').style.display = 'none';
+            }
+
+            hideLoading() {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
+
+            showConnectionError() {
+                document.getElementById('connectionErrorScreen').style.display = 'block';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('versionTabs').style.display = 'none';
+                document.getElementById('noRevisionMessage').style.display = 'none';
+                document.getElementById('decisionInfo').style.display = 'none';
+            }
+
+            showError(message, isAuthError = false) {
+                const errorTitle = document.getElementById('errorTitle');
+                const errorMessage = document.getElementById('errorMessage');
+
+                if (isAuthError) {
+                    errorTitle.textContent = 'Authentication Required';
+                    errorMessage.textContent = message;
+                } else {
+                    errorTitle.textContent = 'Failed to Load Submission Data';
+                    errorMessage.textContent = message;
+                }
+
+                document.getElementById('errorScreen').style.display = 'block';
+                document.getElementById('connectionErrorScreen').style.display = 'none';
+                document.getElementById('versionTabs').style.display = 'none';
+                document.getElementById('noRevisionMessage').style.display = 'none';
+                document.getElementById('decisionInfo').style.display = 'none';
+            }
+
+            hideError() {
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('connectionErrorScreen').style.display = 'none';
+            }
+
+            closeModal() {
+                const modalOverlay = document.getElementById('contentModal');
+                if (modalOverlay) {
+                    modalOverlay.classList.remove('active');
+                }
+                this.currentContent = null;
+            }
+        }
+
+        // Initialize submission revisions manager when DOM is loaded
+        let submissionRevisionsManager;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            submissionRevisionsManager = new SubmissionRevisionsManager();
+
+            // expose to window for retry functionality
+            window.submissionRevisionsManager = submissionRevisionsManager;
+            window.loadSubmissionData = function () {
+                if (window.submissionRevisionsManager) {
+                    window.submissionRevisionsManager.loadSubmissionData();
+                }
+            };
+        });
+
+        // For safety: also expose a direct load function
+        window.loadSubmissionData = window.loadSubmissionData || (() => { });
+    </script>
+
+</body>
+
+</html>

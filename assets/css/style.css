@@ -117,9 +117,9 @@
     --status-rejected-color: #dc2626;
     --status-rejected-border: #fecaca;
 
-    --status-revision_requested-bg: var(--primary-light);
-    --status-revision_requested-color: var(--primary-light);
-    --status-revision_requested-border: var(--primary-light);
+    --status-revision_requested-bg: var(--warning-light);
+    --status-revision_requested-color: var(--warning);
+    --status-revision_requested-border: var(--warning-light);
 
     --status-revised-bg: var(--info);
     --status-revised-color: var(--info);
