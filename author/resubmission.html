@@ -126,7 +126,7 @@
         }
 
         .abstract-card {
-            border-left: 4px solid var(--success-color);
+            border-left: 4px solid var(--lite-secondary3);
         }
 
         .manuscript-card h3 {
@@ -144,7 +144,7 @@
         }
 
         .abstract-card h3 i {
-            color: var(--success-color);
+            color: var(--primary-color);
         }
 
         .manuscript-details {
@@ -209,8 +209,8 @@
         }
 
         .author-tag {
-            background: rgba(204, 85, 0, 0.1);
-            color: var(--primary-color);
+            background: var(--warning-light);
+            color: var(--warning);
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.9rem;
@@ -226,7 +226,7 @@
 
         /* File Upload Area */
         .file-upload-area {
-            border: 2px dashed var(--border-color);
+            border: 2px dashed var(--lite-secondary4);
             border-radius: 8px;
             padding: 40px 20px;
             text-align: center;
@@ -238,7 +238,7 @@
         .file-upload-area:hover,
         .file-upload-area.dragover {
             border-color: var(--primary-color);
-            background-color: var(--hover-bg);
+            background-color: var(--lite-secondary6);
         }
 
         .file-upload-icon {
@@ -417,8 +417,10 @@
             <div id="header-placeholder"></div>
             <main class="main-content">
                 <div class="container page-title">
+                   <div>
                     <h1>Resubmit Manuscript</h1>
                     <p>Submit a revised version of your manuscript</p>
+                   </div>
                 </div>
                 <div class="container my-4">
                     <div class="row justify-content-center">
@@ -511,7 +513,7 @@
 
                                 <!-- Action Buttons -->
                                 <div class="d-flex justify-content-between align-items-center action-buttons">
-                                    <a href="#" id="cancelBtn" class="btn cancel-btn">
+                                    <a href="#" id="cancelBtn" class="btn btn-clear">
                                         <i class="fas fa-times"></i> Cancel
                                     </a>
                                     <button type="submit" id="submitBtn" class="btn-brand">
@@ -877,7 +879,7 @@
                                 <i class="fas fa-book"></i> Scope
                             </div>
                             <div class="detail-content">
-                                ${escapeHtml(scopeName)} <span style="color: var(--text-light);">(ISSN: ${escapeHtml(scopeIssn)})</span>
+                                ${escapeHtml(scopeName)} <span style="color: var(--text-light);"></span>
                             </div>
                         </div>
                         

@@ -248,7 +248,7 @@ class MySubmissionsManager {
             if (!resp.ok) {
                 const text = await resp.text().catch(()=>'');
                 console.error('Submissions fetch failed', resp.status, text);
-                this.showNoSubmissions('Failed to load submissions. Server returned an error.');
+                this.showNoSubmissions('Failed to load submissions. Please try again later');
                 return;
             }
 

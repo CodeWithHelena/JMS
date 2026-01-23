@@ -1226,16 +1226,17 @@
             // Get status color from root variables
             getStatusColor(status) {
                 const statusColors = {
-                    'submitted': 'rgba(var(--info-rgb), 0.1)',
-                    'under_review': 'rgba(var(--warning-rgb), 0.1)',
+                    'submitted': 'var(--status-submitted-bg)',
+                    'under_review': 'var(--status-under_review-bg)',
                     'reviewed': 'rgba(var(--primary-rgb), 0.1)',
                     'accepted': 'rgba(var(--success-rgb), 0.1)',
                     'rejected': 'rgba(var(--danger-rgb), 0.1)',
-                    'revision_requested': 'rgba(var(--warning-rgb), 0.1)'
+                    'revision_requested': 'rgba(var(--warning-rgb), 0.1)',
+                    'published': 'rgba(var(--warning-rgb), 0.1)',
                 };
 
                 const textColors = {
-                    'submitted': 'var(--info)',
+                    'submitted': 'var(--status-submitted-color)',
                     'under_review': 'var(--warning)',
                     'reviewed': 'var(--lite-primary-color)',
                     'accepted': 'var(--success)',
