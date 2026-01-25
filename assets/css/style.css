@@ -121,8 +121,8 @@
     --status-revision_requested-color: var(--warning);
     --status-revision_requested-border: var(--warning-light);
 
-    --status-revised-bg: var(--info);
-    --status-revised-color: var(--info);
+    --status-revised-bg: var(--info-light);
+    --status-revised-color: var(--secondary-color);
     --status-revised-border: var(--info);
 
     --status-awaiting_payment-bg: var(--warning);
@@ -445,7 +445,6 @@ h1, h2, h3, h4, h5, h6 {
 
 p{
     margin: 0;
-    color: var(--text-light);
 }
 
 input:focus {

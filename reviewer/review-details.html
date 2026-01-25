@@ -2297,7 +2297,7 @@
                 });
 
                 if (!data.success) {
-                    throw new Error(data.message || 'Failed to load review data');
+                    throw new Error(data.message || 'Unable to load review data');
                 }
 
                 this.review = data.review;
@@ -2544,10 +2544,14 @@
             reviewFormSection.style.display = 'none';
             reviewSubmittedMessage.style.display = 'none';
 
-            if (invitationStatus === 'accepted' && manuscriptStatus === 'under_review') {
+            if (invitationStatus === 'accepted' && !this.review.submittedAt ) {
                 reviewFormSection.style.display = 'block';
                 decisionSection.style.display = 'none';
-            } else if (invitationStatus === 'accepted' && this.review.submittedAt) {
+            } else if (manuscriptStatus === 'under_review') {
+                reviewFormSection.style.display = 'block';
+                decisionSection.style.display = 'none';
+            }
+             else if (invitationStatus === 'accepted' && this.review.submittedAt) {
                 reviewSubmittedMessage.style.display = 'block';
                 decisionSection.style.display = 'none';
             } else {

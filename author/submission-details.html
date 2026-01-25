@@ -551,15 +551,15 @@
 .revision-title {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--secondary-color);
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .revision-version {
-    background: var(--primary);
-    color: white;
+    background: var(--warning-light);
+    color: var(--warning);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.85rem;
@@ -848,6 +848,10 @@ body.modal-open {
     gap: 1rem;
     justify-content: center;
     margin-top: 1.5rem;
+}
+
+.btn-light{
+    flex: none;
 }
 
 /* View Receipt Button */
@@ -3161,7 +3165,7 @@ body.modal-open {
                         </div>
                         <div class="revision-meta">
                             <div class="revision-date"><i class="far fa-calendar"></i> Submitted on: ${submittedAt}</div>
-                            ${fileUrl ? `<a href="${fileUrl}" target="_blank" class="view-document-btn"><i class="fas fa-file-pdf"></i> View Document</a>` : '<span class="score-empty">No document</span>'}
+                            ${fileUrl ? `<a href="${fileUrl}" target="_blank" class="btn-light"><i class="fas fa-file-pdf"></i> Download</a>` : '<span class="score-empty">No document</span>'}
                         </div>
                     </div>
                 </div>

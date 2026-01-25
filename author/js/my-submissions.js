@@ -1,6 +1,5 @@
 // js/my-submissions.js
- import { BASE_URL, token } from '/assets/js/utility.js';
-
+import { BASE_URL, token } from '/assets/js/utility.js';
 
 class MySubmissionsManager {
     constructor() {
@@ -206,6 +205,29 @@ class MySubmissionsManager {
         });
     }
 
+    // Helper methods for button display logic
+    shouldShowEditButton(submission) {
+        if (submission.status === 'submitted') {
+            return true;
+        }
+        
+        if (submission.status === 'under_review') {
+            // Check if there are NO revisions
+            return !submission.revisions || submission.revisions.length === 0;
+        }
+        
+        return false;
+    }
+
+    shouldShowDownloadButton(submission) {
+        const downloadStatuses = ['reviewed', 'revised', 'accepted', 'rejected', 'awaiting_payment', 'published'];
+        return downloadStatuses.includes(submission.status);
+    }
+
+    shouldShowResubmitButton(submission) {
+        return submission.status === 'revision_requested';
+    }
+
     // Fetch submissions from backend (uses /submissions/my-submissions)
     async fetchAndRender(page = 1) {
         const grid = document.getElementById('cardsGrid');
@@ -356,8 +378,11 @@ class MySubmissionsManager {
         const title = sub.title || 'Untitled';
         const scopeTitle = (sub.scopeId && (sub.scopeId.title || sub.scopeId)) || 'Unknown scope';
         const authors = Array.isArray(sub.authors) ? sub.authors : [];
-        // show "Resubmit" when status is either 'revised' OR 'revision_requested'
-        const isResubmit = ['revised', 'revision_requested'].includes(String(sub.status));
+        
+        // Determine which buttons to show based on new rules
+        const showEditButton = this.shouldShowEditButton(sub);
+        const showDownloadButton = this.shouldShowDownloadButton(sub);
+        const showResubmitButton = this.shouldShowResubmitButton(sub);
 
         article.innerHTML = `
             <div class="status-badge" style="${statusStyle}">${this.escapeHtml(statusText)}</div>
@@ -383,14 +408,23 @@ class MySubmissionsManager {
                         <i class="fas fa-history"></i> Timeline
                     </button>
 
-                    <button class="link" style="display: none" data-action="download" data-id="${sub._id}" title="Download file">
-                        <i class="fas fa-download"></i> Download
-                    </button>
+                    ${showDownloadButton ? `
+                        <button class="link" data-action="download" data-id="${sub._id}" title="Download file">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    ` : ''}
 
-                    ${isResubmit
-                        ? `<button class="link" data-action="resubmit" data-id="${sub._id}" title="Resubmit"><i class="fas fa-redo"></i> Resubmit</button>`
-                        : `<button class="link" data-action="edit" data-id="${sub._id}" title="Edit"><i class="fas fa-pen"></i> Edit</button>`
-                    }
+                    ${showEditButton ? `
+                        <button class="link" data-action="edit" data-id="${sub._id}" title="Edit">
+                            <i class="fas fa-pen"></i> Edit
+                        </button>
+                    ` : ''}
+
+                    ${showResubmitButton ? `
+                        <button class="link" data-action="resubmit" data-id="${sub._id}" title="Resubmit">
+                            <i class="fas fa-redo"></i> Resubmit
+                        </button>
+                    ` : ''}
                 </div>
             </div>
 

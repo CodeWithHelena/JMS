@@ -1661,10 +1661,9 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
     <!-- Submission Details JavaScript (self-contained) -->
-    <script type="module">
-        import { BASE_URL, token } from '../assets/js/utility.js';
-
-        class SubmissionDetailsManager {
+<script type="module">
+    import { BASE_URL, token } from '../assets/js/utility.js';
+    class SubmissionDetailsManager {
             constructor() {
                 this.submissionId = this.getSubmissionIdFromURL();
                 this.submission = null;
@@ -1902,12 +1901,14 @@
                         if (user) {
                             enrichedReviewers.push({
                                 ...assignment,
+                                id: reviewerId,
                                 name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
                                 email: user.email
                             });
                         } else {
                             enrichedReviewers.push({
                                 ...assignment,
+                                id: reviewerId,
                                 name: assignment.name || 'Unknown Reviewer',
                                 email: assignment.email || 'N/A'
                             });
@@ -2029,6 +2030,14 @@
                 };
 
                 const selectReviewer = (reviewer) => {
+                    // Check if reviewer is already assigned
+                    const isAlreadyAssigned = this.isReviewerAlreadyAssigned(reviewer.id);
+                    if (isAlreadyAssigned) {
+                        toastr.warning(`Reviewer already assigned`, 'Info');
+                        return;
+                    }
+
+                    // Check if reviewer is already selected
                     const isSelected = this.selectedReviewers.some(r => String(r.id) === String(reviewer.id));
                     if (!isSelected) {
                         this.selectedReviewers.push(reviewer);
@@ -2087,19 +2096,41 @@
                 filterReviewers('');
             }
 
+            // Helper method to check if a reviewer is already assigned
+            isReviewerAlreadyAssigned(reviewerId) {
+                if (!this.submission?.assignedReviewers) return false;
+                return this.submission.assignedReviewers.some(reviewer =>
+                    String(reviewer.id) === String(reviewerId) ||
+                    String(reviewer.reviewerId) === String(reviewerId) ||
+                    String(reviewer._id) === String(reviewerId)
+                );
+            }
+
             renderReviewerOptions(reviewers) {
                 if (!reviewers || reviewers.length === 0) {
                     return '<div class="no-results" style="padding:12px;text-align:center;color:var(--muted)">No reviewers available for this scope</div>';
                 }
-                return reviewers.map(reviewer => `
-    <div class="select-option-item" data-id="${this.escapeHtml(reviewer.id)}" style="padding:0.6rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.03);">
+
+                return reviewers.map(reviewer => {
+                    const isAlreadyAssigned = this.isReviewerAlreadyAssigned(reviewer.id);
+                    const itemClass = isAlreadyAssigned ? 'select-option-item already-assigned' : 'select-option-item';
+                    const cursorStyle = isAlreadyAssigned ? 'cursor: not-allowed;' : 'cursor: pointer;';
+                    const opacityStyle = isAlreadyAssigned ? 'opacity: 0.6;' : '';
+                    const textColorStyle = isAlreadyAssigned ? 'color: var(--muted);' : '';
+
+                    return `
+    <div class="${itemClass}" data-id="${this.escapeHtml(reviewer.id)}" style="padding:0.6rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.03);${cursorStyle}${opacityStyle}">
         <div style="flex:1;">
-            <div class="option-name" style="font-weight:600;">${this.escapeHtml(reviewer.name)}</div>
-            ${reviewer.email ? `<div class="option-email" style="font-size:0.9rem;color:var(--muted);">${this.escapeHtml(reviewer.email)}</div>` : ''}
+            <div class="option-name" style="font-weight:600;${textColorStyle}">${this.escapeHtml(reviewer.name)}</div>
+            ${reviewer.email ? `<div class="option-email" style="font-size:0.9rem;color:${isAlreadyAssigned ? '#a0aec0' : 'var(--muted)'};">${this.escapeHtml(reviewer.email)}</div>` : ''}
+            ${isAlreadyAssigned ? '<div class="already-assigned-badge" style="font-size:0.75rem;color:var(--muted);margin-top:4px;"><i class="fas fa-user-check"></i> Already assigned</div>' : ''}
         </div>
-        <div style="padding-left:8px;"><i class="fas fa-plus"></i></div>
+        <div style="padding-left:8px;">
+            ${isAlreadyAssigned ? '<i class="fas fa-check" style="color:var(--muted);"></i>' : '<i class="fas fa-plus" style="color:var(--primary);"></i>'}
+        </div>
     </div>
-`).join('');
+`;
+                }).join('');
             }
 
             renderManuscriptHeader() {
@@ -2449,6 +2480,53 @@
                 }
             }
 
+            // Add this method to format timeline comments
+            processCommentWithFormatting(comment) {
+                if (!comment || comment.trim() === '') {
+                    return '<span style="color: #9ca3af;">No comment provided.</span>';
+                }
+
+                // Sanitize HTML but preserve safe formatting tags
+                const sanitizedHtml = this.sanitizeHTML(comment);
+
+                // If the comment is already HTML, return it directly
+                if (comment.includes('<') && comment.includes('>')) {
+                    return sanitizedHtml;
+                }
+
+                // Otherwise, wrap in paragraph tag
+                return `<p>${this.escapeHtml(comment)}</p>`;
+            }
+
+            // Update your existing sanitizeHTML method (make sure it's exactly like this)
+            sanitizeHTML(html) {
+                if (!html) return '';
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                // Remove script tags and other dangerous elements
+                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
+                scripts.forEach(script => script.remove());
+
+                // Allow safe HTML tags for formatting
+                const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+                // Process all elements
+                const allElements = tempDiv.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                        // Replace disallowed tags with their text content
+                        const text = document.createTextNode(el.textContent);
+                        el.parentNode.replaceChild(text, el);
+                    }
+                });
+
+                // Return sanitized HTML
+                return tempDiv.innerHTML.trim() || html;
+            }
+
+            // Update the renderLatestTimelineEvent method to use proper formatting
             async renderLatestTimelineEvent(event) {
                 const timelineContainer = document.getElementById('recentTimeline');
                 if (!timelineContainer) return;
@@ -2461,18 +2539,21 @@
                     }
                 }
 
+                // Use the new formatting method for the comment
+                const formattedComment = this.processCommentWithFormatting(event.comment);
+
                 timelineContainer.innerHTML = `
-    <div class="timeline-item">
-        <div class="card">
-            <span class="status-badge" style="${this.getStatusStyle(event.status)}">
-                ${this.formatStatus(event.status)}
-            </span>
-            <p class="timeline-comment">${this.escapeHtml(event.comment || 'No comment provided')}</p>
-            <p class="timeline-date"><i class="far fa-clock"></i> ${this.formatDate(event.date)}</p>
-            <div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong></div>
-        </div>
-    </div>
-`;
+            <div class="timeline-item">
+                <div class="card">
+                    <span class="status-badge" style="${this.getStatusStyle(event.status)}">
+                        ${this.formatStatus(event.status)}
+                    </span>
+                    <div class="timeline-comment">${formattedComment}</div>
+                    <p class="timeline-date"><i class="far fa-clock"></i> ${this.formatDate(event.date)}</p>
+                    <div class="updated-by"><strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong></div>
+                </div>
+            </div>
+        `;
             }
 
             // Content display methods (Added from review details page)
@@ -2493,28 +2574,6 @@
                     plainText: plainText,
                     displayHtml: sanitizedHtml
                 };
-            }
-
-            sanitizeHTML(html) {
-                if (!html) return '';
-
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-
-                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
-                scripts.forEach(script => script.remove());
-
-                const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-
-                const allElements = tempDiv.querySelectorAll('*');
-                allElements.forEach(el => {
-                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
-                        const text = document.createTextNode(el.textContent);
-                        el.parentNode.replaceChild(text, el);
-                    }
-                });
-
-                return tempDiv.innerHTML.trim() || html;
             }
 
             encodeForModal(content) {
@@ -3223,14 +3282,15 @@
 
             getStatusStyle(status) {
                 const colors = {
-                    'submitted': 'background-color: #3b82f6; color: white;',
-                    'under_review': 'background-color: #f59e0b; color: white;',
-                    'reviewed': 'background-color: #8b5cf6; color: white;',
-                    'accepted': 'background-color: #10b981; color: white;',
-                    'rejected': 'background-color: #ef4444; color: white;',
-                    'revised': 'background-color: #8b5cf6; color: white;',
-                    'awaiting_payment': 'background-color: #f59e0b; color: white;',
-                    'published': 'background-color: #10b981; color: white;'
+                    'submitted': 'background-color: var(--status-submitted-bg); color: var(--status-submitted-color);',
+                    'under_review': 'background-color: var(--status-under_review-bg); color: var(--status-under_review-color);',
+                    'reviewed': 'background-color: var(--status-reviewed-bg); color: var(--status-reviewed-color);',
+                    'revision_requested': 'background-color: var(--status-revision_requested-bg); color: var(--status-revision_requested-color);',
+                    'accepted': 'background-color: var(--status-accepted-bg); color: var(--status-accepted-color);',
+                    'rejected': 'background-color: var(--status-rejected-bg); color: var(--status-rejected-color);',
+                    'revised': 'background-color: var(--status-revised-bg); color: var(--status-revised-color);',
+                    'awaiting_payment': 'background-color: var(--status-awaiting_payment-bg); color: var(--status-awaiting_payment-color);',
+                    'published': 'background-color: var(--status-published-bg); color: var(--status-published-color);'
                 };
                 return colors[status] || 'background-color: #6b7280; color: white;';
             }
@@ -3296,7 +3356,7 @@
 
         /* instantiate */
         window.submissionDetails = new SubmissionDetailsManager();
-    </script>
+</script>
 
 
 </body>
