@@ -133,6 +133,7 @@
 
         input:focus {
             outline: none;
+            border: 1px solid var(--border);
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
         }
@@ -181,6 +182,25 @@
             color: var(--text-secondary);
             font-size: var(--font-size-sm);
         }
+
+        .scope-option {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background-color var(--transition-fast);
+        }
+
+        .scope-option:last-child {
+            border-bottom: none;
+        }
+
+        .scope-option:hover {
+            background-color: var(--light);
+        }
+
+        .scope-option.selected {
+            background-color: var(--primary-light);
+        } 
 
         /* Buttons */
         .btn {
@@ -419,7 +439,7 @@
                 <img src="assets/img/logo.png" alt="">
             </div>
             
-            <h1>Create Account</h1>
+            <h1>Create Author Account</h1>
             <p class="subtitle">Join our platform for seamless submission management and peer review</p>
             
             <div class="success-message" id="successMessage">
@@ -525,15 +545,6 @@
                     <div class="input-wrapper">
                         <input type="text" id="orcid" name="orcid" placeholder="0000-0000-0000-0000">
                     </div>
-                </div>
-            
-                <!-- Reviewer Checkbox -->
-                <div class="checkbox-container">
-                    <input type="checkbox" id="reviewer" name="reviewer" class="checkbox-input">
-                    <label for="reviewer" class="checkbox-label">
-                        <span class="custom-checkbox"></span>
-                        <span>Register as a Reviewer</span>
-                    </label>
                 </div>
             
                 <!-- Password -->

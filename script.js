@@ -223,3 +223,50 @@ document.addEventListener("click", (e) => {
     mobileMenu.classList.remove("active")
   }
 })
+
+
+// Register Dropdown Toggle
+function toggleRegisterDropdown() {
+  const dropdown = document.getElementById('registerDropdown');
+  dropdown.classList.toggle('active');
+  
+  // Close other dropdowns
+  const mobileDropdown = document.getElementById('mobileRegisterDropdown');
+  if (mobileDropdown) {
+    mobileDropdown.classList.remove('active');
+    const toggleBtn = mobileDropdown.previousElementSibling;
+    if (toggleBtn) toggleBtn.classList.remove('active');
+  }
+}
+
+// Mobile Register Dropdown Toggle
+function toggleMobileRegisterDropdown() {
+  const dropdown = document.getElementById('mobileRegisterDropdown');
+  const toggleBtn = event.currentTarget;
+  
+  dropdown.classList.toggle('active');
+  toggleBtn.classList.toggle('active');
+  
+  // Close desktop dropdown
+  const desktopDropdown = document.getElementById('registerDropdown');
+  if (desktopDropdown) {
+    desktopDropdown.classList.remove('active');
+  }
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('registerDropdown');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+  
+  // Close desktop dropdown if clicking outside
+  if (dropdown && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('active');
+  }
+  
+  // Close mobile menu if clicking outside
+  if (mobileMenu && mobileMenuBtn && !mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+    mobileMenu.classList.remove('active');
+  }
+});

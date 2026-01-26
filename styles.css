@@ -1344,3 +1344,131 @@ section {
     width: 100%;
   }
 }
+
+
+/* Dropdown Styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.dropdown-toggle svg {
+  transition: transform 0.3s ease;
+}
+
+.dropdown-toggle.active svg {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.dropdown.active .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--foreground);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.dropdown-item:hover {
+  background: var(--background-secondary);
+  color: var(--primary);
+}
+
+.dropdown-item svg {
+  color: var(--primary);
+}
+
+/* Mobile Dropdown Styles */
+.mobile-dropdown {
+  width: 100%;
+}
+
+.mobile-dropdown-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--foreground);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.mobile-dropdown-toggle:hover {
+  background: var(--background-secondary);
+}
+
+.mobile-dropdown-toggle svg {
+  transition: transform 0.3s ease;
+}
+
+.mobile-dropdown-toggle.active svg {
+  transform: rotate(180deg);
+}
+
+.mobile-dropdown-menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding-left: 1rem;
+}
+
+.mobile-dropdown-menu.active {
+  max-height: 200px;
+}
+
+.mobile-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--foreground);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.mobile-dropdown-item:hover {
+  background: var(--background-secondary);
+  color: var(--primary);
+}
+
+.mobile-dropdown-item svg {
+  color: var(--primary);
+}

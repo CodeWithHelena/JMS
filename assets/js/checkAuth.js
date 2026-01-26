@@ -1,11 +1,8 @@
-
 const BASE_URL = "https://jms.247laboratory.net";
-export const token = localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
-
-/*
 function redirectToLogin() {
-  window.location.href = "/signin.html"; // Redirect to your login page
+  window.location.href = "/login.html"; // Redirect to your login page
 }
 
 async function verifyToken() {
@@ -20,7 +17,7 @@ async function verifyToken() {
 
   try {
     //alert("verifying token", token);
-    const response = await fetch(`https://fp.247laboratory.net/auth/verify`, {
+    const response = await fetch(`${BASE_URL}/auth/verify`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -51,7 +48,7 @@ function logout() {
   // Remove token from localStorage and redirect to login page
   alert("are you loggin out?");
   localStorage.removeItem("token");
-  window.location.href = "signin.html"; // Redirect to login page
+  window.location.href = "/login.html"; // Redirect to login page
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -63,5 +60,3 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 verifyToken(); // Call the function to verify the token when the script runs
-
-*/

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Auto Assign Reviewers - Certificate Management</title>
+    <title>System Settings - Certificate Management</title>
 
     <script type="module" src="../assets/js/checkAuth.js"></script>
 
@@ -27,18 +27,19 @@
             --accent-hover: #b34c00;
             --bg-white: #ffffff;
             --light: #f8f9fa;
-            --border-color: #e2e8f0;
             --text-color: #1a202c;
             --text-light: #718096;
             --danger-dark: #c53030;
             --warning-yellow: #f6e05e;
             --accent-orange-soft: #fffaf0;
             --transition: all 0.3s ease;
+            --success: #38a169;
+            --info: #4299e1;
         }
 
         .main-content {
-            padding: 2rem;
-            max-width: 1200px;
+            padding: 1.5rem;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -46,318 +47,361 @@
             width: 100%;
         }
 
-        /* Content Card */
-        .content-card {
-            background: var(--bg-white);
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            padding: 2.5rem;
+        /* Page Header */
+        .page-header {
             margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .card-header {
-            margin-bottom: 2rem;
-        }
-
-        .card-header h2 {
+        .page-header h1 {
             font-size: 1.8rem;
             font-weight: 600;
             color: var(--text-color);
             margin-bottom: 0.5rem;
         }
 
-        .card-header p {
+        .page-header p {
             color: var(--text-light);
             font-size: 1rem;
         }
 
-        /* Current Setting Display */
-        .current-setting-display {
-            background: linear-gradient(90deg, rgba(0, 191, 255, 0.06), rgba(31, 27, 81, 0.02));
-            border-radius: 16px;
-            padding: 2rem;
-            border: 3px solid var(--lite-secondary6);
-            margin-bottom: 2.5rem;
-            text-align: center;
-        }
 
-        .current-setting-label {
-            font-size: 1.1rem;
-            color: var(--warning);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
 
-        .current-setting-value {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--secondary-color);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .current-setting-unit {
-            font-size: 1.5rem;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        /* Form Section */
-        .form-section {
-            background: var(--light);
-            border-radius: 16px;
-            padding: 2rem;
+        /* Setting Card */
+        .setting-card {
+            background: var(--bg-white);
+            border-radius: 12px;
             border: 1px solid var(--border-color);
-        }
-
-        .form-header {
+            padding: 1.5rem;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             margin-bottom: 1.5rem;
         }
 
-        .form-header h3 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--secondary-color);
+        .setting-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .setting-header {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light);
         }
 
-        .form-header p {
+        .setting-header i {
+            font-size: 1.25rem;
+            color: var(--warning);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--warning-light);
+            border-radius: 8px;
+        }
+
+        .setting-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin: 0;
+        }
+
+        /* Current Value Display */
+        .current-value {
+            width: fit-content;
+            margin: auto;
+            background: var(--light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .current-label {
+            font-size: 0.9rem;
             color: var(--text-light);
-            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
         }
 
+        .current-value-display {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .current-value-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+
+        .current-value-unit {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .current-image {
+            max-width: 200px;
+            max-height: 100px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            padding: 4px;
+        }
+
+        .no-image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            color: var(--text-light);
+        }
+
+        .no-image i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--border-color);
+        }
+
+        .no-image p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Form Controls */
         .form-group {
-            margin-bottom: 2rem ;
+            margin-bottom: 1.5rem;
         }
 
         .form-label {
+            display: block;
             font-weight: 600;
             color: var(--text-color);
-            margin-bottom: 0.75rem;
-            display: block;
-            font-size: 1.1rem;
-        }
-
-        .form-label i {
-            color: var(--primary-color);
-            margin-right: 0.5rem;
-        }
-
-        .input-group {
-            display: flex;
-            align-items: stretch;
-            max-width: 400px;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
         }
 
         .form-control {
-            flex: 1;
-            padding: 1rem 1.25rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
-            border-radius: 12px 0 0 12px;
+            border-radius: 8px;
             background: var(--bg-white);
             color: var(--text-color);
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: var(--transition);
-            font-weight: 500;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: var(--warning);
-            box-shadow: 0 0 0 3px var(--warning-light);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.1);
         }
 
-        .input-group-text {
-            background: var(--light);
-            border: 2px solid var(--border-color);
-            border-left: none;
-            padding: 1rem 1.5rem;
-            border-radius: 0 12px 12px 0;
-            color: var(--text-light);
-            font-weight: 600;
-            font-size: 1.1rem;
-            min-width: 120px;
+        .number-input-group {
+            display: flex;
+            align-items: center;
+            max-width: 200px;
+        }
+
+        .number-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px 0 0 8px;
+            background: var(--bg-white);
+            color: var(--text-color);
+            font-size: 1rem;
             text-align: center;
         }
 
-        .form-text {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            margin-top: 0.75rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-
-        .form-text i {
-            color: var(--primary-color);
-            margin-top: 0.2rem;
-        }
-
-        /* Error Message */
-        .error-message {
-            display: none;
-            color: var(--danger-dark);
-            font-size: 0.95rem;
-            margin-top: 0.75rem;
+        .number-unit {
             padding: 0.75rem 1rem;
-            background: #fed7d7;
+            background: var(--light);
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
             border-radius: 8px;
-            border-left: 4px solid var(--danger-dark);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-white);
         }
 
-        .error-message i {
-            margin-right: 0.5rem;
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(204, 85, 0, 0.02);
         }
 
-        /* Buttons */
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .file-upload-label i {
+            font-size: 2rem;
+            color: var(--text-light);
+        }
+
+        .file-upload-text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .file-upload-hint {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .selected-file {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--light);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+            display: none;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .file-info i {
+            color: var(--primary-color);
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .file-size {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        /* Action Buttons */
         .action-buttons {
             display: flex;
-            gap: 1rem;
-            margin-top: 2.5rem;
-            padding-top: 2rem;
-            border-top: 2px solid var(--border-color);
+            gap: 0.75rem;
+            margin-top: 1rem;
         }
 
         .btn {
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
             cursor: pointer;
             border: none;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            font-size: 1.1rem;
-            min-width: 180px;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-brand:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+            gap: 0.5rem;
+            min-width: 120px;
         }
 
         .btn-secondary {
             background: var(--bg-white);
             color: var(--text-color);
-            border: 2px solid var(--border-color);
+            border: 1px solid var(--border-color);
         }
 
         .btn-secondary:hover {
             background: var(--light);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         /* Spinner */
-        .spinner-border {
+        .spinner {
             display: inline-block;
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 0.25em solid currentColor;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid currentColor;
             border-right-color: transparent;
             border-radius: 50%;
-            animation: spinner-border 0.75s linear infinite;
+            animation: spinner 0.75s linear infinite;
         }
 
-        @keyframes spinner-border {
+        @keyframes spinner {
             to {
                 transform: rotate(360deg);
             }
         }
 
-        /* Status Message */
-        .status-message {
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            display: none;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .status-message.success {
-            background: #c6f6d5;
-            color: #22543d;
-            border-left: 4px solid #38a169;
-        }
-
-        .status-message.error {
+        /* Error Message */
+        .error-message {
+            color: var(--danger-dark);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
             background: #fed7d7;
-            color: #742a2a;
-            border-left: 4px solid #e53e3e;
+            border-radius: 6px;
+            border-left: 3px solid var(--danger-dark);
+            display: none;
         }
 
-        .status-message i {
-            font-size: 1.25rem;
+        .error-message i {
+            margin-right: 0.5rem;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        /* Responsive */
+        @media (min-width: 768px) {
             .main-content {
-                padding: 1.5rem;
+                padding: 2rem;
             }
 
-            .content-card {
-                padding: 1.5rem;
-            }
-
-            .current-setting-value {
-                font-size: 2.5rem;
-            }
-
-            .input-group {
-                flex-direction: column;
-                max-width: 100%;
-            }
-
-            .form-control {
-                border-radius: 12px 12px 0 0;
-                text-align: center;
-                font-size: 1.5rem;
-                padding: 1.5rem;
-            }
-
-            .input-group-text {
-                border-radius: 0 0 12px 12px;
-                border-top: none;
-                border-left: 2px solid var(--border-color);
-                padding: 1rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                min-width: auto;
+            .setting-card:first-child {
+                grid-column: 1 / -1;
             }
         }
 
-        /* Info Box */
-        /* .info-box {
-            background: linear-gradient(135deg, rgba(0, 191, 255, 0.06), rgba(31, 27, 81, 0.02));
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(0, 191, 255, 0.15);
-        } */
+        @media (min-width: 1024px) {
+
+            .setting-card:first-child {
+                grid-column: 1;
+            }
+        }
     </style>
 </head>
 
@@ -370,50 +414,34 @@
             <main class="main-content">
                 <div class="container">
                     <!-- Page Header -->
-                    <div class="container page-title">
-                        <div>
-                            <h1>Auto Assign Reviewers</h1>
-                            <p>Configure the automatic reviewer assignment</p>
-                        </div>
+                    <div class="page-header">
+                        <h1>System Settings</h1>
+                        <p>Configure system settings and upload official documents</p>
                     </div>
 
-                    <!-- Status Message Area -->
-                    <div id="statusMessage" class="status-message">
-                        <i class="fas fa-check-circle"></i>
-                        <span id="statusText"></span>
-                    </div>
-
-                    <!-- Main Content Card -->
-                    <div class="content-card">
-                        <!-- Current Setting -->
-                        <div class="current-setting-display">
-                            <div class="current-setting-label">
+                    <!-- Settings Grid -->
+                    <div class="settings-grid">
+                        <!-- Review Number Card -->
+                        <div class="setting-card">
+                            <div class="setting-header">
                                 <i class="fas fa-user-check"></i>
-                                Current Auto-Assigned Reviewers Per Submission
-                            </div>
-                            <div class="current-setting-value" id="currentReviewersNumber"></div>
-                            <div class="current-setting-unit">reviewers per submission</div>
-                        </div>
-
-                        <!-- Update Form -->
-                        <div class="form-section">
-                            <div class="form-header">
-                                <h3><i class="fas fa-edit"></i> Update Reviewers Number</h3>
-                                <p>Enter a new value between 1 and 50 reviewers per submission</p>
+                                <h3>Review Number</h3>
                             </div>
 
-                            <div class="form-group">
-                                <label for="newReviewersNumber" class="form-label">
-                                    <i class="fas fa-user-plus"></i>
-                                    Number of Reviewers to Auto-Assign
-                                </label>
-                                <div class="input-group">
-                                    <input type="number" id="newReviewersNumber" class="form-control" min="1" max="50" value="3" placeholder="Enter number (1-50)" aria-label="Number of reviewers to auto-assign">
-                                    <span class="input-group-text">reviewers</span>
+                            <!-- Current Setting -->
+                            <div class="current-value">
+                                <div class="current-value-display">
+                                    <span class="current-value-number" id="currentReviewersNumber"></span>
+                                    <span class="current-value-unit">reviewers per submission</span>
                                 </div>
-                                <div class="form-text">
-                                    <i class="fas fa-info-circle"></i>
-                                    The system will automatically assign this many reviewers to each new submission.
+                            </div>
+
+                            <!-- Update Form -->
+                            <div class="form-group">
+                                <label class="form-label">Number of Reviewers</label>
+                                <div class="number-input-group">
+                                    <input type="number" id="newReviewersNumber" class="number-input" min="1" max="50" placeholder="1-50">
+                                    <span class="number-unit">reviewers</span>
                                 </div>
                                 <div class="error-message" id="reviewersError">
                                     <i class="fas fa-exclamation-circle"></i>
@@ -423,11 +451,119 @@
 
                             <!-- Action Buttons -->
                             <div class="action-buttons">
-                                <button class="btn btn-secondary" id="resetBtn">
+                                <button class="btn btn-secondary" id="resetReviewersBtn">
                                     <i class="fas fa-redo"></i> Reset
                                 </button>
-                                <button class="btn btn-primary" id="updateReviewersBtn">
-                                    <i class="fas fa-save"></i> Save Changes
+                                <button class="btn btn-brand" id="updateReviewersBtn" disabled>
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Official Stamp Card -->
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <i class="fas fa-stamp"></i>
+                                <h3>Official Stamp</h3>
+                            </div>
+
+                            <!-- Current Image -->
+                            <div class="image-preview">
+                                <div id="stampPreview" class="no-image">
+                                    <i class="fas fa-stamp"></i>
+                                    <p>No stamp uploaded</p>
+                                </div>
+                            </div>
+
+                            <!-- Upload Form -->
+                            <div class="form-group">
+                                <label class="form-label">Upload New Stamp</label>
+                                <div class="file-upload-area" onclick="document.getElementById('stampFile').click()">
+                                    <label class="file-upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <div>
+                                            <div class="file-upload-text">Click to select file</div>
+                                            <div class="file-upload-hint">PNG only, max 2MB</div>
+                                        </div>
+                                    </label>
+                                    <input type="file" id="stampFile" class="file-input" accept=".png,image/png">
+                                </div>
+                                <div class="selected-file" id="stampFileInfo">
+                                    <div class="file-info">
+                                        <i class="fas fa-file-alt"></i>
+                                        <div>
+                                            <div class="file-name" id="stampFileName"></div>
+                                            <div class="file-size" id="stampFileSize"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="error-message" id="stampError">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span id="stampErrorMessage"></span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary" id="cancelStampBtn" style="display: none;">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button class="btn btn-brand" id="uploadStampBtn" disabled>
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Official Signature Card -->
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <i class="fas fa-signature"></i>
+                                <h3>Official Signature</h3>
+                            </div>
+
+                            <!-- Current Image -->
+                            <div class="image-preview">
+                                <div id="signaturePreview" class="no-image">
+                                    <i class="fas fa-signature"></i>
+                                    <p>No signature uploaded</p>
+                                </div>
+                            </div>
+
+                            <!-- Upload Form -->
+                            <div class="form-group">
+                                <label class="form-label">Upload New Signature</label>
+                                <div class="file-upload-area" onclick="document.getElementById('signatureFile').click()">
+                                    <label class="file-upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <div>
+                                            <div class="file-upload-text">Click to select file</div>
+                                            <div class="file-upload-hint">PNG only, max 2MB</div>
+                                        </div>
+                                    </label>
+                                    <input type="file" id="signatureFile" class="file-input" accept=".png,image/png">
+                                </div>
+                                <div class="selected-file" id="signatureFileInfo">
+                                    <div class="file-info">
+                                        <i class="fas fa-file-alt"></i>
+                                        <div>
+                                            <div class="file-name" id="signatureFileName"></div>
+                                            <div class="file-size" id="signatureFileSize"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="error-message" id="signatureError">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span id="signatureErrorMessage"></span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary" id="cancelSignatureBtn" style="display: none;">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button class="btn btn-brand" id="uploadSignatureBtn" disabled>
+                                    <i class="fas fa-upload"></i> Upload
                                 </button>
                             </div>
                         </div>
@@ -439,7 +575,7 @@
 
     <script>
         window.SIDEBAR_MODULE = 'admin';
-        window.SIDEBAR_ACTIVE_ID = 'review-number';
+        window.SIDEBAR_ACTIVE_ID = 'settings';
     </script>
 
     <script src="/assets/js/layout.js"></script>
@@ -448,13 +584,19 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <script type="module">
-        import { BASE_URL, token } from '../assets/js/utility.js';
+        import { BASE_URL, token, apiFetch } from '../assets/js/utility.js';
 
-        class ReviewNumberManager {
+        class SettingsManager {
             constructor() {
-                this.currentNumber = 3; // Demo value
-                this.isLoading = false;
-                this.originalValue = 3;
+                this.settings = {
+                    numberOfReviewersAutoAssignedPerSubmission: 0,
+                    stamp: null,
+                    signature: null
+                };
+
+                this.stampFile = null;
+                this.signatureFile = null;
+                this.uploadBaseUrl = BASE_URL.replace('/api/v1', '');
 
                 this.init();
             }
@@ -462,194 +604,229 @@
             init() {
                 this.cacheElements();
                 this.bindEvents();
-                this.fetchCurrentNumber();
+                this.initializeToastr();
+                this.fetchSettings();
             }
 
             cacheElements() {
+                // Review Number Elements
                 this.currentNumberDisplay = document.getElementById('currentReviewersNumber');
                 this.newNumberInput = document.getElementById('newReviewersNumber');
-                this.updateBtn = document.getElementById('updateReviewersBtn');
-                this.resetBtn = document.getElementById('resetBtn');
-                this.errorDisplay = document.getElementById('reviewersError');
-                this.errorMessage = document.getElementById('reviewersErrorMessage');
-                this.statusMessage = document.getElementById('statusMessage');
-                this.statusText = document.getElementById('statusText');
+                this.updateReviewersBtn = document.getElementById('updateReviewersBtn');
+                this.resetReviewersBtn = document.getElementById('resetReviewersBtn');
+                this.reviewersError = document.getElementById('reviewersError');
+                this.reviewersErrorMessage = document.getElementById('reviewersErrorMessage');
+
+                // Stamp Elements
+                this.stampFileInput = document.getElementById('stampFile');
+                this.stampPreview = document.getElementById('stampPreview');
+                this.stampFileName = document.getElementById('stampFileName');
+                this.stampFileSize = document.getElementById('stampFileSize');
+                this.stampFileInfo = document.getElementById('stampFileInfo');
+                this.uploadStampBtn = document.getElementById('uploadStampBtn');
+                this.cancelStampBtn = document.getElementById('cancelStampBtn');
+                this.stampError = document.getElementById('stampError');
+                this.stampErrorMessage = document.getElementById('stampErrorMessage');
+
+                // Signature Elements
+                this.signatureFileInput = document.getElementById('signatureFile');
+                this.signaturePreview = document.getElementById('signaturePreview');
+                this.signatureFileName = document.getElementById('signatureFileName');
+                this.signatureFileSize = document.getElementById('signatureFileSize');
+                this.signatureFileInfo = document.getElementById('signatureFileInfo');
+                this.uploadSignatureBtn = document.getElementById('uploadSignatureBtn');
+                this.cancelSignatureBtn = document.getElementById('cancelSignatureBtn');
+                this.signatureError = document.getElementById('signatureError');
+                this.signatureErrorMessage = document.getElementById('signatureErrorMessage');
             }
 
             bindEvents() {
-                // Input validation
+                // Review Number Events
                 if (this.newNumberInput) {
                     this.newNumberInput.addEventListener('input', () => {
-                        this.validateInput();
-                        this.checkForChanges();
-                    });
-
-                    this.newNumberInput.addEventListener('change', () => {
-                        this.validateInput();
-                        this.checkForChanges();
+                        this.validateReviewersInput();
+                        this.checkReviewersChanges();
                     });
                 }
 
-                // Update button click
-                if (this.updateBtn) {
-                    this.updateBtn.addEventListener('click', () => this.updateReviewersNumber());
+                if (this.updateReviewersBtn) {
+                    this.updateReviewersBtn.addEventListener('click', () => this.updateReviewersNumber());
                 }
 
-                // Reset button click
-                if (this.resetBtn) {
-                    this.resetBtn.addEventListener('click', () => this.resetForm());
+                if (this.resetReviewersBtn) {
+                    this.resetReviewersBtn.addEventListener('click', () => this.resetReviewersForm());
+                }
+
+                // Stamp Events
+                if (this.stampFileInput) {
+                    this.stampFileInput.addEventListener('change', (e) => this.handleFileSelect(e, 'stamp'));
+                }
+
+                if (this.uploadStampBtn) {
+                    this.uploadStampBtn.addEventListener('click', () => this.uploadStamp());
+                }
+
+                if (this.cancelStampBtn) {
+                    this.cancelStampBtn.addEventListener('click', () => this.cancelStampUpload());
+                }
+
+                // Signature Events
+                if (this.signatureFileInput) {
+                    this.signatureFileInput.addEventListener('change', (e) => this.handleFileSelect(e, 'signature'));
+                }
+
+                if (this.uploadSignatureBtn) {
+                    this.uploadSignatureBtn.addEventListener('click', () => this.uploadSignature());
+                }
+
+                if (this.cancelSignatureBtn) {
+                    this.cancelSignatureBtn.addEventListener('click', () => this.cancelSignatureUpload());
                 }
             }
 
-            async fetchCurrentNumber() {
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 4000,
+                    extendedTimeOut: 1000
+                };
+            }
+
+            async fetchSettings() {
                 try {
-                    const response = await fetch(`${BASE_URL}/settings`, {
+                    const data = await apiFetch(`${BASE_URL}/settings`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         }
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: Failed to fetch settings`);
-                    }
-
-                    const data = await response.json();
-
                     if (data.success && data.settings) {
-                        this.currentNumber = data.settings.numberOfReviewersAutoAssignedPerSubmission || 0;
+                        this.settings = data.settings;
                         this.updateDisplay();
                     } else {
-                        throw new Error('Invalid response format');
+                        throw new Error('Failed to fetch settings');
                     }
                 } catch (error) {
-                    console.error('Error fetching reviewers number:', error);
-                    // Use demo value if API fails
-                    this.updateDisplay();
+                    console.error('Error fetching settings:', error);
+                    toastr.error(error.message || 'Failed to load settings. Please check your connection.');
                 }
             }
 
             updateDisplay() {
+                // Update Review Number
                 if (this.currentNumberDisplay) {
-                    this.currentNumberDisplay.textContent = this.currentNumber;
+                    this.currentNumberDisplay.textContent = this.settings.numberOfReviewersAutoAssignedPerSubmission;
                 }
 
                 if (this.newNumberInput) {
-                    this.newNumberInput.value = this.currentNumber;
+                    this.newNumberInput.value = this.settings.numberOfReviewersAutoAssignedPerSubmission;
                 }
 
-                this.originalValue = this.currentNumber;
-                this.checkForChanges();
+                // Update Stamp Preview
+                this.updateImagePreview('stamp', this.settings.stamp);
+
+                // Update Signature Preview
+                this.updateImagePreview('signature', this.settings.signature);
+
+                // Check for changes
+                this.checkReviewersChanges();
             }
 
-            validateInput() {
+            updateImagePreview(type, imageData) {
+                const previewElement = type === 'stamp' ? this.stampPreview : this.signaturePreview;
+
+                if (imageData && imageData.url) {
+                    // Remove /api/v1 from the URL for file access
+                    const imageUrl = imageData.url.startsWith('http')
+                        ? imageData.url
+                        : `${this.uploadBaseUrl}${imageData.url}`;
+
+                    previewElement.innerHTML = `<img src="${imageUrl}" alt="${type}" class="current-image">`;
+                    previewElement.classList.remove('no-image');
+                } else {
+                    previewElement.innerHTML = `
+                        <i class="fas fa-${type === 'stamp' ? 'stamp' : 'signature'}"></i>
+                        <p>No ${type} uploaded</p>
+                    `;
+                    previewElement.classList.add('no-image');
+                }
+            }
+
+            // Review Number Methods
+            validateReviewersInput() {
                 const value = parseInt(this.newNumberInput.value);
+                const errorElement = this.reviewersError;
 
                 if (isNaN(value)) {
-                    this.showError('Please enter a valid number');
+                    this.showError(errorElement, 'Please enter a valid number');
                     return false;
                 }
 
                 if (value < 1) {
-                    this.showError('Number must be at least 1 reviewer');
+                    this.showError(errorElement, 'Must be at least 1 reviewer');
                     return false;
                 }
 
                 if (value > 50) {
-                    this.showError('Number cannot exceed 50 reviewers');
+                    this.showError(errorElement, 'Cannot exceed 50 reviewers');
                     return false;
                 }
 
-                this.hideError();
+                this.hideError(errorElement);
                 return true;
             }
 
-            checkForChanges() {
+            checkReviewersChanges() {
                 const value = parseInt(this.newNumberInput.value);
                 if (isNaN(value)) return;
 
-                if (value === this.originalValue) {
-                    this.updateBtn.disabled = true;
-                } else {
-                    this.updateBtn.disabled = false;
+                const currentValue = this.settings.numberOfReviewersAutoAssignedPerSubmission;
+                this.updateReviewersBtn.disabled = value === currentValue;
+            }
+
+            showError(element, message) {
+                if (element && element.querySelector('span')) {
+                    element.querySelector('span').textContent = message;
+                    element.style.display = 'block';
                 }
             }
 
-            showError(message) {
-                if (this.errorDisplay && this.errorMessage) {
-                    this.errorMessage.textContent = message;
-                    this.errorDisplay.style.display = 'block';
-                }
-
-                if (this.updateBtn) {
-                    this.updateBtn.disabled = true;
+            hideError(element) {
+                if (element) {
+                    element.style.display = 'none';
                 }
             }
 
-            hideError() {
-                if (this.errorDisplay) {
-                    this.errorDisplay.style.display = 'none';
-                }
-            }
-
-            showStatus(message, type = 'success') {
-                if (this.statusMessage && this.statusText) {
-                    this.statusText.textContent = message;
-                    this.statusMessage.className = `status-message ${type}`;
-                    this.statusMessage.style.display = 'flex';
-
-                    if (type === 'success') {
-                        this.statusMessage.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
-                    } else {
-                        this.statusMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>${message}</span>`;
-                    }
-
-                    // Auto-hide after 5 seconds
-                    setTimeout(() => {
-                        this.statusMessage.style.display = 'none';
-                    }, 5000);
-                }
-            }
-
-            resetForm() {
+            resetReviewersForm() {
                 if (this.newNumberInput) {
-                    this.newNumberInput.value = this.currentNumber;
+                    this.newNumberInput.value = this.settings.numberOfReviewersAutoAssignedPerSubmission;
                 }
-                this.hideError();
-                this.updateBtn.disabled = true;
-                this.showStatus('Form reset to current value', 'success');
+                this.hideError(this.reviewersError);
+                this.updateReviewersBtn.disabled = true;
+                toastr.info('Reset to current value');
             }
 
             async updateReviewersNumber() {
-                // Validate input
-                if (!this.validateInput()) {
-                    return;
-                }
+                if (!this.validateReviewersInput()) return;
 
                 const newNumber = parseInt(this.newNumberInput.value);
 
-                // Check if number changed
-                if (newNumber === this.currentNumber) {
-                    this.showStatus('Number is already set to this value', 'error');
+                if (newNumber === this.settings.numberOfReviewersAutoAssignedPerSubmission) {
+                    toastr.warning('Already set to this value');
                     return;
                 }
 
-                if (!token) {
-                    this.showStatus('Authentication token not found. Please login again.', 'error');
-                    return;
-                }
-
-                this.isLoading = true;
-                const originalText = this.updateBtn.innerHTML;
-                this.updateBtn.disabled = true;
-                this.updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+                this.setLoading(this.updateReviewersBtn, true);
 
                 try {
                     const payload = {
                         numberOfReviewersAutoAssignedPerSubmission: newNumber
                     };
 
-                    const response = await fetch(`${BASE_URL}/settings`, {
+                    const data = await apiFetch(`${BASE_URL}/settings`, {
                         method: 'PUT',
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -659,67 +836,249 @@
                         body: JSON.stringify(payload)
                     });
 
-                    const data = await response.json();
-
-                    if (response.ok && data.success) {
-                        // Update current number
-                        this.currentNumber = newNumber;
+                    if (data.success) {
+                        this.settings.numberOfReviewersAutoAssignedPerSubmission = newNumber;
                         this.updateDisplay();
 
-                        // Show success message
                         await Swal.fire({
                             icon: 'success',
-                            title: 'Success!',
-                            text: data.message || 'Reviewers number updated successfully',
-                            confirmButtonColor: '#3085d6',
-                            timer: 2000,
-                            showConfirmButton: true
+                            title: 'Updated!',
+                            text: 'Reviewer count updated successfully',
+                            confirmButtonColor: '#cc5500',
+                            confirmButtonText: 'OK',
+                            timer: 2000
                         });
 
-                        this.showStatus('Reviewers number updated successfully!', 'success');
-
+                        toastr.success('Reviewer count updated');
                     } else {
-                        throw new Error(data.message || 'Failed to update reviewers number');
+                        throw new Error(data.message || 'Update failed');
                     }
 
                 } catch (error) {
                     console.error('Error updating reviewers number:', error);
+                    toastr.error(error.message || 'Failed to update');
+                    this.newNumberInput.value = this.settings.numberOfReviewersAutoAssignedPerSubmission;
+                } finally {
+                    this.setLoading(this.updateReviewersBtn, false);
+                    this.checkReviewersChanges();
+                }
+            }
 
-                    // Show error with SweetAlert
-                    await Swal.fire({
-                        icon: 'error',
-                        title: 'Update Failed',
-                        text: error.message || 'Failed to update reviewers number. Please try again.',
-                        confirmButtonColor: '#d33',
+            // File Upload Methods
+            handleFileSelect(event, type) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                // Validate file type
+                if (file.type !== 'image/png') {
+                    toastr.error('Please select a PNG image file');
+                    this.resetFileInput(type);
+                    return;
+                }
+
+                // Validate file size (2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    toastr.error('File size must be less than 2MB');
+                    this.resetFileInput(type);
+                    return;
+                }
+
+                // Store file and update UI
+                if (type === 'stamp') {
+                    this.stampFile = file;
+                    this.updateFileInfo(file, 'stamp');
+                    this.uploadStampBtn.disabled = false;
+                    this.cancelStampBtn.style.display = 'flex';
+                } else {
+                    this.signatureFile = file;
+                    this.updateFileInfo(file, 'signature');
+                    this.uploadSignatureBtn.disabled = false;
+                    this.cancelSignatureBtn.style.display = 'flex';
+                }
+            }
+
+            updateFileInfo(file, type) {
+                const fileNameElement = type === 'stamp' ? this.stampFileName : this.signatureFileName;
+                const fileSizeElement = type === 'stamp' ? this.stampFileSize : this.signatureFileSize;
+                const fileInfoElement = type === 'stamp' ? this.stampFileInfo : this.signatureFileInfo;
+
+                fileNameElement.textContent = file.name;
+                fileSizeElement.textContent = `(${this.formatFileSize(file.size)})`;
+                fileInfoElement.style.display = 'block';
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            resetFileInput(type) {
+                if (type === 'stamp') {
+                    this.stampFile = null;
+                    this.stampFileInput.value = '';
+                    this.stampFileInfo.style.display = 'none';
+                    this.uploadStampBtn.disabled = true;
+                    this.cancelStampBtn.style.display = 'none';
+                    this.hideError(this.stampError);
+                } else {
+                    this.signatureFile = null;
+                    this.signatureFileInput.value = '';
+                    this.signatureFileInfo.style.display = 'none';
+                    this.uploadSignatureBtn.disabled = true;
+                    this.cancelSignatureBtn.style.display = 'none';
+                    this.hideError(this.signatureError);
+                }
+            }
+
+            cancelStampUpload() {
+                this.resetFileInput('stamp');
+                toastr.info('Stamp upload cancelled');
+            }
+
+            cancelSignatureUpload() {
+                this.resetFileInput('signature');
+                toastr.info('Signature upload cancelled');
+            }
+
+            validateImageFile(file, type) {
+                const errorElement = type === 'stamp' ? this.stampError : this.signatureError;
+                this.hideError(errorElement);
+
+                if (!file) {
+                    this.showError(errorElement, 'Please select a file');
+                    return false;
+                }
+
+                if (file.type !== 'image/png') {
+                    this.showError(errorElement, 'Only PNG images allowed');
+                    return false;
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+                    this.showError(errorElement, 'File must be under 2MB');
+                    return false;
+                }
+
+                return true;
+            }
+
+            async uploadStamp() {
+                if (!this.validateImageFile(this.stampFile, 'stamp')) return;
+
+                this.setLoading(this.uploadStampBtn, true);
+
+                try {
+                    const formData = new FormData();
+                    formData.append('stamp', this.stampFile);
+
+                    const data = await apiFetch(`${BASE_URL}/settings/upload/stamp`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
                     });
 
-                    this.showStatus(error.message || 'Failed to update reviewers number', 'error');
+                    if (data.success) {
+                        this.settings.stamp = data.stamp || {
+                            filename: this.stampFile.name,
+                            originalName: this.stampFile.name,
+                            url: URL.createObjectURL(this.stampFile)
+                        };
+                        this.updateImagePreview('stamp', this.settings.stamp);
+                        this.resetFileInput('stamp');
 
-                    // Reset to current value
-                    this.newNumberInput.value = this.currentNumber;
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Uploaded!',
+                            text: 'Official stamp updated successfully',
+                            confirmButtonColor: '#cc5500',
+                            confirmButtonText: 'OK',
+                            timer: 2000
+                        });
 
+                        toastr.success('Stamp uploaded successfully');
+                    } else {
+                        throw new Error(data.message || 'Upload failed');
+                    }
+
+                } catch (error) {
+                    console.error('Error uploading stamp:', error);
+                    toastr.error(error.message || 'Failed to upload stamp');
                 } finally {
-                    this.isLoading = false;
-                    this.updateBtn.disabled = false;
-                    this.updateBtn.innerHTML = originalText;
-                    this.checkForChanges();
+                    this.setLoading(this.uploadStampBtn, false);
+                }
+            }
+
+            async uploadSignature() {
+                if (!this.validateImageFile(this.signatureFile, 'signature')) return;
+
+                this.setLoading(this.uploadSignatureBtn, true);
+
+                try {
+                    const formData = new FormData();
+                    formData.append('signature', this.signatureFile);
+
+                    const data = await apiFetch(`${BASE_URL}/settings/upload/signature`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    if (data.success) {
+                        this.settings.signature = data.signature || {
+                            filename: this.signatureFile.name,
+                            originalName: this.signatureFile.name,
+                            url: URL.createObjectURL(this.signatureFile)
+                        };
+                        this.updateImagePreview('signature', this.settings.signature);
+                        this.resetFileInput('signature');
+
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Uploaded!',
+                            text: 'Official signature updated successfully',
+                            confirmButtonColor: '#cc5500',
+                            confirmButtonText: 'OK',
+                            timer: 2000
+                        });
+
+                        toastr.success('Signature uploaded successfully');
+                    } else {
+                        throw new Error(data.message || 'Upload failed');
+                    }
+
+                } catch (error) {
+                    console.error('Error uploading signature:', error);
+                    toastr.error(error.message || 'Failed to upload signature');
+                } finally {
+                    this.setLoading(this.uploadSignatureBtn, false);
+                }
+            }
+
+            setLoading(button, isLoading) {
+                if (isLoading) {
+                    button.disabled = true;
+                    button.innerHTML = '<span class="spinner"></span> Processing...';
+                } else {
+                    button.disabled = false;
+                    const icon = button.id.includes('Stamp') ? 'fa-upload' :
+                        button.id.includes('Signature') ? 'fa-upload' : 'fa-save';
+                    const text = button.id.includes('Stamp') ? 'Upload' :
+                        button.id.includes('Signature') ? 'Upload' : 'Save';
+                    button.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
                 }
             }
         }
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Toastr
-            toastr.options = {
-                closeButton: true,
-                progressBar: true,
-                positionClass: "toast-top-right",
-                timeOut: 3000,
-                extendedTimeOut: 1000
-            };
-
-            // Initialize manager
-            window.reviewNumberManager = new ReviewNumberManager();
+            window.settingsManager = new SettingsManager();
         });
     </script>
 
