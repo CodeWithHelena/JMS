@@ -25,7 +25,7 @@
             --accent: #4f46e5;
             --primary: var(--secondary-color2);
             --primary-light: rgba(255, 122, 24, 0.1);
-            --primary-dark: #e56c0e;
+            --primary-dark: var(--lite-primary-color);
             --muted: #6b7280;
             --light: #f8fafc;
             --border: #e2e8f0;
@@ -95,18 +95,29 @@
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
             margin-bottom: 1.5rem;
             border: 4px solid rgba(255, 255, 255, 0.3);
             position: relative;
             z-index: 1;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-avatar .avatar-initials {
+            font-size: 2.5rem;
+            font-weight: 700;
         }
 
         .profile-name {
@@ -151,6 +162,42 @@
         .stat-label {
             font-size: 0.9rem;
             opacity: 0.8;
+        }
+
+        /* Bio Section */
+        .bio-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .bio-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .bio-title i {
+            color: var(--primary);
+        }
+
+        .bio-content {
+            color: #374151;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .bio-content.empty {
+            color: var(--muted);
+            font-style: italic;
         }
 
         /* Profile Content Grid */
@@ -325,7 +372,7 @@
             border-radius: var(--radius);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 500px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
@@ -375,13 +422,46 @@
         .modal-form {
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1.5rem;
+        }
+
+        .form-section {
+            margin-bottom: 1rem;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group label {
@@ -400,10 +480,11 @@
         .form-control {
             padding: 0.75rem 1rem;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: all 0.2s;
             font-family: inherit;
+            background: var(--bg-white);
         }
 
         .form-control:focus {
@@ -416,6 +497,191 @@
             background: #f5f5f5;
             color: var(--muted);
             cursor: not-allowed;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Custom Select */
+        .custom-select {
+            position: relative;
+        }
+
+        .select-header {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-white);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .select-header:hover {
+            border-color: var(--primary);
+        }
+
+        .select-header.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
+        }
+
+        .select-placeholder {
+            color: var(--muted);
+        }
+
+        .select-arrow {
+            color: var(--muted);
+            transition: transform 0.2s;
+        }
+
+        .select-arrow.active {
+            transform: rotate(180deg);
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 0.25rem;
+        }
+
+        .select-dropdown.active {
+            display: block;
+        }
+
+        .select-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .select-option:last-child {
+            border-bottom: none;
+        }
+
+        .select-option:hover {
+            background: var(--light);
+        }
+
+        .select-option.selected {
+            background: rgba(255, 122, 24, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--light);
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(255, 122, 24, 0.05);
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(255, 122, 24, 0.1);
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .file-upload-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .file-upload-text {
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .file-upload-hint {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border);
+            margin: 0 auto;
+        }
+
+        .file-info {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .file-size {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .remove-file {
+            color: var(--danger);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .form-hint {
@@ -591,9 +857,8 @@
             }
 
             .profile-avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 1.5rem;
+                width: 100px;
+                height: 100px;
                 margin: 0 auto 1rem;
             }
 
@@ -645,8 +910,10 @@
                 <div class="profile-container">
                     <!-- Page Title -->
                     <div class="container page-title">
-                        <h1>My Profile</h1>
-                        <p>View and manage your account information</p>
+                        <div>
+                            <h1>My Profile</h1>
+                            <p>View and manage your account information</p>
+                        </div>
                     </div>
 
                     <!-- Loading Screen -->
@@ -658,7 +925,6 @@
                     <!-- Error Screen -->
                     <div id="errorScreen" class="error-screen" style="display: none;">
                         <i class="fas fa-exclamation-triangle fa-3x"></i>
-                        <h3>Failed to load profile</h3>
                         <p id="errorMessage">An error occurred while loading the profile.</p>
                         <button class="retry-btn" onclick="window.location.reload()">
                             <i class="fas fa-redo"></i> Try Again
@@ -670,7 +936,7 @@
                         <!-- Profile Header Card -->
                         <div id="profileHeader" class="profile-header-card">
                             <div class="profile-avatar">
-                                <i class="fas fa-user"></i>
+                                <div class="avatar-initials">CI</div>
                             </div>
                             <div class="profile-name" id="userFullName">Loading...</div>
                             <div class="profile-role">
@@ -682,6 +948,16 @@
                             </div>
                         </div>
 
+                        <!-- Bio Section -->
+                        <div class="bio-section">
+                            <h2 class="bio-title">
+                                <i class="fas fa-user-circle"></i> Biography
+                            </h2>
+                            <div class="bio-content" id="userBio">
+                                Loading bio...
+                            </div>
+                        </div>
+
                         <!-- Profile Content Grid -->
                         <div class="profile-content">
                             <!-- Personal Information Card -->
@@ -690,6 +966,12 @@
                                     <i class="fas fa-user-circle"></i> Personal Information
                                 </h2>
                                 <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user-tag"></i> Title
+                                        </span>
+                                        <div class="info-value" id="userTitle">Loading...</div>
+                                    </div>
                                     <div class="info-item">
                                         <span class="info-label">
                                             <i class="fas fa-user"></i> First Name
@@ -720,13 +1002,19 @@
                                         </span>
                                         <div class="info-value" id="phone">Loading...</div>
                                     </div>
+                                    <div class="info-item" id="affiliationItem">
+                                        <span class="info-label">
+                                            <i class="fas fa-building"></i> Affiliation
+                                        </span>
+                                        <div class="info-value" id="affiliation">Loading...</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Account Information Card -->
+                            <!-- Account & Professional Information Card -->
                             <div class="profile-card">
                                 <h2 class="card-title">
-                                    <i class="fas fa-info-circle"></i> Account Information
+                                    <i class="fas fa-info-circle"></i> Account & Professional Information
                                 </h2>
                                 <div class="info-grid">
                                     <div class="info-item">
@@ -734,6 +1022,36 @@
                                             <i class="fas fa-briefcase"></i> Role
                                         </span>
                                         <div class="info-value" id="role">Loading...</div>
+                                    </div>
+                                    <div class="info-item" id="scopeItem" style="display: none;">
+                                        <span class="info-label">
+                                            <i class="fas fa-tags"></i> Scope
+                                        </span>
+                                        <div class="info-value" id="scope">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-university"></i> Institution
+                                        </span>
+                                        <div class="info-value" id="institution">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-graduation-cap"></i> Department
+                                        </span>
+                                        <div class="info-value" id="department">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-star"></i> Specialization
+                                        </span>
+                                        <div class="info-value" id="specialization">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-id-card"></i> ORCID ID
+                                        </span>
+                                        <div class="info-value" id="orcid">Loading...</div>
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">
@@ -795,43 +1113,182 @@
             </div>
             <div class="modal-body">
                 <form id="editProfileForm" class="modal-form">
-                    <!-- First Name -->
-                    <div class="form-group">
-                        <label for="editFirstName">
-                            <i class="fas fa-user"></i> First Name
-                        </label>
-                        <input type="text" id="editFirstName" class="form-control" required>
+                    <!-- Profile Picture Upload -->
+                    <div class="form-section">
+                        <h4 class="form-section-title">
+                            <i class="fas fa-camera"></i> Profile Picture
+                        </h4>
+                        <div class="form-group full-width">
+                            <div class="file-upload-area" id="profileUploadArea">
+                                <label class="file-upload-label" for="profileImage">
+                                    <div class="file-upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div>
+                                        <div class="file-upload-text">Upload Profile Picture</div>
+                                        <div class="file-upload-hint">Click or drag & drop (JPG, PNG, max 2MB)</div>
+                                    </div>
+                                </label>
+                                <input type="file" id="profileImage" class="file-input" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+                            </div>
+                            <div class="file-preview" id="profilePreview">
+                                <img src="" alt="Preview" class="preview-image" id="profilePreviewImage">
+                                <div class="file-info">
+                                    <div class="file-name" id="profileFileName"></div>
+                                    <div class="file-size" id="profileFileSize"></div>
+                                    <div class="remove-file" id="removeProfileImage">
+                                        <i class="fas fa-times"></i> Remove
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Last Name -->
-                    <div class="form-group">
-                        <label for="editLastName">
-                            <i class="fas fa-user"></i> Last Name
-                        </label>
-                        <input type="text" id="editLastName" class="form-control" required>
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h4 class="form-section-title">
+                            <i class="fas fa-user"></i> Basic Information
+                        </h4>
+                        <div class="form-row">
+                            <!-- Title Custom Select -->
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-user-tag"></i> Title
+                                </label>
+                                <div class="custom-select" id="titleSelect">
+                                    <div class="select-header">
+                                        <span class="select-value" id="titleValue">Select Title</span>
+                                        <span class="select-arrow"><i class="fas fa-chevron-down"></i></span>
+                                    </div>
+                                    <div class="select-dropdown">
+                                        <div class="select-option" data-value="">Select Title</div>
+                                        <div class="select-option" data-value="Mr">Mr</div>
+                                        <div class="select-option" data-value="Mrs">Mrs</div>
+                                        <div class="select-option" data-value="Miss">Miss</div>
+                                        <div class="select-option" data-value="Dr">Dr</div>
+                                        <div class="select-option" data-value="Prof">Prof</div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="editTitle" name="title">
+                            </div>
+
+                            <!-- Gender Custom Select -->
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-venus-mars"></i> Gender
+                                </label>
+                                <div class="custom-select" id="genderSelect">
+                                    <div class="select-header">
+                                        <span class="select-value" id="genderValue">Select Gender</span>
+                                        <span class="select-arrow"><i class="fas fa-chevron-down"></i></span>
+                                    </div>
+                                    <div class="select-dropdown">
+                                        <div class="select-option" data-value="">Select Gender</div>
+                                        <div class="select-option" data-value="Male">Male</div>
+                                        <div class="select-option" data-value="Female">Female</div>
+                                        <div class="select-option" data-value="Not_Provided">Not Provided</div>
+                                        <div class="select-option" data-value="Other">Other</div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="editGender" name="gender">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editFirstName">
+                                    <i class="fas fa-user"></i> First Name
+                                </label>
+                                <input type="text" id="editFirstName" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editLastName">
+                                    <i class="fas fa-user"></i> Last Name
+                                </label>
+                                <input type="text" id="editLastName" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editPhone">
+                                    <i class="fas fa-phone"></i> Phone Number
+                                </label>
+                                <input type="tel" id="editPhone" class="form-control" required>
+                                <div class="form-hint">Include country code (e.g., +2348012345678)</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editOrcid">
+                                    <i class="fas fa-id-card"></i> ORCID ID
+                                </label>
+                                <input type="text" id="editOrcid" class="form-control" placeholder="0000-0000-0000-0000">
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Phone Number -->
-                    <div class="form-group">
-                        <label for="editPhone">
-                            <i class="fas fa-phone"></i> Phone Number
-                        </label>
-                        <input type="tel" id="editPhone" class="form-control" required>
-                        <div class="form-hint">Include country code (e.g., +2348012345678)</div>
+                    <!-- Professional Information -->
+                    <div class="form-section">
+                        <h4 class="form-section-title">
+                            <i class="fas fa-briefcase"></i> Professional Information
+                        </h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editInstitution">
+                                    <i class="fas fa-university"></i> Institution
+                                </label>
+                                <input type="text" id="editInstitution" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editDepartment">
+                                    <i class="fas fa-graduation-cap"></i> Department
+                                </label>
+                                <input type="text" id="editDepartment" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editSpecialization">
+                                    <i class="fas fa-star"></i> Specialization
+                                </label>
+                                <input type="text" id="editSpecialization" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editAffiliation">
+                                    <i class="fas fa-building"></i> Affiliation
+                                </label>
+                                <input type="text" id="editAffiliation" class="form-control">
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Address -->
-                    <div class="form-group">
-                        <label for="editAddress">
-                            <i class="fas fa-map-marker-alt"></i> Address
-                        </label>
-                        <textarea id="editAddress" class="form-control" rows="3" required></textarea>
+                    <!-- Location & Bio -->
+                    <div class="form-section">
+                        <h4 class="form-section-title">
+                            <i class="fas fa-map-marker-alt"></i> Location & Bio
+                        </h4>
+                        <div class="form-group full-width">
+                            <label for="editAddress">
+                                <i class="fas fa-map-marker-alt"></i> Address
+                            </label>
+                            <textarea id="editAddress" class="form-control" rows="3" required></textarea>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="editBio">
+                                <i class="fas fa-user-circle"></i> Biography
+                            </label>
+                            <textarea id="editBio" class="form-control" rows="4"></textarea>
+                            <div class="form-hint">Tell us about your professional background and interests</div>
+                        </div>
                     </div>
 
-                    <!-- Read-only fields (not shown to user) -->
-                    <input type="hidden" id="editEmail">
-                    <input type="hidden" id="editGender">
-                    <input type="hidden" id="editRole">
+                    <!-- Hidden user ID -->
+                    <input type="hidden" id="editUserId">
                 </form>
             </div>
             <div class="modal-footer">
@@ -844,8 +1301,8 @@
     </div>
 
     <script>
-        window.SIDEBAR_MODULE = 'editor';
-        window.SIDEBAR_ACTIVE_ID = 'editor-profile';
+        window.SIDEBAR_MODULE = 'reviewer';
+        window.SIDEBAR_ACTIVE_ID = 'reviewer-profile';
     </script>
     <script src="/assets/js/layout.js"></script>
     <!-- jQuery (for toastr) -->
@@ -857,15 +1314,18 @@
 
     <!-- Profile JavaScript -->
     <script type="module">
-        import { BASE_URL, token } from '../assets/js/utility.js';
+        import { BASE_URL, token, apiFetch } from '../assets/js/utility.js';
 
         class ProfileManager {
             constructor() {
                 this.user = null;
+                this.uploadBaseUrl = BASE_URL.replace('/api/v1', '');
+                this.profileImageFile = null;
 
                 this.initializeToastr();
                 this.bindEvents();
-                this.loadProfileData(); // load current user's profile via profile/me
+                this.loadProfileData();
+                this.initializeCustomSelects();
             }
 
             initializeToastr() {
@@ -876,6 +1336,74 @@
                     timeOut: 3000,
                     extendedTimeOut: 1000
                 };
+            }
+
+            initializeCustomSelects() {
+                // Initialize custom select dropdowns
+                this.initializeSelect('titleSelect', 'titleValue', 'editTitle');
+                this.initializeSelect('genderSelect', 'genderValue', 'editGender');
+            }
+
+            initializeSelect(selectId, valueId, hiddenInputId) {
+                const select = document.getElementById(selectId);
+                const header = select.querySelector('.select-header');
+                const value = select.querySelector(`#${valueId}`);
+                const dropdown = select.querySelector('.select-dropdown');
+                const arrow = select.querySelector('.select-arrow');
+                const hiddenInput = document.getElementById(hiddenInputId);
+
+                // Toggle dropdown
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isActive = dropdown.classList.contains('active');
+
+                    // Close all other dropdowns
+                    document.querySelectorAll('.select-dropdown.active').forEach(drop => {
+                        if (drop !== dropdown) {
+                            drop.classList.remove('active');
+                            drop.previousElementSibling.classList.remove('active');
+                            drop.previousElementSibling.querySelector('.select-arrow').classList.remove('active');
+                        }
+                    });
+
+                    dropdown.classList.toggle('active');
+                    header.classList.toggle('active');
+                    arrow.classList.toggle('active', !isActive);
+                });
+
+                // Handle option selection
+                dropdown.querySelectorAll('.select-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        const selectedValue = option.getAttribute('data-value');
+                        const selectedText = option.textContent;
+
+                        // Update display
+                        value.textContent = selectedText;
+
+                        // Update hidden input
+                        hiddenInput.value = selectedValue;
+
+                        // Update selected state
+                        dropdown.querySelectorAll('.select-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        option.classList.add('selected');
+
+                        // Close dropdown
+                        dropdown.classList.remove('active');
+                        header.classList.remove('active');
+                        arrow.classList.remove('active');
+                    });
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!select.contains(e.target)) {
+                        dropdown.classList.remove('active');
+                        header.classList.remove('active');
+                        arrow.classList.remove('active');
+                    }
+                });
             }
 
             bindEvents() {
@@ -911,25 +1439,299 @@
                         e.preventDefault();
                         this.saveProfileChanges();
                     });
+
+                    // File upload events
+                    this.initializeFileUpload();
                 });
+            }
+
+            initializeFileUpload() {
+                const fileInput = document.getElementById('profileImage');
+                const uploadArea = document.getElementById('profileUploadArea');
+                const preview = document.getElementById('profilePreview');
+                const previewImage = document.getElementById('profilePreviewImage');
+                const fileName = document.getElementById('profileFileName');
+                const fileSize = document.getElementById('profileFileSize');
+                const removeButton = document.getElementById('removeProfileImage');
+
+                // Click to upload
+                uploadArea.addEventListener('click', () => {
+                    fileInput.click();
+                });
+
+                // File input change
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.handleFileSelect(file, previewImage, fileName, fileSize, preview);
+                    }
+                });
+
+                // Drag and drop
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                        this.handleFileSelect(file, previewImage, fileName, fileSize, preview);
+                    }
+                });
+
+                // Remove file
+                removeButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.profileImageFile = null;
+                    fileInput.value = '';
+                    preview.classList.remove('active');
+                    previewImage.src = '';
+                    fileName.textContent = '';
+                    fileSize.textContent = '';
+                });
+            }
+
+            handleFileSelect(file, previewImage, fileName, fileSize, preview) {
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!validTypes.includes(file.type)) {
+                    toastr.error('Please select a valid image file (JPG or PNG)');
+                    return;
+                }
+
+                // Validate file size (2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    toastr.error('File size must be less than 2MB');
+                    return;
+                }
+
+                // Store file
+                this.profileImageFile = file;
+
+                // Update preview
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                // Update file info
+                fileName.textContent = file.name;
+                fileSize.textContent = this.formatFileSize(file.size);
+
+                // Show preview
+                preview.classList.add('active');
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            async loadProfileData() {
+                this.showLoading();
+
+                try {
+                    if (!token) {
+                        throw new Error('Authentication required. Please login.');
+                    }
+
+                    // Fetch profile data
+                    const data = await apiFetch(`${BASE_URL}/profile/me`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!data.success || !data.user) {
+                        throw new Error(data.message || 'Failed to load profile data');
+                    }
+
+                    this.user = data.user;
+                    console.log('Profile data loaded:', this.user);
+
+                    this.renderProfile();
+
+                    this.hideLoading();
+                    this.showContent();
+
+                } catch (error) {
+                    console.error('Error loading profile data:', error);
+                    this.showError(error.message || 'Failed to load profile information. Please check your connection.');
+                }
+            }
+
+            renderProfile() {
+                if (!this.user) return;
+
+                // Format user data
+                const title = this.user.title || '';
+                const firstName = this.user.firstName || '';
+                const lastName = this.user.lastName || '';
+                const fullName = title ? `${title}. ${firstName} ${lastName}`.trim() : `${firstName} ${lastName}`.trim();
+                const role = this.user.role || 'User';
+                const gender = this.formatGender(this.user.gender) || 'Not specified';
+                const phone = this.user.phone || 'Not provided';
+                const address = this.user.address || 'Not provided';
+                const institution = this.user.institution || 'Not provided';
+                const department = this.user.department || 'Not provided';
+                const specialization = this.user.specialization || 'Not provided';
+                const affiliation = this.user.affiliation || 'Not provided';
+                const orcid = this.user.orcid || 'Not provided';
+                const bio = this.user.bio || 'No biography provided.';
+
+                // Format member since date
+                const memberSince = this.formatDate(this.user.createdAt);
+
+                // Determine status badges
+                const accountStatus = this.user.isActive ? 'active' : 'inactive';
+                const verificationStatus = this.user.isVerified ? 'verified' : 'unverified';
+
+                // Update header
+                document.getElementById('userFullName').textContent = fullName;
+                document.getElementById('userRole').textContent = role;
+
+                // Update avatar with profile image
+                this.updateAvatar();
+
+                // Update bio section
+                const bioElement = document.getElementById('userBio');
+                bioElement.textContent = bio;
+                bioElement.className = bio === 'No biography provided.' ? 'bio-content empty' : 'bio-content';
+
+                // Update personal information
+                document.getElementById('userTitle').textContent = title || 'Not provided';
+                document.getElementById('firstName').textContent = firstName;
+                document.getElementById('lastName').textContent = lastName;
+                document.getElementById('gender').textContent = gender;
+                document.getElementById('email').textContent = this.user.email || 'Not provided';
+                document.getElementById('phone').textContent = phone;
+                document.getElementById('affiliation').textContent = affiliation;
+
+                // Update account & professional information
+                document.getElementById('role').textContent = role;
+                document.getElementById('institution').textContent = institution;
+                document.getElementById('department').textContent = department;
+                document.getElementById('specialization').textContent = specialization;
+                document.getElementById('orcid').textContent = orcid;
+                document.getElementById('address').textContent = address;
+                document.getElementById('memberSince').textContent = memberSince;
+
+                // Handle scope - only show if scopeId exists
+                const scopeItem = document.getElementById('scopeItem');
+                if (this.user.scopeId) {
+                    scopeItem.style.display = 'flex';
+                    // If you have scope title, update it here
+                    // document.getElementById('scope').textContent = this.user.scopeTitle || 'Not specified';
+                } else {
+                    scopeItem.style.display = 'none';
+                }
+
+                // Update status badges
+                this.updateStatusBadge('accountStatus', accountStatus);
+                this.updateStatusBadge('verificationStatus', verificationStatus);
+            }
+
+            updateAvatar() {
+                const avatar = document.querySelector('.profile-avatar');
+                if (!avatar) return;
+
+                if (this.user.profileImage && this.user.profileImage.url) {
+                    const imageUrl = this.user.profileImage.url.startsWith('http')
+                        ? this.user.profileImage.url
+                        : `${this.uploadBaseUrl}${this.user.profileImage.url}`;
+
+                    avatar.innerHTML = `<img src="${imageUrl}" alt="${this.user.firstName} ${this.user.lastName}">`;
+                } else {
+                    // Extract initials from full name
+                    const firstName = this.user.firstName || '';
+                    const lastName = this.user.lastName || '';
+                    const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'U';
+
+                    avatar.innerHTML = `<div class="avatar-initials">${initials}</div>`;
+                }
             }
 
             openEditModal() {
                 if (!this.user) return;
 
                 // Populate form fields with current user data
+                document.getElementById('editUserId').value = this.user._id;
+
+                // Set custom select values
+                this.setSelectValue('titleSelect', 'titleValue', 'editTitle', this.user.title || '', 'Select Title');
+                this.setSelectValue('genderSelect', 'genderValue', 'editGender', this.user.gender || '', 'Select Gender');
+
+                // Set other fields
                 document.getElementById('editFirstName').value = this.user.firstName || '';
                 document.getElementById('editLastName').value = this.user.lastName || '';
                 document.getElementById('editPhone').value = this.user.phone || '';
                 document.getElementById('editAddress').value = this.user.address || '';
+                document.getElementById('editInstitution').value = this.user.institution || '';
+                document.getElementById('editDepartment').value = this.user.department || '';
+                document.getElementById('editSpecialization').value = this.user.specialization || '';
+                document.getElementById('editAffiliation').value = this.user.affiliation || '';
+                document.getElementById('editOrcid').value = this.user.orcid || '';
+                document.getElementById('editBio').value = this.user.bio || '';
 
-                // Set hidden fields (not editable)
-                document.getElementById('editEmail').value = this.user.email || '';
-                document.getElementById('editGender').value = this.user.gender || '';
-                document.getElementById('editRole').value = this.user.role || '';
+                // Reset profile image file
+                this.profileImageFile = null;
+                const preview = document.getElementById('profilePreview');
+                preview.classList.remove('active');
 
                 // Show modal
                 document.getElementById('editProfileModal').classList.add('active');
+            }
+
+            setSelectValue(selectId, valueId, hiddenInputId, value, defaultValue) {
+                const select = document.getElementById(selectId);
+                const valueElement = document.getElementById(valueId);
+                const hiddenInput = document.getElementById(hiddenInputId);
+                const dropdown = select.querySelector('.select-dropdown');
+
+                if (value) {
+                    // Find and select the option
+                    const options = dropdown.querySelectorAll('.select-option');
+                    let found = false;
+                    options.forEach(option => {
+                        if (option.getAttribute('data-value') === value) {
+                            option.classList.add('selected');
+                            valueElement.textContent = option.textContent;
+                            hiddenInput.value = value;
+                            found = true;
+                        } else {
+                            option.classList.remove('selected');
+                        }
+                    });
+
+                    if (!found) {
+                        valueElement.textContent = defaultValue;
+                        hiddenInput.value = '';
+                    }
+                } else {
+                    valueElement.textContent = defaultValue;
+                    hiddenInput.value = '';
+                    dropdown.querySelectorAll('.select-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    // Select the default option
+                    const defaultOption = dropdown.querySelector('.select-option[data-value=""]');
+                    if (defaultOption) {
+                        defaultOption.classList.add('selected');
+                    }
+                }
             }
 
             closeEditModal() {
@@ -944,33 +1746,44 @@
                     }
 
                     // Get form data
-                    const formData = {
-                        firstName: document.getElementById('editFirstName').value.trim(),
-                        lastName: document.getElementById('editLastName').value.trim(),
-                        phone: document.getElementById('editPhone').value.trim(),
-                        address: document.getElementById('editAddress').value.trim(),
-                        email: document.getElementById('editEmail').value.trim(),
-                        gender: document.getElementById('editGender').value.trim(),
-                        role: document.getElementById('editRole').value.trim()
-                    };
+                    const formData = new FormData();
+
+                    // Add text fields
+                    const textFields = [
+                        'title', 'firstName', 'lastName', 'phone', 'address',
+                        'institution', 'department', 'specialization', 'affiliation',
+                        'orcid', 'bio', 'gender'
+                    ];
+
+                    textFields.forEach(field => {
+                        const value = document.getElementById(`edit${field.charAt(0).toUpperCase() + field.slice(1)}`).value.trim();
+                        if (value) {
+                            formData.append(field, value);
+                        }
+                    });
+
+                    // Add profile image if selected
+                    if (this.profileImageFile) {
+                        formData.append('profileImage', this.profileImageFile);
+                    }
 
                     // Validation
-                    if (!formData.firstName) {
+                    if (!formData.get('firstName')) {
                         toastr.error('Please enter your first name', 'Validation Error');
                         return;
                     }
 
-                    if (!formData.lastName) {
+                    if (!formData.get('lastName')) {
                         toastr.error('Please enter your last name', 'Validation Error');
                         return;
                     }
 
-                    if (!formData.phone) {
+                    if (!formData.get('phone')) {
                         toastr.error('Please enter your phone number', 'Validation Error');
                         return;
                     }
 
-                    if (!formData.address) {
+                    if (!formData.get('address')) {
                         toastr.error('Please enter your address', 'Validation Error');
                         return;
                     }
@@ -981,43 +1794,37 @@
                     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
                     saveBtn.disabled = true;
 
-                    // Use profile/update for edit profile as requested
-                    const response = await fetch(`${BASE_URL}/profile/update`, {
+                    const userId = document.getElementById('editUserId').value;
+
+                    // Update profile using new API endpoint
+                    const data = await apiFetch(`${BASE_URL}/user/${userId}/profile`, {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
+                            'Authorization': `Bearer ${token}`
+                            // Note: Don't set Content-Type for FormData, browser will set it with boundary
                         },
-                        body: JSON.stringify(formData)
+                        body: formData
                     });
 
-                    const text = await response.text();
-                    let data;
-                    try {
-                        data = JSON.parse(text);
-                    } catch (e) {
-                        // Not JSON
-                        data = null;
-                    }
-
-                    if (!response.ok) {
-                        let errorMessage = `Failed to update profile: ${response.status}`;
-                        if (data && (data.message || data.error)) {
-                            errorMessage = data.message || data.error;
-                        }
-                        throw new Error(errorMessage);
-                    }
-
-                    if (data && data.success === false) {
+                    if (!data.success) {
                         throw new Error(data.message || 'Failed to update profile');
                     }
 
                     // Success
                     toastr.success('Profile updated successfully!', 'Success');
 
-                    // Merge changes into local user object
-                    this.user = { ...this.user, ...formData };
+                    // Update local user object with new data
+                    if (data.user) {
+                        this.user = data.user;
+                    } else {
+                        // Manually update fields from form data
+                        textFields.forEach(field => {
+                            const value = formData.get(field);
+                            if (value) {
+                                this.user[field] = value;
+                            }
+                        });
+                    }
 
                     // Update UI
                     this.renderProfile();
@@ -1038,130 +1845,6 @@
             changePassword() {
                 // Redirect to change password page
                 window.location.href = 'change-password.html';
-            }
-
-            async loadProfileData() {
-                this.showLoading();
-
-                try {
-                    if (!token) {
-                        throw new Error('Authentication required. Please login.');
-                    }
-
-                    // Use profile/me as requested
-                    const response = await fetch(`${BASE_URL}/profile/me`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        const statusText = `Failed to fetch profile: ${response.status}`;
-                        throw new Error(statusText);
-                    }
-
-                    const raw = await response.text();
-                    let data;
-                    try {
-                        data = JSON.parse(raw);
-                    } catch (e) {
-                        data = raw;
-                    }
-
-                    // The API may return different shapes. Try common ones:
-                    // 1) { success: true, user: {...} }
-                    // 2) { success: true, data: {...} }
-                    // 3) { success: true, profile: {...} }
-                    // 4) direct user object
-                    let profileObj = null;
-
-                    if (data && typeof data === 'object') {
-                        if (data.user) profileObj = data.user;
-                        else if (data.data && (typeof data.data === 'object')) profileObj = data.data;
-                        else if (data.profile) profileObj = data.profile;
-                        else if (data.success === false) {
-                            throw new Error(data.message || 'Failed to load profile data');
-                        } else {
-                            // assume the object itself is the user
-                            profileObj = data;
-                        }
-                    } else {
-                        throw new Error('Unexpected profile response from server');
-                    }
-
-                    this.user = profileObj;
-                    console.log('Profile data loaded:', this.user);
-
-                    this.renderProfile();
-
-                    this.hideLoading();
-                    this.showContent();
-
-                } catch (error) {
-                    console.error('Error loading profile data:', error);
-                    this.showError(error.message || 'Failed to load profile information. Please try again.');
-                }
-            }
-
-            renderProfile() {
-                if (!this.user) return;
-
-                // Format user data
-                const fullName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim() || 'No Name';
-                const role = this.user.role || 'User';
-                const gender = this.capitalizeFirstLetter(this.user.gender) || 'Not specified';
-                const phone = this.user.phone || 'Not provided';
-                const address = this.user.address || 'Not provided';
-
-                // Format member since date
-                const memberSince = this.formatDate(this.user.createdAt || this.user.createdAtAt || this.user.created_at);
-
-                // Determine status badges
-                const accountStatus = this.user.isActive || this.user.active ? 'active' : 'inactive';
-                const verificationStatus = this.user.isVerified || this.user.verified ? 'verified' : 'unverified';
-
-                // Update header
-                document.getElementById('userFullName').textContent = fullName;
-                document.getElementById('userRole').textContent = role;
-
-                // Update personal information
-                document.getElementById('firstName').textContent = this.user.firstName || 'Not provided';
-                document.getElementById('lastName').textContent = this.user.lastName || 'Not provided';
-                document.getElementById('gender').textContent = gender;
-                document.getElementById('email').textContent = this.user.email || 'Not provided';
-                document.getElementById('phone').textContent = phone;
-                document.getElementById('email').textContent = this.user.email || 'Not provided';
-
-                // Update account information
-                document.getElementById('role').textContent = role;
-                document.getElementById('address').textContent = address;
-                document.getElementById('memberSince').textContent = memberSince;
-
-                // Update status badges
-                this.updateStatusBadge('accountStatus', accountStatus);
-                this.updateStatusBadge('verificationStatus', verificationStatus);
-
-                // Update avatar with initials
-                this.updateAvatar(fullName);
-            }
-
-            updateAvatar(fullName) {
-                const avatar = document.querySelector('.profile-avatar');
-                if (!avatar) return;
-
-                // Extract initials from full name
-                const initials = fullName
-                    .split(' ')
-                    .map(name => name.charAt(0))
-                    .join('')
-                    .toUpperCase()
-                    .substring(0, 2);
-
-                if (initials.length >= 1) {
-                    avatar.innerHTML = `<span style="font-size: 2rem; font-weight: 700;">${initials}</span>`;
-                }
             }
 
             updateStatusBadge(elementId, status) {
@@ -1199,9 +1882,10 @@
                 `;
             }
 
-            capitalizeFirstLetter(string) {
-                if (!string) return '';
-                return string.charAt(0).toUpperCase() + string.slice(1);
+            formatGender(gender) {
+                if (!gender) return '';
+                if (gender === 'Not_Provided') return 'Not Provided';
+                return gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
             }
 
             formatDate(dateString) {

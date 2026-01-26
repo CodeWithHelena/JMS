@@ -51,12 +51,5 @@ function logout() {
   window.location.href = "/login.html"; // Redirect to login page
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // alert("in logout btn");
-  const logoutBtn = document.querySelector(".logoutBtn");
-  logoutBtn.addEventListener("click", () => {
-    logout();
-  });
-});
 
 verifyToken(); // Call the function to verify the token when the script runs

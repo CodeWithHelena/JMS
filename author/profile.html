@@ -262,7 +262,6 @@
             border-top: 1px solid var(--border);
         }
 
-        .btn-primary,
         .btn-secondary {
             padding: 0.75rem 1.5rem;
             border-radius: 6px;
@@ -273,21 +272,6 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .btn-secondary {
@@ -614,7 +598,7 @@
                 flex-direction: column;
             }
 
-            .btn-primary,
+            .btn-brand,
             .btn-secondary {
                 width: 100%;
                 justify-content: center;
@@ -645,8 +629,10 @@
                 <div class="profile-container">
                     <!-- Page Title -->
                     <div class="container page-title">
-                        <h1>My Profile</h1>
-                        <p>View and manage your account information</p>
+                        <div>
+                            <h1>My Profile</h1>
+                            <p>View and manage your account information</p>
+                        </div>
                     </div>
 
                     <!-- Loading Screen -->
@@ -773,7 +759,7 @@
 
                         <!-- Action Buttons -->
                         <div class="action-buttons">
-                            <button id="editProfileBtn" class="btn-primary">
+                            <button id="editProfileBtn" class="btn-brand">
                                 <i class="fas fa-edit"></i> Edit Profile
                             </button>
                             <button id="changePasswordBtn" class="btn-secondary">
@@ -836,7 +822,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" id="cancelEditBtn">Cancel</button>
-                <button type="submit" form="editProfileForm" class="btn-save" id="saveProfileBtn">
+                <button type="submit" form="editProfileForm" class="btn-brand" id="saveProfileBtn">
                     <i class="fas fa-save"></i> Save Changes
                 </button>
             </div>

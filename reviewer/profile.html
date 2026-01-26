@@ -95,18 +95,29 @@
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
             margin-bottom: 1.5rem;
             border: 4px solid rgba(255, 255, 255, 0.3);
             position: relative;
             z-index: 1;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-avatar .avatar-initials {
+            font-size: 2.5rem;
+            font-weight: 700;
         }
 
         .profile-name {
@@ -151,6 +162,42 @@
         .stat-label {
             font-size: 0.9rem;
             opacity: 0.8;
+        }
+
+        /* Bio Section */
+        .bio-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .bio-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .bio-title i {
+            color: var(--primary);
+        }
+
+        .bio-content {
+            color: #374151;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .bio-content.empty {
+            color: var(--muted);
+            font-style: italic;
         }
 
         /* Profile Content Grid */
@@ -325,7 +372,7 @@
             border-radius: var(--radius);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
@@ -378,10 +425,26 @@
             gap: 1.25rem;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group label {
@@ -416,6 +479,11 @@
             background: #f5f5f5;
             color: var(--muted);
             cursor: not-allowed;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
         }
 
         .form-hint {
@@ -591,9 +659,8 @@
             }
 
             .profile-avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 1.5rem;
+                width: 100px;
+                height: 100px;
                 margin: 0 auto 1rem;
             }
 
@@ -671,7 +738,7 @@
                         <!-- Profile Header Card -->
                         <div id="profileHeader" class="profile-header-card">
                             <div class="profile-avatar">
-                                <i class="fas fa-user"></i>
+                                <div class="avatar-initials">CI</div>
                             </div>
                             <div class="profile-name" id="userFullName">Loading...</div>
                             <div class="profile-role">
@@ -683,6 +750,16 @@
                             </div>
                         </div>
 
+                        <!-- Bio Section -->
+                        <div class="bio-section">
+                            <h2 class="bio-title">
+                                <i class="fas fa-user-circle"></i> Biography
+                            </h2>
+                            <div class="bio-content" id="userBio">
+                                Loading bio...
+                            </div>
+                        </div>
+
                         <!-- Profile Content Grid -->
                         <div class="profile-content">
                             <!-- Personal Information Card -->
@@ -691,6 +768,12 @@
                                     <i class="fas fa-user-circle"></i> Personal Information
                                 </h2>
                                 <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-user-tag"></i> Title
+                                        </span>
+                                        <div class="info-value" id="userTitle">Loading...</div>
+                                    </div>
                                     <div class="info-item">
                                         <span class="info-label">
                                             <i class="fas fa-user"></i> First Name
@@ -721,13 +804,19 @@
                                         </span>
                                         <div class="info-value" id="phone">Loading...</div>
                                     </div>
+                                    <div class="info-item" id="affiliationItem">
+                                        <span class="info-label">
+                                            <i class="fas fa-building"></i> Affiliation
+                                        </span>
+                                        <div class="info-value" id="affiliation">Loading...</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Account Information Card -->
+                            <!-- Account & Professional Information Card -->
                             <div class="profile-card">
                                 <h2 class="card-title">
-                                    <i class="fas fa-info-circle"></i> Account Information
+                                    <i class="fas fa-info-circle"></i> Account & Professional Information
                                 </h2>
                                 <div class="info-grid">
                                     <div class="info-item">
@@ -735,6 +824,36 @@
                                             <i class="fas fa-briefcase"></i> Role
                                         </span>
                                         <div class="info-value" id="role">Loading...</div>
+                                    </div>
+                                    <div class="info-item" id="scopeItem" style="display: none;">
+                                        <span class="info-label">
+                                            <i class="fas fa-tags"></i> Scope
+                                        </span>
+                                        <div class="info-value" id="scope">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-university"></i> Institution
+                                        </span>
+                                        <div class="info-value" id="institution">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-graduation-cap"></i> Department
+                                        </span>
+                                        <div class="info-value" id="department">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-star"></i> Specialization
+                                        </span>
+                                        <div class="info-value" id="specialization">Loading...</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">
+                                            <i class="fas fa-id-card"></i> ORCID ID
+                                        </span>
+                                        <div class="info-value" id="orcid">Loading...</div>
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">
@@ -796,43 +915,129 @@
             </div>
             <div class="modal-body">
                 <form id="editProfileForm" class="modal-form">
-                    <!-- First Name -->
-                    <div class="form-group">
-                        <label for="editFirstName">
-                            <i class="fas fa-user"></i> First Name
-                        </label>
-                        <input type="text" id="editFirstName" class="form-control" required>
+                    <div class="form-row">
+                        <!-- Title -->
+                        <div class="form-group">
+                            <label for="editTitle">
+                                <i class="fas fa-user-tag"></i> Title
+                            </label>
+                            <select id="editTitle" class="form-control">
+                                <option value="">Select Title</option>
+                                <option value="Mr">Mr</option>
+                                <option value="Mrs">Mrs</option>
+                                <option value="Miss">Miss</option>
+                                <option value="Dr">Dr</option>
+                                <option value="Prof">Prof</option>
+                            </select>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="form-group">
+                            <label for="editGender">
+                                <i class="fas fa-venus-mars"></i> Gender
+                            </label>
+                            <select id="editGender" class="form-control">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Not_Provided">Not Provided</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- Last Name -->
-                    <div class="form-group">
-                        <label for="editLastName">
-                            <i class="fas fa-user"></i> Last Name
-                        </label>
-                        <input type="text" id="editLastName" class="form-control" required>
+                    <div class="form-row">
+                        <!-- First Name -->
+                        <div class="form-group">
+                            <label for="editFirstName">
+                                <i class="fas fa-user"></i> First Name
+                            </label>
+                            <input type="text" id="editFirstName" class="form-control" required>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="form-group">
+                            <label for="editLastName">
+                                <i class="fas fa-user"></i> Last Name
+                            </label>
+                            <input type="text" id="editLastName" class="form-control" required>
+                        </div>
                     </div>
 
-                    <!-- Phone Number -->
-                    <div class="form-group">
-                        <label for="editPhone">
-                            <i class="fas fa-phone"></i> Phone Number
-                        </label>
-                        <input type="tel" id="editPhone" class="form-control" required>
-                        <div class="form-hint">Include country code (e.g., +2348012345678)</div>
+                    <div class="form-row">
+                        <!-- Phone Number -->
+                        <div class="form-group">
+                            <label for="editPhone">
+                                <i class="fas fa-phone"></i> Phone Number
+                            </label>
+                            <input type="tel" id="editPhone" class="form-control" required>
+                            <div class="form-hint">Include country code (e.g., +2348012345678)</div>
+                        </div>
+
+                        <!-- ORCID ID -->
+                        <div class="form-group">
+                            <label for="editOrcid">
+                                <i class="fas fa-id-card"></i> ORCID ID
+                            </label>
+                            <input type="text" id="editOrcid" class="form-control" placeholder="0000-0000-0000-0000">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Institution -->
+                        <div class="form-group">
+                            <label for="editInstitution">
+                                <i class="fas fa-university"></i> Institution
+                            </label>
+                            <input type="text" id="editInstitution" class="form-control">
+                        </div>
+
+                        <!-- Department -->
+                        <div class="form-group">
+                            <label for="editDepartment">
+                                <i class="fas fa-graduation-cap"></i> Department
+                            </label>
+                            <input type="text" id="editDepartment" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Specialization -->
+                        <div class="form-group">
+                            <label for="editSpecialization">
+                                <i class="fas fa-star"></i> Specialization
+                            </label>
+                            <input type="text" id="editSpecialization" class="form-control">
+                        </div>
+
+                        <!-- Affiliation -->
+                        <div class="form-group">
+                            <label for="editAffiliation">
+                                <i class="fas fa-building"></i> Affiliation
+                            </label>
+                            <input type="text" id="editAffiliation" class="form-control">
+                        </div>
                     </div>
 
                     <!-- Address -->
-                    <div class="form-group">
+                    <div class="form-group full-width">
                         <label for="editAddress">
                             <i class="fas fa-map-marker-alt"></i> Address
                         </label>
                         <textarea id="editAddress" class="form-control" rows="3" required></textarea>
                     </div>
 
-                    <!-- Read-only fields (not shown to user) -->
-                    <input type="hidden" id="editEmail">
-                    <input type="hidden" id="editGender">
-                    <input type="hidden" id="editRole">
+                    <!-- Bio -->
+                    <div class="form-group full-width">
+                        <label for="editBio">
+                            <i class="fas fa-user-circle"></i> Biography
+                        </label>
+                        <textarea id="editBio" class="form-control" rows="4"></textarea>
+                        <div class="form-hint">Tell us about your professional background and interests</div>
+                    </div>
+
+                    <!-- Hidden user ID -->
+                    <input type="hidden" id="editUserId">
                 </form>
             </div>
             <div class="modal-footer">
@@ -857,485 +1062,390 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Profile JavaScript -->
-// Profile JavaScript
-<script type="module">
-    import { BASE_URL, token } from '../assets/js/utility.js';
-    import { apiFetch } from '../assets/js/utility.js'; // Import the apiFetch function
+    <script type="module">
+        import { BASE_URL, token, apiFetch } from '../assets/js/utility.js';
 
-    class ProfileManager {
-        constructor() {
-            this.user = null;
+        class ProfileManager {
+            constructor() {
+                this.user = null;
+                this.uploadBaseUrl = BASE_URL.replace('/api/v1', '');
 
-            this.initializeToastr();
-            this.bindEvents();
-            this.loadProfileData(); // load current user's profile via profile/me
-        }
-
-        initializeToastr() {
-            toastr.options = {
-                closeButton: false,
-                progressBar: false,
-                positionClass: "toast-top-right",
-                timeOut: 3000,
-                extendedTimeOut: 1000
-            };
-        }
-
-        bindEvents() {
-            document.addEventListener('DOMContentLoaded', () => {
-                // Edit Profile Button
-                document.getElementById('editProfileBtn')?.addEventListener('click', () => {
-                    this.openEditModal();
-                });
-
-                // Change Password Button
-                document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
-                    this.changePassword();
-                });
-
-                // Modal close buttons
-                document.getElementById('closeModalBtn')?.addEventListener('click', () => {
-                    this.closeEditModal();
-                });
-
-                document.getElementById('cancelEditBtn')?.addEventListener('click', () => {
-                    this.closeEditModal();
-                });
-
-                // Close modal when clicking outside
-                document.getElementById('editProfileModal')?.addEventListener('click', (e) => {
-                    if (e.target === document.getElementById('editProfileModal')) {
-                        this.closeEditModal();
-                    }
-                });
-
-                // Form submission
-                document.getElementById('editProfileForm')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.saveProfileChanges();
-                });
-            });
-        }
-
-        // Add this method to fetch scope information
-        async fetchScopeInfo(scopeId) {
-            try {
-                if (!scopeId || !token) return null;
-
-                const data = await apiFetch(`${BASE_URL}/scope/shallow`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (data.success && data.scopes && Array.isArray(data.scopes)) {
-                    // Find the scope with matching ID
-                    const userScope = data.scopes.find(scope => scope._id === scopeId);
-                    return userScope ? userScope.title : null;
-                }
-
-                return null;
-            } catch (error) {
-                console.error('Error fetching scope info:', error);
-                return null;
+                this.initializeToastr();
+                this.bindEvents();
+                this.loadProfileData();
             }
-        }
 
-        openEditModal() {
-            if (!this.user) return;
-
-            // Populate form fields with current user data
-            document.getElementById('editFirstName').value = this.user.firstName || '';
-            document.getElementById('editLastName').value = this.user.lastName || '';
-            document.getElementById('editPhone').value = this.user.phone || '';
-            document.getElementById('editAddress').value = this.user.address || '';
-
-            // Set hidden fields (not editable)
-            document.getElementById('editEmail').value = this.user.email || '';
-            document.getElementById('editGender').value = this.user.gender || '';
-            document.getElementById('editRole').value = this.user.role || '';
-
-            // Show modal
-            document.getElementById('editProfileModal').classList.add('active');
-        }
-
-        closeEditModal() {
-            document.getElementById('editProfileModal').classList.remove('active');
-        }
-
-        async saveProfileChanges() {
-            try {
-                if (!token) {
-                    toastr.error('Authentication required. Please login.');
-                    return;
-                }
-
-                // Get form data
-                const formData = {
-                    firstName: document.getElementById('editFirstName').value.trim(),
-                    lastName: document.getElementById('editLastName').value.trim(),
-                    phone: document.getElementById('editPhone').value.trim(),
-                    address: document.getElementById('editAddress').value.trim(),
-                    email: document.getElementById('editEmail').value.trim(),
-                    gender: document.getElementById('editGender').value.trim(),
-                    role: document.getElementById('editRole').value.trim()
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
                 };
+            }
 
-                // Validation
-                if (!formData.firstName) {
-                    toastr.error('Please enter your first name', 'Validation Error');
-                    return;
-                }
+            bindEvents() {
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Edit Profile Button
+                    document.getElementById('editProfileBtn')?.addEventListener('click', () => {
+                        this.openEditModal();
+                    });
 
-                if (!formData.lastName) {
-                    toastr.error('Please enter your last name', 'Validation Error');
-                    return;
-                }
+                    // Change Password Button
+                    document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
+                        this.changePassword();
+                    });
 
-                if (!formData.phone) {
-                    toastr.error('Please enter your phone number', 'Validation Error');
-                    return;
-                }
+                    // Modal close buttons
+                    document.getElementById('closeModalBtn')?.addEventListener('click', () => {
+                        this.closeEditModal();
+                    });
 
-                if (!formData.address) {
-                    toastr.error('Please enter your address', 'Validation Error');
-                    return;
-                }
+                    document.getElementById('cancelEditBtn')?.addEventListener('click', () => {
+                        this.closeEditModal();
+                    });
 
-                // Show loading state
-                const saveBtn = document.getElementById('saveProfileBtn');
-                const originalText = saveBtn.innerHTML;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                saveBtn.disabled = true;
+                    // Close modal when clicking outside
+                    document.getElementById('editProfileModal')?.addEventListener('click', (e) => {
+                        if (e.target === document.getElementById('editProfileModal')) {
+                            this.closeEditModal();
+                        }
+                    });
 
-                // Use profile/update for edit profile as requested
-                const response = await fetch(`${BASE_URL}/profile/update`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+                    // Form submission
+                    document.getElementById('editProfileForm')?.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.saveProfileChanges();
+                    });
                 });
+            }
 
-                const text = await response.text();
-                let data;
+            async loadProfileData() {
+                this.showLoading();
+
                 try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    // Not JSON
-                    data = null;
-                }
-
-                if (!response.ok) {
-                    let errorMessage = `Failed to update profile: ${response.status}`;
-                    if (data && (data.message || data.error)) {
-                        errorMessage = data.message || data.error;
+                    if (!token) {
+                        throw new Error('Authentication required. Please login.');
                     }
-                    throw new Error(errorMessage);
-                }
 
-                if (data && data.success === false) {
-                    throw new Error(data.message || 'Failed to update profile');
-                }
+                    // Fetch profile data
+                    const data = await apiFetch(`${BASE_URL}/profile/me`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
 
-                // Success
-                toastr.success('Profile updated successfully!', 'Success');
-
-                // Merge changes into local user object
-                this.user = { ...this.user, ...formData };
-
-                // Update UI
-                this.renderProfile();
-
-                // Close modal
-                this.closeEditModal();
-
-            } catch (error) {
-                console.error('Error saving profile changes:', error);
-                toastr.error(error.message || 'Failed to update profile', 'Error');
-            } finally {
-                const saveBtn = document.getElementById('saveProfileBtn');
-                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
-                saveBtn.disabled = false;
-            }
-        }
-
-        changePassword() {
-            // Redirect to change password page
-            window.location.href = 'change-password.html';
-        }
-
-        async loadProfileData() {
-            this.showLoading();
-
-            try {
-                if (!token) {
-                    throw new Error('Authentication required. Please login.');
-                }
-
-                // Use profile/me as requested
-                const data = await apiFetch(`${BASE_URL}/profile/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                // The API may return different shapes. Try common ones:
-                // 1) { success: true, user: {...} }
-                // 2) { success: true, data: {...} }
-                // 3) { success: true, profile: {...} }
-                // 4) direct user object
-                let profileObj = null;
-
-                if (data && typeof data === 'object') {
-                    if (data.user) profileObj = data.user;
-                    else if (data.data && (typeof data.data === 'object')) profileObj = data.data;
-                    else if (data.profile) profileObj = data.profile;
-                    else if (data.success === false) {
+                    if (!data.success || !data.user) {
                         throw new Error(data.message || 'Failed to load profile data');
-                    } else {
-                        // assume the object itself is the user
-                        profileObj = data;
                     }
-                } else {
-                    throw new Error('Unexpected profile response from server');
+
+                    this.user = data.user;
+                    console.log('Profile data loaded:', this.user);
+
+                    this.renderProfile();
+
+                    this.hideLoading();
+                    this.showContent();
+
+                } catch (error) {
+                    console.error('Error loading profile data:', error);
+                    this.showError(error.message || 'Failed to load profile information. Please check your connection.');
                 }
-
-                this.user = profileObj;
-                console.log('Profile data loaded:', this.user);
-
-                // Fetch scope information if scope ID exists
-                if (this.user.scopeId || this.user.scope) {
-                    const scopeId = this.user.scopeId || this.user.scope;
-                    this.user.scopeTitle = await this.fetchScopeInfo(scopeId);
-                }
-
-                this.renderProfile();
-
-                this.hideLoading();
-                this.showContent();
-
-            } catch (error) {
-                console.error('Error loading profile data:', error);
-                this.showError(error.message || 'Failed to load profile information. Please try again.');
             }
-        }
 
-        renderProfile() {
-            if (!this.user) return;
+            renderProfile() {
+                if (!this.user) return;
 
-            // Format user data
-            const fullName = `${this.user.firstName || ''} ${this.user.lastName || ''}`.trim() || 'No Name';
-            const role = this.user.role || 'User';
-            const gender = this.capitalizeFirstLetter(this.user.gender) || 'Not specified';
-            const phone = this.user.phone || 'Not provided';
-            const address = this.user.address || 'Not provided';
-            const affiliation = this.user.affiliation || 'Not provided';
+                // Format user data
+                const title = this.user.title || '';
+                const firstName = this.user.firstName || '';
+                const lastName = this.user.lastName || '';
+                const fullName = title ? `${title}. ${firstName} ${lastName}`.trim() : `${firstName} ${lastName}`.trim();
+                const role = this.user.role || 'User';
+                const gender = this.formatGender(this.user.gender) || 'Not specified';
+                const phone = this.user.phone || 'Not provided';
+                const address = this.user.address || 'Not provided';
+                const institution = this.user.institution || 'Not provided';
+                const department = this.user.department || 'Not provided';
+                const specialization = this.user.specialization || 'Not provided';
+                const affiliation = this.user.affiliation || 'Not provided';
+                const orcid = this.user.orcid || 'Not provided';
+                const bio = this.user.bio || 'No biography provided.';
 
-            // Get scope title (fetched from API)
-            const scopeTitle = this.user.scopeTitle || 'Not specified';
+                // Format member since date
+                const memberSince = this.formatDate(this.user.createdAt);
 
-            // Format member since date
-            const memberSince = this.formatDate(this.user.createdAt || this.user.createdAtAt || this.user.created_at);
+                // Determine status badges
+                const accountStatus = this.user.isActive ? 'active' : 'inactive';
+                const verificationStatus = this.user.isVerified ? 'verified' : 'unverified';
 
-            // Determine status badges
-            const accountStatus = this.user.isActive || this.user.active ? 'active' : 'inactive';
-            const verificationStatus = this.user.isVerified || this.user.verified ? 'verified' : 'unverified';
+                // Update header
+                document.getElementById('userFullName').textContent = fullName;
+                document.getElementById('userRole').textContent = role;
 
-            // Update header
-            document.getElementById('userFullName').textContent = fullName;
-            document.getElementById('userRole').textContent = role;
+                // Update avatar with profile image
+                this.updateAvatar();
 
-            // Update personal information
-            document.getElementById('firstName').textContent = this.user.firstName || 'Not provided';
-            document.getElementById('lastName').textContent = this.user.lastName || 'Not provided';
-            document.getElementById('gender').textContent = gender;
-            document.getElementById('email').textContent = this.user.email || 'Not provided';
-            document.getElementById('phone').textContent = phone;
-            document.getElementById('email').textContent = this.user.email || 'Not provided';
+                // Update bio section
+                const bioElement = document.getElementById('userBio');
+                bioElement.textContent = bio;
+                bioElement.className = bio === 'No biography provided.' ? 'bio-content empty' : 'bio-content';
 
-            // Update account information - Add Scope after Role
-            document.getElementById('role').textContent = role;
-            document.getElementById('address').textContent = address;
-            document.getElementById('memberSince').textContent = memberSince;
-
-            // Update status badges
-            this.updateStatusBadge('accountStatus', accountStatus);
-            this.updateStatusBadge('verificationStatus', verificationStatus);
-
-            // Update avatar with initials
-            this.updateAvatar(fullName);
-
-            // Add Scope to Account Information section (after Role)
-            this.addScopeToAccountInfo(scopeTitle);
-
-            // Add Affiliation to Personal Information section
-            this.addAffiliationToPersonalInfo(affiliation);
-        }
-
-        // Method to add Scope to Account Information
-        addScopeToAccountInfo(scopeTitle) {
-            const accountInfoGrid = document.querySelector('.profile-card:nth-child(2) .info-grid');
-            if (!accountInfoGrid) return;
-
-            // Check if scope already exists
-            let existingScopeItem = document.getElementById('scopeInfoItem');
-
-            if (!existingScopeItem) {
-                // Create new scope info item
-                const scopeItem = document.createElement('div');
-                scopeItem.className = 'info-item';
-                scopeItem.id = 'scopeInfoItem';
-
-                scopeItem.innerHTML = `
-                    <span class="info-label">
-                        <i class="fas fa-tags"></i> Scope
-                    </span>
-                    <div class="info-value" id="scope">${scopeTitle}</div>
-                `;
-
-                // Insert after the Role item (which is the first item in the grid)
-                const roleItem = accountInfoGrid.querySelector('.info-item:first-child');
-                if (roleItem && roleItem.nextSibling) {
-                    accountInfoGrid.insertBefore(scopeItem, roleItem.nextSibling);
-                } else {
-                    accountInfoGrid.appendChild(scopeItem);
-                }
-            } else {
-                // Update existing scope
-                document.getElementById('scope').textContent = scopeTitle;
-            }
-        }
-
-        // Method to add Affiliation to Personal Information
-        addAffiliationToPersonalInfo(affiliation) {
-            const personalInfoGrid = document.querySelector('.profile-card:nth-child(1) .info-grid');
-            if (!personalInfoGrid) return;
-
-            // Check if affiliation already exists
-            let existingAffiliationItem = document.getElementById('affiliationInfoItem');
-
-            if (!existingAffiliationItem) {
-                // Create new affiliation info item
-                const affiliationItem = document.createElement('div');
-                affiliationItem.className = 'info-item';
-                affiliationItem.id = 'affiliationInfoItem';
-
-                affiliationItem.innerHTML = `
-                    <span class="info-label">
-                        <i class="fas fa-building"></i> Affiliation
-                    </span>
-                    <div class="info-value" id="affiliation">${affiliation}</div>
-                `;
-
-                // Add to the end of personal information grid
-                personalInfoGrid.appendChild(affiliationItem);
-            } else {
-                // Update existing affiliation
+                // Update personal information
+                document.getElementById('userTitle').textContent = title || 'Not provided';
+                document.getElementById('firstName').textContent = firstName;
+                document.getElementById('lastName').textContent = lastName;
+                document.getElementById('gender').textContent = gender;
+                document.getElementById('email').textContent = this.user.email || 'Not provided';
+                document.getElementById('phone').textContent = phone;
                 document.getElementById('affiliation').textContent = affiliation;
-            }
-        }
 
-        updateAvatar(fullName) {
-            const avatar = document.querySelector('.profile-avatar');
-            if (!avatar) return;
+                // Update account & professional information
+                document.getElementById('role').textContent = role;
+                document.getElementById('institution').textContent = institution;
+                document.getElementById('department').textContent = department;
+                document.getElementById('specialization').textContent = specialization;
+                document.getElementById('orcid').textContent = orcid;
+                document.getElementById('address').textContent = address;
+                document.getElementById('memberSince').textContent = memberSince;
 
-            // Extract initials from full name
-            const initials = fullName
-                .split(' ')
-                .map(name => name.charAt(0))
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
-
-            if (initials.length >= 1) {
-                avatar.innerHTML = `<span style="font-size: 2rem; font-weight: 700;">${initials}</span>`;
-            }
-        }
-
-        updateStatusBadge(elementId, status) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-
-            let badgeClass, badgeIcon, badgeText;
-
-            if (elementId === 'accountStatus') {
-                if (status === 'active') {
-                    badgeClass = 'active';
-                    badgeIcon = 'fa-check-circle';
-                    badgeText = 'Active';
+                // Handle scope - only show if scopeId exists
+                const scopeItem = document.getElementById('scopeItem');
+                if (this.user.scopeId) {
+                    scopeItem.style.display = 'flex';
+                    // If you have scope title, update it here
+                    // document.getElementById('scope').textContent = this.user.scopeTitle || 'Not specified';
                 } else {
-                    badgeClass = 'inactive';
-                    badgeIcon = 'fa-times-circle';
-                    badgeText = 'Inactive';
+                    scopeItem.style.display = 'none';
                 }
-            } else if (elementId === 'verificationStatus') {
-                if (status === 'verified') {
-                    badgeClass = 'active';
-                    badgeIcon = 'fa-check-circle';
-                    badgeText = 'Verified';
+
+                // Update status badges
+                this.updateStatusBadge('accountStatus', accountStatus);
+                this.updateStatusBadge('verificationStatus', verificationStatus);
+            }
+
+            updateAvatar() {
+                const avatar = document.querySelector('.profile-avatar');
+                if (!avatar) return;
+
+                if (this.user.profileImage && this.user.profileImage.url) {
+                    const imageUrl = this.user.profileImage.url.startsWith('http')
+                        ? this.user.profileImage.url
+                        : `${this.uploadBaseUrl}${this.user.profileImage.url}`;
+
+                    avatar.innerHTML = `<img src="${imageUrl}" alt="${this.user.firstName} ${this.user.lastName}">`;
                 } else {
-                    badgeClass = 'inactive';
-                    badgeIcon = 'fa-times-circle';
-                    badgeText = 'Not Verified';
+                    // Extract initials from full name
+                    const firstName = this.user.firstName || '';
+                    const lastName = this.user.lastName || '';
+                    const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'U';
+
+                    avatar.innerHTML = `<div class="avatar-initials">${initials}</div>`;
                 }
             }
 
-            element.innerHTML = `
-                <span class="status-badge ${badgeClass}">
-                    <i class="fas ${badgeIcon}"></i> ${badgeText}
-                </span>
-            `;
-        }
+            openEditModal() {
+                if (!this.user) return;
 
-        capitalizeFirstLetter(string) {
-            if (!string) return '';
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
+                // Populate form fields with current user data
+                document.getElementById('editUserId').value = this.user._id;
+                document.getElementById('editTitle').value = this.user.title || '';
+                document.getElementById('editFirstName').value = this.user.firstName || '';
+                document.getElementById('editLastName').value = this.user.lastName || '';
+                document.getElementById('editPhone').value = this.user.phone || '';
+                document.getElementById('editAddress').value = this.user.address || '';
+                document.getElementById('editInstitution').value = this.user.institution || '';
+                document.getElementById('editDepartment').value = this.user.department || '';
+                document.getElementById('editSpecialization').value = this.user.specialization || '';
+                document.getElementById('editAffiliation').value = this.user.affiliation || '';
+                document.getElementById('editOrcid').value = this.user.orcid || '';
+                document.getElementById('editBio').value = this.user.bio || '';
+                document.getElementById('editGender').value = this.user.gender || '';
 
-        formatDate(dateString) {
-            try {
-                if (!dateString) return 'Not available';
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-            } catch (error) {
-                console.error('Error formatting date:', error);
-                return dateString;
+                // Show modal
+                document.getElementById('editProfileModal').classList.add('active');
+            }
+
+            closeEditModal() {
+                document.getElementById('editProfileModal').classList.remove('active');
+            }
+
+            async saveProfileChanges() {
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login.');
+                        return;
+                    }
+
+                    // Get form data
+                    const formData = {
+                        title: document.getElementById('editTitle').value.trim(),
+                        firstName: document.getElementById('editFirstName').value.trim(),
+                        lastName: document.getElementById('editLastName').value.trim(),
+                        phone: document.getElementById('editPhone').value.trim(),
+                        address: document.getElementById('editAddress').value.trim(),
+                        institution: document.getElementById('editInstitution').value.trim(),
+                        department: document.getElementById('editDepartment').value.trim(),
+                        specialization: document.getElementById('editSpecialization').value.trim(),
+                        affiliation: document.getElementById('editAffiliation').value.trim(),
+                        orcid: document.getElementById('editOrcid').value.trim(),
+                        bio: document.getElementById('editBio').value.trim(),
+                        gender: document.getElementById('editGender').value.trim()
+                    };
+
+                    // Validation
+                    if (!formData.firstName) {
+                        toastr.error('Please enter your first name', 'Validation Error');
+                        return;
+                    }
+
+                    if (!formData.lastName) {
+                        toastr.error('Please enter your last name', 'Validation Error');
+                        return;
+                    }
+
+                    if (!formData.phone) {
+                        toastr.error('Please enter your phone number', 'Validation Error');
+                        return;
+                    }
+
+                    if (!formData.address) {
+                        toastr.error('Please enter your address', 'Validation Error');
+                        return;
+                    }
+
+                    // Show loading state
+                    const saveBtn = document.getElementById('saveProfileBtn');
+                    const originalText = saveBtn.innerHTML;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    saveBtn.disabled = true;
+
+                    const userId = document.getElementById('editUserId').value;
+
+                    // Update profile using new API endpoint
+                    const data = await apiFetch(`${BASE_URL}/user/${userId}/profile`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to update profile');
+                    }
+
+                    // Success
+                    toastr.success('Profile updated successfully!', 'Success');
+
+                    // Merge changes into local user object
+                    this.user = { ...this.user, ...formData };
+
+                    // Update UI
+                    this.renderProfile();
+
+                    // Close modal
+                    this.closeEditModal();
+
+                } catch (error) {
+                    console.error('Error saving profile changes:', error);
+                    toastr.error(error.message || 'Failed to update profile', 'Error');
+                } finally {
+                    const saveBtn = document.getElementById('saveProfileBtn');
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                    saveBtn.disabled = false;
+                }
+            }
+
+            changePassword() {
+                // Redirect to change password page
+                window.location.href = 'change-password.html';
+            }
+
+            updateStatusBadge(elementId, status) {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+
+                let badgeClass, badgeIcon, badgeText;
+
+                if (elementId === 'accountStatus') {
+                    if (status === 'active') {
+                        badgeClass = 'active';
+                        badgeIcon = 'fa-check-circle';
+                        badgeText = 'Active';
+                    } else {
+                        badgeClass = 'inactive';
+                        badgeIcon = 'fa-times-circle';
+                        badgeText = 'Inactive';
+                    }
+                } else if (elementId === 'verificationStatus') {
+                    if (status === 'verified') {
+                        badgeClass = 'active';
+                        badgeIcon = 'fa-check-circle';
+                        badgeText = 'Verified';
+                    } else {
+                        badgeClass = 'inactive';
+                        badgeIcon = 'fa-times-circle';
+                        badgeText = 'Not Verified';
+                    }
+                }
+
+                element.innerHTML = `
+                    <span class="status-badge ${badgeClass}">
+                        <i class="fas ${badgeIcon}"></i> ${badgeText}
+                    </span>
+                `;
+            }
+
+            formatGender(gender) {
+                if (!gender) return '';
+                if (gender === 'Not_Provided') return 'Not Provided';
+                return gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
+            }
+
+            formatDate(dateString) {
+                try {
+                    if (!dateString) return 'Not available';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                } catch (error) {
+                    console.error('Error formatting date:', error);
+                    return dateString;
+                }
+            }
+
+            showLoading() {
+                document.getElementById('loadingScreen').style.display = 'block';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('contentContainer').style.display = 'none';
+            }
+
+            hideLoading() {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
+
+            showContent() {
+                document.getElementById('contentContainer').style.display = 'block';
+            }
+
+            showError(message) {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('errorScreen').style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
             }
         }
 
-        showLoading() {
-            document.getElementById('loadingScreen').style.display = 'block';
-            document.getElementById('errorScreen').style.display = 'none';
-            document.getElementById('contentContainer').style.display = 'none';
-        }
-
-        hideLoading() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
-
-        showContent() {
-            document.getElementById('contentContainer').style.display = 'block';
-        }
-
-        showError(message) {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('errorScreen').style.display = 'block';
-            document.getElementById('errorMessage').textContent = message;
-        }
-    }
-
-    // Initialize profile manager
-    let profileManager = new ProfileManager();
-</script>
+        // Initialize profile manager
+        let profileManager = new ProfileManager();
+    </script>
 </body>
 
 </html>
