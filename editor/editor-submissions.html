@@ -1066,7 +1066,7 @@
                         <div class="no-results">
                             <i class="fas fa-inbox"></i>
                             <h3>No Submissions Found</h3>
-                            <p>${this.allSubmissions.length === 0 ? 'No submissions in your journals yet.' : 'No submissions match your current filters.'}</p>
+                            <p>${this.allSubmissions.length === 0 ? 'No submissions.' : 'No submissions match your current filters.'}</p>
                             ${this.allSubmissions.length > 0 ? `
                                 <button class="retry-btn" id="clearFiltersBtn2">
                                     <i class="fas fa-filter"></i> Clear Filters
@@ -1369,8 +1369,8 @@
                 cardsGrid.innerHTML = `
                     <div class="no-results">
                         <i class="fas fa-journal-whills"></i>
-                        <h3>No Journals Assigned</h3>
-                        <p>You are not assigned as an editor to any journals yet.</p>
+                        <h3>No Scopes Assigned</h3>
+                        <p>You are not assigned as an editor to any Scopes yet.</p>
                         <p>Please contact the administrator if you believe this is an error.</p>
                     </div>
                 `;

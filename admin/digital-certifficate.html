@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Certificate - Replica</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #00BFFF;
+            --secondary-color: #1F1B51;
+            --lite-secondary4: #B7D4E3;
+            --lite-secondary6: #EBF2FE;
+            --warning-yellow: #F4C430;
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --body-bg: #f5f5f5;
+            --bg-light: #f8f9fa;
+            --border-light: #e5e7eb;
+
+            /* Fixed certificate size (no scrolling). Adjust if you want a different fixed size) */
+            --paper-width: 1000px;
+            --paper-height: 100%;
+
+            --left-bar-width: 120px;
+            --gutter: 28px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--body-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            /* IMPORTANT: prevent scrolling */
+        }
+
+        /* certificate container (paper) */
+        .certificate-wrap {
+            width: var(--paper-width);
+            height: var(--paper-height);
+            background: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 14px 36px rgba(20, 20, 60, 0.12);
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+
+        /* left vertical bar */
+        .left-bar {
+            width: var(--left-bar-width);
+            background: var(--secondary-color);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 6px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+
+
+        .ribbon {
+            width: 22px;
+            height: 64px;
+            background: linear-gradient(#c0392b, #e74c3c);
+            margin-top: 6px;
+            clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+        }
+
+        .left-bar .vertical-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-weight: 700;
+            opacity: 0.85;
+            margin-top: 18px;
+            font-size: 32px;
+            letter-spacing: 2px;
+            opacity: 0.2;
+        }
+
+        /* main paper content */
+        .paper {
+            flex: 1;
+            padding: var(--gutter);
+            padding-left: 0;
+            padding-right: 0;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            max-height: 720px;
+        }
+
+        /* top-left logo (new) */
+        .top-left-logo {
+            width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-left-logo img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* header - journal title first */
+        .header {
+            text-align: center;
+            padding-top: 2px;
+            padding-bottom: 6px;
+            margin-bottom: 4px;
+        }
+
+        .journal-title {
+            color: var(--secondary-color);
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            margin: 2px 0 4px 0;
+            line-height: 1.05;
+        }
+
+        .journal-short {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .subline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .pill {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .issn {
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* big 'AUTHOR CERTIFICATE' */
+        .title {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 34px;
+            font-weight: 800;
+            color: #333;
+            letter-spacing: 1px;
+        }
+
+        /* certificate main block */
+        .cert-body {
+            margin-top: 12px;
+            text-align: center;
+            position: relative;
+            padding: 0 36px;
+            color: #3b3b3b;
+        }
+
+        .cert-body .cert-heading {
+            font-weight: 700;
+            font-size: 12px;
+            color: #111827;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+
+        .manuscript-title {
+            font-weight: 600;
+            color: #374151;
+            font-size: 13px;
+            margin-bottom: 10px;
+            line-height: 1.25;
+        }
+
+        /* watermark large and faint */
+        .watermark {
+            position: absolute;
+            top: -50%;
+            left: calc(var(--left-bar-width) + 80px);
+            width: 520px;
+            height: 520px;
+            opacity: 0.06;
+            background-image: url('/assets/img/logo.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 420px 420px;
+            pointer-events: none;
+            transform: translateY(6px);
+        }
+
+        .meta {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #111827;
+        }
+
+        .meta .label {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+
+        .meta .value {
+            font-weight: 700;
+            color: #24303a;
+            font-size: 13px;
+        }
+
+        .article-meta {
+            margin-top: 10px;
+            color: #374151;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .sign-area {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 0 36px;
+        }
+
+        .left-sign {
+            text-align: center;
+            width: 46%;
+        }
+
+        .stamp {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 5px solid rgba(31, 27, 81, 0.04);
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .signature {
+            width: 220px;
+            height: 70px;
+            object-fit: contain;
+            display: block;
+            margin-left: auto;
+        }
+
+        .editor-label {
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 12px;
+            left: var(--gutter);
+            right: var(--gutter);
+            border-top: 1px solid var(--border-light);
+            padding-top: 10px;
+            font-size: 11px;
+            color: #6b7280;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* reduce text scale on very small viewports to avoid scroll (but page shouldn't scroll due to overflow:hidden) */
+        @media (max-width:1100px) {
+            :root {
+                --paper-width: min(1000px, 92vw);
+                --paper-height: min(720px, 92vh);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="certificate-wrap" id="certificate">
+        <div class="left-bar" aria-hidden="true">
+            <div class="medal" role="img" aria-hidden="true">
+                            <div class="top-left-logo">
+                                <img id="topLeftLogo" src="/assets/img/logo.png" alt="logo">
+                            </div>
+            </div>
+            <div class="ribbon" aria-hidden="true"></div>
+            <div class="vertical-text">A DIGITAL LIBRARY</div>
+        </div>
+
+        <div class="paper" role="main">
+
+            <div class="header">
+                <!-- Journal title must be the first thing on the certificate -->
+                <div class="journal-title" id="journalTitle"></div>
+
+                <div class="subline" style="justify-content:center;">
+                    <div class="pill" id="journalShort"></div>
+                </div>
+
+                <div class="issn" id="issnText">ISSN NO :- 2456-2165</div>
+            </div>
+
+            <div class="title">AUTHOR CERTIFICATE</div>
+
+            <div class="cert-body">
+                <div class="cert-heading">THIS IS TO CERTIFY THAT THE MANUSCRIPT, ENTITLED</div>
+
+                <div class="manuscript-title" id="manuscriptTitle">
+                </div>
+
+                <div class="watermark" aria-hidden="true"></div>
+
+                <div class="meta">
+                    <span class="label">AUTHORED BY</span>
+                    <div class="value" id="authorName">Dr. Arup Ratan Biswas</div>
+                </div>
+
+                <div class="meta" style="margin-top:12px;">
+                    <span class="label">HAS BEEN PUBLISHED IN</span>
+                    <div class="value" id="publishedInfo">Volume 5 | Issue 7 | July - 2020</div>
+                </div>
+
+                <div class="article-meta" id="articleDigitalNo" style="margin-top:10px;">ARTICLE DIGITAL NO. IJISRT20JUL757</div>
+
+                <div class="sign-area">
+                    <div class="left-sign">
+                        <img id="stampImg" class="stamp" src="" alt="Stamp">
+                    </div>
+
+                    <div style="text-align:right; width:46%;">
+                        <img id="signatureImg" class="signature" src="" alt="Signature">
+                        <div class="editor-label">EDITOR IN CHIEF IJISRT</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer" id="footerText">
+                This document certifies that the manuscript listed above was submitted by above said respected author.
+                To verify the submitted manuscript please visit our official website: <strong id="journalWebsite">www.example.com</strong>
+                Or Email us: <strong id="journalEmail">editor@ijisrt.com</strong>.
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { BASE_URL, FILE_BASE_URL, token, apiFetch } from '../assets/js/utility.js';
+
+        const certId = new URLSearchParams(location.search).get('id') || '697967c1116e0d5ba6c61071';
+
+        const authorNameEl = document.getElementById('authorName');
+        const manuscriptTitleEl = document.getElementById('manuscriptTitle');
+        const publishedInfoEl = document.getElementById('publishedInfo');
+        const articleDigitalNoEl = document.getElementById('articleDigitalNo');
+        const stampImgEl = document.getElementById('stampImg');
+        const signatureImgEl = document.getElementById('signatureImg');
+        const journalTitleEl = document.getElementById('journalTitle');
+        const journalShortEl = document.getElementById('journalShort');
+        const issnTextEl = document.getElementById('issnText');
+        const journalWebsiteEl = document.getElementById('journalWebsite');
+        const journalEmailEl = document.getElementById('journalEmail');
+        const topLeftLogoEl = document.getElementById('topLeftLogo');
+        const pillTextEl = document.getElementById('pillText');
+
+        const sampleCertificateResponse = {
+            success: true,
+            certificate: {
+                "_id": "697967c1116e0d5ba6c61071",
+                "authorId": {
+                    "_id": "6958b7c61d48a39e0acf9ea4",
+                    "firstName": "Amarachi",
+                    "lastName": "Eneh",
+                    "email": "vivimarny@gmail.com"
+                },
+                "submissionId": {
+                    "_id": "6978e76e17f093abb68a57b7",
+                    "title": "Manuscript Submission for testing 1",
+                    "scopeId": {
+                        "_id": "6958d0a7fad6397b5435115e",
+                        "title": "Computer Science and Information Technology"
+                    }
+                },
+                "certificateNumber": "FEDNEK-C600060E-CERT",
+                "status": "pending",
+                "type": "digital",
+                "issueDate": "2026-01-28T01:34:57.386Z",
+                "requestedAt": "2026-01-28T01:34:57.386Z",
+                "createdAt": "2026-01-28T01:34:57.386Z",
+                "updatedAt": "2026-01-28T01:34:57.386Z",
+                "__v": 0
+            },
+            stampAndSignature: {
+                stamp: {
+                    filename: "profile-1769426699833.png",
+                    url: "/uploads/profile-images/profile-1769426699833.png",
+                    originalName: "stampimage.png"
+                },
+                signature: {
+                    filename: "profile-1769480983746.png",
+                    url: "/uploads/profile-images/profile-1769480983746.png",
+                    originalName: "signature.png"
+                }
+            }
+        };
+
+        const sampleJournalResponse = {
+            success: true,
+            mainJournal: {
+                "_id": "6958b7c61d48a39e0acf9e9d",
+                "title": "International Journal of Research Development. FedInstuIJRD",
+                "issn": "1234-5678",
+                "description": "FedponekIJRD (International Journal of Research & Development) is a leading peer-reviewed, open access journal dedicated to publishing high-quality research across multiple disciplines.",
+                "publisher": "Federal Instution",
+                "reviewPolicy": "double-blind",
+                "submissionFee": 0,
+                "publicationFee": 100,
+                "currency": "NGN",
+                "indexing": [],
+                "website": "https://www.example.com",
+                "email": "contact@example.com",
+                "createdAt": "2026-01-03T06:31:34.270Z",
+                "updatedAt": "2026-01-28T02:01:21.893Z",
+                "__v": 0
+            }
+        };
+
+        function formatDateToMonthYear(iso) {
+            try {
+                const d = new Date(iso);
+                const opts = { year: 'numeric', month: 'long' };
+                return d.toLocaleDateString(undefined, opts);
+            } catch (e) {
+                return iso;
+            }
+        }
+
+        async function loadCertificate() {
+            let journalData;
+            try {
+                journalData = await apiFetch(`${BASE_URL}/journal`);
+            } catch (err) {
+                console.warn('Journal API error - using sample', err);
+                journalData = sampleJournalResponse;
+            }
+
+            let certData;
+            try {
+                certData = await apiFetch(`${BASE_URL}/certificate/${certId}`);
+            } catch (err) {
+                console.warn('Certificate API error - using sample', err);
+                certData = sampleCertificateResponse;
+            }
+
+            const journal = journalData?.mainJournal || {};
+            // journal title (first thing)
+            if (journal.title) {
+                journalTitleEl.textContent = journal.title.split('.')[0].toUpperCase();
+                // try to extract a short name after a dot e.g. "..... . FedInstuIJRD"
+                const parts = journal.title.split('.');
+                if (parts.length > 1) {
+                    journalShortEl.textContent = parts.slice(1).join('.').trim();
+                } else {
+                    journalShortEl.textContent = 'FedInstuIJRD';
+                }
+            }
+
+            if (journal.issn) issnTextEl.textContent = `ISSN NO :- ${journal.issn}`;
+            if (journal.website) {
+                try { journalWebsiteEl.textContent = (new URL(journal.website)).host || journal.website; }
+                catch (e) { journalWebsiteEl.textContent = journal.website; }
+            }
+            if (journal.email) journalEmailEl.textContent = journal.email;
+
+            // set top-left logo to same watermark/logo (uses local asset by default)
+            topLeftLogoEl.src = '/assets/img/logo.png';
+
+            const cert = certData?.certificate || {};
+            const stampAndSignature = certData?.stampAndSignature || {};
+
+            const author = cert.authorId || {};
+            const authorName = [author?.firstName, author?.lastName].filter(Boolean).join(' ') || 'Dr. Arup Ratan Biswas';
+            authorNameEl.textContent = authorName;
+
+            const submission = cert.submissionId || {};
+            manuscriptTitleEl.textContent = submission?.title || manuscriptTitleEl.textContent;
+
+            const issueNumber = 'Issue 7';
+            const volumeNumber = 'Volume 5';
+            const issued = cert.issueDate ? formatDateToMonthYear(cert.issueDate) : 'July - 2020';
+            publishedInfoEl.textContent = `${volumeNumber} | ${issueNumber} | ${issued}`;
+
+            articleDigitalNoEl.textContent = `ARTICLE DIGITAL NO. ${cert.certificateNumber || 'IJISRT20JUL757'}`;
+
+            // stamp + signature images (use FILE_BASE_URL)
+            try {
+                if (stampAndSignature?.stamp?.url) {
+                    stampImgEl.src = `${FILE_BASE_URL}${stampAndSignature.stamp.url}`;
+                } else {
+                    stampImgEl.src = '/assets/img/logo.png';
+                    stampImgEl.style.opacity = '0.95';
+                }
+
+                if (stampAndSignature?.signature?.url) {
+                    signatureImgEl.src = `${FILE_BASE_URL}${stampAndSignature.signature.url}`;
+                } else {
+                    signatureImgEl.src = '/assets/img/logo.png';
+                    signatureImgEl.style.opacity = '0.75';
+                }
+            } catch (e) {
+                stampImgEl.src = '/assets/img/logo.png';
+                signatureImgEl.src = '/assets/img/logo.png';
+            }
+
+            pillTextEl.textContent = 'IJISRT  A DIGITAL LIBRARY';
+        }
+
+        loadCertificate().catch(e => {
+            console.error('Unexpected error loading certificate', e);
+        });
+
+    </script>
+</body>
+
+</html>

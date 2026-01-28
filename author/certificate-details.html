@@ -488,8 +488,8 @@
                         <p>View your certificate information</p>
                     </div>
                     <div>
-                        <a href="published-manuscripts.html" class="btn-back">
-                            <i class="fas fa-arrow-left"></i> Back to Published 
+                        <a class="btn-back" onclick="history.back()">
+                            <i class="fas fa-arrow-left"></i>Go Back  
                         </a>
                     </div>
                 </div>
@@ -522,14 +522,6 @@
                         <i class="fas fa-certificate"></i>
                         <h3>No Certificate Found</h3>
                         <p id="noCertificateMessage">No certificate found for this submission.</p>
-                        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center;">
-                            <a href="published-manuscripts.html" class="btn btn-brand">
-                                <i class="fas fa-book"></i> Back to Published Manuscripts
-                            </a>
-                            <button id="debugInfoBtn" class="btn btn-secondary">
-                                <i class="fas fa-bug"></i> Show Debug Info
-                            </button>
-                        </div>
                     </div>
 
                     <div id="debugInfo" class="certificate-card" style="display: none; margin-top: 1rem; background: #f8f9fa;">

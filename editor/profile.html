@@ -70,8 +70,6 @@
             transform: translateY(-1px);
         }
 
-
-
         /* Profile Header Card */
         .profile-header-card {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary-color) 100%);
@@ -348,416 +346,6 @@
             border-color: #9ca3af;
         }
 
-        /* Edit Profile Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 1rem;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #111827;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .modal-header h3 i {
-            color: var(--primary);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-            color: var(--danger);
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .modal-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .form-section {
-            margin-bottom: 1rem;
-        }
-
-        .form-section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--light);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: #111827;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .form-group label i {
-            color: var(--primary);
-        }
-
-        .form-control {
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.2s;
-            font-family: inherit;
-            background: var(--bg-white);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
-        }
-
-        .form-control:disabled {
-            background: #f5f5f5;
-            color: var(--muted);
-            cursor: not-allowed;
-        }
-
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        /* Custom Select */
-        .custom-select {
-            position: relative;
-        }
-
-        .select-header {
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--bg-white);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
-        }
-
-        .select-header:hover {
-            border-color: var(--primary);
-        }
-
-        .select-header.active {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
-        }
-
-        .select-placeholder {
-            color: var(--muted);
-        }
-
-        .select-arrow {
-            color: var(--muted);
-            transition: transform 0.2s;
-        }
-
-        .select-arrow.active {
-            transform: rotate(180deg);
-        }
-
-        .select-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--bg-white);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 0.25rem;
-        }
-
-        .select-dropdown.active {
-            display: block;
-        }
-
-        .select-option {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-bottom: 1px solid var(--light);
-        }
-
-        .select-option:last-child {
-            border-bottom: none;
-        }
-
-        .select-option:hover {
-            background: var(--light);
-        }
-
-        .select-option.selected {
-            background: rgba(255, 122, 24, 0.1);
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* File Upload */
-        .file-upload-area {
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: var(--light);
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--primary);
-            background: rgba(255, 122, 24, 0.05);
-        }
-
-        .file-upload-area.dragover {
-            border-color: var(--primary);
-            background: rgba(255, 122, 24, 0.1);
-        }
-
-        .file-upload-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-        }
-
-        .file-upload-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .file-upload-text {
-            font-size: 1rem;
-            color: var(--text-color);
-            font-weight: 600;
-        }
-
-        .file-upload-hint {
-            font-size: 0.9rem;
-            color: var(--muted);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-preview {
-            margin-top: 1rem;
-            display: none;
-        }
-
-        .file-preview.active {
-            display: block;
-        }
-
-        .preview-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--border);
-            margin: 0 auto;
-        }
-
-        .file-info {
-            text-align: center;
-            margin-top: 0.5rem;
-        }
-
-        .file-name {
-            font-weight: 500;
-            color: var(--text-color);
-            font-size: 0.9rem;
-        }
-
-        .file-size {
-            color: var(--muted);
-            font-size: 0.8rem;
-        }
-
-        .remove-file {
-            color: var(--danger);
-            font-size: 0.8rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .form-hint {
-            color: var(--muted);
-            font-size: 0.85rem;
-            margin-top: 0.25rem;
-        }
-
-        .modal-footer {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        .btn-cancel {
-            background: var(--light);
-            color: var(--muted);
-            border: 1px solid var(--border);
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .btn-cancel:hover {
-            background: #e5e7eb;
-            border-color: #9ca3af;
-        }
-
-        .btn-save {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-save:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-save:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-save.loading {
-            position: relative;
-            color: transparent;
-        }
-
-        .btn-save.loading::after {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            top: 50%;
-            left: 50%;
-            margin-top: -8px;
-            margin-left: -8px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
         /* Loading Screen */
         .loading-screen {
             text-align: center;
@@ -822,27 +410,705 @@
             transform: translateY(-2px);
         }
 
-        /* Skeleton Loading */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 4px;
+        /* Edit Profile Modal - Redesigned */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 1rem;
         }
 
-        .skeleton-icon {
-            background: #f0f0f0;
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 2px solid var(--primary-light);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-header h3 i {
+            color: white;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
 
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 0;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* Current Profile Section */
+        .current-profile-section {
+            background: linear-gradient(135deg, rgba(255, 122, 24, 0.05) 0%, rgba(0, 191, 255, 0.05) 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .current-profile-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .current-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary);
+        }
+
+        .current-profile-header i {
+            font-size: 1.25rem;
+        }
+
+        .current-profile-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .current-profile-content {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .current-avatar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--card-shadow);
+            min-width: 300px;
+        }
+
+        .current-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .current-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-initials-current {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .current-avatar-info {
+            flex: 1;
+        }
+
+        .current-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .current-role {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-light);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            width: fit-content;
+        }
+
+        /* Update Profile Section */
+        .update-profile-section {
+            padding: 2rem;
+        }
+
+        .form-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .form-section-header i {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .form-section-header h4 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .profile-picture-section {
+            background: linear-gradient(135deg, rgba(255, 122, 24, 0.03) 0%, rgba(0, 191, 255, 0.03) 100%);
+            border: 2px dashed var(--border);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        /* Profile Picture Update */
+        .profile-picture-update {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .profile-picture-update {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .current-picture-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .picture-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .picture-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-initials-modal {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .picture-info {
+            text-align: center;
+        }
+
+        .picture-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .picture-hint {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* File Upload Area - FIXED */
+        .picture-upload-area {
+            position: relative;
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius);
+            padding: 2rem;
+            background: rgba(255, 122, 24, 0.05);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .picture-upload-area:hover {
+            background: rgba(255, 122, 24, 0.1);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 122, 24, 0.1);
+        }
+
+        .picture-upload-area.dragover {
+            background: rgba(255, 122, 24, 0.15);
+            border-color: var(--warning);
+        }
+
+        .upload-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .picture-upload-area:hover .upload-icon {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .upload-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .upload-main-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .upload-sub-text {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 1;
+            /* Ensure file input is on top */
+        }
+
+        /* File Preview */
+        .file-preview {
+            grid-column: 1 / -1;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--radius);
+            border: 2px solid var(--success);
+            animation: slideIn 0.3s ease;
+        }
+
+        .file-preview.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
 
-            100% {
-                background-position: -200% 0;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
+        }
+
+        .preview-wrapper {
+            position: relative;
+        }
+
+        .preview-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-preview {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 32px;
+            height: 32px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .remove-preview:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .file-size {
+            color: var(--success);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .form-grid.full-width {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form Groups */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Custom Select */
+        .custom-select-wrapper {
+            position: relative;
+        }
+
+        .custom-select {
+            position: relative;
+        }
+
+        .select-trigger {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            min-height: 48px;
+        }
+
+        .select-trigger:hover {
+            border-color: var(--primary);
+            background: var(--light);
+        }
+
+        .select-trigger.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.1);
+        }
+
+        .selected-value {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .selected-value.placeholder {
+            color: var(--muted);
+        }
+
+        .select-trigger i {
+            color: var(--muted);
+            transition: transform 0.2s;
+        }
+
+        .select-trigger.active i {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        .select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .select-options.active {
+            display: block;
+        }
+
+        .select-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--light);
+            color: var(--text-color);
+        }
+
+        .select-option:last-child {
+            border-bottom: none;
+        }
+
+        .select-option:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .select-option.selected {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .select-option.selected::after {
+            content: '✓';
+            position: absolute;
+            right: 1rem;
+            color: var(--primary);
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            background: var(--light);
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+
+        .btn-cancel {
+            background: var(--light);
+            color: var(--muted);
+            border: 2px solid var(--border);
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .btn-cancel:hover {
+            background: #e5e7eb;
+            border-color: var(--danger);
+            color: var(--danger);
+            transform: translateY(-2px);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 140px;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(255, 122, 24, 0.2);
+        }
+
+        .btn-save:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-color) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 122, 24, 0.3);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* Responsive Design */
@@ -893,6 +1159,18 @@
             .btn-save {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .current-profile-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .current-avatar-wrapper {
+                min-width: auto;
+                width: 100%;
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
@@ -1108,182 +1386,255 @@
     <div id="editProfileModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-edit"></i> Edit Profile</h3>
+                <h3><i class="fas fa-user-edit"></i> Edit Profile</h3>
                 <button class="modal-close" id="closeModalBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="editProfileForm" class="modal-form">
-                    <!-- Profile Picture Upload -->
-                    <div class="form-section">
-                        <h4 class="form-section-title">
-                            <i class="fas fa-camera"></i> Profile Picture
-                        </h4>
-                        <div class="form-group full-width">
-                            <div class="file-upload-area" id="profileUploadArea">
-                                <label class="file-upload-label" for="profileImage">
-                                    <div class="file-upload-icon">
+                    <!-- Current Profile Display -->
+                    <div class="current-profile-section">
+                        <div class="current-profile-card">
+                            <div class="current-profile-header">
+                                <i class="fas fa-user"></i>
+                                <h4>Current Profile</h4>
+                            </div>
+                            <div class="current-profile-content">
+                                <div class="current-avatar-wrapper">
+                                    <div class="current-avatar" id="currentProfileImage">
+                                        <div class="avatar-initials-current">CI</div>
+                                    </div>
+                                    <div class="current-avatar-info">
+                                        <div class="current-name" id="currentFullName">Loading...</div>
+                                        <div class="current-role" id="currentRole">Loading...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Profile Section -->
+                    <div class="update-profile-section">
+                        <div class="form-section-header">
+                            <i class="fas fa-sync-alt"></i>
+                            <h4>Update Profile Information</h4>
+                        </div>
+
+                        <!-- Profile Picture Update -->
+                        <div class="form-section profile-picture-section">
+                            <div class="section-title">
+                                <i class="fas fa-camera"></i>
+                                <span>Profile Picture</span>
+                            </div>
+                            <div class="profile-picture-update">
+                                <div class="current-picture-display">
+                                    <div class="picture-preview" id="currentPicturePreview">
+                                        <div class="avatar-initials-modal">CI</div>
+                                    </div>
+                                    <div class="picture-info">
+                                        <div class="picture-label">Current Picture</div>
+                                        <div class="picture-hint">Click below to update</div>
+                                    </div>
+                                </div>
+                                <div class="picture-upload-area" id="profileUploadArea">
+                                    <div class="upload-icon">
                                         <i class="fas fa-cloud-upload-alt"></i>
                                     </div>
-                                    <div>
-                                        <div class="file-upload-text">Upload Profile Picture</div>
-                                        <div class="file-upload-hint">Click or drag & drop (JPG, PNG, max 2MB)</div>
+                                    <div class="upload-text">
+                                        <span class="upload-main-text">Choose new profile picture</span>
+                                        <span class="upload-sub-text">JPG or PNG, max 2MB</span>
                                     </div>
-                                </label>
-                                <input type="file" id="profileImage" class="file-input" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
-                            </div>
-                            <div class="file-preview" id="profilePreview">
-                                <img src="" alt="Preview" class="preview-image" id="profilePreviewImage">
-                                <div class="file-info">
-                                    <div class="file-name" id="profileFileName"></div>
-                                    <div class="file-size" id="profileFileSize"></div>
-                                    <div class="remove-file" id="removeProfileImage">
-                                        <i class="fas fa-times"></i> Remove
+                                    <input type="file" id="profileImage" class="file-input" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+                                </div>
+                                <div class="file-preview" id="profilePreview">
+                                    <div class="preview-wrapper">
+                                        <img src="" alt="Preview" class="preview-image" id="profilePreviewImage">
+                                        <button type="button" class="remove-preview" id="removeProfileImage">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="file-info">
+                                        <span class="file-name" id="profileFileName"></span>
+                                        <span class="file-size" id="profileFileSize"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Basic Information -->
-                    <div class="form-section">
-                        <h4 class="form-section-title">
-                            <i class="fas fa-user"></i> Basic Information
-                        </h4>
-                        <div class="form-row">
-                            <!-- Title Custom Select -->
-                            <div class="form-group">
-                                <label>
-                                    <i class="fas fa-user-tag"></i> Title
-                                </label>
-                                <div class="custom-select" id="titleSelect">
-                                    <div class="select-header">
-                                        <span class="select-value" id="titleValue">Select Title</span>
-                                        <span class="select-arrow"><i class="fas fa-chevron-down"></i></span>
-                                    </div>
-                                    <div class="select-dropdown">
-                                        <div class="select-option" data-value="">Select Title</div>
-                                        <div class="select-option" data-value="Mr">Mr</div>
-                                        <div class="select-option" data-value="Mrs">Mrs</div>
-                                        <div class="select-option" data-value="Miss">Miss</div>
-                                        <div class="select-option" data-value="Dr">Dr</div>
-                                        <div class="select-option" data-value="Prof">Prof</div>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="editTitle" name="title">
+                        <!-- Personal Information -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-user-circle"></i>
+                                <span>Personal Information</span>
                             </div>
-
-                            <!-- Gender Custom Select -->
-                            <div class="form-group">
-                                <label>
-                                    <i class="fas fa-venus-mars"></i> Gender
-                                </label>
-                                <div class="custom-select" id="genderSelect">
-                                    <div class="select-header">
-                                        <span class="select-value" id="genderValue">Select Gender</span>
-                                        <span class="select-arrow"><i class="fas fa-chevron-down"></i></span>
-                                    </div>
-                                    <div class="select-dropdown">
-                                        <div class="select-option" data-value="">Select Gender</div>
-                                        <div class="select-option" data-value="Male">Male</div>
-                                        <div class="select-option" data-value="Female">Female</div>
-                                        <div class="select-option" data-value="Not_Provided">Not Provided</div>
-                                        <div class="select-option" data-value="Other">Other</div>
+                            <div class="form-grid">
+                                <!-- Title -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user-tag" style="color: var(--warning);"></i>
+                                        Title
+                                    </label>
+                                    <div class="custom-select-wrapper">
+                                        <div class="custom-select" id="titleSelect">
+                                            <div class="select-trigger">
+                                                <span class="selected-value" id="titleValue">Select Title</span>
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                            <div class="select-options">
+                                                <div class="select-option" data-value="">Select Title</div>
+                                                <div class="select-option" data-value="Mr">Mr</div>
+                                                <div class="select-option" data-value="Mrs">Mrs</div>
+                                                <div class="select-option" data-value="Miss">Miss</div>
+                                                <div class="select-option" data-value="Dr">Dr</div>
+                                                <div class="select-option" data-value="Prof">Prof</div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="editTitle" name="title">
                                     </div>
                                 </div>
-                                <input type="hidden" id="editGender" name="gender">
+
+                                <!-- Gender -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-venus-mars" style="color: var(--info);"></i>
+                                        Gender
+                                    </label>
+                                    <div class="custom-select-wrapper">
+                                        <div class="custom-select" id="genderSelect">
+                                            <div class="select-trigger">
+                                                <span class="selected-value" id="genderValue">Select Gender</span>
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                            <div class="select-options">
+                                                <div class="select-option" data-value="">Select Gender</div>
+                                                <div class="select-option" data-value="Male">Male</div>
+                                                <div class="select-option" data-value="Female">Female</div>
+                                                <div class="select-option" data-value="Not_Provided">Not Provided</div>
+                                                <div class="select-option" data-value="Other">Other</div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="editGender" name="gender">
+                                    </div>
+                                </div>
+
+                                <!-- First Name -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user" style="color: var(--primary);"></i>
+                                        First Name
+                                    </label>
+                                    <input type="text" id="editFirstName" class="form-control" required>
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user" style="color: var(--primary-dark);"></i>
+                                        Last Name
+                                    </label>
+                                    <input type="text" id="editLastName" class="form-control" required>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="editFirstName">
-                                    <i class="fas fa-user"></i> First Name
-                                </label>
-                                <input type="text" id="editFirstName" class="form-control" required>
+                        <!-- Contact Information -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-address-card"></i>
+                                <span>Contact Information</span>
                             </div>
+                            <div class="form-grid">
+                                <!-- Phone -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-phone" style="color: var(--success);"></i>
+                                        Phone Number
+                                    </label>
+                                    <input type="tel" id="editPhone" class="form-control" required>
+                                    <div class="form-hint">Include country code (e.g., +2348012345678)</div>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="editLastName">
-                                    <i class="fas fa-user"></i> Last Name
-                                </label>
-                                <input type="text" id="editLastName" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="editPhone">
-                                    <i class="fas fa-phone"></i> Phone Number
-                                </label>
-                                <input type="tel" id="editPhone" class="form-control" required>
-                                <div class="form-hint">Include country code (e.g., +2348012345678)</div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editOrcid">
-                                    <i class="fas fa-id-card"></i> ORCID ID
-                                </label>
-                                <input type="text" id="editOrcid" class="form-control" placeholder="0000-0000-0000-0000">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Professional Information -->
-                    <div class="form-section">
-                        <h4 class="form-section-title">
-                            <i class="fas fa-briefcase"></i> Professional Information
-                        </h4>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="editInstitution">
-                                    <i class="fas fa-university"></i> Institution
-                                </label>
-                                <input type="text" id="editInstitution" class="form-control">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editDepartment">
-                                    <i class="fas fa-graduation-cap"></i> Department
-                                </label>
-                                <input type="text" id="editDepartment" class="form-control">
+                                <!-- ORCID -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-id-card" style="color: var(--accent);"></i>
+                                        ORCID ID
+                                    </label>
+                                    <input type="text" id="editOrcid" class="form-control" placeholder="0000-0000-0000-0000">
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="editSpecialization">
-                                    <i class="fas fa-star"></i> Specialization
-                                </label>
-                                <input type="text" id="editSpecialization" class="form-control">
+                        <!-- Professional Information -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Professional Information</span>
                             </div>
+                            <div class="form-grid">
+                                <!-- Institution -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-university" style="color: var(--warning);"></i>
+                                        Institution
+                                    </label>
+                                    <input type="text" id="editInstitution" class="form-control">
+                                </div>
 
-                            <div class="form-group">
-                                <label for="editAffiliation">
-                                    <i class="fas fa-building"></i> Affiliation
-                                </label>
-                                <input type="text" id="editAffiliation" class="form-control">
+                                <!-- Department -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-graduation-cap" style="color: var(--info);"></i>
+                                        Department
+                                    </label>
+                                    <input type="text" id="editDepartment" class="form-control">
+                                </div>
+
+                                <!-- Specialization -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-star" style="color: var(--primary);"></i>
+                                        Specialization
+                                    </label>
+                                    <input type="text" id="editSpecialization" class="form-control">
+                                </div>
+
+                                <!-- Affiliation -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-building" style="color: var(--primary-dark);"></i>
+                                        Affiliation
+                                    </label>
+                                    <input type="text" id="editAffiliation" class="form-control">
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Location & Bio -->
-                    <div class="form-section">
-                        <h4 class="form-section-title">
-                            <i class="fas fa-map-marker-alt"></i> Location & Bio
-                        </h4>
-                        <div class="form-group full-width">
-                            <label for="editAddress">
-                                <i class="fas fa-map-marker-alt"></i> Address
-                            </label>
-                            <textarea id="editAddress" class="form-control" rows="3" required></textarea>
-                        </div>
+                        <!-- Location & Bio -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Location & Biography</span>
+                            </div>
+                            <div class="form-grid full-width">
+                                <!-- Address -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-map-marker-alt" style="color: var(--success);"></i>
+                                        Address
+                                    </label>
+                                    <textarea id="editAddress" class="form-control" rows="3" required></textarea>
+                                </div>
 
-                        <div class="form-group full-width">
-                            <label for="editBio">
-                                <i class="fas fa-user-circle"></i> Biography
-                            </label>
-                            <textarea id="editBio" class="form-control" rows="4"></textarea>
-                            <div class="form-hint">Tell us about your professional background and interests</div>
+                                <!-- Bio -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user-edit" style="color: var(--accent);"></i>
+                                        Biography
+                                    </label>
+                                    <textarea id="editBio" class="form-control" rows="4" placeholder="Tell us about your professional background and interests..."></textarea>
+                                    <div class="form-hint">Share your professional experience and research interests</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1292,7 +1643,9 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" id="cancelEditBtn">Cancel</button>
+                <button type="button" class="btn-cancel" id="cancelEditBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
                 <button type="submit" form="editProfileForm" class="btn-save" id="saveProfileBtn">
                     <i class="fas fa-save"></i> Save Changes
                 </button>
@@ -1321,11 +1674,24 @@
                 this.user = null;
                 this.uploadBaseUrl = BASE_URL.replace('/api/v1', '');
                 this.profileImageFile = null;
+                this.isFileDialogOpen = false; // Add flag to track file dialog state
 
                 this.initializeToastr();
+
+                // Initialize when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => {
+                        this.init();
+                    });
+                } else {
+                    this.init();
+                }
+            }
+
+            init() {
                 this.bindEvents();
-                this.loadProfileData();
                 this.initializeCustomSelects();
+                this.loadProfileData();
             }
 
             initializeToastr() {
@@ -1339,36 +1705,75 @@
             }
 
             initializeCustomSelects() {
-                // Initialize custom select dropdowns
-                this.initializeSelect('titleSelect', 'titleValue', 'editTitle');
-                this.initializeSelect('genderSelect', 'genderValue', 'editGender');
+                // Initialize custom select dropdowns after a short delay
+                setTimeout(() => {
+                    this.initializeSelect('titleSelect', 'titleValue', 'editTitle');
+                    this.initializeSelect('genderSelect', 'genderValue', 'editGender');
+                }, 100);
             }
 
             initializeSelect(selectId, valueId, hiddenInputId) {
                 const select = document.getElementById(selectId);
-                const header = select.querySelector('.select-header');
-                const value = select.querySelector(`#${valueId}`);
-                const dropdown = select.querySelector('.select-dropdown');
-                const arrow = select.querySelector('.select-arrow');
+                if (!select) {
+                    console.warn(`Select element with id ${selectId} not found`);
+                    return;
+                }
+
+                const trigger = select.querySelector('.select-trigger');
+                if (!trigger) {
+                    console.warn(`Select trigger not found for ${selectId}`);
+                    return;
+                }
+
+                const value = document.getElementById(valueId);
+                if (!value) {
+                    console.warn(`Value element with id ${valueId} not found`);
+                    return;
+                }
+
+                const dropdown = select.querySelector('.select-options');
+                if (!dropdown) {
+                    console.warn(`Dropdown element not found for ${selectId}`);
+                    return;
+                }
+
+                const arrow = trigger.querySelector('i');
                 const hiddenInput = document.getElementById(hiddenInputId);
 
+                if (!hiddenInput) {
+                    console.warn(`Hidden input with id ${hiddenInputId} not found`);
+                    return;
+                }
+
+                // Initialize placeholder
+                if (!hiddenInput.value) {
+                    value.classList.add('placeholder');
+                }
+
                 // Toggle dropdown
-                header.addEventListener('click', (e) => {
+                trigger.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const isActive = dropdown.classList.contains('active');
 
                     // Close all other dropdowns
-                    document.querySelectorAll('.select-dropdown.active').forEach(drop => {
+                    document.querySelectorAll('.select-options.active').forEach(drop => {
                         if (drop !== dropdown) {
                             drop.classList.remove('active');
-                            drop.previousElementSibling.classList.remove('active');
-                            drop.previousElementSibling.querySelector('.select-arrow').classList.remove('active');
+                            const triggerParent = drop.closest('.custom-select');
+                            if (triggerParent) {
+                                const otherTrigger = triggerParent.querySelector('.select-trigger');
+                                if (otherTrigger) {
+                                    otherTrigger.classList.remove('active');
+                                    const otherArrow = otherTrigger.querySelector('i');
+                                    if (otherArrow) otherArrow.classList.remove('active');
+                                }
+                            }
                         }
                     });
 
                     dropdown.classList.toggle('active');
-                    header.classList.toggle('active');
-                    arrow.classList.toggle('active', !isActive);
+                    trigger.classList.toggle('active');
+                    if (arrow) arrow.classList.toggle('active', !isActive);
                 });
 
                 // Handle option selection
@@ -1379,6 +1784,7 @@
 
                         // Update display
                         value.textContent = selectedText;
+                        value.classList.remove('placeholder');
 
                         // Update hidden input
                         hiddenInput.value = selectedValue;
@@ -1391,8 +1797,8 @@
 
                         // Close dropdown
                         dropdown.classList.remove('active');
-                        header.classList.remove('active');
-                        arrow.classList.remove('active');
+                        trigger.classList.remove('active');
+                        if (arrow) arrow.classList.remove('active');
                     });
                 });
 
@@ -1400,49 +1806,65 @@
                 document.addEventListener('click', (e) => {
                     if (!select.contains(e.target)) {
                         dropdown.classList.remove('active');
-                        header.classList.remove('active');
-                        arrow.classList.remove('active');
+                        trigger.classList.remove('active');
+                        if (arrow) arrow.classList.remove('active');
                     }
                 });
             }
 
             bindEvents() {
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Edit Profile Button
-                    document.getElementById('editProfileBtn')?.addEventListener('click', () => {
+                // Edit Profile Button
+                const editBtn = document.getElementById('editProfileBtn');
+                if (editBtn) {
+                    editBtn.addEventListener('click', () => {
                         this.openEditModal();
                     });
+                }
 
-                    // Change Password Button
-                    document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
+                // Change Password Button
+                const changePassBtn = document.getElementById('changePasswordBtn');
+                if (changePassBtn) {
+                    changePassBtn.addEventListener('click', () => {
                         this.changePassword();
                     });
+                }
 
-                    // Modal close buttons
-                    document.getElementById('closeModalBtn')?.addEventListener('click', () => {
+                // Modal close buttons
+                const closeModalBtn = document.getElementById('closeModalBtn');
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', () => {
                         this.closeEditModal();
                     });
+                }
 
-                    document.getElementById('cancelEditBtn')?.addEventListener('click', () => {
+                const cancelEditBtn = document.getElementById('cancelEditBtn');
+                if (cancelEditBtn) {
+                    cancelEditBtn.addEventListener('click', () => {
                         this.closeEditModal();
                     });
+                }
 
-                    // Close modal when clicking outside
-                    document.getElementById('editProfileModal')?.addEventListener('click', (e) => {
-                        if (e.target === document.getElementById('editProfileModal')) {
+                // Close modal when clicking outside
+                const modal = document.getElementById('editProfileModal');
+                if (modal) {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
                             this.closeEditModal();
                         }
                     });
+                }
 
-                    // Form submission
-                    document.getElementById('editProfileForm')?.addEventListener('submit', (e) => {
+                // Form submission
+                const editForm = document.getElementById('editProfileForm');
+                if (editForm) {
+                    editForm.addEventListener('submit', (e) => {
                         e.preventDefault();
                         this.saveProfileChanges();
                     });
+                }
 
-                    // File upload events
-                    this.initializeFileUpload();
-                });
+                // File upload events
+                this.initializeFileUpload();
             }
 
             initializeFileUpload() {
@@ -1454,12 +1876,12 @@
                 const fileSize = document.getElementById('profileFileSize');
                 const removeButton = document.getElementById('removeProfileImage');
 
-                // Click to upload
-                uploadArea.addEventListener('click', () => {
-                    fileInput.click();
-                });
+                if (!fileInput || !uploadArea) return;
 
-                // File input change
+                // Only handle drag and drop, NOT click on upload area
+                // The file input already covers the entire area and handles clicks
+
+                // File input change - FIXED: Add event listener directly without uploadArea click handler
                 fileInput.addEventListener('change', (e) => {
                     const file = e.target.files[0];
                     if (file) {
@@ -1487,16 +1909,18 @@
                 });
 
                 // Remove file
-                removeButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.profileImageFile = null;
-                    fileInput.value = '';
-                    preview.classList.remove('active');
-                    previewImage.src = '';
-                    fileName.textContent = '';
-                    fileSize.textContent = '';
-                });
+                if (removeButton) {
+                    removeButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.profileImageFile = null;
+                        fileInput.value = '';
+                        if (preview) preview.classList.remove('active');
+                        if (previewImage) previewImage.src = '';
+                        if (fileName) fileName.textContent = '';
+                        if (fileSize) fileSize.textContent = '';
+                    });
+                }
             }
 
             handleFileSelect(file, previewImage, fileName, fileSize, preview) {
@@ -1633,8 +2057,6 @@
                 const scopeItem = document.getElementById('scopeItem');
                 if (this.user.scopeId) {
                     scopeItem.style.display = 'flex';
-                    // If you have scope title, update it here
-                    // document.getElementById('scope').textContent = this.user.scopeTitle || 'Not specified';
                 } else {
                     scopeItem.style.display = 'none';
                 }
@@ -1667,39 +2089,108 @@
             openEditModal() {
                 if (!this.user) return;
 
-                // Populate form fields with current user data
-                document.getElementById('editUserId').value = this.user._id;
+                // Update current profile display
+                const title = this.user.title || '';
+                const firstName = this.user.firstName || '';
+                const lastName = this.user.lastName || '';
+                const fullName = title ? `${title}. ${firstName} ${lastName}`.trim() : `${firstName} ${lastName}`.trim();
+
+                const currentFullName = document.getElementById('currentFullName');
+                const currentRole = document.getElementById('currentRole');
+
+                if (currentFullName) currentFullName.textContent = fullName;
+                if (currentRole) currentRole.textContent = this.user.role || 'User';
+
+                // Update current profile picture
+                this.updateCurrentProfileImage();
+
+                // Update current picture preview in modal
+                this.updateModalPicturePreview();
+
+                // Populate form fields
+                const editUserId = document.getElementById('editUserId');
+                if (editUserId) editUserId.value = this.user._id;
 
                 // Set custom select values
                 this.setSelectValue('titleSelect', 'titleValue', 'editTitle', this.user.title || '', 'Select Title');
                 this.setSelectValue('genderSelect', 'genderValue', 'editGender', this.user.gender || '', 'Select Gender');
 
                 // Set other fields
-                document.getElementById('editFirstName').value = this.user.firstName || '';
-                document.getElementById('editLastName').value = this.user.lastName || '';
-                document.getElementById('editPhone').value = this.user.phone || '';
-                document.getElementById('editAddress').value = this.user.address || '';
-                document.getElementById('editInstitution').value = this.user.institution || '';
-                document.getElementById('editDepartment').value = this.user.department || '';
-                document.getElementById('editSpecialization').value = this.user.specialization || '';
-                document.getElementById('editAffiliation').value = this.user.affiliation || '';
-                document.getElementById('editOrcid').value = this.user.orcid || '';
-                document.getElementById('editBio').value = this.user.bio || '';
+                const fields = {
+                    'editFirstName': this.user.firstName || '',
+                    'editLastName': this.user.lastName || '',
+                    'editPhone': this.user.phone || '',
+                    'editAddress': this.user.address || '',
+                    'editInstitution': this.user.institution || '',
+                    'editDepartment': this.user.department || '',
+                    'editSpecialization': this.user.specialization || '',
+                    'editAffiliation': this.user.affiliation || '',
+                    'editOrcid': this.user.orcid || '',
+                    'editBio': this.user.bio || ''
+                };
 
-                // Reset profile image file
+                Object.keys(fields).forEach(fieldId => {
+                    const element = document.getElementById(fieldId);
+                    if (element) element.value = fields[fieldId];
+                });
+
+                // Reset new profile image file
                 this.profileImageFile = null;
                 const preview = document.getElementById('profilePreview');
-                preview.classList.remove('active');
+                if (preview) preview.classList.remove('active');
 
                 // Show modal
-                document.getElementById('editProfileModal').classList.add('active');
+                const modal = document.getElementById('editProfileModal');
+                if (modal) modal.classList.add('active');
+            }
+
+            updateCurrentProfileImage() {
+                const avatar = document.getElementById('currentProfileImage');
+                if (!avatar) return;
+
+                if (this.user.profileImage && this.user.profileImage.url) {
+                    const imageUrl = this.user.profileImage.url.startsWith('http')
+                        ? this.user.profileImage.url
+                        : `${this.uploadBaseUrl}${this.user.profileImage.url}`;
+
+                    avatar.innerHTML = `<img src="${imageUrl}" alt="${this.user.firstName} ${this.user.lastName}">`;
+                } else {
+                    const firstName = this.user.firstName || '';
+                    const lastName = this.user.lastName || '';
+                    const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'U';
+
+                    avatar.innerHTML = `<div class="avatar-initials-current">${initials}</div>`;
+                }
+            }
+
+            updateModalPicturePreview() {
+                const preview = document.getElementById('currentPicturePreview');
+                if (!preview) return;
+
+                if (this.user.profileImage && this.user.profileImage.url) {
+                    const imageUrl = this.user.profileImage.url.startsWith('http')
+                        ? this.user.profileImage.url
+                        : `${this.uploadBaseUrl}${this.user.profileImage.url}`;
+
+                    preview.innerHTML = `<img src="${imageUrl}" alt="${this.user.firstName} ${this.user.lastName}">`;
+                } else {
+                    const firstName = this.user.firstName || '';
+                    const lastName = this.user.lastName || '';
+                    const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'U';
+
+                    preview.innerHTML = `<div class="avatar-initials-modal">${initials}</div>`;
+                }
             }
 
             setSelectValue(selectId, valueId, hiddenInputId, value, defaultValue) {
                 const select = document.getElementById(selectId);
                 const valueElement = document.getElementById(valueId);
                 const hiddenInput = document.getElementById(hiddenInputId);
-                const dropdown = select.querySelector('.select-dropdown');
+
+                if (!select || !valueElement || !hiddenInput) return;
+
+                const dropdown = select.querySelector('.select-options');
+                if (!dropdown) return;
 
                 if (value) {
                     // Find and select the option
@@ -1709,6 +2200,7 @@
                         if (option.getAttribute('data-value') === value) {
                             option.classList.add('selected');
                             valueElement.textContent = option.textContent;
+                            valueElement.classList.remove('placeholder');
                             hiddenInput.value = value;
                             found = true;
                         } else {
@@ -1718,10 +2210,12 @@
 
                     if (!found) {
                         valueElement.textContent = defaultValue;
+                        valueElement.classList.add('placeholder');
                         hiddenInput.value = '';
                     }
                 } else {
                     valueElement.textContent = defaultValue;
+                    valueElement.classList.add('placeholder');
                     hiddenInput.value = '';
                     dropdown.querySelectorAll('.select-option').forEach(option => {
                         option.classList.remove('selected');
@@ -1735,7 +2229,8 @@
             }
 
             closeEditModal() {
-                document.getElementById('editProfileModal').classList.remove('active');
+                const modal = document.getElementById('editProfileModal');
+                if (modal) modal.classList.remove('active');
             }
 
             async saveProfileChanges() {
@@ -1756,9 +2251,12 @@
                     ];
 
                     textFields.forEach(field => {
-                        const value = document.getElementById(`edit${field.charAt(0).toUpperCase() + field.slice(1)}`).value.trim();
-                        if (value) {
-                            formData.append(field, value);
+                        const element = document.getElementById(`edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
+                        if (element) {
+                            const value = element.value.trim();
+                            if (value) {
+                                formData.append(field, value);
+                            }
                         }
                     });
 
@@ -1790,6 +2288,8 @@
 
                     // Show loading state
                     const saveBtn = document.getElementById('saveProfileBtn');
+                    if (!saveBtn) return;
+
                     const originalText = saveBtn.innerHTML;
                     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
                     saveBtn.disabled = true;
@@ -1837,8 +2337,10 @@
                     toastr.error(error.message || 'Failed to update profile', 'Error');
                 } finally {
                     const saveBtn = document.getElementById('saveProfileBtn');
-                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
-                    saveBtn.disabled = false;
+                    if (saveBtn) {
+                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                        saveBtn.disabled = false;
+                    }
                 }
             }
 
@@ -1904,28 +2406,40 @@
             }
 
             showLoading() {
-                document.getElementById('loadingScreen').style.display = 'block';
-                document.getElementById('errorScreen').style.display = 'none';
-                document.getElementById('contentContainer').style.display = 'none';
+                const loadingScreen = document.getElementById('loadingScreen');
+                const errorScreen = document.getElementById('errorScreen');
+                const contentContainer = document.getElementById('contentContainer');
+
+                if (loadingScreen) loadingScreen.style.display = 'block';
+                if (errorScreen) errorScreen.style.display = 'none';
+                if (contentContainer) contentContainer.style.display = 'none';
             }
 
             hideLoading() {
-                document.getElementById('loadingScreen').style.display = 'none';
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) loadingScreen.style.display = 'none';
             }
 
             showContent() {
-                document.getElementById('contentContainer').style.display = 'block';
+                const contentContainer = document.getElementById('contentContainer');
+                if (contentContainer) contentContainer.style.display = 'block';
             }
 
             showError(message) {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('errorScreen').style.display = 'block';
-                document.getElementById('errorMessage').textContent = message;
+                const loadingScreen = document.getElementById('loadingScreen');
+                const errorScreen = document.getElementById('errorScreen');
+                const errorMessage = document.getElementById('errorMessage');
+
+                if (loadingScreen) loadingScreen.style.display = 'none';
+                if (errorScreen) errorScreen.style.display = 'block';
+                if (errorMessage) errorMessage.textContent = message;
             }
         }
 
-        // Initialize profile manager
-        let profileManager = new ProfileManager();
+        // Initialize profile manager when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.profileManager = new ProfileManager();
+        });
     </script>
 </body>
 
