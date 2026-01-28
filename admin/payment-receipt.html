@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Receipt - FedponekIJRD</title>
+    <script type="module" src="../assets/js/checkAuth.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/header_sidebar.css">
+    <style>
+      
+	:root {
+            --primary: var(--lite-primary-color);
+            --primary-light: var(--lite-primary-color);
+            --success: #10b981;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
+        }
+
+        .receipt-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--light);
+    color: #374151;
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+        .receipt-subtitle {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .receipt-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .receipt-logo {
+            background: var(--lite-secondary6);
+            color: var(--secondary-color3);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .receipt-logo h2 {
+            color: var(--secondary-color);
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .receipt-logo p {
+            margin: 0.5rem 0 0 0;
+            color: var(--secondary-color3);
+        }
+
+        .receipt-body {
+            padding: 2rem;
+        }
+
+        .receipt-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .receipt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .receipt-item {
+            margin-bottom: 1rem;
+        }
+
+        .item-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .item-value {
+            font-size: 1rem;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .item-value.large {
+            font-size: 1.3rem;
+        }
+
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .receipt-table th {
+            background: var(--light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #111827;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .receipt-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .receipt-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .receipt-total {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-row.grand-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--border);
+        }
+
+        .receipt-footer {
+            padding: 2rem;
+            background: var(--light);
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .receipt-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e56c0e;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: #9ca3af;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-badge.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-badge.pending {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-badge.failed {
+            background: var(--danger);
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .error-message i {
+            font-size: 3rem;
+            color: var(--danger);
+            margin-bottom: 1rem;
+        }
+
+        @media print {
+            .receipt-container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .receipt-card {
+                box-shadow: none;
+                border: 1px solid var(--border);
+            }
+
+            .receipt-actions {
+                display: none;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .receipt-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .receipt-body {
+                padding: 1.5rem;
+            }
+
+            .receipt-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .receipt-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .receipt-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div id="sidebar-placeholder"></div>
+        <div class="main-content-wrapper">
+            <div id="header-placeholder"></div>
+
+            <main class="main-content">
+                <div class="receipt-container">
+                    <div class="page-header">
+                        <div>
+                            <h1>Payment Receipt</h1>
+                            <p>Official receipt for your publication payment</p>
+                        </div>
+                        <div>
+                            <button onclick="history.back()" class="back-button">
+                                <i class="fas fa-arrow-left"></i>Go Back</button>
+                    
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loadingState" class="receipt-card">
+                        <div class="receipt-body" style="text-align:center;">
+                            <div class="loading-spinner"></div>
+                            <p style="color:var(--muted); margin-top:1rem;">Loading receipt details...</p>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="errorState" class="receipt-card" style="display:none;">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Failed to Load Receipt</h3>
+                            <p id="errorMessage">Unable to load receipt details.</p>
+                            <button id="backBtn" class="btn btn-primary" style="margin-top:1rem;">
+                                <i class="fas fa-arrow-left"></i> Go Back
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Content -->
+                    <div id="receiptContent" class="receipt-card" style="display:none;">
+                        <div class="receipt-logo">
+                            <h2>FedponekIJRD</h2>
+                            <p>Official Payment Receipt</p>
+                        </div>
+
+                        <div class="receipt-body">
+                            <!-- Payment Information -->
+                            <div class="receipt-section">
+                                <h3 class="section-title">Payment Information</h3>
+                                <div class="receipt-grid">
+                                    <div class="receipt-item">
+                                        <div class="item-label">Payment Reference</div>
+                                        <div id="receiptNumber" class="item-value">N/A</div>
+                                    </div>
+                                    <div class="receipt-item">
+                                        <div class="item-label">Payment Date</div>
+                                        <div id="paymentDate" class="item-value">N/A</div>
+                                    </div>
+                                    <div class="receipt-item">
+                                        <div class="item-label">Status</div>
+                                        <div id="paymentStatus" class="item-value">
+                                            <span id="statusBadge" class="status-badge">N/A</span>
+                                        </div>
+                                    </div>
+                                    <div class="receipt-item">
+                                        <div class="item-label">Payment Method</div>
+                                        <div id="paymentMethod" class="item-value">N/A</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Manuscript Details (journal & submission id removed) -->
+                            <div class="receipt-section">
+                                <h3 class="section-title">Manuscript Details</h3>
+                                <div class="receipt-grid">
+                                    <div class="receipt-item">
+                                        <div class="item-label">Title</div>
+                                        <div id="manuscriptTitle" class="item-value">N/A</div>
+                                    </div>
+
+                                    <div class="receipt-item">
+                                        <div class="item-label">Author(s)</div>
+                                        <div id="authorName" class="item-value">N/A</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Breakdown -->
+                            <div class="receipt-section">
+                                <h3 class="section-title">Payment Breakdown</h3>
+                                <table class="receipt-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th>Quantity</th>
+                                            <th>Unit Price</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="breakdownBody">
+                                        <tr>
+                                            <td>Publication Fee</td>
+                                            <td>1</td>
+                                            <td id="unitPrice">₦0.00</td>
+                                            <td id="lineAmount">₦0.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="receipt-total">
+                                    <div class="total-row">
+                                        <span>Subtotal:</span>
+                                        <span id="subtotal">₦0.00</span>
+                                    </div>
+                                    <div class="total-row">
+                                        <span>Processing Fee:</span>
+                                        <span id="processingFee">₦0.00</span>
+                                    </div>
+                                    <div class="total-row grand-total">
+                                        <span>Total Paid:</span>
+                                        <span id="totalAmount">₦0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="receipt-section">
+                                <h3 class="section-title">Notes</h3>
+                                <div style="color:var(--muted); line-height:1.6;">
+                                    <p>1. This is an official receipt for payment made towards manuscript publication.</p>
+                                    <p>2. Please keep this receipt for your records and future reference.</p>
+                                    <p>3. For any queries regarding this payment, contact support with the payment reference.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="receipt-footer no-print">
+                            <div class="receipt-actions">
+                                <button id="printReceiptBtn" class="btn btn-primary">
+                                    <i class="fas fa-print"></i> Print Receipt
+                                </button>
+                                <button id="downloadReceiptBtn" class="btn btn-secondary">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </button>
+                                <button id="backToDashboardBtn" class="btn btn-secondary">
+                                    <i class="fas fa-home"></i> Back to Submissions
+                                </button>
+                            </div>
+                            <p style="color:var(--muted); margin-top:1.5rem; font-size:0.9rem;">
+                                This is an automatically generated receipt. No signature required.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        window.SIDEBAR_MODULE = 'admin';
+        window.SIDEBAR_ACTIVE_ID = 'admin-payments';
+    </script>
+
+    <script src="/assets/js/layout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script type="module">
+        import { BASE_URL, getAuthToken2 } from '/assets/js/utility.js';
+
+        class PaymentReceiptManager {
+            constructor() {
+                this.reference = this.getParameterFromURL('reference');
+                this.paymentData = null;       // will hold the payment object from API
+                this.submissionData = null;    // will hold fetched submission details (if any)
+
+                this.bindEvents();
+                this.initialize();
+            }
+
+            getParameterFromURL(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+
+            bindEvents() {
+                document.getElementById('printReceiptBtn')?.addEventListener('click', () => this.printReceipt());
+                document.getElementById('downloadReceiptBtn')?.addEventListener('click', () => this.downloadReceipt());
+                document.getElementById('backToDashboardBtn')?.addEventListener('click', () => this.backToDashboard());
+                document.getElementById('backBtn')?.addEventListener('click', () => this.backToDashboard());
+            }
+
+            async initialize() {
+                if (!this.reference) {
+                    this.showError('No payment reference provided');
+                    return;
+                }
+                await this.loadReceiptData();
+            }
+
+            async loadReceiptData() {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) throw new Error('Authentication required');
+
+                    const res = await fetch(`${BASE_URL}/payments/receipt/${this.reference}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!res.ok) {
+                        throw new Error(`Failed to load receipt: ${res.status}`);
+                    }
+
+                    const data = await res.json();
+
+                    if (!data || !data.success) {
+                        throw new Error(data?.message || 'Failed to load receipt');
+                    }
+
+                    // the API may return the payment at data.payment or data directly
+                    const payment = data.payment || data;
+                    this.paymentData = payment;
+
+                    // Try to find a submission id in common locations
+                    const submissionId =
+                        payment.submissionId ||
+                        payment.submission?.id ||
+                        payment?.payment?.submission?.id ||
+                        payment?.submission?._id ||
+                        payment?.submissionId;
+
+                    // If we have a submission id and need extra details (authors), fetch them
+                    if (submissionId) {
+                        await this.loadSubmissionData(submissionId);
+                    } else {
+                        // Sometimes submission info is nested inside the payment object itself
+                        if (payment.submission && typeof payment.submission === 'object') {
+                            this.submissionData = payment.submission;
+                        } else if (payment.payment && payment.payment.submission) {
+                            this.submissionData = payment.payment.submission;
+                        }
+                    }
+
+                    this.showReceipt();
+                } catch (err) {
+                    console.error('Error loading receipt data:', err);
+                    this.showError(err.message || 'Failed to load receipt');
+                }
+            }
+
+            async loadSubmissionData(submissionId) {
+                try {
+                    const token = getAuthToken2();
+                    if (!token) return;
+
+                    const response = await fetch(`${BASE_URL}/submissions/${submissionId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        // don't block if submission fetch fails — we'll fallback to payment-contained info
+                        console.warn('Failed to load submission details', response.status);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    if (data && data.success) {
+                        this.submissionData = data.submission || data;
+                    }
+                } catch (err) {
+                    console.error('Error loading submission data:', err);
+                }
+            }
+
+            showReceipt() {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'none';
+                document.getElementById('receiptContent').style.display = 'block';
+                this.updateReceiptDetails();
+            }
+
+            safeGet(obj, path, fallback = undefined) {
+                try {
+                    return path.split('.').reduce((o, k) => (o ? o[k] : undefined), obj) ?? fallback;
+                } catch {
+                    return fallback;
+                }
+            }
+
+            // Attempt to format amount. Accepts amounts either in major units (Naira) or in kobo (x100)
+            formatCurrency(amount, currency = 'NGN') {
+                if (amount === null || amount === undefined || isNaN(Number(amount))) return 'N/A';
+                let num = Number(amount);
+                // If amount looks like kobo (very large), divide by 100
+                if (num > 100000) num = num / 100;
+                // Format with two decimals and Naira symbol for NGN
+                const formatted = num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const symbol = currency === 'NGN' ? '₦' : (currency === 'USD' ? '$' : '');
+                return `${symbol}${formatted}`;
+            }
+
+            formatDateString(isoString) {
+                if (!isoString) return 'N/A';
+                try {
+                    const d = new Date(isoString);
+                    return d.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                } catch {
+                    return isoString;
+                }
+            }
+
+            updateReceiptDetails() {
+                const payment = this.paymentData || {};
+                const metadata = payment.metadata || payment?.metadata || {};
+                const metaInner = metadata; // alias
+
+                // Payment reference
+                const reference = payment.reference || metaInner.reference || metaInner.receipt_number || this.reference || 'N/A';
+                document.getElementById('receiptNumber').textContent = reference;
+
+                // Payment date: prefer metadata.paid_at, metadata.paidAt, metadata.transaction_date, payment.date
+                const paidAt = metaInner.paid_at || metaInner.paidAt || metaInner.transaction_date || payment.date || payment.createdAt || payment.created_at;
+                document.getElementById('paymentDate').textContent = paidAt ? this.formatDateString(paidAt) : 'N/A';
+
+                // Status
+                const status = payment.status || metaInner.status || 'unknown';
+                const statusBadge = document.getElementById('statusBadge');
+                statusBadge.textContent = (String(status)).replace(/_/g, ' ').toUpperCase();
+                statusBadge.className = 'status-badge'; // reset classes
+                if (/success|paid/i.test(String(status))) {
+                    statusBadge.classList.add('success');
+                } else if (/pending/i.test(String(status))) {
+                    statusBadge.classList.add('pending');
+                } else {
+                    statusBadge.classList.add('failed');
+                }
+
+                // Payment Method: prefer authorization.channel -> metadata.channel -> fallback to paymentGateway
+                const paymentMethod =
+                    this.safeGet(metaInner, 'authorization.channel') ||
+                    metaInner.channel ||
+                    payment.paymentGateway ||
+                    payment.gateway ||
+                    'N/A';
+                document.getElementById('paymentMethod').textContent = paymentMethod || 'N/A';
+
+                // Manuscript Title
+                const title =
+                    this.safeGet(this.submissionData, 'title') ||
+                    this.safeGet(payment, 'submission.title') ||
+                    this.safeGet(payment, 'payment.submission.title') ||
+                    payment.title ||
+                    'Untitled';
+                document.getElementById('manuscriptTitle').textContent = title;
+
+                // Authors: try these sources (in order)
+                const authorsList = [];
+
+                // 1) submissionData.authors (array of {name} or {first_name,last_name})
+                if (Array.isArray(this.safeGet(this.submissionData, 'authors'))) {
+                    this.submissionData.authors.forEach(a => {
+                        if (a) {
+                            const name = a.name || [a.first_name, a.last_name].filter(Boolean).join(' ').trim();
+                            if (name) authorsList.push(name);
+                        }
+                    });
+                }
+
+                // 2) payment.submission.authors
+                if (authorsList.length === 0 && Array.isArray(this.safeGet(payment, 'submission.authors'))) {
+                    payment.submission.authors.forEach(a => {
+                        if (a) {
+                            const name = a.name || [a.first_name, a.last_name].filter(Boolean).join(' ').trim();
+                            if (name) authorsList.push(name);
+                        }
+                    });
+                }
+
+                // 3) top-level payment.author object (single)
+                if (authorsList.length === 0 && (payment.author || this.safeGet(payment, 'payment.author'))) {
+                    const a = payment.author || this.safeGet(payment, 'payment.author');
+                    const name = a.name || [a.first_name, a.last_name].filter(Boolean).join(' ').trim();
+                    if (name) authorsList.push(name);
+                }
+
+                // 4) metadata.customer first/last name or email
+                if (authorsList.length === 0 && metaInner.customer) {
+                    const c = metaInner.customer;
+                    const name = [c.first_name, c.last_name].filter(Boolean).join(' ').trim() || c.email || c.customer_code;
+                    if (name) authorsList.push(name);
+                }
+
+                const authorsStr = authorsList.length ? authorsList.join(', ') : 'N/A';
+                document.getElementById('authorName').textContent = authorsStr;
+
+                // Payment breakdown & totals
+                // Try to display amounts using payment.amount || metadata.amount || metadata.requested_amount
+                let amountMajor = null;
+                if (payment.amount !== undefined && payment.amount !== null) {
+                    amountMajor = Number(payment.amount);
+                } else if (metaInner.amount !== undefined && metaInner.amount !== null) {
+                    // metadata.amount may be in kobo (e.g., 1500000) — divide if large
+                    amountMajor = Number(metaInner.amount);
+                    if (amountMajor > 100000) amountMajor = amountMajor / 100;
+                } else if (metaInner.requested_amount !== undefined && metaInner.requested_amount !== null) {
+                    amountMajor = Number(metaInner.requested_amount);
+                    if (amountMajor > 100000) amountMajor = amountMajor / 100;
+                }
+
+                const currency = payment.currency || metaInner.currency || 'NGN';
+                const formattedAmount = amountMajor !== null && !isNaN(amountMajor) ? this.formatCurrency(amountMajor, currency) : 'N/A';
+
+                // set breakdown fields
+                document.getElementById('unitPrice').textContent = formattedAmount;
+                document.getElementById('lineAmount').textContent = formattedAmount;
+                document.getElementById('subtotal').textContent = formattedAmount;
+
+                // processing fee: try metadata.fees or metadata.fees_breakdown or metadata.fees
+                let processingFee = 0;
+                // if (metaInner.fees !== undefined && metaInner.fees !== null) {
+                //     processingFee = Number(metaInner.fees);
+                //     if (processingFee > 100000) processingFee = processingFee / 100;
+                // } else if (metaInner.fees_breakdown && metaInner.fees_breakdown.total) {
+                //     processingFee = Number(metaInner.fees_breakdown.total);
+                //     if (processingFee > 100000) processingFee = processingFee / 100;
+                // }
+                // document.getElementById('processingFee').textContent = processingFee ? this.formatCurrency(processingFee, currency) : '₦0.00';
+
+                // total
+                // prefer payment.amount, fallback to subtotal + fee
+                let totalNumeric = null;
+                if (payment.amount !== undefined && payment.amount !== null) {
+                    totalNumeric = Number(payment.amount);
+                } else {
+                    totalNumeric = (amountMajor || 0) + (processingFee || 0);
+                }
+                if (totalNumeric !== null && totalNumeric > 100000) totalNumeric = totalNumeric / 100;
+                document.getElementById('totalAmount').textContent = totalNumeric ? this.formatCurrency(totalNumeric, currency) : formattedAmount;
+
+                // If anything is still showing 'Loading...' replace with 'N/A'
+                ['receiptNumber', 'paymentDate', 'authorName', 'manuscriptTitle', 'paymentMethod'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && (!el.textContent || el.textContent.trim() === '')) el.textContent = 'N/A';
+                });
+            }
+
+            showError(message) {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('receiptContent').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+            }
+
+            printReceipt() {
+                window.print();
+            }
+
+            async downloadReceipt() {
+                try {
+                    const receiptElement = document.getElementById('receiptContent');
+                    const canvas = await html2canvas(receiptElement, { scale: 2, useCORS: true, logging: false });
+                    const imgData = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = imgData;
+                    link.download = `payment-receipt-${this.reference}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (err) {
+                    console.error('Error downloading receipt:', err);
+                    alert('Failed to download receipt. Please try printing instead.');
+                }
+            }
+
+            backToDashboard() {
+                window.location.href = '/author/my-submissions.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new PaymentReceiptManager();
+        });
+    </script>
+</body>
+
+</html>

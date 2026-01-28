@@ -40,6 +40,41 @@
             --radius: 12px;
             --card-shadow: 0 6px 20px rgba(22, 24, 46, 0.08);
             --card-shadow-hover: 0 18px 40px rgba(22, 24, 46, 0.12);
+
+            /* Status Colors */
+            --status-submitted-bg: #cae7fa;
+            --status-submitted-color: var(--info);
+            --status-submitted-border: #E0F2FE;
+            --status-under-review-bg: #FEF3C7;
+            --status-under-review-color: #F59E0B;
+            --status-under-review-border: #FDE68A;
+            --status-reviewed-bg: #D1FAE5;
+            --status-reviewed-color: #10B981;
+            --status-reviewed-border: #A7F3D0;
+            --status-accepted-bg: #D1FAE5;
+            --status-accepted-color: #10B981;
+            --status-accepted-border: #A7F3D0;
+            --status-rejected-bg: #FEE2E2;
+            --status-rejected-color: #EF4444;
+            --status-rejected-border: #FECACA;
+            --status-revised-bg: #EDE9FE;
+            --status-revised-color: #8B5CF6;
+            --status-revised-border: #DDD6FE;
+            --status-awaiting-payment-bg: #FEF3C7;
+            --status-awaiting-payment-color: #F59E0B;
+            --status-awaiting-payment-border: #FDE68A;
+            --status-published-bg: #CFFAFE;
+            --status-published-color: #06B6D4;
+            --status-published-border: #A5F3FC;
+            --status-minor-revision-bg: #FEF3C7;
+            --status-minor-revision-color: #F59E0B;
+            --status-minor-revision-border: #FDE68A;
+            --status-major-revision-bg: #FED7AA;
+            --status-major-revision-color: #F97316;
+            --status-major-revision-border: #FDBA74;
+            --status-revision-requested-bg: #EDE9FE;
+            --status-revision-requested-color: #8B5CF6;
+            --status-revision-requested-border: #DDD6FE;
         }
 
         .review-details-container {
@@ -193,190 +228,6 @@
             gap: 0.5rem;
         }
 
-        /* Revisions Section Styling (from submission details page) */
-        .revisions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .revision-card {
-            background: var(--light);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .revision-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--card-shadow-hover);
-        }
-
-        .revision-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--primary-light);
-        }
-
-        .revision-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .revision-version {
-            background: var(--primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .revision-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .revision-item {
-            margin-bottom: 0.75rem;
-        }
-
-        .revision-label {
-            font-size: 0.9rem;
-            color: var(--muted);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .revision-text {
-            font-size: 0.95rem;
-            color: #374151;
-            line-height: 1.5;
-            margin: 0;
-            word-wrap: break-word;
-        }
-
-        .revision-text.truncated {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            max-height: 4.5em;
-            position: relative;
-        }
-
-        .revision-text.truncated::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 30%;
-            height: 1.5em;
-            background: linear-gradient(to right, rgba(248, 250, 252, 0), var(--light) 50%);
-        }
-
-        .view-more-link {
-            color: var(--info);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            margin-top: 0.25rem;
-            transition: color 0.2s;
-        }
-
-        .view-more-link:hover {
-            color: #2563eb;
-            text-decoration: underline;
-        }
-
-        .revision-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
-
-        .revision-date {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .view-document-btn {
-            background: var(--info);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .view-document-btn:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-        }
-
-        .view-all-revisions-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-decoration: none;
-            margin-top: 1rem;
-        }
-
-        .view-all-revisions-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .no-revisions {
-            text-align: center;
-            padding: 3rem;
-            color: var(--muted);
-        }
-
-        .no-revisions i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
         /* Manuscript File Section */
         .file-info-card {
             background: var(--light);
@@ -412,13 +263,13 @@
             font-size: 0.9rem;
         }
 
-        .btn-light{
+        .btn-light {
             max-height: 39px;
         }
 
-        .btn-brand{
+        .btn-brand {
             height: 39px;
-        } 
+        }
 
         /* Abstract Section Styling - Same as submission details page */
         .abstract-content {
@@ -865,94 +716,13 @@
             text-transform: capitalize;
         }
 
-        /* Timeline comment styling - same as submission details page */
+        /* Simplified Timeline Comment */
         .timeline-comment {
             font-size: 0.95rem;
             color: #374151 !important;
             line-height: 1.5;
             margin: 0.75rem 0;
             word-wrap: break-word;
-        }
-
-        .timeline-comment p {
-            margin: 0 0 0.75rem 0;
-            color: #374151;
-        }
-
-        .timeline-comment p:last-child {
-            margin-bottom: 0;
-        }
-
-        .timeline-comment strong,
-        .timeline-comment b {
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .timeline-comment em,
-        .timeline-comment i {
-            font-style: italic;
-        }
-
-        .timeline-comment u {
-            text-decoration: underline;
-        }
-
-        .timeline-comment ul,
-        .timeline-comment ol {
-            margin: 0 0 0.75rem 1.5rem;
-            padding: 0;
-        }
-
-        .timeline-comment li {
-            margin-bottom: 0.25rem;
-            color: #374151;
-        }
-
-        .timeline-comment li:last-child {
-            margin-bottom: 0;
-        }
-
-        .timeline-comment h1,
-        .timeline-comment h2,
-        .timeline-comment h3,
-        .timeline-comment h4,
-        .timeline-comment h5,
-        .timeline-comment h6 {
-            margin: 1rem 0 0.75rem 0;
-            color: #111827;
-            font-weight: 600;
-        }
-
-        .timeline-comment h1 {
-            font-size: 1.4rem;
-        }
-
-        .timeline-comment h2 {
-            font-size: 1.2rem;
-        }
-
-        .timeline-comment h3 {
-            font-size: 1.1rem;
-        }
-
-        .timeline-comment .view-more-link {
-            display: inline-block;
-            margin-left: 0.5rem;
-            color: var(--info);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            transition: color 0.2s;
-        }
-
-        .timeline-comment .view-more-link:hover {
-            color: #2563eb;
-            text-decoration: underline;
         }
 
         .timeline-date {
@@ -962,166 +732,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .updated-by {
-            font-size: 0.85rem;
-            color: var(--muted);
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .updated-by strong {
-            color: #374151;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Content Modal Styles - Same as submission details page */
-        .content-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .content-modal .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-        }
-
-        .content-modal .modal-content {
-            position: relative;
-            z-index: 10001;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow-hover);
-            width: 90%;
-            max-width: 700px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .content-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .content-modal-header h3 {
-            margin: 0;
-            color: #111827;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .modal-content-type {
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-top: 0.25rem;
-            font-weight: normal;
-        }
-
-        .content-modal-body {
-            padding: 1.5rem;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-
-        .content-display {
-            line-height: 1.6;
-            color: #374151;
-            word-wrap: break-word;
-        }
-
-        .content-display p {
-            margin: 0 0 1rem 0;
-        }
-
-        .content-display p:last-child {
-            margin-bottom: 0;
-        }
-
-        .content-display strong,
-        .content-display b {
-            font-weight: 600;
-        }
-
-        .content-display em,
-        .content-display i {
-            font-style: italic;
-        }
-
-        .content-display u {
-            text-decoration: underline;
-        }
-
-        .content-display ul,
-        .content-display ol {
-            margin: 0 0 1rem 1.5rem;
-            padding: 0;
-        }
-
-        .content-display li {
-            margin-bottom: 0.5rem;
-        }
-
-        .content-display li:last-child {
-            margin-bottom: 0;
-        }
-
-        .content-display h1,
-        .content-display h2,
-        .content-display h3,
-        .content-display h4,
-        .content-display h5,
-        .content-display h6 {
-            margin: 1.5rem 0 1rem 0;
-            color: #111827;
-            font-weight: 600;
-        }
-
-        .content-display h1 {
-            font-size: 1.8rem;
-        }
-
-        .content-display h2 {
-            font-size: 1.5rem;
-        }
-
-        .content-display h3 {
-            font-size: 1.3rem;
-        }
-
-        .content-display h4 {
-            font-size: 1.1rem;
-        }
-
-        .content-display h5 {
-            font-size: 1rem;
-        }
-
-        .content-display h6 {
-            font-size: 0.9rem;
-        }
-
-        .fa-file-pdf{
-            color: var(--danger);
         }
 
         /* Review Submitted Message */
@@ -1549,7 +1159,7 @@
                 align-items: flex-start;
             }
 
-      
+
             .btn-download,
             .btn-light {
                 width: 100%;
@@ -1574,40 +1184,9 @@
                 width: 95%;
                 max-height: 90vh;
             }
-
-            /* Revisions section responsive */
-            .revisions-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .revision-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
-            }
-
-            .revision-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
-            }
-
-            .view-document-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .view-all-revisions-btn {
-                width: 100%;
-                justify-content: center;
-            }
         }
 
         @media (max-width: 480px) {
-            .revision-card {
-                padding: 1rem;
-            }
-
             .content-modal-body {
                 padding: 1rem;
             }
@@ -1666,31 +1245,31 @@
 
                     <!-- Content (hidden until loaded) -->
                     <div id="contentContainer" style="display: none;">
-                    <!-- Manuscript File Section -->
-                    <div class="content-section">
-                        <h2 class="section-title">
-                            <i class="fas fa-file-alt"></i> Manuscript Document
-                        </h2>
-                        <div id="fileInfoCard" class="file-info-card">
-                            <div class="file-details">
-                                <div class="file-icon">
-                                    <i class="fas fa-file-word"></i>
+                        <!-- Manuscript File Section -->
+                        <div class="content-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-file-alt"></i> Manuscript Document
+                            </h2>
+                            <div id="fileInfoCard" class="file-info-card">
+                                <div class="file-details">
+                                    <div class="file-icon">
+                                        <i class="fas fa-file-word"></i>
+                                    </div>
+                                    <div class="file-text">
+                                        <h3 id="fileName">Loading...</h3>
+                                        <p id="fileSize">Original file: loading...</p>
+                                    </div>
                                 </div>
-                                <div class="file-text">
-                                    <h3 id="fileName">Loading...</h3>
-                                    <p id="fileSize">Original file: loading...</p>
+                                <div class="file-actions">
+                                    <a id="viewDocumentLink" class="btn-light" href="#" target="_blank">
+                                        <i class="fas fa-external-link-alt"></i> View Document
+                                    </a>
+                                    <button id="downloadDocumentBtn" class="btn-brand">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
                                 </div>
-                            </div>
-                            <div class="file-actions">
-                                <a id="viewDocumentLink" class="btn-light" href="#" target="_blank">
-                                    <i class="fas fa-external-link-alt"></i> View Document
-                                </a>
-                                <button id="downloadDocumentBtn" class="btn-brand">
-                                    <i class="fas fa-download"></i> Download
-                                </button>
                             </div>
                         </div>
-                    </div>
 
                         <!-- Abstract Section -->
                         <div class="content-section">
@@ -1729,23 +1308,8 @@
                             </div>
                         </div>
 
-                        <!-- Revisions Section -->
-                        <div id="revisionsSection" class="content-section" style="display: none;">
-                            <div class="section-header">
-                                <h2 class="section-title">
-                                    <i class="fas fa-history"></i> Revisions
-                                </h2>
-                                <button id="viewAllRevisionsBtn" class="view-all-revisions-btn" style="display: none;">
-                                    <i class="fas fa-external-link-alt"></i> View All Revisions
-                                </button>
-                            </div>
-                            <div id="revisionsContainer">
-                                <!-- Revisions will be populated here -->
-                            </div>
-                        </div>
-
                         <!-- Decision Section -->
-                        <div class="content-section decision-section">
+                        <div id="decisionSection" class="content-section decision-section" style="display: none;">
                             <h2 class="section-title">
                                 <i class="fas fa-clipboard-check"></i> Review Invitation
                             </h2>
@@ -1779,89 +1343,89 @@
                         </div>
 
                         <!-- Review Form Section -->
-                        <div id="reviewFormSection" class="content-section review-form-section">
+                        <div id="reviewFormSection" class="content-section review-form-section" style="display: none;">
                             <h2 class="section-title">
                                 <i class="fas fa-edit"></i> Submit Your Review
                             </h2>
 
                             <form id="reviewForm" class="review-form">
-                        <!-- Comments to Editor -->
-                        <div class="form-group">
-                            <label for="commentsToEditor" class="required">
-                                <i class="fas fa-comment-dots"></i> Confidential Comments to Editor
-                            </label>
+                                <!-- Comments to Editor -->
+                                <div class="form-group">
+                                    <label for="commentsToEditor" class="required">
+                                        <i class="fas fa-comment-dots"></i> Confidential Comments to Editor
+                                    </label>
 
-                            <!-- Rich text editor toolbar -->
-                            <div id="editorToolbar" class="editor-toolbar" style="background: #f8f9fa; padding: 8px; border-bottom: 1px solid #dee2e6;">
-                                <button type="button" class="format-btn" data-command="bold" title="Bold">
-                                    <i class="fas fa-bold"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="italic" title="Italic">
-                                    <i class="fas fa-italic"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="underline" title="Underline">
-                                    <i class="fas fa-underline"></i>
-                                </button>
-                                <span style="margin: 0 10px; color: #dee2e6;">|</span>
-                                <button type="button" class="format-btn" data-command="insertUnorderedList" title="Bullet List">
-                                    <i class="fas fa-list-ul"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="insertOrderedList" title="Numbered List">
-                                    <i class="fas fa-list-ol"></i>
-                                </button>
-                                <span style="margin: 0 10px; color: #dee2e6;">|</span>
-                                <button type="button" class="format-btn" data-command="formatBlock" data-value="<h3>" title="Heading">
-                                    <i class="fas fa-heading"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="insertHTML" data-value="<blockquote>" title="Quote">
-                                    <i class="fas fa-quote-right"></i>
-                                </button>
-                            </div>
+                                    <!-- Rich text editor toolbar -->
+                                    <div id="editorToolbar" class="editor-toolbar" style="background: #f8f9fa; padding: 8px; border-bottom: 1px solid #dee2e6;">
+                                        <button type="button" class="format-btn" data-command="bold" title="Bold">
+                                            <i class="fas fa-bold"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="italic" title="Italic">
+                                            <i class="fas fa-italic"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="underline" title="Underline">
+                                            <i class="fas fa-underline"></i>
+                                        </button>
+                                        <span style="margin: 0 10px; color: #dee2e6;">|</span>
+                                        <button type="button" class="format-btn" data-command="insertUnorderedList" title="Bullet List">
+                                            <i class="fas fa-list-ul"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="insertOrderedList" title="Numbered List">
+                                            <i class="fas fa-list-ol"></i>
+                                        </button>
+                                        <span style="margin: 0 10px; color: #dee2e6;">|</span>
+                                        <button type="button" class="format-btn" data-command="formatBlock" data-value="<h3>" title="Heading">
+                                            <i class="fas fa-heading"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="insertHTML" data-value="<blockquote>" title="Quote">
+                                            <i class="fas fa-quote-right"></i>
+                                        </button>
+                                    </div>
 
-                            <textarea id="commentsToEditor" name="commentsToEditor" class="form-control" placeholder="Provide confidential feedback for the editor only..." required></textarea>
-                            <div class="form-hint">
-                                These comments will only be visible to the editor, not the authors.
-                            </div>
-                        </div>
+                                    <textarea id="commentsToEditor" name="commentsToEditor" class="form-control" placeholder="Provide confidential feedback for the editor only..." required></textarea>
+                                    <div class="form-hint">
+                                        These comments will only be visible to the editor, not the authors.
+                                    </div>
+                                </div>
 
-                        <!-- Comments to Author -->
-                        <div class="form-group">
-                            <label for="commentsToAuthor" class="required">
-                                <i class="fas fa-comments"></i> Comments to Author
-                            </label>
+                                <!-- Comments to Author -->
+                                <div class="form-group">
+                                    <label for="commentsToAuthor" class="required">
+                                        <i class="fas fa-comments"></i> Comments to Author
+                                    </label>
 
-                            <!-- Rich text editor toolbar -->
-                            <div id="authorToolbar" class="editor-toolbar" style="background: #f8f9fa; padding: 8px; border-bottom: 1px solid #dee2e6;">
-                                <button type="button" class="format-btn" data-command="bold" title="Bold">
-                                    <i class="fas fa-bold"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="italic" title="Italic">
-                                    <i class="fas fa-italic"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="underline" title="Underline">
-                                    <i class="fas fa-underline"></i>
-                                </button>
-                                <span style="margin: 0 10px; color: #dee2e6;">|</span>
-                                <button type="button" class="format-btn" data-command="insertUnorderedList" title="Bullet List">
-                                    <i class="fas fa-list-ul"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="insertOrderedList" title="Numbered List">
-                                    <i class="fas fa-list-ol"></i>
-                                </button>
-                                <span style="margin: 0 10px; color: #dee2e6;">|</span>
-                                <button type="button" class="format-btn" data-command="formatBlock" data-value="<h3>" title="Heading">
-                                    <i class="fas fa-heading"></i>
-                                </button>
-                                <button type="button" class="format-btn" data-command="insertHTML" data-value="<blockquote>" title="Quote">
-                                    <i class="fas fa-quote-right"></i>
-                                </button>
-                            </div>
+                                    <!-- Rich text editor toolbar -->
+                                    <div id="authorToolbar" class="editor-toolbar" style="background: #f8f9fa; padding: 8px; border-bottom: 1px solid #dee2e6;">
+                                        <button type="button" class="format-btn" data-command="bold" title="Bold">
+                                            <i class="fas fa-bold"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="italic" title="Italic">
+                                            <i class="fas fa-italic"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="underline" title="Underline">
+                                            <i class="fas fa-underline"></i>
+                                        </button>
+                                        <span style="margin: 0 10px; color: #dee2e6;">|</span>
+                                        <button type="button" class="format-btn" data-command="insertUnorderedList" title="Bullet List">
+                                            <i class="fas fa-list-ul"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="insertOrderedList" title="Numbered List">
+                                            <i class="fas fa-list-ol"></i>
+                                        </button>
+                                        <span style="margin: 0 10px; color: #dee2e6;">|</span>
+                                        <button type="button" class="format-btn" data-command="formatBlock" data-value="<h3>" title="Heading">
+                                            <i class="fas fa-heading"></i>
+                                        </button>
+                                        <button type="button" class="format-btn" data-command="insertHTML" data-value="<blockquote>" title="Quote">
+                                            <i class="fas fa-quote-right"></i>
+                                        </button>
+                                    </div>
 
-                            <textarea id="commentsToAuthor" name="commentsToAuthor" class="form-control" placeholder="Provide constructive feedback for the authors..." required></textarea>
-                            <div class="form-hint">
-                                These comments will be shared with the manuscript authors.
-                            </div>
-                        </div>
+                                    <textarea id="commentsToAuthor" name="commentsToAuthor" class="form-control" placeholder="Provide constructive feedback for the authors..." required></textarea>
+                                    <div class="form-hint">
+                                        These comments will be shared with the manuscript authors.
+                                    </div>
+                                </div>
 
                                 <!-- Recommendation -->
                                 <div class="form-group">
@@ -1998,7 +1562,7 @@
                 </div>
             </div>
         </div>
-    </div>search-button
+    </div>
 
     <script>
         window.SIDEBAR_MODULE = 'reviewer';
@@ -2012,565 +1576,467 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script type="module">
-    import { BASE_URL, token, apiFetch } from '/assets/js/utility.js';
+    <script type="module">
+        import { BASE_URL, token, apiFetch } from '/assets/js/utility.js';
 
-    class ReviewDetailsManager {
-        constructor() {
-            this.reviewId = this.getReviewIdFromURL();
-            this.review = null;
-            this.userCache = new Map();
-            this.currentModalContent = '';
-            this.currentModalType = '';
-            this.currentModalTitle = '';
-            this.selectedFile = null;
-            this.isFileSelectionActive = false; // NEW: Track file selection state
+        class ReviewDetailsManager {
+            constructor() {
+                this.reviewId = this.getReviewIdFromURL();
+                this.review = null;
+                this.editorDecisionHistory = null;
+                this.userCache = new Map();
+                this.currentModalContent = '';
+                this.currentModalType = '';
+                this.currentModalTitle = '';
+                this.selectedFile = null;
+                this.isFileSelectionActive = false;
 
-            if (!this.reviewId) {
-                this.showError('No review ID provided');
-                return;
+                if (!this.reviewId) {
+                    this.showError('No review ID provided');
+                    return;
+                }
+
+                this.initializeToastr();
+                this.bindEvents();
+                this.initialize();
             }
 
-            this.initializeToastr();
-            this.bindEvents();
-            this.initialize();
-        }
+            getReviewIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('id');
+            }
 
-        getReviewIdFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
-        }
+            initializeToastr() {
+                toastr.options = {
+                    closeButton: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
 
-        initializeToastr() {
-            toastr.options = {
-                closeButton: false,
-                progressBar: false,
-                positionClass: "toast-top-right",
-                timeOut: 3000,
-                extendedTimeOut: 1000
-            };
-        }
-
-        bindEvents() {
-            // Content modal close button
-            document.getElementById('closeContentModal')?.addEventListener('click', () => {
-                this.closeContentModal();
-            });
-
-            // Close modal when clicking outside
-            document.getElementById('contentModal')?.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal-overlay')) {
+            bindEvents() {
+                // Content modal close button
+                document.getElementById('closeContentModal')?.addEventListener('click', () => {
                     this.closeContentModal();
-                }
-            });
-
-            // Close modal with Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    this.closeContentModal();
-                }
-            });
-
-            setTimeout(() => {
-                // Decision buttons
-                document.getElementById('acceptBtn')?.addEventListener('click', () => this.respondToInvitation('accept'));
-                document.getElementById('declineBtn')?.addEventListener('click', () => this.respondToInvitation('decline'));
-
-                // Review form
-                document.getElementById('score')?.addEventListener('input', (e) => {
-                    document.getElementById('scoreDisplay').textContent = e.target.value;
                 });
 
-                document.getElementById('resetFormBtn')?.addEventListener('click', () => this.resetForm());
+                // Close modal when clicking outside
+                document.getElementById('contentModal')?.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        this.closeContentModal();
+                    }
+                });
 
-                // File upload - FIXED: Prevent multiple file selector openings
-                const fileInput = document.getElementById('reviewFile');
-                const fileUploadArea = document.getElementById('fileUploadArea');
+                // Close modal with Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeContentModal();
+                    }
+                });
 
-                if (fileInput) {
-                    fileInput.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent event bubbling
+                setTimeout(() => {
+                    // Decision buttons
+                    document.getElementById('acceptBtn')?.addEventListener('click', () => this.respondToInvitation('accept'));
+                    document.getElementById('declineBtn')?.addEventListener('click', () => this.respondToInvitation('decline'));
+
+                    // Review form
+                    document.getElementById('score')?.addEventListener('input', (e) => {
+                        document.getElementById('scoreDisplay').textContent = e.target.value;
                     });
 
-                    fileInput.addEventListener('change', (e) => {
-                        if (!this.isFileSelectionActive) {
-                            this.isFileSelectionActive = true;
-                            this.handleFileSelect(e);
-                            // Reset the flag after a short delay
-                            setTimeout(() => {
-                                this.isFileSelectionActive = false;
-                            }, 100);
-                        }
-                    });
-                }
+                    document.getElementById('resetFormBtn')?.addEventListener('click', () => this.resetForm());
 
-                if (fileUploadArea) {
-                    // Remove the direct click event that was causing the issue
-                    // Only use the label's natural behavior
+                    // File upload
+                    const fileInput = document.getElementById('reviewFile');
+                    const fileUploadArea = document.getElementById('fileUploadArea');
 
-                    // Drag and drop events
-                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                        fileUploadArea.addEventListener(eventName, (e) => {
-                            e.preventDefault();
+                    if (fileInput) {
+                        fileInput.addEventListener('click', (e) => {
                             e.stopPropagation();
                         });
-                    });
 
-                    ['dragenter', 'dragover'].forEach(eventName => {
-                        fileUploadArea.addEventListener(eventName, () => {
-                            fileUploadArea.classList.add('drag-over');
+                        fileInput.addEventListener('change', (e) => {
+                            if (!this.isFileSelectionActive) {
+                                this.isFileSelectionActive = true;
+                                this.handleFileSelect(e);
+                                setTimeout(() => {
+                                    this.isFileSelectionActive = false;
+                                }, 100);
+                            }
                         });
-                    });
+                    }
 
-                    ['dragleave', 'drop'].forEach(eventName => {
-                        fileUploadArea.addEventListener(eventName, () => {
-                            fileUploadArea.classList.remove('drag-over');
+                    if (fileUploadArea) {
+                        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                            fileUploadArea.addEventListener(eventName, (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            });
                         });
+
+                        ['dragenter', 'dragover'].forEach(eventName => {
+                            fileUploadArea.addEventListener(eventName, () => {
+                                fileUploadArea.classList.add('drag-over');
+                            });
+                        });
+
+                        ['dragleave', 'drop'].forEach(eventName => {
+                            fileUploadArea.addEventListener(eventName, () => {
+                                fileUploadArea.classList.remove('drag-over');
+                            });
+                        });
+
+                        fileUploadArea.addEventListener('drop', (e) => {
+                            const files = e.dataTransfer.files;
+                            if (files.length > 0 && !this.isFileSelectionActive) {
+                                this.isFileSelectionActive = true;
+                                this.handleFileSelect({ target: { files } });
+                                setTimeout(() => {
+                                    this.isFileSelectionActive = false;
+                                }, 100);
+                            }
+                        });
+                    }
+
+                    // Remove file button
+                    document.getElementById('removeFileBtn')?.addEventListener('click', () => {
+                        this.removeSelectedFile();
                     });
 
-                    fileUploadArea.addEventListener('drop', (e) => {
-                        const files = e.dataTransfer.files;
-                        if (files.length > 0 && !this.isFileSelectionActive) {
-                            this.isFileSelectionActive = true;
-                            this.handleFileSelect({ target: { files } });
-                            setTimeout(() => {
-                                this.isFileSelectionActive = false;
-                            }, 100);
+                    // Form submission
+                    const reviewForm = document.getElementById('reviewForm');
+                    if (reviewForm) {
+                        reviewForm.addEventListener('submit', (e) => {
+                            e.preventDefault();
+                            this.submitReview();
+                        });
+                    }
+
+                    // View Full Timeline button
+                    document.getElementById('viewTimelineBtn')?.addEventListener('click', () => {
+                        window.location.href = `review-timeline.html?id=${this.review?.manuscript?.id || this.reviewId}`;
+                    });
+
+                    // Download document button
+                    document.getElementById('downloadDocumentBtn')?.addEventListener('click', () => {
+                        this.downloadDocument();
+                    });
+
+                    // Initialize rich text editors
+                    this.initializeRichTextEditors();
+                }, 100);
+            }
+
+            initializeRichTextEditors() {
+                // Initialize for comments to editor
+                const editorToolbar = document.getElementById('editorToolbar');
+                const commentsToEditor = document.getElementById('commentsToEditor');
+
+                if (editorToolbar && commentsToEditor) {
+                    this.setupRichTextEditor(editorToolbar, commentsToEditor);
+                }
+
+                // Initialize for comments to author
+                const authorToolbar = document.getElementById('authorToolbar');
+                const commentsToAuthor = document.getElementById('commentsToAuthor');
+
+                if (authorToolbar && commentsToAuthor) {
+                    this.setupRichTextEditor(authorToolbar, commentsToAuthor);
+                }
+            }
+
+            setupRichTextEditor(toolbar, textarea) {
+                // Create editor container
+                const editorContainer = document.createElement('div');
+                editorContainer.className = 'rich-text-editor';
+                editorContainer.style.border = '1px solid var(--border)';
+                editorContainer.style.borderRadius = '6px';
+                editorContainer.style.overflow = 'hidden';
+
+                // Create editor content area
+                const editorContent = document.createElement('div');
+                editorContent.className = 'editor-content';
+                editorContent.style.minHeight = '120px';
+                editorContent.style.padding = '12px';
+                editorContent.style.outline = 'none';
+                editorContent.style.maxHeight = '400px';
+                editorContent.style.overflowY = 'auto';
+                editorContent.contentEditable = true;
+
+                // Set initial content from textarea
+                editorContent.innerHTML = textarea.value || '';
+
+                // Replace textarea with editor
+                textarea.style.display = 'none';
+                textarea.parentNode.insertBefore(editorContainer, textarea.nextSibling);
+                editorContainer.appendChild(toolbar);
+                editorContainer.appendChild(editorContent);
+
+                // Update textarea value when editor content changes
+                editorContent.addEventListener('input', () => {
+                    textarea.value = editorContent.innerHTML;
+                });
+
+                // Add toolbar button functionality
+                const buttons = toolbar.querySelectorAll('.format-btn');
+                buttons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const command = button.dataset.command;
+                        const value = button.dataset.value;
+
+                        if (command === 'insertHTML' && value) {
+                            this.insertHTMLAtCursor(editorContent, value);
+                        } else {
+                            document.execCommand(command, false, value);
+                        }
+
+                        editorContent.focus();
+                    });
+                });
+
+                // Handle tab key for better formatting
+                editorContent.addEventListener('keydown', (e) => {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;');
+                    }
+                });
+            }
+
+            insertHTMLAtCursor(editor, html) {
+                const selection = window.getSelection();
+                if (selection.rangeCount) {
+                    const range = selection.getRangeAt(0);
+                    range.deleteContents();
+                    const div = document.createElement('div');
+                    div.innerHTML = html;
+                    const fragment = document.createDocumentFragment();
+                    let node;
+                    while ((node = div.firstChild)) {
+                        fragment.appendChild(node);
+                    }
+                    range.insertNode(fragment);
+                }
+            }
+
+            async initialize() {
+                if (!token) {
+                    this.showError('Authentication required. Please login again.');
+                    return;
+                }
+
+                this.showLoading();
+                try {
+                    await this.loadReviewData();
+                    await this.loadEditorDecisionHistory();
+                    await this.loadLatestTimelineEvent();
+                    this.hideLoading();
+                    this.showContent();
+                    this.updateReviewFormVisibility();
+                } catch (error) {
+                    console.error('Error initializing:', error);
+                    this.showError(error.message || 'Failed to load review details. Please try again.');
+                }
+            }
+
+            async loadReviewData() {
+                try {
+                    const data = await apiFetch(`${BASE_URL}/reviews/${this.reviewId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
                         }
                     });
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Unable to load review data');
+                    }
+
+                    this.review = data.review;
+                    this.renderManuscriptHeader();
+                    this.renderFileInfo();
+                    this.renderAbstract();
+                    this.renderAuthors();
+                    await this.renderEditors();
+
+                } catch (error) {
+                    console.error('Error loading review data:', error);
+                    throw error;
                 }
+            }
 
-                // Remove file button
-                document.getElementById('removeFileBtn')?.addEventListener('click', () => {
-                    this.removeSelectedFile();
-                });
+            async loadEditorDecisionHistory() {
+                try {
+                    if (!this.review?.manuscript?.id) return;
 
-                // Form submission
-                const reviewForm = document.getElementById('reviewForm');
-                if (reviewForm) {
-                    reviewForm.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        this.submitReview();
+                    const data = await apiFetch(`${BASE_URL}/editor/${this.review.manuscript.id}/decision-history`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
                     });
-                }
 
-                // View Full Timeline button
-                document.getElementById('viewTimelineBtn')?.addEventListener('click', () => {
-                    window.location.href = `review-timeline.html?id=${this.review?.manuscript?._id || this.reviewId}`;
-                });
-
-                // View All Revisions button
-                document.getElementById('viewAllRevisionsBtn')?.addEventListener('click', () => {
-                    if (this.review?.manuscript?._id) {
-                        window.location.href = `revision-history.html?id=${this.review.manuscript._id}`;
+                    if (data.success) {
+                        this.editorDecisionHistory = data;
                     }
-                });
-
-                // Download document button
-                document.getElementById('downloadDocumentBtn')?.addEventListener('click', () => {
-                    this.downloadDocument();
-                });
-
-                // Initialize rich text editors
-                this.initializeRichTextEditors();
-            }, 100);
-        }
-
-        initializeRichTextEditors() {
-            // Initialize for comments to editor
-            const editorToolbar = document.getElementById('editorToolbar');
-            const commentsToEditor = document.getElementById('commentsToEditor');
-
-            if (editorToolbar && commentsToEditor) {
-                this.setupRichTextEditor(editorToolbar, commentsToEditor);
+                } catch (error) {
+                    console.error('Error loading editor decision history:', error);
+                    // Don't throw error here, as it's optional data
+                }
             }
 
-            // Initialize for comments to author
-            const authorToolbar = document.getElementById('authorToolbar');
-            const commentsToAuthor = document.getElementById('commentsToAuthor');
+            async loadLatestTimelineEvent() {
+                try {
+                    if (!this.review?.manuscript?.id) return;
 
-            if (authorToolbar && commentsToAuthor) {
-                this.setupRichTextEditor(authorToolbar, commentsToAuthor);
-            }
-        }
+                    const data = await apiFetch(`${BASE_URL}/submissions/${this.review.manuscript.id}/history`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
 
-        setupRichTextEditor(toolbar, textarea) {
-            // Create editor container
-            const editorContainer = document.createElement('div');
-            editorContainer.className = 'rich-text-editor';
-            editorContainer.style.border = '1px solid var(--border)';
-            editorContainer.style.borderRadius = '6px';
-            editorContainer.style.overflow = 'hidden';
-
-            // Create editor content area
-            const editorContent = document.createElement('div');
-            editorContent.className = 'editor-content';
-            editorContent.style.minHeight = '120px';
-            editorContent.style.padding = '12px';
-            editorContent.style.outline = 'none';
-            editorContent.style.maxHeight = '400px';
-            editorContent.style.overflowY = 'auto';
-            editorContent.contentEditable = true;
-
-            // Set initial content from textarea
-            editorContent.innerHTML = textarea.value || '';
-
-            // Replace textarea with editor
-            textarea.style.display = 'none';
-            textarea.parentNode.insertBefore(editorContainer, textarea.nextSibling);
-            editorContainer.appendChild(toolbar);
-            editorContainer.appendChild(editorContent);
-
-            // Update textarea value when editor content changes
-            editorContent.addEventListener('input', () => {
-                textarea.value = editorContent.innerHTML;
-            });
-
-            // Add toolbar button functionality
-            const buttons = toolbar.querySelectorAll('.format-btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const command = button.dataset.command;
-                    const value = button.dataset.value;
-
-                    if (command === 'insertHTML' && value) {
-                        this.insertHTMLAtCursor(editorContent, value);
+                    if (data.success && data.submission?.history?.length > 0) {
+                        const latestEvent = data.submission.history[data.submission.history.length - 1];
+                        await this.renderLatestTimelineEvent(latestEvent);
                     } else {
-                        document.execCommand(command, false, value);
+                        this.renderTimeline([]);
                     }
 
-                    editorContent.focus();
-                });
-            });
-
-            // Handle tab key for better formatting
-            editorContent.addEventListener('keydown', (e) => {
-                if (e.key === 'Tab') {
-                    e.preventDefault();
-                    document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;');
-                }
-            });
-        }
-
-        insertHTMLAtCursor(editor, html) {
-            const selection = window.getSelection();
-            if (selection.rangeCount) {
-                const range = selection.getRangeAt(0);
-                range.deleteContents();
-                const div = document.createElement('div');
-                div.innerHTML = html;
-                const fragment = document.createDocumentFragment();
-                let node;
-                while ((node = div.firstChild)) {
-                    fragment.appendChild(node);
-                }
-                range.insertNode(fragment);
-            }
-        }
-
-        async initialize() {
-            if (!token) {
-                this.showError('Authentication required. Please login again.');
-                return;
-            }
-
-            this.showLoading();
-            try {
-                await this.loadReviewData();
-                await this.loadLatestTimelineEvent();
-                this.hideLoading();
-                this.showContent();
-            } catch (error) {
-                console.error('Error initializing:', error);
-                this.showError(error.message || 'Failed to load review details. Please try again.');
-            }
-        }
-
-        async loadReviewData() {
-            try {
-                const data = await apiFetch(`${BASE_URL}/reviews/${this.reviewId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!data.success) {
-                    throw new Error(data.message || 'Unable to load review data');
-                }
-
-                this.review = data.review;
-                this.renderManuscriptHeader();
-                this.renderFileInfo();
-                this.renderAbstract();
-                this.renderAuthors();
-                await this.renderEditors();
-                this.renderRevisions();
-                this.updateDecisionSection();
-                this.updateReviewFormVisibility();
-
-            } catch (error) {
-                console.error('Error loading review data:', error);
-                throw error;
-            }
-        }
-
-        async loadLatestTimelineEvent() {
-            try {
-                if (!this.review?.manuscript?.history) return;
-
-                const history = this.review.manuscript.history || [];
-                const latestEvent = history.length > 0 ? history[history.length - 1] : null;
-
-                if (latestEvent) {
-                    await this.renderLatestTimelineEvent(latestEvent);
-                } else {
+                } catch (error) {
+                    console.error('Error loading timeline data:', error);
                     this.renderTimeline([]);
                 }
-
-            } catch (error) {
-                console.error('Error loading timeline data:', error);
-                this.renderTimeline([]);
             }
-        }
 
-        async renderLatestTimelineEvent(event) {
-            const timelineContainer = document.getElementById('recentTimeline');
-            if (!timelineContainer) return;
+            updateReviewFormVisibility() {
+                const decisionSection = document.getElementById('decisionSection');
+                const reviewFormSection = document.getElementById('reviewFormSection');
+                const reviewSubmittedMessage = document.getElementById('reviewSubmittedMessage');
 
-            let updatedBy = 'System';
-            if (event.by) {
-                const user = await this.getUserDetails(event.by);
-                if (user) {
-                    updatedBy = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User';
+                if (!this.review) return;
+
+                const invitationStatus = this.review.invitationStatus;
+                const initialReview = this.review.initialReview;
+                const reviewHistory = this.review.reviewHistory || [];
+                const revisionCount = this.review.manuscript?.revisionCount || 0;
+
+                // Get last version from reviewHistory
+                let lastVersion = 0;
+                if (reviewHistory.length > 0) {
+                    lastVersion = Math.max(...reviewHistory.map(r => r.version || 0));
+                }
+
+                // Get submissionVersion from editor decision history
+                let submissionVersion = 0;
+                if (this.editorDecisionHistory?.currentDecision?.submissionVersion) {
+                    submissionVersion = this.editorDecisionHistory.currentDecision.submissionVersion;
+                }
+
+                // Hide all sections first
+                decisionSection.style.display = 'none';
+                reviewFormSection.style.display = 'none';
+                reviewSubmittedMessage.style.display = 'none';
+
+                // Show decision section only if invitation is pending
+                if (invitationStatus === 'pending') {
+                    decisionSection.style.display = 'block';
+                    this.updateDecisionSection();
+                    return;
+                }
+
+                // Show review form based on conditions
+                let shouldShowReviewForm = false;
+
+                // Condition 1: No initial review
+                if (!initialReview) {
+                    shouldShowReviewForm = true;
+                }
+                // Condition 2: lastVersion != revisionCount && revisionCount != submissionVersion
+                else if (lastVersion !== revisionCount && revisionCount !== submissionVersion) {
+                    shouldShowReviewForm = true;
+                }
+
+                if (shouldShowReviewForm) {
+                    reviewFormSection.style.display = 'block';
+                } else {
+                    reviewSubmittedMessage.style.display = 'block';
                 }
             }
 
-            const processedComment = this.processContentForDisplay(event.comment || 'No comment provided');
-            const isCommentLong = processedComment.plainText.length > 150;
-            const commentPreview = isCommentLong ?
-                processedComment.plainText.substring(0, 150) + '...' :
-                processedComment.plainText;
-            const commentDisplayHtml = isCommentLong ?
-                this.processContentForDisplay(commentPreview).displayHtml :
-                processedComment.displayHtml;
+            async renderLatestTimelineEvent(event) {
+                const timelineContainer = document.getElementById('recentTimeline');
+                if (!timelineContainer) return;
 
-            timelineContainer.innerHTML = `
+                // Strip HTML tags from comment and limit to 200 characters
+                let commentText = event.comment || 'No comment provided';
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = commentText;
+                commentText = tempDiv.textContent || tempDiv.innerText || '';
+
+                const isCommentLong = commentText.length > 200;
+                const commentPreview = isCommentLong ?
+                    commentText.substring(0, 200) + '...' :
+                    commentText;
+
+                timelineContainer.innerHTML = `
                 <div class="timeline-item">
                     <div class="card">
                         <span class="status-badge" style="${this.getStatusStyle(event.status)}">
                             ${this.formatStatus(event.status)}
                         </span>
                         <div class="timeline-comment">
-                            ${commentDisplayHtml}
-                            ${isCommentLong ? `
-                                <a class="view-more-link" onclick="window.reviewDetails.showFullContent('${this.escapeHtml(processedComment.displayHtml)}', 'timeline-comment', 'Timeline Comment - ${this.formatStatus(event.status)}')">
-                                    <i class="fas fa-eye"></i> View full comment
-                                </a>
-                            ` : ''}
+                            ${this.escapeHtml(commentPreview)}
                         </div>
                         <p class="timeline-date">
                             <i class="far fa-clock"></i> ${this.formatDate(event.date)}
                         </p>
-                        <div class="updated-by">
-                            <strong><i class="fas fa-user"></i> Updated by: ${this.escapeHtml(updatedBy)}</strong>
-                        </div>
                     </div>
                 </div>
             `;
-        }
-
-        renderRevisions() {
-            const revisionsSection = document.getElementById('revisionsSection');
-            const revisionsContainer = document.getElementById('revisionsContainer');
-            const viewAllRevisionsBtn = document.getElementById('viewAllRevisionsBtn');
-
-            if (!revisionsSection || !revisionsContainer || !this.review) return;
-
-            const status = this.review.manuscript?.status || '';
-            const revisions = this.review.manuscript?.revisions || [];
-
-            if (status === 'submitted' || revisions.length === 0) {
-                revisionsSection.style.display = 'none';
-                return;
             }
 
-            revisionsSection.style.display = 'block';
+            buildFileUrl(filePath) {
+                if (!filePath) return null;
 
-            if (viewAllRevisionsBtn && revisions.length > 0) {
-                viewAllRevisionsBtn.style.display = 'inline-flex';
+                const baseUrl = BASE_URL.replace('/api/v1', '');
+
+                try {
+                    const url = new URL(filePath);
+                    return url.toString();
+                } catch {
+                    const normalizedPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
+                    return `${baseUrl}${normalizedPath}`;
+                }
             }
 
-            const latestRevision = revisions[0];
+            getDocumentViewUrl(fileUrl) {
+                if (!fileUrl) return null;
 
-            if (!latestRevision) {
-                revisionsContainer.innerHTML = `
-                    <div class="no-revisions">
-                        <i class="fas fa-history"></i>
-                        <h3>No Revisions Available</h3>
-                        <p>No revisions have been submitted for this manuscript.</p>
-                    </div>
-                `;
-                return;
+                const url = fileUrl.toLowerCase();
+                const isOfficeDoc = url.endsWith(".docx") || url.endsWith(".doc");
+
+                if (isOfficeDoc) {
+                    return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
+                }
+
+                return fileUrl;
             }
 
-            const version = latestRevision.version || 1;
-            const coverLetter = latestRevision.coverLetter || '';
-            const changesSummary = latestRevision.changesSummary || '';
-            const submittedAt = this.formatDate(latestRevision.submittedAt || latestRevision.createdAt, true);
-            const fileUrl = this.buildFileUrl(latestRevision.file?.url || latestRevision.file);
-            const fileName = latestRevision.file?.originalName || `Revision_${version}.pdf`;
+            renderManuscriptHeader() {
+                const header = document.getElementById('manuscriptHeader');
+                if (!header || !this.review) return;
 
-            // NEW: Use Office Online viewer for Word documents
-            const viewUrl = this.getDocumentViewUrl(fileUrl);
+                const manuscript = this.review.manuscript;
+                const initialReview = this.review.initialReview;
+                const formattedDate = initialReview ? this.formatDate(initialReview.submittedAt) : this.formatDate(this.review.createdAt);
+                const statusDisplay = this.formatStatus(manuscript.status);
+                const scopeTitle = manuscript.scope || 'No Scope Assigned';
 
-            const processedCoverLetter = this.processContentForDisplay(coverLetter);
-            const isCoverLetterLong = processedCoverLetter.plainText.length > 100;
-            const coverLetterPreview = isCoverLetterLong ?
-                processedCoverLetter.plainText.substring(0, 100) + '...' :
-                processedCoverLetter.plainText;
-            const coverLetterDisplayHtml = isCoverLetterLong ?
-                this.processContentForDisplay(coverLetterPreview).displayHtml :
-                processedCoverLetter.displayHtml;
-
-            const processedChangesSummary = this.processContentForDisplay(changesSummary);
-            const isChangesSummaryLong = processedChangesSummary.plainText.length > 100;
-            const changesSummaryPreview = isChangesSummaryLong ?
-                processedChangesSummary.plainText.substring(0, 100) + '...' :
-                processedChangesSummary.plainText;
-            const changesSummaryDisplayHtml = isChangesSummaryLong ?
-                this.processContentForDisplay(changesSummaryPreview).displayHtml :
-                processedChangesSummary.displayHtml;
-
-            let revisionsHTML = '<div class="revisions-grid">';
-            revisionsHTML += `
-                <div class="revision-card">
-                    <div class="revision-header">
-                        <div class="revision-title">
-                            <i class="fas fa-file-edit"></i> Latest Revision
-                        </div>
-                        <span class="revision-version">v${version}</span>
-                    </div>
-                    
-                    <div class="revision-content">
-                        ${coverLetter ? `
-                        <div class="revision-item">
-                            <div class="revision-label">
-                                <i class="fas fa-envelope"></i> Cover Letter
-                            </div>
-                            <div class="revision-text ${isCoverLetterLong ? 'truncated' : ''}">
-                                ${coverLetterDisplayHtml}
-                            </div>
-                            ${isCoverLetterLong ? `
-                                <a class="view-more-link" onclick="window.reviewDetails.showFullContent('${this.encodeForModal(processedCoverLetter.displayHtml)}', 'cover-letter', 'Cover Letter - Revision ${version}')">
-                                    <i class="fas fa-eye"></i> View full cover letter
-                                </a>
-                            ` : ''}
-                        </div>
-                        ` : ''}
-                        
-                        ${changesSummary ? `
-                        <div class="revision-item">
-                            <div class="revision-label">
-                                <i class="fas fa-list-check"></i> Changes Summary
-                            </div>
-                            <div class="revision-text ${isChangesSummaryLong ? 'truncated' : ''}">
-                                ${changesSummaryDisplayHtml}
-                            </div>
-                            ${isChangesSummaryLong ? `
-                                <a class="view-more-link" onclick="window.reviewDetails.showFullContent('${this.encodeForModal(processedChangesSummary.displayHtml)}', 'changes-summary', 'Changes Summary - Revision ${version}')">
-                                    <i class="fas fa-eye"></i> View full changes summary
-                                </a>
-                            ` : ''}
-                        </div>
-                        ` : ''}
-                        
-                        <div class="revision-meta">
-                            <div class="revision-date">
-                                <i class="far fa-calendar"></i> Submitted on: ${submittedAt}
-                            </div>
-                            ${viewUrl ? `
-                                <a href="${viewUrl}" target="_blank" class="view-document-btn">
-                                    <i class="fas fa-file-pdf"></i> View Document
-                                </a>
-                            ` : '<span class="score-empty">No document</span>'}
-                        </div>
-                    </div>
-                </div>
-            `;
-            revisionsHTML += '</div>';
-            revisionsContainer.innerHTML = revisionsHTML;
-        }
-
-        buildFileUrl(filePath) {
-            if (!filePath) return null;
-
-            const baseUrl = BASE_URL.replace('/api/v1', '');
-
-            try {
-                const url = new URL(filePath);
-                return url.toString();
-            } catch {
-                const normalizedPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
-                return `${baseUrl}${normalizedPath}`;
-            }
-        }
-
-        // NEW: Get document view URL with Office Online viewer for Word documents
-        getDocumentViewUrl(fileUrl) {
-            if (!fileUrl) return null;
-
-            const url = fileUrl.toLowerCase();
-            const isOfficeDoc = url.endsWith(".docx") || url.endsWith(".doc");
-
-            if (isOfficeDoc) {
-                return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
-            }
-
-            return fileUrl;
-        }
-
-        updateReviewFormVisibility() {
-            const reviewFormSection = document.getElementById('reviewFormSection');
-            const reviewSubmittedMessage = document.getElementById('reviewSubmittedMessage');
-            const decisionSection = document.querySelector('.decision-section');
-
-            if (!this.review) return;
-
-            const invitationStatus = this.review.invitationStatus;
-            const manuscriptStatus = this.review.manuscript?.status;
-
-            reviewFormSection.style.display = 'none';
-            reviewSubmittedMessage.style.display = 'none';
-
-            if (invitationStatus === 'accepted' && !this.review.submittedAt ) {
-                reviewFormSection.style.display = 'block';
-                decisionSection.style.display = 'none';
-            } else if (manuscriptStatus === 'under_review') {
-                reviewFormSection.style.display = 'block';
-                decisionSection.style.display = 'none';
-            }
-             else if (invitationStatus === 'accepted' && this.review.submittedAt) {
-                reviewSubmittedMessage.style.display = 'block';
-                decisionSection.style.display = 'none';
-            } else {
-                decisionSection.style.display = 'block';
-                reviewFormSection.style.display = 'none';
-                reviewSubmittedMessage.style.display = 'none';
-            }
-        }
-
-        renderManuscriptHeader() {
-            const header = document.getElementById('manuscriptHeader');
-            if (!header || !this.review) return;
-
-            const manuscript = this.review.manuscript;
-            const formattedDate = this.formatDate(manuscript.createdAt);
-            const statusDisplay = this.formatStatus(manuscript.status);
-            const scopeTitle = manuscript.scope?.title || 'No Scope Assigned';
-
-            header.innerHTML = `
+                header.innerHTML = `
                 <h1>${this.escapeHtml(manuscript.title)}</h1>
                 <span class="header-status-badge" style="${this.getStatusStyle(manuscript.status)}">
                     ${statusDisplay}
@@ -2586,88 +2052,89 @@
                     </div>
                 </div>
             `;
-        }
-
-        getStatusStyle(status) {
-            const style = getComputedStyle(document.documentElement);
-
-            const colorMap = {
-                'submitted': style.getPropertyValue('--status-submitted') || '#3b82f6',
-                'under_review': style.getPropertyValue('--status-under-review') || '#f59e0b',
-                'reviewed': style.getPropertyValue('--status-reviewed') || '#10b981',
-                'accepted': style.getPropertyValue('--status-accepted') || '#10b981',
-                'rejected': style.getPropertyValue('--status-rejected') || '#ef4444',
-                'revised': style.getPropertyValue('--status-revised') || '#8b5cf6',
-                'awaiting_payment': style.getPropertyValue('--status-awaiting-payment') || '#f59e0b',
-                'published': style.getPropertyValue('--status-published') || '#06b6d4',
-                'accept': style.getPropertyValue('--status-accept') || '#10b981',
-                'reject': style.getPropertyValue('--status-reject') || '#ef4444',
-                'minor_revision': style.getPropertyValue('--status-minor-revision') || '#f59e0b',
-                'major_revision': style.getPropertyValue('--status-major-revision') || '#f97316',
-                'revision_requested': style.getPropertyValue('--status-revision-requested') || '#8b5cf6'
-            };
-
-            const color = colorMap[status] || style.getPropertyValue('--muted') || '#6b7280';
-            return `background-color: ${color}; color: white;`;
-        }
-
-        renderFileInfo() {
-            const fileInfoCard = document.getElementById('fileInfoCard');
-            const fileName = document.getElementById('fileName');
-            const fileSize = document.getElementById('fileSize');
-            const viewDocumentLink = document.getElementById('viewDocumentLink');
-
-            if (!this.review?.manuscript?.file) return;
-
-            const file = this.review.manuscript.file;
-            const fileUrl = this.buildFileUrl(file.url);
-            // NEW: Use Office Online viewer for Word documents
-            const viewUrl = this.getDocumentViewUrl(fileUrl);
-            const originalName = file.originalName || 'Unknown file';
-
-            fileName.textContent = originalName;
-            fileSize.textContent = `Original file: ${originalName}`;
-            viewDocumentLink.href = viewUrl; // Use the view URL instead of direct file URL
-            viewDocumentLink.target = '_blank';
-        }
-
-        downloadDocument() {
-            if (!this.review?.manuscript?.file) {
-                toastr.error('No document available to download', 'Error');
-                return;
             }
 
-            const file = this.review.manuscript.file;
-            const fileUrl = this.buildFileUrl(file.url);
-            const fileName = file.originalName || 'document.pdf';
+            getStatusStyle(status) {
+                const statusMap = {
+                    'submitted': 'submitted',
+                    'under_review': 'under-review',
+                    'reviewed': 'reviewed',
+                    'accepted': 'accepted',
+                    'rejected': 'rejected',
+                    'revised': 'revised',
+                    'awaiting_payment': 'awaiting-payment',
+                    'published': 'published',
+                    'minor_revision': 'minor-revision',
+                    'major_revision': 'major-revision',
+                    'revision_requested': 'revision-requested'
+                };
 
-            const link = document.createElement('a');
-            link.href = fileUrl;
-            link.download = fileName;
-            link.target = '_blank';
+                const statusKey = statusMap[status] || 'submitted';
+                const style = getComputedStyle(document.documentElement);
 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+                return `
+                background-color: ${style.getPropertyValue(`--status-${statusKey}-bg`) || '#cae7fa'};
+                color: ${style.getPropertyValue(`--status-${statusKey}-color`) || '#3b82f6'};
+                border: 1px solid ${style.getPropertyValue(`--status-${statusKey}-border`) || '#E0F2FE'};
+            `;
+            }
 
-        renderAbstract() {
-            const abstractContent = document.getElementById('abstractContent');
-            if (!abstractContent || !this.review) return;
+            renderFileInfo() {
+                const fileInfoCard = document.getElementById('fileInfoCard');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+                const viewDocumentLink = document.getElementById('viewDocumentLink');
 
-            const abstract = this.review.manuscript.abstract || 'No abstract provided.';
+                if (!this.review?.manuscript?.file) return;
 
-            if (abstract && abstract.trim() !== '') {
-                const processedAbstract = this.processContentForDisplay(abstract);
-                const isAbstractLong = processedAbstract.plainText.length > 300;
-                const abstractPreview = isAbstractLong ?
-                    processedAbstract.plainText.substring(0, 300) + '...' :
-                    processedAbstract.plainText;
-                const abstractDisplayHtml = isAbstractLong ?
-                    this.processContentForDisplay(abstractPreview).displayHtml :
-                    processedAbstract.displayHtml;
+                const file = this.review.manuscript.file;
+                const fileUrl = this.buildFileUrl(file.url);
+                const viewUrl = this.getDocumentViewUrl(fileUrl);
+                const originalName = file.originalName || 'Unknown file';
 
-                abstractContent.innerHTML = `
+                fileName.textContent = originalName;
+                fileSize.textContent = `Original file: ${originalName}`;
+                viewDocumentLink.href = viewUrl;
+                viewDocumentLink.target = '_blank';
+            }
+
+            downloadDocument() {
+                if (!this.review?.manuscript?.file) {
+                    toastr.error('No document available to download', 'Error');
+                    return;
+                }
+
+                const file = this.review.manuscript.file;
+                const fileUrl = this.buildFileUrl(file.url);
+                const fileName = file.originalName || 'document.pdf';
+
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = fileName;
+                link.target = '_blank';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            renderAbstract() {
+                const abstractContent = document.getElementById('abstractContent');
+                if (!abstractContent || !this.review) return;
+
+                const abstract = this.review.manuscript.abstract || 'No abstract provided.';
+
+                if (abstract && abstract.trim() !== '') {
+                    const processedAbstract = this.processContentForDisplay(abstract);
+                    const isAbstractLong = processedAbstract.plainText.length > 300;
+                    const abstractPreview = isAbstractLong ?
+                        processedAbstract.plainText.substring(0, 300) + '...' :
+                        processedAbstract.plainText;
+                    const abstractDisplayHtml = isAbstractLong ?
+                        this.processContentForDisplay(abstractPreview).displayHtml :
+                        processedAbstract.displayHtml;
+
+                    abstractContent.innerHTML = `
                     <div class="abstract-text ${isAbstractLong ? 'truncated' : ''}">
                         ${abstractDisplayHtml}
                     </div>
@@ -2677,25 +2144,25 @@
                         </a>
                     ` : ''}
                 `;
-            } else {
-                abstractContent.innerHTML = '<span style="color: #9ca3af;">No abstract provided.</span>';
-            }
-        }
-
-        renderAuthors() {
-            const authorsList = document.getElementById('authorsList');
-            const authorsCount = document.getElementById('authorsCount');
-            if (!authorsList || !this.review) return;
-
-            const authors = this.review.manuscript.authors || [];
-            authorsCount.textContent = authors.length;
-
-            if (authors.length === 0) {
-                authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
-                return;
+                } else {
+                    abstractContent.innerHTML = '<span style="color: #9ca3af;">No abstract provided.</span>';
+                }
             }
 
-            authorsList.innerHTML = authors.map(author => `
+            renderAuthors() {
+                const authorsList = document.getElementById('authorsList');
+                const authorsCount = document.getElementById('authorsCount');
+                if (!authorsList || !this.review) return;
+
+                const authors = this.review.manuscript.authors || [];
+                authorsCount.textContent = authors.length;
+
+                if (authors.length === 0) {
+                    authorsList.innerHTML = '<div class="no-authors">No authors listed</div>';
+                    return;
+                }
+
+                authorsList.innerHTML = authors.map(author => `
                 <div class="author-item">
                     <div class="author-name">${this.escapeHtml(author.name)}</div>
                     <div class="author-email">
@@ -2704,576 +2171,525 @@
                     </div>
                 </div>
             `).join('');
-        }
-
-        async renderEditors() {
-            const editorsList = document.getElementById('editorsList');
-            const editorsCount = document.getElementById('editorsCount');
-
-            if (!editorsList || !this.review) return;
-
-            const scope = this.review.manuscript.scope;
-            if (!scope) {
-                editorsList.innerHTML = '<div class="no-editors">No scope assigned</div>';
-                editorsCount.textContent = '0';
-                return;
             }
 
-            const editorsInChiefIds = scope.editorsInChief || [];
-            const associateEditorsIds = scope.associateEditors || [];
-            const totalEditors = editorsInChiefIds.length + associateEditorsIds.length;
+            async renderEditors() {
+                const editorsList = document.getElementById('editorsList');
+                const editorsCount = document.getElementById('editorsCount');
 
-            editorsCount.textContent = totalEditors;
+                if (!editorsList || !this.review) return;
 
-            if (totalEditors === 0) {
-                editorsList.innerHTML = '<div class="no-editors">No editors assigned to this scope</div>';
-                return;
-            }
-
-            const editorsInChief = await Promise.all(
-                editorsInChiefIds.map(id => this.getUserDetails(id))
-            );
-
-            const associateEditors = await Promise.all(
-                associateEditorsIds.map(id => this.getUserDetails(id))
-            );
-
-            let html = '<div class="editors-list">';
-
-            if (editorsInChief.length > 0) {
-                html += `
-                    <div class="editor-category"><h4> Editor-in-Chief</h4>
-                        ${editorsInChief.map(editor => editor ? this.renderEditorItem(editor, 'Editor-in-Chief') : '').join('')}
-                    </div>
-                `;
-            }
-
-            if (associateEditors.length > 0) {
-                html += `
-                    <div class="editor-category">
-                        <h4> Associate Editors</h4>
-                        ${associateEditors.map(editor => editor ? this.renderEditorItem(editor, 'Associate Editor') : '').join('')}
-                    </div>
-                `;
-            }
-
-            html += '</div>';
-            editorsList.innerHTML = html;
-        }
-
-        renderEditorItem(user, role) {
-            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unnamed Editor';
-            return `
-                <div class="editor-item">
-                    <div class="editor-name"> ${this.escapeHtml(fullName)}
-                    </div>
-                    <div class="editor-email">
-                        <i class="fas fa-envelope"></i> ${this.escapeHtml(user.email || 'No email')}
-                    </div>
-                    <div class="editor-role">${role}</div>
-                </div>
-            `;
-        }
-
-        async getUserDetails(userId) {
-            if (this.userCache.has(userId)) {
-                return this.userCache.get(userId);
-            }
-
-            try {
-                if (!userId) return null;
-
-                const data = await apiFetch(`${BASE_URL}/user/${userId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!data.success) {
-                    console.warn(`Failed to fetch user ${userId}:`, data.message);
-                    return null;
+                const scope = this.review.manuscript.scope;
+                if (!scope) {
+                    editorsList.innerHTML = '<div class="no-editors">No scope assigned</div>';
+                    editorsCount.textContent = '0';
+                    return;
                 }
 
-                const user = data.user;
-                this.userCache.set(userId, user);
-                return user;
-
-            } catch (error) {
-                console.error(`Error fetching user ${userId}:`, error);
-                return null;
+                // This section is hidden anyway, but keeping the logic
+                editorsCount.textContent = '0';
+                editorsList.innerHTML = '<div class="no-editors">Editors section hidden</div>';
             }
-        }
 
-        updateDecisionSection() {
-            const decisionStatusBadge = document.getElementById('decisionStatusBadge');
-            const decisionButtons = document.getElementById('decisionButtons');
-            const decisionMessage = document.getElementById('decisionMessage');
+            async getUserDetails(userId) {
+                if (this.userCache.has(userId)) {
+                    return this.userCache.get(userId);
+                }
 
-            if (!this.review) return;
+                try {
+                    if (!userId) return null;
 
-            const invitationStatus = this.review.invitationStatus;
+                    const data = await apiFetch(`${BASE_URL}/user/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
 
-            decisionStatusBadge.className = `decision-status-badge ${invitationStatus}`;
-            const statusIcon = invitationStatus === 'accepted' ? 'fa-check-circle' :
-                invitationStatus === 'declined' ? 'fa-times-circle' : 'fa-clock';
-            const statusText = invitationStatus === 'accepted' ? 'Review Accepted' :
-                invitationStatus === 'declined' ? 'Review Declined' : 'Pending Your Response';
+                    if (!data.success) {
+                        console.warn(`Failed to fetch user ${userId}:`, data.message);
+                        return null;
+                    }
 
-            decisionStatusBadge.innerHTML = `
+                    const user = data.user;
+                    this.userCache.set(userId, user);
+                    return user;
+
+                } catch (error) {
+                    console.error(`Error fetching user ${userId}:`, error);
+                    return null;
+                }
+            }
+
+            updateDecisionSection() {
+                const decisionStatusBadge = document.getElementById('decisionStatusBadge');
+                const decisionButtons = document.getElementById('decisionButtons');
+                const decisionMessage = document.getElementById('decisionMessage');
+
+                if (!this.review) return;
+
+                const invitationStatus = this.review.invitationStatus;
+
+                decisionStatusBadge.className = `decision-status-badge ${invitationStatus}`;
+                const statusIcon = invitationStatus === 'accepted' ? 'fa-check-circle' :
+                    invitationStatus === 'declined' ? 'fa-times-circle' : 'fa-clock';
+                const statusText = invitationStatus === 'accepted' ? 'Review Accepted' :
+                    invitationStatus === 'declined' ? 'Review Declined' : 'Pending Your Response';
+
+                decisionStatusBadge.innerHTML = `
                 <i class="fas ${statusIcon}"></i>
                 <span>${statusText}</span>
             `;
 
-            if (invitationStatus === 'pending') {
-                decisionButtons.style.display = 'flex';
-                decisionMessage.innerHTML = 'Please accept or decline this review invitation.';
-            } else {
-                decisionButtons.style.display = 'none';
-                if (invitationStatus === 'accepted') {
-                    decisionMessage.innerHTML = `
+                if (invitationStatus === 'pending') {
+                    decisionButtons.style.display = 'flex';
+                    decisionMessage.innerHTML = 'Please accept or decline this review invitation.';
+                } else {
+                    decisionButtons.style.display = 'none';
+                    if (invitationStatus === 'accepted') {
+                        decisionMessage.innerHTML = `
                         <i class="fas fa-check-circle" style="color: var(--success);"></i>
                         You have accepted this review invitation.
                     `;
-                } else if (invitationStatus === 'declined') {
-                    decisionMessage.innerHTML = `
+                    } else if (invitationStatus === 'declined') {
+                        decisionMessage.innerHTML = `
                         <i class="fas fa-times-circle" style="color: var(--danger);"></i>
                         You have declined this review invitation.
                     `;
+                    }
                 }
-            }
-
-            const acceptBtn = document.getElementById('acceptBtn');
-            const declineBtn = document.getElementById('declineBtn');
-            if (invitationStatus !== 'pending') {
-                acceptBtn.disabled = true;
-                declineBtn.disabled = true;
-            }
-        }
-
-        async respondToInvitation(decision) {
-            try {
-                if (!token) {
-                    toastr.error('Authentication required. Please login again.', 'Error');
-                    return;
-                }
-
-                const requestBody = {
-                    reviewId: this.reviewId,
-                    decision: decision
-                };
 
                 const acceptBtn = document.getElementById('acceptBtn');
                 const declineBtn = document.getElementById('declineBtn');
-
-                if (decision === 'accept') {
-                    acceptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Accepting...';
-                } else {
-                    declineBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Declining...';
-                }
-
-                acceptBtn.disabled = true;
-                declineBtn.disabled = true;
-
-                const data = await apiFetch(`${BASE_URL}/reviews/respond`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!data.success) {
-                    throw new Error(data.message || `Failed to ${decision} review`);
-                }
-
-                toastr.success(`Successfully ${decision}ed the review invitation`, 'Success');
-                this.review.invitationStatus = decision;
-                await this.loadReviewData();
-                this.updateDecisionSection();
-                this.updateReviewFormVisibility();
-
-            } catch (error) {
-                console.error('Error responding to invitation:', error);
-                toastr.error(error.message || 'Failed to respond to invitation', 'Error');
-
-                const acceptBtn = document.getElementById('acceptBtn');
-                const declineBtn = document.getElementById('declineBtn');
-                acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> Accept Review';
-                declineBtn.innerHTML = '<i class="fas fa-times-circle"></i> Decline Review';
-
-                if (this.review?.invitationStatus === 'pending') {
-                    acceptBtn.disabled = false;
-                    declineBtn.disabled = false;
+                if (invitationStatus !== 'pending') {
+                    acceptBtn.disabled = true;
+                    declineBtn.disabled = true;
                 }
             }
-        }
 
-        handleFileSelect(event) {
-            const files = event.target.files;
-            if (!files || files.length === 0) return;
+            async respondToInvitation(decision) {
+                try {
+                    if (!token) {
+                        toastr.error('Authentication required. Please login again.', 'Error');
+                        return;
+                    }
 
-            const file = files[0];
+                    const requestBody = {
+                        reviewId: this.reviewId,
+                        decision: decision
+                    };
 
-            const allowedTypes = ['application/pdf', 'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                    const acceptBtn = document.getElementById('acceptBtn');
+                    const declineBtn = document.getElementById('declineBtn');
 
-            if (!allowedTypes.includes(file.type)) {
-                toastr.error('Please upload only PDF or Word documents', 'Invalid File Type');
-                return;
-            }
+                    if (decision === 'accept') {
+                        acceptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Accepting...';
+                    } else {
+                        declineBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Declining...';
+                    }
 
-            const maxSize = 10 * 1024 * 1024;
-            if (file.size > maxSize) {
-                toastr.error('File size must be less than 10MB', 'File Too Large');
-                return;
-            }
+                    acceptBtn.disabled = true;
+                    declineBtn.disabled = true;
 
-            this.selectedFile = file;
-            this.updateFilePreview();
-        }
-
-        updateFilePreview() {
-            const filePreview = document.getElementById('filePreview');
-            const fileName = document.getElementById('fileNamePreview');
-            const fileSize = document.getElementById('fileSizePreview');
-
-            if (!this.selectedFile) {
-                filePreview.classList.remove('show');
-                return;
-            }
-
-            const sizeInMB = (this.selectedFile.size / (1024 * 1024)).toFixed(2);
-
-            fileName.textContent = this.selectedFile.name;
-            fileSize.textContent = `${sizeInMB} MB`;
-
-            filePreview.classList.add('show');
-        }
-
-        removeSelectedFile() {
-            this.selectedFile = null;
-            document.getElementById('reviewFile').value = '';
-            document.getElementById('filePreview').classList.remove('show');
-        }
-
-        async submitReview() {
-            try {
-                const formData = {
-                    reviewId: this.reviewId,
-                    commentsToEditor: document.getElementById('commentsToEditor').value.trim(),
-                    commentsToAuthor: document.getElementById('commentsToAuthor').value.trim(),
-                    recommendation: document.querySelector('input[name="recommendation"]:checked')?.value,
-                    score: parseInt(document.getElementById('score').value)
-                };
-
-                // NEW: Enhanced validation
-                let isValid = true;
-                let errorMessage = '';
-
-                // Convert HTML to plain text for validation
-                const stripHtml = (html) => {
-                    const tmp = document.createElement('div');
-                    tmp.innerHTML = html;
-                    return tmp.textContent || tmp.innerText || '';
-                };
-
-                const editorCommentPlain = stripHtml(formData.commentsToEditor).trim();
-                const authorCommentPlain = stripHtml(formData.commentsToAuthor).trim();
-
-                // Validate comments to editor
-                if (!editorCommentPlain) {
-                    isValid = false;
-                    errorMessage = 'Please provide comments to the editor';
-                }
-                // Validate comments to author
-                else if (!authorCommentPlain) {
-                    isValid = false;
-                    errorMessage = 'Please provide comments to the author';
-                }
-                // Validate recommendation
-                else if (!formData.recommendation) {
-                    isValid = false;
-                    errorMessage = 'Please select a recommendation';
-                }
-                // Validate score (should be between 0-100)
-                else if (isNaN(formData.score) || formData.score < 0 || formData.score > 100) {
-                    isValid = false;
-                    errorMessage = 'Please provide a valid score between 0-100';
-                }
-
-                if (!isValid) {
-                    toastr.error(errorMessage, 'Please fill out the review form');
-                    return;
-                }
-
-                const submitBtn = document.getElementById('submitReviewBtn');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-                submitBtn.disabled = true;
-
-                let response;
-
-                if (this.selectedFile) {
-                    const formDataObj = new FormData();
-                    formDataObj.append('reviewId', formData.reviewId);
-                    formDataObj.append('commentsToEditor', formData.commentsToEditor);
-                    formDataObj.append('commentsToAuthor', formData.commentsToAuthor);
-                    formDataObj.append('recommendation', formData.recommendation);
-                    formDataObj.append('score', formData.score.toString());
-                    formDataObj.append('reviewFile', this.selectedFile);
-
-                    response = await fetch(`${BASE_URL}/reviews/submit`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: formDataObj
-                    });
-                } else {
-                    response = await fetch(`${BASE_URL}/reviews/submit`, {
+                    const data = await apiFetch(`${BASE_URL}/reviews/respond`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
                         },
-                        body: JSON.stringify(formData)
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!data.success) {
+                        throw new Error(data.message || `Failed to ${decision} review`);
+                    }
+
+                    toastr.success(`Successfully ${decision}ed the review invitation`, 'Success');
+                    this.review.invitationStatus = decision;
+                    await this.loadReviewData();
+                    this.updateReviewFormVisibility();
+
+                } catch (error) {
+                    console.error('Error responding to invitation:', error);
+                    toastr.error(error.message || 'Failed to respond to invitation', 'Error');
+
+                    const acceptBtn = document.getElementById('acceptBtn');
+                    const declineBtn = document.getElementById('declineBtn');
+                    acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> Accept Review';
+                    declineBtn.innerHTML = '<i class="fas fa-times-circle"></i> Decline Review';
+
+                    if (this.review?.invitationStatus === 'pending') {
+                        acceptBtn.disabled = false;
+                        declineBtn.disabled = false;
+                    }
+                }
+            }
+
+            handleFileSelect(event) {
+                const files = event.target.files;
+                if (!files || files.length === 0) return;
+
+                const file = files[0];
+
+                const allowedTypes = ['application/pdf', 'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+                if (!allowedTypes.includes(file.type)) {
+                    toastr.error('Please upload only PDF or Word documents', 'Invalid File Type');
+                    return;
+                }
+
+                const maxSize = 10 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    toastr.error('File size must be less than 10MB', 'File Too Large');
+                    return;
+                }
+
+                this.selectedFile = file;
+                this.updateFilePreview();
+            }
+
+            updateFilePreview() {
+                const filePreview = document.getElementById('filePreview');
+                const fileName = document.getElementById('fileNamePreview');
+                const fileSize = document.getElementById('fileSizePreview');
+
+                if (!this.selectedFile) {
+                    filePreview.classList.remove('show');
+                    return;
+                }
+
+                const sizeInMB = (this.selectedFile.size / (1024 * 1024)).toFixed(2);
+
+                fileName.textContent = this.selectedFile.name;
+                fileSize.textContent = `${sizeInMB} MB`;
+
+                filePreview.classList.add('show');
+            }
+
+            removeSelectedFile() {
+                this.selectedFile = null;
+                document.getElementById('reviewFile').value = '';
+                document.getElementById('filePreview').classList.remove('show');
+            }
+
+            async submitReview() {
+                try {
+                    const formData = {
+                        reviewId: this.reviewId,
+                        commentsToEditor: document.getElementById('commentsToEditor').value.trim(),
+                        commentsToAuthor: document.getElementById('commentsToAuthor').value.trim(),
+                        recommendation: document.querySelector('input[name="recommendation"]:checked')?.value,
+                        score: parseInt(document.getElementById('score').value)
+                    };
+
+                    // Enhanced validation
+                    let isValid = true;
+                    let errorMessage = '';
+
+                    // Convert HTML to plain text for validation
+                    const stripHtml = (html) => {
+                        const tmp = document.createElement('div');
+                        tmp.innerHTML = html;
+                        return tmp.textContent || tmp.innerText || '';
+                    };
+
+                    const editorCommentPlain = stripHtml(formData.commentsToEditor).trim();
+                    const authorCommentPlain = stripHtml(formData.commentsToAuthor).trim();
+
+                    // Validate comments to editor
+                    if (!editorCommentPlain) {
+                        isValid = false;
+                        errorMessage = 'Please provide comments to the editor';
+                    }
+                    // Validate comments to author
+                    else if (!authorCommentPlain) {
+                        isValid = false;
+                        errorMessage = 'Please provide comments to the author';
+                    }
+                    // Validate recommendation
+                    else if (!formData.recommendation) {
+                        isValid = false;
+                        errorMessage = 'Please select a recommendation';
+                    }
+                    // Validate score (should be between 0-100)
+                    else if (isNaN(formData.score) || formData.score < 0 || formData.score > 100) {
+                        isValid = false;
+                        errorMessage = 'Please provide a valid score between 0-100';
+                    }
+
+                    if (!isValid) {
+                        toastr.error(errorMessage, 'Please fill out the review form');
+                        return;
+                    }
+
+                    const submitBtn = document.getElementById('submitReviewBtn');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                    submitBtn.disabled = true;
+
+                    let response;
+
+                    if (this.selectedFile) {
+                        const formDataObj = new FormData();
+                        formDataObj.append('reviewId', formData.reviewId);
+                        formDataObj.append('commentsToEditor', formData.commentsToEditor);
+                        formDataObj.append('commentsToAuthor', formData.commentsToAuthor);
+                        formDataObj.append('recommendation', formData.recommendation);
+                        formDataObj.append('score', formData.score.toString());
+                        formDataObj.append('reviewFile', this.selectedFile);
+
+                        response = await fetch(`${BASE_URL}/reviews/submit`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: formDataObj
+                        });
+                    } else {
+                        response = await fetch(`${BASE_URL}/reviews/submit`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                    }
+
+                    const responseData = await response.json();
+
+                    if (!responseData.success) {
+                        throw new Error(responseData.message || 'Failed to submit review');
+                    }
+
+                    Swal.fire({
+                        title: 'Review Submitted Successfully!',
+                        text: 'Thank you for your review. The editor has been notified.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#10b981',
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(async () => {
+                        await this.loadReviewData();
+                        this.updateReviewFormVisibility();
+                    });
+
+                } catch (error) {
+                    console.error('Error submitting review:', error);
+                    toastr.error(error.message || 'Failed to submit review', 'Error');
+                } finally {
+                    const submitBtn = document.getElementById('submitReviewBtn');
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Review';
+                    submitBtn.disabled = false;
+                }
+            }
+
+            resetForm() {
+                const form = document.getElementById('reviewForm');
+                if (form) {
+                    form.reset();
+                    document.getElementById('scoreDisplay').textContent = '50';
+                    document.getElementById('score').value = '50';
+                    this.removeSelectedFile();
+
+                    // Reset rich text editors
+                    const editorContents = document.querySelectorAll('.editor-content');
+                    editorContents.forEach(editor => {
+                        editor.innerHTML = '';
+                    });
+
+                    const textareas = document.querySelectorAll('textarea');
+                    textareas.forEach(textarea => {
+                        textarea.value = '';
                     });
                 }
+            }
 
-                const responseData = await response.json();
-
-                if (!responseData.success) {
-                    throw new Error(responseData.message || 'Failed to submit review');
+            // Content display methods
+            processContentForDisplay(content) {
+                if (!content || content.trim() === '') {
+                    return {
+                        plainText: '',
+                        displayHtml: '<span style="color: #9ca3af;">No content provided.</span>'
+                    };
                 }
 
-                Swal.fire({
-                    title: 'Review Submitted Successfully!',
-                    text: 'Thank you for your review. The editor has been notified.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#10b981',
-                    timer: 3000,
-                    timerProgressBar: true
-                }).then(async () => {
-                    await this.loadReviewData();
-                });
+                const sanitizedHtml = this.sanitizeHTML(content);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = sanitizedHtml;
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
 
-            } catch (error) {
-                console.error('Error submitting review:', error);
-                toastr.error(error.message || 'Failed to submit review', 'Error');
-            } finally {
-                const submitBtn = document.getElementById('submitReviewBtn');
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Review';
-                submitBtn.disabled = false;
-            }
-        }
-
-        resetForm() {
-            const form = document.getElementById('reviewForm');
-            if (form) {
-                form.reset();
-                document.getElementById('scoreDisplay').textContent = '50';
-                document.getElementById('score').value = '50';
-                this.removeSelectedFile();
-
-                // Reset rich text editors
-                const editorContents = document.querySelectorAll('.editor-content');
-                editorContents.forEach(editor => {
-                    editor.innerHTML = '';
-                });
-
-                const textareas = document.querySelectorAll('textarea');
-                textareas.forEach(textarea => {
-                    textarea.value = '';
-                });
-            }
-        }
-
-        // Content display methods
-        processContentForDisplay(content) {
-            if (!content || content.trim() === '') {
                 return {
-                    plainText: '',
-                    displayHtml: '<span style="color: #9ca3af;">No content provided.</span>'
+                    plainText: plainText,
+                    displayHtml: sanitizedHtml
                 };
             }
 
-            const sanitizedHtml = this.sanitizeHTML(content);
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = sanitizedHtml;
-            const plainText = tempDiv.textContent || tempDiv.innerText || '';
+            sanitizeHTML(html) {
+                if (!html) return '';
 
-            return {
-                plainText: plainText,
-                displayHtml: sanitizedHtml
-            };
-        }
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
 
-        sanitizeHTML(html) {
-            if (!html) return '';
+                const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
+                scripts.forEach(script => script.remove());
 
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
+                const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
-            const scripts = tempDiv.querySelectorAll('script, style, link, meta, object, embed, iframe, frame');
-            scripts.forEach(script => script.remove());
+                const allElements = tempDiv.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (!allowedTags.includes(el.tagName.toLowerCase())) {
+                        const text = document.createTextNode(el.textContent);
+                        el.parentNode.replaceChild(text, el);
+                    }
+                });
 
-            const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+                return tempDiv.innerHTML.trim() || html;
+            }
 
-            const allElements = tempDiv.querySelectorAll('*');
-            allElements.forEach(el => {
-                if (!allowedTags.includes(el.tagName.toLowerCase())) {
-                    const text = document.createTextNode(el.textContent);
-                    el.parentNode.replaceChild(text, el);
-                }
-            });
+            encodeForModal(content) {
+                return String(content)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;')
+                    .replaceAll('\n', ' ')
+                    .replaceAll('\r', '');
+            }
 
-            return tempDiv.innerHTML.trim() || html;
-        }
+            showFullContent(contentHtml, contentType, title) {
+                this.currentModalContent = contentHtml;
+                this.currentModalType = contentType;
+                this.currentModalTitle = title;
 
-        encodeForModal(content) {
-            return String(content)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;')
-                .replaceAll('\n', ' ')
-                .replaceAll('\r', '');
-        }
+                const modal = document.getElementById('contentModal');
+                const modalTitle = document.getElementById('contentModalTitle');
+                const modalType = document.getElementById('contentModalType');
+                const contentDisplay = document.getElementById('contentDisplay');
 
-        showFullContent(contentHtml, contentType, title) {
-            this.currentModalContent = contentHtml;
-            this.currentModalType = contentType;
-            this.currentModalTitle = title;
+                if (!modal || !modalTitle || !modalType || !contentDisplay) return;
 
-            const modal = document.getElementById('contentModal');
-            const modalTitle = document.getElementById('contentModalTitle');
-            const modalType = document.getElementById('contentModalType');
-            const contentDisplay = document.getElementById('contentDisplay');
+                modalTitle.textContent = title;
 
-            if (!modal || !modalTitle || !modalType || !contentDisplay) return;
+                const typeMap = {
+                    'cover-letter': 'Cover Letter',
+                    'changes-summary': 'Changes Summary',
+                    'abstract': 'Abstract',
+                    'timeline-comment': 'Timeline Comment'
+                };
 
-            modalTitle.textContent = title;
+                modalType.textContent = typeMap[contentType] || 'Content';
 
-            const typeMap = {
-                'cover-letter': 'Cover Letter',
-                'changes-summary': 'Changes Summary',
-                'abstract': 'Abstract',
-                'timeline-comment': 'Timeline Comment'
-            };
-
-            modalType.textContent = typeMap[contentType] || 'Content';
-
-            contentDisplay.innerHTML = `
+                contentDisplay.innerHTML = `
                 <div class="content-display">
                     ${contentHtml || '<div class="empty">No content available</div>'}
                 </div>
             `;
 
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        closeContentModal() {
-            const modal = document.getElementById('contentModal');
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-                this.currentModalContent = '';
-                this.currentModalType = '';
-                this.currentModalTitle = '';
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
             }
-        }
 
-        formatStatus(status) {
-            const statusMap = {
-                'submitted': 'Submitted',
-                'under_review': 'Under Review',
-                'reviewed': 'Reviewed',
-                'accepted': 'Accepted',
-                'rejected': 'Rejected',
-                'revised': 'Revised',
-                'awaiting_payment': 'Awaiting Payment',
-                'published': 'Published',
-                'minor_revision': 'Minor Revision',
-                'major_revision': 'Major Revision',
-                'revision_requested': 'Revision Requested'
-            };
-            return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
-        }
+            closeContentModal() {
+                const modal = document.getElementById('contentModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    this.currentModalContent = '';
+                    this.currentModalType = '';
+                    this.currentModalTitle = '';
+                }
+            }
 
-        formatDate(dateString, dateOnly = false) {
-            try {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                if (dateOnly) {
+            formatStatus(status) {
+                const statusMap = {
+                    'submitted': 'Submitted',
+                    'under_review': 'Under Review',
+                    'reviewed': 'Reviewed',
+                    'accepted': 'Accepted',
+                    'rejected': 'Rejected',
+                    'revised': 'Revised',
+                    'awaiting_payment': 'Awaiting Payment',
+                    'published': 'Published',
+                    'minor_revision': 'Minor Revision',
+                    'major_revision': 'Major Revision',
+                    'revision_requested': 'Revision Requested'
+                };
+                return statusMap[status] || (status.charAt(0).toUpperCase() + status.slice(1)).replace(/_/g, ' ');
+            }
+
+            formatDate(dateString, dateOnly = false) {
+                try {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    if (dateOnly) {
+                        return date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                    }
                     return date.toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
-                        day: 'numeric'
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
                     });
+                } catch (error) {
+                    return dateString;
                 }
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit'
-                });
-            } catch (error) {
-                return dateString;
+            }
+
+            showLoading() {
+                document.getElementById('loadingScreen').style.display = 'block';
+                document.getElementById('errorScreen').style.display = 'none';
+                document.getElementById('contentContainer').style.display = 'none';
+            }
+
+            hideLoading() {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
+
+            showContent() {
+                document.getElementById('contentContainer').style.display = 'block';
+            }
+
+            showError(message) {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('errorScreen').style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+            }
+
+            escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str)
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+
+            renderTimeline(events) {
+                const timelineContainer = document.getElementById('recentTimeline');
+                if (!timelineContainer) return;
+
+                if (events.length === 0) {
+                    timelineContainer.innerHTML = '<div style="color: var(--muted); text-align: center; padding: 2rem;">No timeline events found</div>';
+                }
             }
         }
 
-        showLoading() {
-            document.getElementById('loadingScreen').style.display = 'block';
-            document.getElementById('errorScreen').style.display = 'none';
-            document.getElementById('contentContainer').style.display = 'none';
-        }
-
-        hideLoading() {
-            document.getElementById('loadingScreen').style.display = 'none';
-        }
-
-        showContent() {
-            document.getElementById('contentContainer').style.display = 'block';
-        }
-
-        showError(message) {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('errorScreen').style.display = 'block';
-            document.getElementById('errorMessage').textContent = message;
-        }
-
-        escapeHtml(str) {
-            if (!str && str !== 0) return '';
-            return String(str)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;');
-        }
-
-        renderTimeline(events) {
-            const timelineContainer = document.getElementById('recentTimeline');
-            if (!timelineContainer) return;
-
-            if (events.length === 0) {
-                timelineContainer.innerHTML = '<div style="color: var(--muted); text-align: center; padding: 2rem;">No timeline events found</div>';
-            }
-        }
-    }
-
-    // Initialize after DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
-        window.reviewDetails = new ReviewDetailsManager();
-    });
-</script>
+        // Initialize after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.reviewDetails = new ReviewDetailsManager();
+        });
+    </script>
 </body>
 
 </html>

@@ -1063,876 +1063,875 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Review Progress JavaScript -->
-    <script type="module">
+<script type="module">
 
-        import { BASE_URL, token } from '../assets/js/utility.js';
+    import { BASE_URL, token } from '../assets/js/utility.js';
 
-        class ReviewProgressManager {
-            constructor() {
-                this.submissionId = this.getSubmissionIdFromURL();
-                this.progressData = null;
-                this.filteredTimeline = [];
-                this.currentFilter = 'all';
-                this.reviewersData = [];
-                this.currentReviewId = null;
-                this.currentVisibleToAuthor = false;
-                this.currentCommentToAuthor = '';
-                this.modalMode = ''; // 'comments' or 'recommendation'
+    class ReviewProgressManager {
+        constructor() {
+            this.submissionId = this.getSubmissionIdFromURL();
+            this.progressData = null;
+            this.filteredTimeline = [];
+            this.currentFilter = 'all';
+            this.reviewersData = [];
+            this.currentReviewId = null;
+            this.currentVisibleToAuthor = false;
+            this.currentCommentToAuthor = '';
+            this.modalMode = ''; // 'comments' or 'recommendation'
 
-                if (!this.submissionId) {
-                    this.showError('No submission ID provided');
-                    return;
-                }
-
-                this.initializeToastr();
-                this.bindEvents();
-                this.initialize();
+            if (!this.submissionId) {
+                this.showError('No submission ID provided');
+                return;
             }
 
-            initializeToastr() {
-                toastr.options = {
-                    closeButton: false,
-                    progressBar: false,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000,
-                    extendedTimeOut: 1000
-                };
-            }
+            this.initializeToastr();
+            this.bindEvents();
+            this.initialize();
+        }
 
-            bindEvents() {
-                // Timeline filter buttons
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const filter = e.target.dataset.filter;
-                        this.filterTimeline(filter);
-                    });
+        initializeToastr() {
+            toastr.options = {
+                closeButton: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                timeOut: 3000,
+                extendedTimeOut: 1000
+            };
+        }
+
+        bindEvents() {
+            // Timeline filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const filter = e.target.dataset.filter;
+                    this.filterTimeline(filter);
                 });
+            });
 
-                // Modal close button
-                document.getElementById('closeModal')?.addEventListener('click', () => {
+            // Modal close button
+            document.getElementById('closeModal')?.addEventListener('click', () => {
+                this.closeModal();
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('detailsModal')?.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('detailsModal')) {
                     this.closeModal();
-                });
-
-                // Close modal when clicking outside
-                document.getElementById('detailsModal')?.addEventListener('click', (e) => {
-                    if (e.target === document.getElementById('detailsModal')) {
-                        this.closeModal();
-                    }
-                });
-
-                // Close modal with Escape key
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        this.closeModal();
-                    }
-                });
-            }
-
-            getSubmissionIdFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('id');
-            }
-
-            async initialize() {
-                this.showLoading();
-                await this.loadProgressData();
-            }
-
-            async loadProgressData() {
-                try {
-                    if (!token) {
-                        throw new Error('Authentication token not found');
-                    }
-
-                    const response = await fetch(`${BASE_URL}/editor/review-progress?submissionId=${this.submissionId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch review progress: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to load review progress');
-                    }
-
-                    this.progressData = data;
-                    await this.enrichReviewerData();
-                    this.renderManuscriptHeader();
-                    this.renderReviewersTable();
-                    this.generateTimeline();
-
-                    this.hideLoading();
-                    this.showContent();
-
-                } catch (error) {
-                    console.error('Error loading review progress:', error);
-                    this.showError('Failed to load review progress. Please try again.');
                 }
-            }
+            });
 
-            async enrichReviewerData() {
-                if (!this.progressData || !this.progressData.reviewers) return;
-
-                const reviewers = this.progressData.reviewers;
-                this.reviewersData = reviewers.map(reviewer => ({
-                    ...reviewer,
-                    reviewerName: reviewer.reviewerName || 'Unknown Reviewer',
-                    reviewerEmail: reviewer.reviewerEmail || ''
-                }));
-            }
-
-            renderManuscriptHeader() {
-                const header = document.getElementById('manuscriptHeader');
-                if (!header || !this.progressData) return;
-
-                const submissionTitle = this.progressData.submissionTitle || 'Unknown Title';
-                const scope = this.progressData.scope || 'Unknown Scope';
-
-                // NEW: Create View Versions button
-                const viewVersionsButton = document.createElement('div');
-                viewVersionsButton.id = 'viewVersionsButton';
-                viewVersionsButton.style.marginLeft = 'auto'; // Pushes it to the right
-                viewVersionsButton.style.display = 'flex';
-                viewVersionsButton.style.alignItems = 'center';
-
-                // Create the button link
-                const versionsLink = document.createElement('a');
-                versionsLink.href = `version.html?submissionId=${this.submissionId}`;
-                versionsLink.className = 'view-versions-btn';
-                versionsLink.innerHTML = '<i class="fas fa-history"></i> View All Versions';
-
-                viewVersionsButton.appendChild(versionsLink);
-
-                header.innerHTML = `
-        <h1>${this.escapeHtml(submissionTitle)}</h1>
-        <div class="header-meta" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <div class="meta-item" style="display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-book-open"></i>
-                <span>Scope: ${this.escapeHtml(scope)}</span>
-            </div>
-            <!-- View Versions button will be appended here -->
-        </div>
-    `;
-
-                // Find the header-meta div and append the button
-                const headerMeta = header.querySelector('.header-meta');
-                if (headerMeta) {
-                    headerMeta.appendChild(viewVersionsButton);
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.closeModal();
                 }
-            }
+            });
+        }
 
-            renderReviewersTable() {
-                const tableBody = document.getElementById('reviewersTableBody');
-                const noReviewersMessage = document.getElementById('noReviewersMessage');
+        getSubmissionIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
 
-                if (!tableBody) return;
+        async initialize() {
+            this.showLoading();
+            await this.loadProgressData();
+        }
 
-                if (this.reviewersData.length === 0) {
-                    tableBody.innerHTML = '';
-                    noReviewersMessage.style.display = 'block';
-                    return;
+        async loadProgressData() {
+            try {
+                if (!token) {
+                    throw new Error('Authentication token not found');
                 }
 
-                noReviewersMessage.style.display = 'none';
-
-                let tableHTML = '';
-
-                this.reviewersData.forEach(reviewer => {
-                    const status = reviewer.invitationStatus || 'pending';
-                    const statusClass = this.getStatusClass(status);
-                    const statusText = this.formatStatus(status);
-
-                    const scoreDisplay = reviewer.score !== null && reviewer.score !== undefined ?
-                        `<div class="score-display"><span class="score-value">${reviewer.score}</span><span style="font-size: 1.15rem;">/ 100</span></div>` :
-                        `<span class="score-empty">Not scored</span>`;
-
-                    const recommendation = reviewer.recommendation || '';
-                    const invitationDate = this.formatDate(reviewer.createdAt);
-
-                    const reviewerName = reviewer.reviewerName;
-                    const reviewerEmail = reviewer.reviewerEmail;
-
-                    // Check if reviewer has comments
-                    const hasComments = reviewer.commentToEditor || reviewer.commentToAuthor;
-                    const isReviewCompleted = reviewer.invitationStatus === 'completed' || reviewer.invitationStatus === 'accepted';
-
-                    // Comments column - Use data attributes instead of inline onclick
-                    let commentsDisplay = '';
-                    if (isReviewCompleted) {
-                        if (hasComments) {
-                            commentsDisplay = `
-                                <button class="view-comments-btn" 
-                                        data-reviewer-name="${this.escapeHtml(reviewerName)}"
-                                        data-reviewer-email="${this.escapeHtml(reviewerEmail)}"
-                                        data-review-id="${reviewer.reviewId}"
-                                        data-comment-to-editor="${this.escapeHtml(reviewer.commentToEditor || '')}"
-                                        data-comment-to-author="${this.escapeHtml(reviewer.commentToAuthor || '')}"
-                                        data-visible-to-author="${reviewer.visibleToAuthor || false}">
-                                    <i class="fas fa-comment"></i> View
-                                </button>
-                            `;
-                        } else {
-                            commentsDisplay = '<span class="score-empty">No comments</span>';
-                        }
-                    } else {
-                        commentsDisplay = '<span class="score-empty">Not submitted</span>';
-                    }
-
-                    // Recommendation display
-                    let recommendationDisplay = '';
-                    if (recommendation) {
-                        const isLong = recommendation.length > 100;
-                        const displayText = isLong ? recommendation.substring(0, 100) + '...' : recommendation;
-
-                        recommendationDisplay = `
-                            <div class="recommendation-text ${isLong ? 'recommendation-truncated' : ''}">
-                                ${this.escapeHtml(displayText)}
-                            </div>
-                            ${isLong ? `
-                                <button class="view-recommendation-btn" 
-                                        data-reviewer-name="${this.escapeHtml(reviewerName)}"
-                                        data-reviewer-email="${this.escapeHtml(reviewerEmail)}"
-                                        data-recommendation="${this.escapeHtml(recommendation)}">
-                                    <i class="fas fa-eye"></i> View recommendation
-                                </button>
-                            ` : ''}
-                        `;
-                    } else {
-                        recommendationDisplay = '<span class="score-empty">No recommendation</span>';
-                    }
-
-                    tableHTML += `
-                        <tr>
-                            <td class="reviewer-info">
-                                <div class="reviewer-name">${this.escapeHtml(reviewerName)}</div>
-                                <div class="reviewer-email">${this.escapeHtml(reviewerEmail)}</div>
-                            </td>
-                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                            <td>${scoreDisplay}</td>
-                            <td class="recommendation-cell">${recommendationDisplay}</td>
-                            <td>${invitationDate}</td>
-                            <td class="comments-cell">${commentsDisplay}</td>
-                        </tr>
-                    `;
-                });
-
-                tableBody.innerHTML = tableHTML;
-
-                // Add event listeners after rendering
-                this.attachTableEventListeners();
-            }
-
-            attachTableEventListeners() {
-                // Add event listener for comment buttons
-                document.querySelectorAll('.view-comments-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const reviewerName = button.getAttribute('data-reviewer-name');
-                        const reviewerEmail = button.getAttribute('data-reviewer-email');
-                        const commentToEditor = button.getAttribute('data-comment-to-editor');
-                        const commentToAuthor = button.getAttribute('data-comment-to-author');
-                        const visibleToAuthor = button.getAttribute('data-visible-to-author') === 'true';
-                        const reviewId = button.getAttribute('data-review-id');
-
-                        this.showCommentsModal(reviewerName, reviewerEmail, commentToEditor, commentToAuthor, visibleToAuthor, reviewId);
-                    });
-                });
-
-                // Add event listener for recommendation buttons
-                document.querySelectorAll('.view-recommendation-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const reviewerName = button.getAttribute('data-reviewer-name');
-                        const reviewerEmail = button.getAttribute('data-reviewer-email');
-                        const recommendation = button.getAttribute('data-recommendation');
-
-                        this.showRecommendationModal(reviewerName, reviewerEmail, recommendation);
-                    });
-                });
-            }
-
-            showCommentsModal(reviewerName, reviewerEmail, commentToEditor, commentToAuthor, visibleToAuthor, reviewId) {
-                this.modalMode = 'comments';
-                this.currentReviewId = reviewId;
-                this.currentCommentToAuthor = commentToAuthor;
-                this.currentVisibleToAuthor = visibleToAuthor;
-
-                const modalTitle = document.getElementById('modalTitle');
-                const modalBody = document.getElementById('modalBody');
-
-                if (!modalTitle || !modalBody) return;
-
-                modalTitle.textContent = 'Reviewer Comments';
-
-                // Format comments using the improved formatting function
-                const formattedCommentToEditor = this.formatCommentForDisplay(commentToEditor);
-                const formattedCommentToAuthor = this.formatCommentForDisplay(commentToAuthor);
-
-                modalBody.innerHTML = `
-                    <div class="modal-reviewer-info">
-                        <div class="modal-reviewer-name">${reviewerName}</div>
-                        <div class="modal-reviewer-email">${reviewerEmail}</div>
-                    </div>
-                    
-                    <div class="modal-comments-content">
-                        <!-- Comment to Editor -->
-                        <div class="comment-section">
-                            <div class="comment-section-header">
-                                <h4><i class="fas fa-user-tie"></i> Comment to Editor</h4>
-                            </div>
-                            <div class="comment-content clean-text">
-                                ${formattedCommentToEditor || '<div class="empty">No comments to editor</div>'}
-                            </div>
-                        </div>
-                        
-                        <!-- Comment to Author -->
-                        <div class="comment-section">
-                            <div class="comment-section-header">
-                                <h4><i class="fas fa-user-edit"></i> Comment to Author</h4>
-                                <div class="comment-toggle">
-                                    <span class="toggle-label">Visible to Author</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="visibilityToggle" ${visibleToAuthor ? 'checked' : ''}>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div id="visibilityMessage" class="visibility-message ${visibleToAuthor ? 'visible' : 'hidden'}">
-                                <i class="fas ${visibleToAuthor ? 'fa-eye' : 'fa-eye-slash'}"></i>
-                                ${visibleToAuthor ? 'Comment visible to author' : 'Comment not visible to author'}
-                            </div>
-                            <div class="comment-content clean-text">
-                                ${formattedCommentToAuthor || '<div class="empty">No comments to author</div>'}
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Add event listener for the toggle
-                const toggle = document.getElementById('visibilityToggle');
-                if (toggle) {
-                    toggle.addEventListener('change', () => this.toggleCommentVisibility());
-                }
-
-                document.getElementById('detailsModal').classList.add('active');
-            }
-
-            showRecommendationModal(reviewerName, reviewerEmail, recommendation) {
-                this.modalMode = 'recommendation';
-
-                const modalTitle = document.getElementById('modalTitle');
-                const modalBody = document.getElementById('modalBody');
-
-                if (!modalTitle || !modalBody) return;
-
-                modalTitle.textContent = 'Reviewer Recommendation';
-
-                // Format recommendation using the improved formatting function
-                const formattedRecommendation = this.formatCommentForDisplay(recommendation);
-
-                modalBody.innerHTML = `
-                    <div class="modal-reviewer-info">
-                        <div class="modal-reviewer-name">${reviewerName}</div>
-                        <div class="modal-reviewer-email">${reviewerEmail}</div>
-                    </div>
-                    <div class="modal-recommendation-content clean-text">
-                        ${formattedRecommendation || 'No recommendation provided'}
-                    </div>
-                `;
-
-                document.getElementById('detailsModal').classList.add('active');
-            }
-
-            /**
-             * Improved function to format comments and recommendations for display
-             * This handles the special characters, HTML tags, and formatting
-             */
-            formatCommentForDisplay(content) {
-                if (!content || content.trim() === '') {
-                    return '';
-                }
-
-                // Decode HTML entities
-                const decodeHtml = (html) => {
-                    const txt = document.createElement('textarea');
-                    txt.innerHTML = html;
-                    return txt.value;
-                };
-
-                let cleanedContent = decodeHtml(content);
-
-                // Remove leading/trailing quotes if present (common in JSON strings)
-                if (cleanedContent.startsWith('"') && cleanedContent.endsWith('"')) {
-                    cleanedContent = cleanedContent.slice(1, -1);
-                }
-
-                // Replace escaped newlines with actual newlines
-                cleanedContent = cleanedContent.replace(/\\n/g, '\n');
-                cleanedContent = cleanedContent.replace(/\\r/g, '\r');
-                cleanedContent = cleanedContent.replace(/\\t/g, '\t');
-
-                // Remove HTML tags but preserve their semantic meaning
-                cleanedContent = this.convertHtmlToPlainText(cleanedContent);
-
-                // Format the text nicely for display
-                return this.formatPlainTextForDisplay(cleanedContent);
-            }
-
-            /**
-             * Convert HTML to plain text while preserving structure
-             */
-            convertHtmlToPlainText(html) {
-                // Create a temporary div to parse HTML
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-
-                // Remove script and style elements
-                const scripts = tempDiv.querySelectorAll('script, style, link, meta');
-                scripts.forEach(script => script.remove());
-
-                // Convert common HTML elements to plain text with formatting
-                const replacements = [
-                    // Headings
-                    { tag: 'h1', replacement: '\n\n## ' },
-                    { tag: 'h2', replacement: '\n\n## ' },
-                    { tag: 'h3', replacement: '\n\n### ' },
-                    { tag: 'h4', replacement: '\n\n#### ' },
-                    { tag: 'h5', replacement: '\n\n##### ' },
-                    { tag: 'h6', replacement: '\n\n###### ' },
-
-                    // Paragraphs and line breaks
-                    { tag: 'p', replacement: '\n\n' },
-                    { tag: 'br', replacement: '\n' },
-                    { tag: 'div', replacement: '\n' },
-
-                    // Lists
-                    { tag: 'li', replacement: '\n• ' },
-                    { tag: 'ul', replacement: '\n' },
-                    { tag: 'ol', replacement: '\n' },
-
-                    // Block elements
-                    { tag: 'blockquote', replacement: '\n> ' },
-                    { tag: 'pre', replacement: '\n```\n' },
-                    { tag: 'code', replacement: '`' },
-
-                    // Formatting (we'll handle these differently)
-                    { tag: 'strong', replacement: '**' },
-                    { tag: 'b', replacement: '**' },
-                    { tag: 'em', replacement: '*' },
-                    { tag: 'i', replacement: '*' },
-                    { tag: 'u', replacement: '__' }
-                ];
-
-                // First, get the text content to remove all tags
-                let text = tempDiv.textContent || tempDiv.innerText || '';
-
-                // Clean up multiple newlines
-                text = text.replace(/\n\s*\n\s*\n/g, '\n\n');
-                text = text.replace(/\r\n/g, '\n');
-
-                return text;
-            }
-
-            /**
-             * Format plain text for nice display
-             */
-            formatPlainTextForDisplay(text) {
-                if (!text) return '';
-
-                // Split by paragraphs (double newlines)
-                let paragraphs = text.split(/\n\s*\n/);
-
-                // Clean each paragraph
-                paragraphs = paragraphs.map(paragraph => {
-                    // Trim whitespace
-                    paragraph = paragraph.trim();
-
-                    // Replace multiple spaces with single space
-                    paragraph = paragraph.replace(/\s+/g, ' ');
-
-                    // Add paragraph wrapper if there's content
-                    if (paragraph) {
-                        return `<p>${this.escapeHtml(paragraph)}</p>`;
-                    }
-                    return '';
-                }).filter(p => p !== '');
-
-                // If no paragraphs, return empty
-                if (paragraphs.length === 0) {
-                    return '';
-                }
-
-                return paragraphs.join('');
-            }
-
-            /**
-             * Alternative: Keep the original HTML but sanitize it
-             */
-            sanitizeHtmlForDisplay(html) {
-                if (!html) return '';
-
-                // Decode HTML entities
-                const decodeHtml = (html) => {
-                    const txt = document.createElement('textarea');
-                    txt.innerHTML = html;
-                    return txt.value;
-                };
-
-                let content = decodeHtml(html);
-
-                // Remove leading/trailing quotes
-                if (content.startsWith('"') && content.endsWith('"')) {
-                    content = content.slice(1, -1);
-                }
-
-                // Replace escaped characters
-                content = content.replace(/\\n/g, '<br>');
-                content = content.replace(/\\r/g, '');
-                content = content.replace(/\\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
-
-                // Create a temporary div to sanitize HTML
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = content;
-
-                // Remove dangerous elements
-                const dangerousTags = ['script', 'style', 'link', 'meta', 'object', 'embed', 'iframe', 'frame'];
-                dangerousTags.forEach(tag => {
-                    const elements = tempDiv.querySelectorAll(tag);
-                    elements.forEach(el => el.remove());
-                });
-
-                // Remove all attributes except a few safe ones
-                const safeAttributes = ['href', 'src', 'alt', 'title', 'class'];
-                const allElements = tempDiv.querySelectorAll('*');
-                allElements.forEach(el => {
-                    const attributes = Array.from(el.attributes);
-                    attributes.forEach(attr => {
-                        if (!safeAttributes.includes(attr.name)) {
-                            el.removeAttribute(attr.name);
-                        }
-                    });
-                });
-
-                // Clean up empty paragraphs
-                const paragraphs = tempDiv.querySelectorAll('p');
-                paragraphs.forEach(p => {
-                    if (!p.innerHTML.trim() || p.innerHTML === '<br>') {
-                        p.remove();
+                const response = await fetch(`${BASE_URL}/editor/review-progress?submissionId=${this.submissionId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
                     }
                 });
 
-                // Ensure proper spacing
-                const blockElements = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote');
-                blockElements.forEach(el => {
-                    el.style.margin = '0 0 1rem 0';
-                });
-
-                return tempDiv.innerHTML;
-            }
-
-            async toggleCommentVisibility() {
-                if (!this.currentReviewId) return;
-
-                try {
-                    if (!token) {
-                        toastr.error('Authentication required. Please login again.', 'Error');
-                        return;
-                    }
-
-                    const response = await fetch(`${BASE_URL}/reviews/${this.currentReviewId}/visibility`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        let errorMessage = `Failed to update visibility: ${response.status}`;
-                        try {
-                            const errorData = JSON.parse(errorText);
-                            errorMessage = errorData.message || errorMessage;
-                        } catch (e) { }
-                        throw new Error(errorMessage);
-                    }
-
-                    const data = await response.json();
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to update visibility');
-                    }
-
-                    // Toggle the current state
-                    this.currentVisibleToAuthor = !this.currentVisibleToAuthor;
-
-                    // Update the message
-                    const messageElement = document.getElementById('visibilityMessage');
-                    if (messageElement) {
-                        messageElement.className = `visibility-message ${this.currentVisibleToAuthor ? 'visible' : 'hidden'}`;
-                        messageElement.innerHTML = `
-                            <i class="fas ${this.currentVisibleToAuthor ? 'fa-eye' : 'fa-eye-slash'}"></i>
-                            ${this.currentVisibleToAuthor ? 'Comment visible to author' : 'Comment not visible to author'}
-                        `;
-                    }
-
-                    toastr.success(`Comment visibility ${this.currentVisibleToAuthor ? 'enabled' : 'disabled'}`, 'Success');
-
-                } catch (error) {
-                    console.error('Error toggling comment visibility:', error);
-                    toastr.error(error.message || 'Failed to update visibility', 'Error');
-
-                    // Revert the toggle if there was an error
-                    const toggle = document.getElementById('visibilityToggle');
-                    if (toggle) {
-                        toggle.checked = this.currentVisibleToAuthor;
-                    }
-                }
-            }
-
-            closeModal() {
-                const modal = document.getElementById('detailsModal');
-                if (modal) {
-                    modal.classList.remove('active');
-                    this.currentReviewId = null;
-                    this.modalMode = '';
-                }
-            }
-
-            getStatusClass(status) {
-                const statusClasses = {
-                    'pending': 'status-pending',
-                    'accepted': 'status-accepted',
-                    'declined': 'status-declined',
-                    'completed': 'status-completed',
-                    'reviewing': 'status-pending'
-                };
-                return statusClasses[status] || 'status-pending';
-            }
-
-            formatStatus(status) {
-                const statusMap = {
-                    'pending': 'Pending',
-                    'accepted': 'Accepted',
-                    'declined': 'Declined',
-                    'completed': 'Completed',
-                    'reviewing': 'Reviewing'
-                };
-                return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
-            }
-
-            generateTimeline() {
-                const timelineContainer = document.getElementById('timelineContainer');
-                const noTimelineMessage = document.getElementById('noTimelineMessage');
-
-                if (!timelineContainer) return;
-
-                if (this.reviewersData.length === 0) {
-                    timelineContainer.innerHTML = '';
-                    noTimelineMessage.style.display = 'block';
-                    return;
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch review progress: ${response.status}`);
                 }
 
-                noTimelineMessage.style.display = 'none';
+                const data = await response.json();
 
-                const timelineEvents = [];
-
-                this.reviewersData.forEach(reviewer => {
-                    const reviewerName = reviewer.reviewerName || reviewer.reviewerEmail || 'Unknown Reviewer';
-                    const reviewerEmail = reviewer.reviewerEmail || '';
-
-                    timelineEvents.push({
-                        id: reviewer.reviewId,
-                        type: 'invited',
-                        title: 'Reviewer Invited',
-                        description: `${reviewerName} was invited to review`,
-                        date: reviewer.createdAt,
-                        reviewer: reviewerName,
-                        reviewerEmail: reviewerEmail,
-                        status: 'invited'
-                    });
-
-                    if (reviewer.invitationStatus === 'accepted') {
-                        timelineEvents.push({
-                            id: reviewer.reviewId + '_accepted',
-                            type: 'accepted',
-                            title: 'Review Accepted',
-                            description: `${reviewerName} accepted the review invitation`,
-                            date: reviewer.createdAt,
-                            reviewer: reviewerName,
-                            reviewerEmail: reviewerEmail,
-                            status: 'accepted'
-                        });
-                    }
-
-                    if (reviewer.invitationStatus === 'declined') {
-                        timelineEvents.push({
-                            id: reviewer.reviewId + '_declined',
-                            type: 'declined',
-                            title: 'Review Declined',
-                            description: `${reviewerName} declined the review invitation`,
-                            date: reviewer.createdAt,
-                            reviewer: reviewerName,
-                            reviewerEmail: reviewerEmail,
-                            status: 'declined'
-                        });
-                    }
-
-                    if (reviewer.invitationStatus === 'completed') {
-                        timelineEvents.push({
-                            id: reviewer.reviewId + '_completed',
-                            type: 'completed',
-                            title: 'Review Completed',
-                            description: `${reviewerName} completed the review${reviewer.score ? ` with score: ${reviewer.score}/10` : ''}`,
-                            date: reviewer.submittedAt || reviewer.createdAt,
-                            reviewer: reviewerName,
-                            reviewerEmail: reviewerEmail,
-                            status: 'completed'
-                        });
-                    }
-                });
-
-                timelineEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
-                this.filteredTimeline = timelineEvents;
-                this.renderTimeline();
-            }
-
-            renderTimeline() {
-                const timelineContainer = document.getElementById('timelineContainer');
-                if (!timelineContainer) return;
-
-                let filteredEvents = this.filteredTimeline;
-                if (this.currentFilter !== 'all') {
-                    filteredEvents = this.filteredTimeline.filter(event => event.status === this.currentFilter);
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load review progress');
                 }
 
-                if (filteredEvents.length === 0) {
-                    timelineContainer.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-filter"></i>
-                            <h3>No ${this.currentFilter} events</h3>
-                            <p>No ${this.currentFilter} timeline events found.</p>
-                        </div>
-                    `;
-                    return;
-                }
+                this.progressData = data;
+                await this.enrichReviewerData();
+                this.renderManuscriptHeader();
+                this.renderReviewersTable();
+                this.generateTimeline();
 
-                let timelineHTML = '';
-                filteredEvents.forEach(event => {
-                    const icon = this.getTimelineIcon(event.type);
-                    const formattedDate = this.formatDate(event.date);
+                this.hideLoading();
+                this.showContent();
 
-                    timelineHTML += `
-                        <div class="timeline-item">
-                            <div class="timeline-icon">
-                                <i class="${icon}"></i>
-                            </div>
-                            <div class="timeline-content">
-                                <div class="timeline-header-row">
-                                    <div class="timeline-title">${event.title}</div>
-                                    <div class="timeline-date">${formattedDate}</div>
-                                </div>
-                                <div class="timeline-description">
-                                    ${event.description}
-                                    ${event.reviewerEmail ? `<br><small><strong>Email:</strong> ${event.reviewerEmail}</small>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                timelineContainer.innerHTML = timelineHTML;
-            }
-
-            getTimelineIcon(type) {
-                const icons = {
-                    'invited': 'fas fa-user-plus',
-                    'accepted': 'fas fa-check-circle',
-                    'declined': 'fas fa-times-circle',
-                    'completed': 'fas fa-flag-checkered',
-                    'reviewing': 'fas fa-pencil-alt'
-                };
-                return icons[type] || 'fas fa-circle';
-            }
-
-            filterTimeline(filter) {
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.filter === filter) {
-                        btn.classList.add('active');
-                    }
-                });
-
-                this.currentFilter = filter;
-                this.renderTimeline();
-            }
-
-            formatDate(dateString) {
-                try {
-                    if (!dateString) return 'N/A';
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                    });
-                } catch (error) {
-                    return dateString;
-                }
-            }
-
-            showLoading() {
-                document.getElementById('loadingScreen').style.display = 'block';
-                document.getElementById('errorScreen').style.display = 'none';
-                document.getElementById('contentContainer').style.display = 'none';
-            }
-
-            hideLoading() {
-                document.getElementById('loadingScreen').style.display = 'none';
-            }
-
-            showContent() {
-                document.getElementById('contentContainer').style.display = 'block';
-            }
-
-            showError(message) {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('errorScreen').style.display = 'block';
-                document.getElementById('errorMessage').textContent = message;
-            }
-
-            escapeHtml(str) {
-                if (str === undefined || str === null || str === '') return '';
-
-                // First escape HTML entities
-                const htmlEscaped = String(str)
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#39;');
-
-                // Then escape any remaining special characters that could break JS
-                return htmlEscaped
-                    .replace(/\n/g, '\\n')
-                    .replace(/\r/g, '\\r')
-                    .replace(/\t/g, '\\t');
+            } catch (error) {
+                console.error('Error loading review progress:', error);
+                this.showError('Failed to load review progress. Please try again.');
             }
         }
 
-        // Initialize review progress manager
-        const reviewProgress = new ReviewProgressManager();
-        window.reviewProgress = reviewProgress;
-    </script>
+        async enrichReviewerData() {
+            if (!this.progressData || !this.progressData.reviewers) return;
+
+            const reviewers = this.progressData.reviewers;
+            console.log(reviewers)
+            this.reviewersData = reviewers.map(reviewer => ({
+                ...reviewer,
+                reviewerName: reviewer.reviewerName || 'Unknown Reviewer',
+                reviewerEmail: reviewer.reviewerEmail || ''
+            }));
+        }
+
+        renderManuscriptHeader() {
+            const header = document.getElementById('manuscriptHeader');
+            if (!header || !this.progressData) return;
+
+            const submissionTitle = this.progressData.submissionTitle || 'Unknown Title';
+            const scope = this.progressData.scope || 'Unknown Scope';
+
+            // NEW: Create View Versions button
+            const viewVersionsButton = document.createElement('div');
+            viewVersionsButton.id = 'viewVersionsButton';
+            viewVersionsButton.style.marginLeft = 'auto'; // Pushes it to the right
+            viewVersionsButton.style.display = 'flex';
+            viewVersionsButton.style.alignItems = 'center';
+
+            // Create the button link
+            const versionsLink = document.createElement('a');
+            versionsLink.href = `version.html?submissionId=${this.submissionId}`;
+            versionsLink.className = 'view-versions-btn';
+            versionsLink.innerHTML = '<i class="fas fa-history"></i> View All Versions';
+
+            viewVersionsButton.appendChild(versionsLink);
+
+            header.innerHTML = `
+    <h1>${this.escapeHtml(submissionTitle)}</h1>
+    <div class="header-meta" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div class="meta-item" style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-book-open"></i>
+            <span>Scope: ${this.escapeHtml(scope)}</span>
+        </div>
+        <!-- View Versions button will be appended here -->
+    </div>
+`;
+
+            // Find the header-meta div and append the button
+            const headerMeta = header.querySelector('.header-meta');
+            if (headerMeta) {
+                headerMeta.appendChild(viewVersionsButton);
+            }
+        }
+
+        renderReviewersTable() {
+            const tableBody = document.getElementById('reviewersTableBody');
+            const noReviewersMessage = document.getElementById('noReviewersMessage');
+
+            if (!tableBody) return;
+
+            if (this.reviewersData.length === 0) {
+                tableBody.innerHTML = '';
+                noReviewersMessage.style.display = 'block';
+                return;
+            }
+
+            noReviewersMessage.style.display = 'none';
+
+            let tableHTML = '';
+
+            this.reviewersData.forEach(reviewer => {
+                const status = reviewer.invitationStatus || 'pending';
+                const statusClass = this.getStatusClass(status);
+                const statusText = this.formatStatus(status);
+
+                // FIXED: Check if currentReview exists and has score
+                const hasScore = reviewer.currentReview && reviewer.currentReview.score !== null && reviewer.currentReview.score !== undefined;
+                const scoreValue = hasScore ? reviewer.currentReview.score : null;
+
+                // Display score as percentage with % symbol
+                const scoreDisplay = hasScore ?
+                    `<div class="score-display"><span class="score-value">${scoreValue}%</span></div>` :
+                    `<span class="score-empty">Not scored</span>`;
+
+                // FIXED: Get recommendation from currentReview
+                const recommendation = reviewer.currentReview?.recommendation || '';
+                const formattedRecommendation = this.formatRecommendation(recommendation);
+
+                const invitationDate = this.formatDate(reviewer.currentReview?.submittedAt || reviewer.createdAt);
+
+                const reviewerName = reviewer.reviewerName;
+                const reviewerEmail = reviewer.reviewerEmail;
+
+                // FIXED: Check if reviewer has comments based on new API structure
+                const hasComments = reviewer.currentReview &&
+                    (reviewer.currentReview.commentsToEditor || reviewer.currentReview.commentsToAuthor);
+
+                // FIXED: Check if review is completed
+                const isReviewCompleted = reviewer.invitationStatus === 'accepted' &&
+                    reviewer.hasReviewedCurrentVersion === true;
+
+                // Comments column - Use data attributes instead of inline onclick
+                let commentsDisplay = '';
+                if (isReviewCompleted) {
+                    if (hasComments) {
+                        commentsDisplay = `
+                            <button class="view-comments-btn" 
+                                    data-reviewer-name="${this.escapeHtml(reviewerName)}"
+                                    data-reviewer-email="${this.escapeHtml(reviewerEmail)}"
+                                    data-review-id="${reviewer.reviewId}"
+                                    data-comment-to-editor="${this.escapeHtml(reviewer.currentReview?.commentsToEditor || '')}"
+                                    data-comment-to-author="${this.escapeHtml(reviewer.currentReview?.commentsToAuthor || '')}"
+                                    data-visible-to-author="${reviewer.currentReview?.isReleasedToAuthor || false}">
+                                <i class="fas fa-comment"></i> View
+                            </button>
+                        `;
+                    } else {
+                        commentsDisplay = '<span class="score-empty">No comments</span>';
+                    }
+                } else {
+                    commentsDisplay = '<span class="score-empty">Not submitted</span>';
+                }
+
+                // Recommendation display
+                let recommendationDisplay = '';
+                if (formattedRecommendation) {
+                    const isLong = formattedRecommendation.length > 100;
+                    const displayText = isLong ? formattedRecommendation.substring(0, 100) + '...' : formattedRecommendation;
+
+                    recommendationDisplay = `
+                        <div class="recommendation-text ${isLong ? 'recommendation-truncated' : ''}">
+                            ${this.escapeHtml(displayText)}
+                        </div>
+                        ${isLong ? `
+                            <button class="view-recommendation-btn" 
+                                    data-reviewer-name="${this.escapeHtml(reviewerName)}"
+                                    data-reviewer-email="${this.escapeHtml(reviewerEmail)}"
+                                    data-recommendation="${this.escapeHtml(formattedRecommendation)}">
+                                <i class="fas fa-eye"></i> View recommendation
+                            </button>
+                        ` : ''}
+                    `;
+                } else {
+                    recommendationDisplay = '<span class="score-empty">No recommendation</span>';
+                }
+
+                tableHTML += `
+                    <tr>
+                        <td class="reviewer-info">
+                            <div class="reviewer-name">${this.escapeHtml(reviewerName)}</div>
+                            <div class="reviewer-email">${this.escapeHtml(reviewerEmail)}</div>
+                        </td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${scoreDisplay}</td>
+                        <td class="recommendation-cell">${recommendationDisplay}</td>
+                        <td>${invitationDate}</td>
+                        <td class="comments-cell">${commentsDisplay}</td>
+                    </tr>
+                `;
+            });
+
+            tableBody.innerHTML = tableHTML;
+
+            // Add event listeners after rendering
+            this.attachTableEventListeners();
+        }
+
+        // NEW: Format recommendation from API value
+        formatRecommendation(recommendation) {
+            if (!recommendation) return '';
+
+            const recommendationMap = {
+                'minor_revision': 'Minor Revision',
+                'major_revision': 'Major Revision',
+                'accept': 'Accept',
+                'reject': 'Reject'
+            };
+
+            return recommendationMap[recommendation] || recommendation.split('_').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+
+        attachTableEventListeners() {
+            // Add event listener for comment buttons
+            document.querySelectorAll('.view-comments-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const reviewerName = button.getAttribute('data-reviewer-name');
+                    const reviewerEmail = button.getAttribute('data-reviewer-email');
+                    const commentToEditor = button.getAttribute('data-comment-to-editor');
+                    const commentToAuthor = button.getAttribute('data-comment-to-author');
+                    const visibleToAuthor = button.getAttribute('data-visible-to-author') === 'true';
+                    const reviewId = button.getAttribute('data-review-id');
+
+                    this.showCommentsModal(reviewerName, reviewerEmail, commentToEditor, commentToAuthor, visibleToAuthor, reviewId);
+                });
+            });
+
+            // Add event listener for recommendation buttons
+            document.querySelectorAll('.view-recommendation-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const reviewerName = button.getAttribute('data-reviewer-name');
+                    const reviewerEmail = button.getAttribute('data-reviewer-email');
+                    const recommendation = button.getAttribute('data-recommendation');
+
+                    this.showRecommendationModal(reviewerName, reviewerEmail, recommendation);
+                });
+            });
+        }
+
+        showCommentsModal(reviewerName, reviewerEmail, commentToEditor, commentToAuthor, visibleToAuthor, reviewId) {
+            this.modalMode = 'comments';
+            this.currentReviewId = reviewId;
+            this.currentCommentToAuthor = commentToAuthor;
+            this.currentVisibleToAuthor = visibleToAuthor;
+
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            if (!modalTitle || !modalBody) return;
+
+            modalTitle.textContent = 'Reviewer Comments';
+
+            // Format comments using the improved formatting function
+            const formattedCommentToEditor = this.formatCommentForDisplay(commentToEditor);
+            const formattedCommentToAuthor = this.formatCommentForDisplay(commentToAuthor);
+
+            modalBody.innerHTML = `
+                <div class="modal-reviewer-info">
+                    <div class="modal-reviewer-name">${reviewerName}</div>
+                    <div class="modal-reviewer-email">${reviewerEmail}</div>
+                </div>
+                
+                <div class="modal-comments-content">
+                    <!-- Comment to Editor -->
+                    <div class="comment-section">
+                        <div class="comment-section-header">
+                            <h4><i class="fas fa-user-tie"></i> Comment to Editor</h4>
+                        </div>
+                        <div class="comment-content clean-text">
+                            ${formattedCommentToEditor || '<div class="empty">No comments to editor</div>'}
+                        </div>
+                    </div>
+                    
+                    <!-- Comment to Author -->
+                    <div class="comment-section">
+                        <div class="comment-section-header">
+                            <h4><i class="fas fa-user-edit"></i> Comment to Author</h4>
+                            <div class="comment-toggle">
+                                <span class="toggle-label">Visible to Author</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="visibilityToggle" ${visibleToAuthor ? 'checked' : ''}>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div id="visibilityMessage" class="visibility-message ${visibleToAuthor ? 'visible' : 'hidden'}">
+                            <i class="fas ${visibleToAuthor ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                            ${visibleToAuthor ? 'Comment visible to author' : 'Comment not visible to author'}
+                        </div>
+                        <div class="comment-content clean-text">
+                            ${formattedCommentToAuthor || '<div class="empty">No comments to author</div>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add event listener for the toggle
+            const toggle = document.getElementById('visibilityToggle');
+            if (toggle) {
+                toggle.addEventListener('change', () => this.toggleCommentVisibility());
+            }
+
+            document.getElementById('detailsModal').classList.add('active');
+        }
+
+        showRecommendationModal(reviewerName, reviewerEmail, recommendation) {
+            this.modalMode = 'recommendation';
+
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            if (!modalTitle || !modalBody) return;
+
+            modalTitle.textContent = 'Reviewer Recommendation';
+
+            // Format recommendation using the improved formatting function
+            const formattedRecommendation = this.formatCommentForDisplay(recommendation);
+
+            modalBody.innerHTML = `
+                <div class="modal-reviewer-info">
+                    <div class="modal-reviewer-name">${reviewerName}</div>
+                    <div class="modal-reviewer-email">${reviewerEmail}</div>
+                </div>
+                <div class="modal-recommendation-content clean-text">
+                    ${formattedRecommendation || 'No recommendation provided'}
+                </div>
+            `;
+
+            document.getElementById('detailsModal').classList.add('active');
+        }
+
+        /**
+         * Improved function to format comments and recommendations for display
+         * This handles the special characters, HTML tags, and formatting
+         */
+        formatCommentForDisplay(content) {
+            if (!content || content.trim() === '') {
+                return '';
+            }
+
+            // Decode HTML entities
+            const decodeHtml = (html) => {
+                const txt = document.createElement('textarea');
+                txt.innerHTML = html;
+                return txt.value;
+            };
+
+            let cleanedContent = decodeHtml(content);
+
+            // Remove leading/trailing quotes if present (common in JSON strings)
+            if (cleanedContent.startsWith('"') && cleanedContent.endsWith('"')) {
+                cleanedContent = cleanedContent.slice(1, -1);
+            }
+
+            // Replace escaped characters
+            cleanedContent = cleanedContent.replace(/\\n/g, '\n');
+            cleanedContent = cleanedContent.replace(/\\r/g, '\r');
+            cleanedContent = cleanedContent.replace(/\\t/g, '\t');
+            cleanedContent = cleanedContent.replace(/\\"/g, '"');
+            cleanedContent = cleanedContent.replace(/\\'/g, "'");
+
+            // Remove HTML tags but preserve line breaks
+            cleanedContent = this.stripHtmlTags(cleanedContent);
+
+            // Preserve line breaks and format paragraphs
+            cleanedContent = this.formatWithLineBreaks(cleanedContent);
+
+            return cleanedContent;
+        }
+
+        /**
+         * Strip HTML tags while preserving line breaks
+         */
+        stripHtmlTags(text) {
+            if (!text) return '';
+
+            // Create a temporary div to parse HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = text;
+
+            // Remove script and style elements
+            const scripts = tempDiv.querySelectorAll('script, style, link, meta');
+            scripts.forEach(script => script.remove());
+
+            // Get text content (automatically handles line breaks from <br>, <p>, etc.)
+            let plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+            // Replace multiple newlines with single ones
+            plainText = plainText.replace(/\n\s*\n\s*\n/g, '\n\n');
+
+            return plainText.trim();
+        }
+
+        /**
+         * Format text with proper line breaks and paragraphs
+         */
+        formatWithLineBreaks(text) {
+            if (!text) return '';
+
+            // Split by double newlines (paragraphs)
+            const paragraphs = text.split(/\n\s*\n/);
+
+            // Wrap each paragraph in <p> tags
+            const formattedParagraphs = paragraphs.map(paragraph => {
+                if (paragraph.trim() === '') return '';
+
+                // Replace single newlines with <br>
+                const withLineBreaks = paragraph.replace(/\n/g, '<br>');
+
+                // Escape HTML to prevent XSS
+                const escaped = this.escapeHtml(withLineBreaks);
+
+                return `<p>${escaped}</p>`;
+            }).filter(p => p !== '');
+
+            return formattedParagraphs.join('');
+        }
+
+        async toggleCommentVisibility() {
+            if (!this.currentReviewId) return;
+
+            try {
+                if (!token) {
+                    toastr.error('Authentication required. Please login again.', 'Error');
+                    return;
+                }
+
+                const response = await fetch(`${BASE_URL}/reviews/${this.currentReviewId}/visibility`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errorMessage = `Failed to update visibility: ${response.status}`;
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (e) { }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to update visibility');
+                }
+
+                // Toggle the current state
+                this.currentVisibleToAuthor = !this.currentVisibleToAuthor;
+
+                // Update the message
+                const messageElement = document.getElementById('visibilityMessage');
+                if (messageElement) {
+                    messageElement.className = `visibility-message ${this.currentVisibleToAuthor ? 'visible' : 'hidden'}`;
+                    messageElement.innerHTML = `
+                        <i class="fas ${this.currentVisibleToAuthor ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                        ${this.currentVisibleToAuthor ? 'Comment visible to author' : 'Comment not visible to author'}
+                    `;
+                }
+
+                toastr.success(`Comment visibility ${this.currentVisibleToAuthor ? 'enabled' : 'disabled'}`, 'Success');
+
+            } catch (error) {
+                console.error('Error toggling comment visibility:', error);
+                toastr.error(error.message || 'Failed to update visibility', 'Error');
+
+                // Revert the toggle if there was an error
+                const toggle = document.getElementById('visibilityToggle');
+                if (toggle) {
+                    toggle.checked = this.currentVisibleToAuthor;
+                }
+            }
+        }
+
+        closeModal() {
+            const modal = document.getElementById('detailsModal');
+            if (modal) {
+                modal.classList.remove('active');
+                this.currentReviewId = null;
+                this.modalMode = '';
+            }
+        }
+
+        getStatusClass(status) {
+            const statusClasses = {
+                'pending': 'status-pending',
+                'accepted': 'status-accepted',
+                'declined': 'status-declined',
+                'completed': 'status-completed',
+                'reviewing': 'status-pending'
+            };
+            return statusClasses[status] || 'status-pending';
+        }
+
+        formatStatus(status) {
+            const statusMap = {
+                'pending': 'Pending',
+                'accepted': 'Accepted',
+                'declined': 'Declined',
+                'completed': 'Completed',
+                'reviewing': 'Reviewing'
+            };
+            return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
+        }
+
+        generateTimeline() {
+            const timelineContainer = document.getElementById('timelineContainer');
+            const noTimelineMessage = document.getElementById('noTimelineMessage');
+
+            if (!timelineContainer) return;
+
+            if (this.reviewersData.length === 0) {
+                timelineContainer.innerHTML = '';
+                noTimelineMessage.style.display = 'block';
+                return;
+            }
+
+            noTimelineMessage.style.display = 'none';
+
+            const timelineEvents = [];
+
+            this.reviewersData.forEach(reviewer => {
+                const reviewerName = reviewer.reviewerName || reviewer.reviewerEmail || 'Unknown Reviewer';
+                const reviewerEmail = reviewer.reviewerEmail || '';
+
+                // FIXED: Get the invitation date - check multiple possible sources
+                const invitationDate = reviewer.createdAt ||
+                    reviewer.currentReview?.submittedAt ||
+                    new Date().toISOString();
+
+                timelineEvents.push({
+                    id: reviewer.reviewId,
+                    type: 'invited',
+                    title: 'Reviewer Invited',
+                    description: `${reviewerName} was invited to review`,
+                    date: invitationDate, // Use the invitation date
+                    reviewer: reviewerName,
+                    reviewerEmail: reviewerEmail,
+                    status: 'invited'
+                });
+
+                if (reviewer.invitationStatus === 'accepted') {
+                    // FIXED: Get acceptance date from currentReview or invitation date
+                    const acceptedDate = reviewer.currentReview?.submittedAt ||
+                        reviewer.reviewHistory?.[0]?.submittedAt ||
+                        invitationDate;
+
+                    timelineEvents.push({
+                        id: reviewer.reviewId + '_accepted',
+                        type: 'accepted',
+                        title: 'Review Accepted',
+                        description: `${reviewerName} accepted the review invitation`,
+                        date: acceptedDate,
+                        reviewer: reviewerName,
+                        reviewerEmail: reviewerEmail,
+                        status: 'accepted'
+                    });
+                }
+
+                if (reviewer.invitationStatus === 'declined') {
+                    // FIXED: Get declined date from invitation date or current date
+                    const declinedDate = invitationDate;
+
+                    timelineEvents.push({
+                        id: reviewer.reviewId + '_declined',
+                        type: 'declined',
+                        title: 'Review Declined',
+                        description: `${reviewerName} declined the review invitation`,
+                        date: declinedDate,
+                        reviewer: reviewerName,
+                        reviewerEmail: reviewerEmail,
+                        status: 'declined'
+                    });
+                }
+
+                // FIXED: Check if review is completed based on new API structure
+                if (reviewer.invitationStatus === 'accepted' && reviewer.hasReviewedCurrentVersion === true) {
+                    const score = reviewer.currentReview?.score || null;
+
+                    // FIXED: Get completion date from multiple possible sources
+                    const completedDate = reviewer.currentReview?.submittedAt ||
+                        reviewer.reviewHistory?.[0]?.submittedAt ||
+                        reviewer.updatedAt ||
+                        invitationDate;
+
+                    timelineEvents.push({
+                        id: reviewer.reviewId + '_completed',
+                        type: 'completed',
+                        title: 'Review Completed',
+                        description: `${reviewerName} completed the review${score ? ` with score: ${score}%` : ''}`,
+                        date: completedDate,
+                        reviewer: reviewerName,
+                        reviewerEmail: reviewerEmail,
+                        status: 'completed'
+                    });
+                }
+            });
+
+            // FIXED: Sort by date, but handle invalid dates gracefully
+            timelineEvents.sort((a, b) => {
+                try {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+
+                    // If either date is invalid, put it at the end
+                    if (isNaN(dateA.getTime())) return 1;
+                    if (isNaN(dateB.getTime())) return -1;
+
+                    return dateB - dateA;
+                } catch (error) {
+                    return 0;
+                }
+            });
+
+            this.filteredTimeline = timelineEvents;
+            this.renderTimeline();
+        }
+
+        formatDate(dateString) {
+            try {
+                if (!dateString || dateString === 'N/A') return 'N/A';
+
+                // Try to parse the date
+                const date = new Date(dateString);
+
+                // Check if date is valid
+                if (isNaN(date.getTime())) {
+                    // Try alternative date formats
+                    const altDate = new Date(dateString.replace(' ', 'T'));
+                    if (!isNaN(altDate.getTime())) {
+                        return altDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                        });
+                    }
+                    return 'N/A';
+                }
+
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                console.warn('Error formatting date:', dateString, error);
+                return 'N/A';
+            }
+        }
+
+
+        renderTimeline() {
+            const timelineContainer = document.getElementById('timelineContainer');
+            if (!timelineContainer) return;
+
+            let filteredEvents = this.filteredTimeline;
+            if (this.currentFilter !== 'all') {
+                filteredEvents = this.filteredTimeline.filter(event => event.status === this.currentFilter);
+            }
+
+            if (filteredEvents.length === 0) {
+                timelineContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-filter"></i>
+                <h3>No ${this.currentFilter} events</h3>
+                <p>No ${this.currentFilter} timeline events found.</p>
+            </div>
+        `;
+                return;
+            }
+
+            let timelineHTML = '';
+            filteredEvents.forEach(event => {
+                const icon = this.getTimelineIcon(event.type);
+                const formattedDate = this.formatDate(event.date);
+
+                timelineHTML += `
+            <div class="timeline-item">
+                <div class="timeline-icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header-row">
+                        <div class="timeline-title">${event.title}</div>
+                        <div class="timeline-date">${formattedDate}</div>
+                    </div>
+                    <div class="timeline-description">
+                        ${event.description}
+                        ${event.reviewerEmail ? `<br><small><strong>Email:</strong> ${event.reviewerEmail}</small>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+            });
+
+            timelineContainer.innerHTML = timelineHTML;
+        }
+
+        getTimelineIcon(type) {
+            const icons = {
+                'invited': 'fas fa-user-plus',
+                'accepted': 'fas fa-check-circle',
+                'declined': 'fas fa-times-circle',
+                'completed': 'fas fa-flag-checkered',
+                'reviewing': 'fas fa-pencil-alt'
+            };
+            return icons[type] || 'fas fa-circle';
+        }
+
+        filterTimeline(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('active');
+                }
+            });
+
+            this.currentFilter = filter;
+            this.renderTimeline();
+        }
+
+        formatDate(dateString) {
+            try {
+                if (!dateString) return 'N/A';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                return dateString;
+            }
+        }
+
+        showLoading() {
+            document.getElementById('loadingScreen').style.display = 'block';
+            document.getElementById('errorScreen').style.display = 'none';
+            document.getElementById('contentContainer').style.display = 'none';
+        }
+
+        hideLoading() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+
+        showContent() {
+            document.getElementById('contentContainer').style.display = 'block';
+        }
+
+        showError(message) {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('errorScreen').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        escapeHtml(str) {
+            if (str === undefined || str === null || str === '') return '';
+
+            // First escape HTML entities
+            const htmlEscaped = String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+
+            return htmlEscaped;
+        }
+    }
+
+    // Initialize review progress manager
+    const reviewProgress = new ReviewProgressManager();
+    window.reviewProgress = reviewProgress;
+</script>
 </body>
 
 </html>

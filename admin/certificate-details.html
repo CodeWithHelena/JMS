@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <!-- Global CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -23,7 +25,6 @@
     <!-- Page-specific CSS -->
     <style>
         :root {
-            /* New accent colors */
             --accent-orange: #FF9F1C;
             --warning-yellow: #F4C430;
             --accent-hover: #b34a00;
@@ -31,8 +32,6 @@
             --warning-yellow-soft: #FFF4CC;
             --error-red-soft: #FADBD8;
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            
-            
         }
 
         * {
@@ -50,12 +49,11 @@
                 radial-gradient(circle at 80% 20%, rgba(244, 196, 48, 0.05) 0%, transparent 20%);
         }
 
-
-
         /* Main content container */
-        .container.page-title{
+        .container.page-title {
             padding: 0 3rem;
         }
+
         .content-container {
             max-width: 1000px;
             margin: 0 auto 3rem;
@@ -150,13 +148,7 @@
             border: none;
         }
 
-        .status-dispatched {
-            background: linear-gradient(135deg, #17a2b8, #0dcaf0);
-            color: white;
-            border: none;
-        }
-
-        /* Certificate details sections - FULL WIDTH */
+        /* Certificate details sections */
         .details-sections {
             display: flex;
             flex-direction: column;
@@ -217,7 +209,6 @@
         .detail-section h3 i {
             color: var(--warning);
             font-size: 1.5rem;
-            /* background: var(--card-bg); */
             background: var(--warning-light);
             padding: 0.75rem;
             border-radius: 12px;
@@ -260,9 +251,9 @@
         }
 
         .detail-value {
-        font-size: 16px;
-        color: var(--text-primary);
-        font-weight: 500;
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
         .detail-value.code {
@@ -292,12 +283,6 @@
             background: linear-gradient(135deg, var(--warning-yellow-soft), #fff);
             border-color: var(--warning-yellow);
             color: #856404;
-        }
-
-        .type-hardcopy {
-            background: linear-gradient(135deg, #e3f2fd, #fff);
-            border-color: #17a2b8;
-            color: #0c5460;
         }
 
         /* Action buttons section */
@@ -400,187 +385,6 @@
             border-color: var(--accent-orange);
         }
 
-        /* File upload */
-        .file-upload-area {
-            border: 3px dashed var(--border-light);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background-color: var(--card-bg);
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-upload-area::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 158, 28, 0.05), rgba(244, 196, 48, 0.05));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .file-upload-area:hover,
-        .file-upload-area.dragover {
-            border-color: var(--lite-secondary3);
-            background-color: var(---warning-light);
-        }
-
-        .file-upload-area:hover::before,
-        .file-upload-area.dragover::before {
-            opacity: 1;
-        }
-
-        .file-upload-icon {
-            font-size: 3.5rem;
-            color: var(--accent-orange);
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .file-upload-text {
-            color: var(--text-color);
-            margin-bottom: 0.75rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .file-upload-subtext {
-            color: var(--text-light);
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .file-preview {
-            margin-top: 1.5rem;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .file-preview-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.25rem;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            border: 2px solid var(--border-light);
-            animation: slideIn 0.3s ease;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .file-preview-name {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: var(--text-color);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .file-preview-name i {
-            color: var(--accent-orange);
-            font-size: 1.5rem;
-        }
-
-        .file-preview-remove {
-            color: var(--danger-dark);
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0.5rem;
-            font-size: 1.2rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .file-preview-remove:hover {
-            background-color: var(--error-red-soft);
-            transform: rotate(90deg);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-requirements {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-top: 1rem;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-
-
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Error state */
-        .error-state {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: var(--danger-dark);
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .error-state i {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            color: var(--warning-yellow);
-        }
-
-        .error-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        /* Approved certificate section */
-        .approved-certificate-section {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 2px solid var(--border-light);
-        }
-
-        .approved-certificate-section h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-color);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
         /* Timestamps */
         .timestamp {
             font-size: 0.9rem;
@@ -665,10 +469,6 @@
                 width: 100%;
                 justify-content: center;
             }
-
-            .file-upload-area {
-                padding: 2rem 1.5rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -685,13 +485,6 @@
             }
         }
 
-        /* Card hover effects */
-        .detail-item,
-        .action-section,
-        .file-upload-area {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
         /* Enhanced shadows */
         .certificate-card,
         .detail-section,
@@ -701,10 +494,83 @@
 
         /* Gradient text */
         .gradient-text {
-            background: linear-gradient(135deg, var( --danger), var(--danger-dark));
+            background: linear-gradient(135deg, var(--danger), var(--danger-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Loading state */
+        .loading-state {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+
+        .loading-state .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border-width: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .loading-state p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* Error state */
+        .error-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--danger-dark);
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .error-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--warning-yellow);
+        }
+
+        .error-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Certificate view section */
+        .certificate-view-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-light);
+        }
+
+        .certificate-view-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
     </style>
 </head>
@@ -761,648 +627,544 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-   <script type="module">
-    import { BASE_URL, token } from '../assets/js/utility.js';
+    <script type="module">
+        import { BASE_URL, token, apiFetch } from '../assets/js/utility.js';
 
-    class CertificateDetailsManager {
-        constructor() {
-            this.certificateId = null;
-            this.certificateData = null;
-            this.isLoading = false;
-            this.selectedFile = null;
-
-            this.init();
-        }
-
-        init() {
-            this.initToastr();
-            this.getCertificateIdFromURL();
-
-            if (this.certificateId) {
-                this.loadCertificateDetails();
-            } else {
-                this.showError('Certificate ID not found in URL');
-            }
-        }
-
-        initToastr() {
-            toastr.options = {
-                closeButton: true,
-                progressBar: true,
-                positionClass: "toast-top-right",
-                timeOut: 3000,
-                extendedTimeOut: 1000
-            };
-        }
-
-        getCertificateIdFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            this.certificateId = urlParams.get('id');
-
-            if (!this.certificateId) {
-                // Try to get from hash
-                const hash = window.location.hash.substring(1);
-                if (hash) this.certificateId = hash;
-            }
-        }
-
-        async loadCertificateDetails() {
-            this.isLoading = true;
-            this.showLoading(true);
-
-            try {
-                const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: Failed to load certificate details`);
-                }
-
-                const data = await response.json();
-
-                if (data.success && data.certificate) {
-                    this.certificateData = data.certificate;
-                    this.renderCertificateDetails();
-                } else {
-                    throw new Error('Invalid response format');
-                }
-            } catch (error) {
-                console.error('Error loading certificate details:', error);
-                this.showError(error.message || 'Failed to load certificate details');
-            } finally {
+        class CertificateDetailsManager {
+            constructor() {
+                this.certificateId = null;
+                this.certificateData = null;
                 this.isLoading = false;
-                this.showLoading(false);
+                this.init();
             }
-        }
 
-        renderCertificateDetails() {
-            if (!this.certificateData) return;
+            init() {
+                this.initToastr();
+                this.getCertificateIdFromURL();
 
-            const certificate = this.certificateData;
-            const author = certificate.authorId || {};
-            const submission = certificate.submissionId || {};
-
-            // Determine status class
-            const statusClass = `status-${certificate.status}`;
-            const statusText = certificate.status.charAt(0).toUpperCase() + certificate.status.slice(1);
-
-            // Action buttons should ONLY appear when status is pending
-            let actionButtons = '';
-
-            if (certificate.status === 'pending') {
-                if (certificate.type === 'digital') {
-                    actionButtons = this.renderDigitalCertificateActions();
-                } else if (certificate.type === 'hardcopy') {
-                    actionButtons = this.renderHardcopyCertificateActions();
+                if (this.certificateId) {
+                    this.loadCertificateDetails();
+                } else {
+                    this.showError('Certificate ID not found in URL');
                 }
             }
 
-            // Format dates
-            const issueDate = certificate.issueDate ? this.formatDate(certificate.issueDate) : 'Not issued yet';
-            const updatedDate = certificate.updatedAt ? this.formatDate(certificate.updatedAt) : 'N/A';
+            initToastr() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000,
+                    extendedTimeOut: 1000
+                };
+            }
 
-            const html = `
-                <div class="certificate-header">
-                    <div class="certificate-title">
-                        <h2>Certificate Details</h2>
-                        <p>Manage and view complete certificate information</p>
-                    </div>
-                    <div class="status-badge ${statusClass}">
-                        <i class="fas fa-${certificate.status === 'pending' ? 'clock' : certificate.status === 'approved' ? 'check-circle' : 'paper-plane'}"></i>
-                        ${statusText}
-                    </div>
-                </div>
+            getCertificateIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.certificateId = urlParams.get('id');
 
-                <div class="details-sections">
-                    <div class="detail-section publication-section">
-                        <h3><i class="fas fa-file-alt"></i> Publication Details</h3>
-                        <div class="details-grid">
-                            <div class="detail-item">
-                                <div class="detail-label">
-                                    <i class="fas fa-heading"></i> Publication Title
-                                </div>
-                                <div class="detail-value">${this.escapeHtml(submission.title || 'N/A')}</div>
-                            </div>
+                if (!this.certificateId) {
+                    const hash = window.location.hash.substring(1);
+                    if (hash) this.certificateId = hash;
+                }
+            }
+
+            async loadCertificateDetails() {
+                this.isLoading = true;
+                this.showLoading(true);
+
+                try {
+                    const data = await apiFetch(`${BASE_URL}/certificate/${this.certificateId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (data.success && data.certificate) {
+                        this.certificateData = data.certificate;
+                        this.renderCertificateDetails();
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.error('Error loading certificate details:', error);
+                    this.showError(error.message || 'Failed to load certificate details');
+                } finally {
+                    this.isLoading = false;
+                    this.showLoading(false);
+                }
+            }
+
+            renderCertificateDetails() {
+                if (!this.certificateData) return;
+
+                const certificate = this.certificateData;
+                const author = certificate.authorId || {};
+                const submission = certificate.submissionId || {};
+
+                const statusClass = `status-${certificate.status}`;
+                const statusText = certificate.status.charAt(0).toUpperCase() + certificate.status.slice(1);
+
+                let actionButtons = '';
+                if (certificate.status === 'pending') {
+                    actionButtons = this.renderPendingCertificateActions();
+                }
+
+                const issueDate = certificate.issueDate ? this.formatDate(certificate.issueDate) : 'Not issued yet';
+                const updatedDate = certificate.updatedAt ? this.formatDate(certificate.updatedAt) : 'N/A';
+
+                const html = `
+                    <div class="certificate-header">
+                        <div class="certificate-title">
+                            <h2>Certificate Details</h2>
+                            <p>Manage and view complete certificate information</p>
+                        </div>
+                        <div class="status-badge ${statusClass}">
+                            <i class="fas fa-${certificate.status === 'pending' ? 'clock' : 'check-circle'}"></i>
+                            ${statusText}
                         </div>
                     </div>
 
-                    <div class="detail-section author-section">
-                        <h3><i class="fas fa-user"></i> Author Details</h3>
-                        <div class="details-grid">
-                            <div class="detail-item">
-                                <div class="detail-label">
-                                    <i class="fas fa-user-circle"></i> Author Name
-                                </div>
-                                <div class="detail-value">${this.escapeHtml(author.firstName || '')} ${this.escapeHtml(author.lastName || '')}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">
-                                    <i class="fas fa-envelope"></i> Author Email
-                                </div>
-                                <div class="detail-value">${this.escapeHtml(author.email || 'N/A')}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="detail-section certificate-section">
-                        <h3><i class="fas fa-certificate"></i> Certificate Details</h3>
-                        <div class="details-grid">
-                            <div class="detail-item">
-                                <div class="detail-label">
-                                    <i class="fas fa-hashtag"></i> Certificate Number
-                                </div>
-                                <div class="detail-value code">${this.escapeHtml(certificate.certificateNumber || 'N/A')}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">
-                                    <i class="fas fa-tag"></i> Certificate Type
-                                </div>
-                                <div class="detail-value">
-                                    <span class="type-badge type-${certificate.type}">
-                                        <i class="fas fa-${certificate.type === 'digital' ? 'file-pdf' : 'box'}"></i>
-                                        ${certificate.type ? certificate.type.charAt(0).toUpperCase() + certificate.type.slice(1) : 'N/A'}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">
-                                    <i class="fas fa-calendar-check"></i> Issue Date
-                                </div>
-                                <div class="detail-value">${issueDate}</div>
-                                ${certificate.issueDate ? `
-                                    <div class="timestamp">
-                                        <i class="far fa-clock"></i> ${this.formatDateTime(certificate.issueDate)}
+                    <div class="details-sections">
+                        <div class="detail-section publication-section">
+                            <h3><i class="fas fa-file-alt"></i> Publication Details</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-heading"></i> Publication Title
                                     </div>
-                                ` : ''}
+                                    <div class="detail-value">${this.escapeHtml(submission.title || 'N/A')}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section author-section">
+                            <h3><i class="fas fa-user"></i> Author Details</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-user-circle"></i> Author Name
+                                    </div>
+                                    <div class="detail-value">${this.escapeHtml(author.firstName || '')} ${this.escapeHtml(author.lastName || '')}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-envelope"></i> Author Email
+                                    </div>
+                                    <div class="detail-value">${this.escapeHtml(author.email || 'N/A')}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section certificate-section">
+                            <h3><i class="fas fa-certificate"></i> Certificate Details</h3>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-hashtag"></i> Certificate Number
+                                    </div>
+                                    <div class="detail-value code">${this.escapeHtml(certificate.certificateNumber || 'N/A')}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-tag"></i> Certificate Type
+                                    </div>
+                                    <div class="detail-value">
+                                        <span class="type-badge type-digital">
+                                            <i class="fas fa-file-pdf"></i>
+                                            Digital
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-calendar-check"></i> Issue Date
+                                    </div>
+                                    <div class="detail-value">${issueDate}</div>
+                                    ${certificate.issueDate ? `
+                                        <div class="timestamp">
+                                            <i class="far fa-clock"></i> ${this.formatDateTime(certificate.issueDate)}
+                                        </div>
+                                    ` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                ${certificate.status === 'pending' ? `
-                    <div class="alert">
-                        <i class="fas fa-info-circle"></i>
-                        <div>
-                            <strong>Action Required</strong>
-                            <span>This certificate is pending. ${certificate.type === 'digital'
-                        ? 'Please upload the digital certificate file and approve it.'
-                        : 'Please mark this hardcopy certificate as dispatched.'}
-                            </span>
+                    ${certificate.status === 'pending' ? `
+                        <div class="alert">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <strong>Action Required</strong>
+                                <span>This digital certificate is pending approval.</span>
+                            </div>
                         </div>
-                    </div>
-                ` : ''}
+                    ` : ''}
 
-                ${certificate.status === 'approved' && certificate.fileUrl ? `
-                    <div class="approved-certificate-section">
-                        <h3><i class="fas fa-file-pdf gradient-text"></i> Approved Certificate</h3>
-                        <div class="action-buttons">
-                            <button class="btn-brand view-certificate-btn" data-file="${this.escapeHtml(certificate.fileUrl)}">
-                                <i class="fas fa-external-link-alt"></i> View Certificate
-                            </button>
+                    ${certificate.status === 'approved' ? `
+                        <div class="certificate-view-section">
+                            <h3><i class="fas fa-file-pdf gradient-text"></i> Certificate Actions</h3>
+                            <div class="action-buttons">
+                                <a href="certificate-view.html?id=${this.certificateId}" target="_blank" class="btn btn-info">
+                                    <i class="fas fa-external-link-alt"></i> View Certificate
+                                </a>
+                                <button class="btn btn-success download-certificate-btn">
+                                    <i class="fas fa-download"></i> Download as PNG
+                                </button>
+                            </div>
                         </div>
+                    ` : ''}
+
+                    ${actionButtons ? `
+                        <div class="action-section">
+                            <h3><i class="fas fa-cogs gradient-text"></i> Certificate Actions</h3>
+                            ${actionButtons}
+                        </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('certificateContent').innerHTML = html;
+                document.getElementById('certificateContent').style.display = 'block';
+                this.setupActionListeners();
+            }
+
+            renderPendingCertificateActions() {
+                return `
+                    <div class="action-buttons">
+                        <button id="approveBtn" class="btn btn-success">
+                            <i class="fas fa-check-circle"></i> Approve Certificate
+                        </button>
                     </div>
-                ` : ''}
+                `;
+            }
 
-                ${actionButtons ? `
-                    <div class="action-section">
-                        <h3><i class="fas fa-cogs gradient-text"></i> Certificate Actions</h3>
-                        ${actionButtons}
-                    </div>
-                ` : ''}
-            `;
+            setupActionListeners() {
+                const root = document.getElementById('certificateContent');
 
-            document.getElementById('certificateContent').innerHTML = html;
-            document.getElementById('certificateContent').style.display = 'block';
+                const approveBtn = document.getElementById('approveBtn');
+                if (approveBtn) {
+                    approveBtn.addEventListener('click', () => this.approveCertificate());
+                }
 
-            // Setup event listeners for actions (delegated)
-            this.setupActionListeners();
-        }
+                const downloadBtn = root.querySelector('.download-certificate-btn');
+                if (downloadBtn) {
+                    downloadBtn.addEventListener('click', () => this.downloadCertificateAsPNG());
+                }
+            }
 
-        renderDigitalCertificateActions() {
-            return `
-                <div class="file-upload-area" id="fileUploadArea">
-                    <div class="file-upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <div class="file-upload-text">Upload Digital Certificate</div>
-                    <div class="file-upload-subtext">Drag & drop your PDF file here or click to browse</div>
-                    <input type="file" id="certificateFile" class="file-input" accept=".pdf" style="display: none;">
-                    <div class="file-requirements">PDF files only • Max size: 10MB</div>
-                </div>
-
-                <div class="file-preview" id="filePreview">
-                    <!-- File preview will be added here -->
-                </div>
-
-                <div class="action-buttons">
-                    <button id="approveBtn" class="btn btn-brand" disabled>
-                        <i class="fas fa-check-circle"></i> Approve Certificate
-                    </button>
-                    <button id="cancelBtn" class="btn btn-clear">
-                        <i class="fas fa-times-circle"></i> Cancel
-                    </button>
-                </div>
-            `;
-        }
-
-        renderHardcopyCertificateActions() {
-            return `
-                <div class="action-buttons">
-                    <button id="dispatchBtn" class="btn btn-brand">
-                        <i class="fas fa-paper-plane"></i> Mark as Dispatched
-                    </button>
-                </div>
-            `;
-        }
-
-        setupActionListeners() {
-            const root = document.getElementById('certificateContent');
-
-            // File upload for digital certificates (attach only if elements exist)
-            const fileUploadArea = document.getElementById('fileUploadArea');
-            const certificateFile = document.getElementById('certificateFile');
-            const filePreview = document.getElementById('filePreview');
-            const approveBtn = document.getElementById('approveBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const dispatchBtn = document.getElementById('dispatchBtn');
-
-            if (fileUploadArea && certificateFile) {
-                fileUploadArea.addEventListener('click', () => certificateFile.click());
-
-                certificateFile.addEventListener('change', (e) => {
-                    this.handleFileSelection(e.target.files[0]);
+            async approveCertificate() {
+                const result = await Swal.fire({
+                    title: 'Approve Certificate?',
+                    text: 'Are you sure you want to approve this digital certificate? This action cannot be undone.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, approve it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
                 });
 
-                fileUploadArea.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    fileUploadArea.classList.add('dragover');
-                });
+                if (!result.isConfirmed) return;
 
-                fileUploadArea.addEventListener('dragleave', (e) => {
-                    e.preventDefault();
-                    fileUploadArea.classList.remove('dragover');
-                });
-
-                fileUploadArea.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    fileUploadArea.classList.remove('dragover');
-
-                    if (e.dataTransfer.files.length) {
-                        this.handleFileSelection(e.dataTransfer.files[0]);
-                    }
-                });
-            }
-
-            if (approveBtn) {
-                approveBtn.addEventListener('click', () => this.approveDigitalCertificate());
-            }
-
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => this.clearFileSelection());
-            }
-
-            if (dispatchBtn) {
-                dispatchBtn.addEventListener('click', () => this.dispatchHardcopyCertificate());
-            }
-
-            // View certificate buttons 
-            root.querySelectorAll('.view-certificate-btn')?.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const filePath = btn.getAttribute('data-file');
-                    this.openPdfInNewTab(filePath);
-                });
-            });
-        }
-
-        handleFileSelection(file) {
-            if (!file) return;
-
-            // Validate file type
-            if (file.type !== 'application/pdf') {
-                toastr.error('Please upload a PDF file only');
-                return;
-            }
-
-            // Validate file size (10MB)
-            const maxSize = 10 * 1024 * 1024;
-            if (file.size > maxSize) {
-                toastr.error('File size exceeds 10MB limit');
-                return;
-            }
-
-            this.selectedFile = file;
-
-            // Update UI
-            const filePreview = document.getElementById('filePreview');
-            const approveBtn = document.getElementById('approveBtn');
-            const fileUploadArea = document.getElementById('fileUploadArea');
-
-            filePreview.innerHTML = `
-                <div class="file-preview-item">
-                    <div class="file-preview-name">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>${this.escapeHtml(file.name)} (${this.formatFileSize(file.size)})</span>
-                    </div>
-                    <button type="button" class="file-preview-remove" id="removeFile">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            filePreview.style.display = 'block';
-
-            if (approveBtn) {
-                approveBtn.disabled = false;
-            }
-
-            if (fileUploadArea) {
-                fileUploadArea.style.display = 'none';
-            }
-
-            // Add remove file listener
-            document.getElementById('removeFile')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.clearFileSelection();
-            });
-        }
-
-        clearFileSelection() {
-            this.selectedFile = null;
-
-            const filePreview = document.getElementById('filePreview');
-            const approveBtn = document.getElementById('approveBtn');
-            const fileUploadArea = document.getElementById('fileUploadArea');
-            const certificateFile = document.getElementById('certificateFile');
-
-            if (filePreview) {
-                filePreview.style.display = 'none';
-                filePreview.innerHTML = '';
-            }
-
-            if (approveBtn) {
+                const approveBtn = document.getElementById('approveBtn');
+                const originalText = approveBtn.innerHTML;
                 approveBtn.disabled = true;
-            }
+                approveBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Approving...';
 
-            if (fileUploadArea) {
-                fileUploadArea.style.display = 'block';
-            }
-
-            if (certificateFile) {
-                certificateFile.value = '';
-            }
-        }
-
-        async approveDigitalCertificate() {
-            if (!this.selectedFile) {
-                toastr.error('Please select a certificate file first');
-                return;
-            }
-
-            const result = await Swal.fire({
-                title: 'Approve Digital Certificate?',
-                text: 'Are you sure you want to approve this digital certificate? This action cannot be undone.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, approve it!',
-                cancelButtonText: 'Cancel',
-                reverseButtons: true
-            });
-
-            if (!result.isConfirmed) return;
-
-            const approveBtn = document.getElementById('approveBtn');
-            const originalText = approveBtn.innerHTML;
-            approveBtn.disabled = true;
-            approveBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Approving...';
-
-            try {
-                const formData = new FormData();
-                formData.append('status', 'approved');
-                formData.append('certificate', this.selectedFile);
-
-                const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Certificate Approved!',
-                        text: data.message || 'Digital certificate has been approved successfully.',
-                        confirmButtonColor: '#28a745',
-                        showConfirmButton: true,
-                        timer: 2500
+                try {
+                    const data = await apiFetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ status: 'approved' })
                     });
 
-                    if (data.certificate) {
-                        this.certificateData = data.certificate;
+                    if (data.success) {
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Certificate Approved!',
+                            text: data.message || 'Digital certificate has been approved successfully.',
+                            confirmButtonColor: '#28a745',
+                            showConfirmButton: true,
+                            timer: 2500
+                        });
+
+                        if (data.certificate) {
+                            this.certificateData = data.certificate;
+                        } else {
+                            this.certificateData.status = 'approved';
+                        }
+
+                        this.renderCertificateDetails();
                     } else {
-                        this.certificateData.status = 'approved';
+                        throw new Error(data.message || 'Failed to approve certificate');
                     }
-
-                    this.clearFileSelection();
-                    this.renderCertificateDetails();
-                } else {
-                    throw new Error(data.message || 'Failed to approve certificate');
+                } catch (error) {
+                    console.error('Error approving certificate:', error);
+                    toastr.error(error.message || 'Failed to approve certificate');
+                    approveBtn.disabled = false;
+                    approveBtn.innerHTML = originalText;
                 }
-            } catch (error) {
-                console.error('Error approving certificate:', error);
-                toastr.error(error.message || 'Failed to approve certificate');
-                approveBtn.disabled = false;
-                approveBtn.innerHTML = originalText;
             }
-        }
 
-        async dispatchHardcopyCertificate() {
-            const result = await Swal.fire({
-                title: 'Dispatch Hardcopy Certificate?',
-                text: 'Are you sure you want to mark this hardcopy certificate as dispatched?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#17a2b8',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, mark as dispatched',
-                cancelButtonText: 'Cancel',
-                reverseButtons: true
-            });
+            async downloadCertificateAsPNG() {
+                const downloadBtn = document.querySelector('.download-certificate-btn');
+                if (!downloadBtn) return;
 
-            if (!result.isConfirmed) return;
+                const originalText = downloadBtn.innerHTML;
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = '<span class="loading-spinner" style="width:20px;height:20px;border-width:2px;"></span> Preparing...';
 
-            const dispatchBtn = document.getElementById('dispatchBtn');
-            const originalText = dispatchBtn.innerHTML;
-            dispatchBtn.disabled = true;
-            dispatchBtn.innerHTML = '<span class="loading-spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Dispatching...';
-
-            try {
-                const response = await fetch(`${BASE_URL}/certificate/${this.certificateId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: 'dispatched'
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Certificate Dispatched!',
-                        text: data.message || 'Hardcopy certificate has been marked as dispatched.',
-                        confirmButtonColor: '#17a2b8',
-                        showConfirmButton: true,
-                        timer: 2500
+                try {
+                    // Ensure certificate is approved (same check as you had)
+                    const certResp = await apiFetch(`${BASE_URL}/certificate/${this.certificateId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
                     });
 
-                    if (data.certificate) {
-                        this.certificateData = data.certificate;
-                    } else {
-                        this.certificateData.status = 'dispatched';
+                    if (!certResp.success || !certResp.certificate || certResp.certificate.status !== 'approved') {
+                        toastr.error('Certificate must be approved before downloading');
+                        downloadBtn.disabled = false;
+                        downloadBtn.innerHTML = originalText;
+                        return;
                     }
 
-                    this.renderCertificateDetails();
-                } else {
-                    throw new Error(data.message || 'Failed to dispatch certificate');
-                }
-            } catch (error) {
-                console.error('Error dispatching certificate:', error);
-                toastr.error(error.message || 'Failed to dispatch certificate');
-                dispatchBtn.disabled = false;
-                dispatchBtn.innerHTML = originalText;
-            }
-        }
+                    // Create hidden iframe
+                    const iframe = document.createElement('iframe');
+                    iframe.style.position = 'fixed';
+                    iframe.style.left = '-9999px';
+                    iframe.style.top = '-9999px';
+                    iframe.style.width = '1000px';   // match paper width used in certificate-view
+                    iframe.style.height = '720px';   // match certificate viewport height
+                    iframe.style.border = '0';
+                    iframe.src = `certificate-view.html?id=${encodeURIComponent(this.certificateId)}`;
+                    document.body.appendChild(iframe);
 
-        openPdfInNewTab(filePath) {
-            if (!filePath) {
-                toastr.error('Certificate file not available');
-                return;
-            }
+                    // Helper: wait for message from iframe (certificate-ready) OR fallback to polling the DOM
+                    const WAIT_TIMEOUT_MS = 18000; // 18s timeout
+                    let notified = false;
+                    let timerId;
 
-            let url = encodeURIComponent(filePath);
+                    const waitForReadyMessage = new Promise((resolve, reject) => {
+                        function onMessage(ev) {
+                            try {
+                                const data = ev.data || {};
+                                if (data && data.type === 'certificate-ready' && String(data.id) === String(this.certificateId)) {
+                                    notified = true;
+                                    window.removeEventListener('message', onMessageBound);
+                                    clearTimeout(timerId);
+                                    resolve();
+                                }
+                            } catch (e) {
+                                // ignore parse errors
+                            }
+                        }
+                        // bind with 'this' safe scope
+                        const onMessageBound = onMessage.bind(this);
+                        window.addEventListener('message', onMessageBound);
 
-            try {
-                if (/^https?:\/\//i.test(filePath)) {
-                    url = filePath;
-                } else {
-                    const base = (BASE_URL).replace("/api/v1", '');
-                    if (filePath.startsWith('/')) {
-                        url = base ? `${base}${filePath}` : `${window.location.origin}${filePath}`;
-                    } else {
-                        url = base ? `${base}/${filePath}` : `${window.location.origin}/${filePath}`;
+                        timerId = setTimeout(() => {
+                            // remove listener and continue to fallback polling
+                            window.removeEventListener('message', onMessageBound);
+                            resolve(); // resolve anyway to let fallback polling start
+                        }, WAIT_TIMEOUT_MS / 3); // give some time for postMessage first (6s if WAIT_TIMEOUT_MS=18s)
+                    });
+
+                    // Helper: poll for .certificate-wrap existence and wait for its images to load
+                    const waitForDomAndImages = (iframeEl, timeout = WAIT_TIMEOUT_MS) => new Promise((resolve, reject) => {
+                        const start = Date.now();
+
+                        const check = async () => {
+                            try {
+                                const doc = iframeEl.contentDocument || iframeEl.contentWindow.document;
+                                if (!doc) {
+                                    if (Date.now() - start > timeout) return resolve(false);
+                                    return setTimeout(check, 250);
+                                }
+                                const wrap = doc.querySelector('.certificate-wrap');
+                                if (!wrap) {
+                                    if (Date.now() - start > timeout) return resolve(false);
+                                    return setTimeout(check, 250);
+                                }
+
+                                // Wait for images within .certificate-wrap to load
+                                const imgs = Array.from(wrap.querySelectorAll('img'));
+                                if (imgs.length === 0) return resolve(true);
+
+                                // If all images already complete -> resolve
+                                const unloaded = imgs.filter(img => !img.complete || (img.naturalWidth === 0 && img.naturalHeight === 0));
+                                if (unloaded.length === 0) return resolve(true);
+
+                                // wait for each image to load or error
+                                let remaining = unloaded.length;
+                                const onFinish = () => {
+                                    remaining--;
+                                    if (remaining <= 0) resolve(true);
+                                };
+                                const onErr = () => {
+                                    // we still continue — some images might fail but we proceed
+                                    onFinish();
+                                };
+                                unloaded.forEach(img => {
+                                    img.addEventListener('load', onFinish, { once: true });
+                                    img.addEventListener('error', onErr, { once: true });
+                                });
+
+                                // safety timeout
+                                setTimeout(() => resolve(true), Math.min(6000, timeout));
+                            } catch (e) {
+                                // cross-origin or other issues (shouldn't happen if same-origin)
+                                resolve(false);
+                            }
+                        };
+
+                        check();
+                    });
+
+                    // Wait for either the message (fast) or fallback DOM readiness
+                    await waitForReadyMessage;
+
+                    // Wait until DOM exists and images are loaded (but bounded by total timeout)
+                    const domReady = await waitForDomAndImages(iframe, WAIT_TIMEOUT_MS);
+
+                    // As a guard: try to access the .certificate-wrap now
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    const certificateWrap = doc ? doc.querySelector('.certificate-wrap') : null;
+                    if (!certificateWrap) {
+                        throw new Error('Could not find certificate content in iframe (timeout or cross-origin).');
                     }
-                }
 
-                if (url === (BASE_URL || '').replace(/\/$/, '')) {
-                    toastr.error('Invalid certificate file URL');
-                    return;
+                    // Small delay to ensure CSS render stabilizes
+                    await new Promise(r => setTimeout(r, 300));
+
+                    // Capture with html2canvas using the iframe document element
+                    const canvas = await html2canvas(certificateWrap, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        logging: false,
+                        windowWidth: certificateWrap.offsetWidth,
+                        windowHeight: certificateWrap.offsetHeight,
+                        // onclone not available when passing an element from another document in older versions,
+                        // but we've ensured styles/images are present — keep minimal options
+                    });
+
+                    // Convert to PNG and trigger download
+                    const pngData = canvas.toDataURL('image/png');
+                    const downloadLink = document.createElement('a');
+                    const fileName = `certificate_${this.certificateData?.certificateNumber || this.certificateId}.png`;
+                    downloadLink.href = pngData;
+                    downloadLink.download = fileName;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                    // Clean up iframe
+                    try { document.body.removeChild(iframe); } catch (e) { /* ignore */ }
+
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = originalText;
+                    toastr.success('Certificate downloaded as PNG successfully!');
+
+                } catch (err) {
+                    console.error('Error downloading certificate (background flow):', err);
+
+                    // cleanup any leftover iframe
+                    const possibleIframes = Array.from(document.querySelectorAll('iframe'));
+                    possibleIframes.forEach(ifr => {
+                        if (ifr.src && ifr.src.includes(`certificate-view.html?id=${this.certificateId}`)) {
+                            try { ifr.parentNode.removeChild(ifr); } catch (e) { /* ignore */ }
+                        }
+                    });
+
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download as PNG';
+
+                    toastr.error('Failed to download certificate. Opening certificate in new tab...');
+
+                    // fallback: open certificate view in a new tab so the user can download manually
+                    window.open(`certificate-view.html?id=${this.certificateId}`, '_blank');
                 }
-            } catch (err) {
-                console.error('Error building file URL', err);
-                toastr.error('Cannot open certificate file');
-                return;
             }
 
-            window.open(url, '_blank', 'noopener,noreferrer');
-        }
 
-        showLoading(show) {
-            const loadingState = document.getElementById('loadingState');
-            const certificateContent = document.getElementById('certificateContent');
-            const errorState = document.getElementById('errorState');
+            showLoading(show) {
+                const loadingState = document.getElementById('loadingState');
+                const certificateContent = document.getElementById('certificateContent');
+                const errorState = document.getElementById('errorState');
 
-            if (show) {
-                loadingState.style.display = 'block';
-                certificateContent.style.display = 'none';
-                errorState.style.display = 'none';
-            } else {
+                if (show) {
+                    loadingState.style.display = 'block';
+                    certificateContent.style.display = 'none';
+                    errorState.style.display = 'none';
+                } else {
+                    loadingState.style.display = 'none';
+                }
+            }
+
+            showError(message) {
+                const loadingState = document.getElementById('loadingState');
+                const certificateContent = document.getElementById('certificateContent');
+                const errorState = document.getElementById('errorState');
+                const errorMessage = document.getElementById('errorMessage');
+
                 loadingState.style.display = 'none';
+                certificateContent.style.display = 'none';
+                errorState.style.display = 'block';
+                errorMessage.textContent = message;
+            }
+
+            // Utility functions
+            formatDate(isoString) {
+                if (!isoString) return 'N/A';
+                try {
+                    const date = new Date(isoString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                } catch {
+                    return isoString;
+                }
+            }
+
+            formatDateTime(isoString) {
+                if (!isoString) return 'N/A';
+                try {
+                    const date = new Date(isoString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } catch {
+                    return isoString;
+                }
+            }
+
+            escapeHtml(text) {
+                if (text === undefined || text === null) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
         }
 
-        showError(message) {
-            const loadingState = document.getElementById('loadingState');
-            const certificateContent = document.getElementById('certificateContent');
-            const errorState = document.getElementById('errorState');
-            const errorMessage = document.getElementById('errorMessage');
-
-            loadingState.style.display = 'none';
-            certificateContent.style.display = 'none';
-            errorState.style.display = 'block';
-            errorMessage.textContent = message;
-        }
-
-        // Utility functions
-        formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        formatDate(isoString) {
-            if (!isoString) return 'N/A';
-            try {
-                const date = new Date(isoString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-            } catch {
-                return isoString;
-            }
-        }
-
-        formatDateTime(isoString) {
-            if (!isoString) return 'N/A';
-            try {
-                const date = new Date(isoString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            } catch {
-                return isoString;
-            }
-        }
-
-        escapeHtml(text) {
-            if (text === undefined || text === null) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-    }
-
-    // Initialize the certificate details manager
-    document.addEventListener('DOMContentLoaded', () => {
-        window.certificateDetailsManager = new CertificateDetailsManager();
-    });
-</script>
-
-
+        // Initialize the certificate details manager
+        document.addEventListener('DOMContentLoaded', () => {
+            window.certificateDetailsManager = new CertificateDetailsManager();
+        });
+    </script>
 </body>
 
 </html>

@@ -469,7 +469,15 @@
 
             let certData;
             try {
-                certData = await apiFetch(`${BASE_URL}/certificate/${certId}`);
+                certData = await apiFetch(`${BASE_URL}/certificate/${certId}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    }
+                )
+                
             } catch (err) {
                 console.warn('Certificate API error - using sample', err);
                 certData = sampleCertificateResponse;

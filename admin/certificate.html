@@ -560,12 +560,11 @@
                                 <div class="custom-select-option selected" data-value="" role="option">All Status</div>
                                 <div class="custom-select-option" data-value="pending" role="option">Pending</div>
                                 <div class="custom-select-option" data-value="approved" role="option">Approved</div>
-                                <div class="custom-select-option" data-value="dispatched" role="option">Dispatched</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="filter-group">
+                    <div class="filter-group" style="display: none !important;">
                         <label class="filter-label">Type</label>
                         <div class="custom-select-wrapper" id="typeSelect">
                             <div class="custom-select-header" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Select type">
@@ -1029,8 +1028,8 @@
                                 ${this.escapeHtml(truncatedTitle)}
                             </td>
                             <td>
-                                <span class="type-badge type-${cert.type}">
-                                    ${cert.type}
+                                <span class="status-badge status-${cert.status}">
+                                    ${cert.status}
                                 </span>
                             </td>
                             <td>
