@@ -40,11 +40,51 @@
             --border: #e2e8f0;
             --light: #f8fafc;
             --primary-light: rgba(255, 122, 24, 0.1);
+
+            /* Status Colors */
+            --status-submitted-bg: #cae7fa;
+            --status-submitted-color: var(--info);
+            --status-submitted-border: #E0F2FE;
+            --status-under_review-bg: #fef3c7;
+            --status-under_review-color: #d97706;
+            --status-under_review-border: #fef3c7;
+            --status-revision_requested-bg: #fee2e2;
+            --status-revision_requested-color: #dc2626;
+            --status-revision_requested-border: #fee2e2;
+            --status-revision_submitted-bg: #dbeafe;
+            --status-revision_submitted-color: #2563eb;
+            --status-revision_submitted-border: #dbeafe;
+            --status-accepted-bg: #d1fae5;
+            --status-accepted-color: #059669;
+            --status-accepted-border: #d1fae5;
+            --status-rejected-bg: #f3e8ff;
+            --status-rejected-color: #7c3aed;
+            --status-rejected-border: #f3e8ff;
+            --status-published-bg: #ecfdf5;
+            --status-published-color: #047857;
+            --status-published-border: #ecfdf5;
+            --status-withdrawn-bg: #f5f5f5;
+            --status-withdrawn-color: #6b7280;
+            --status-withdrawn-border: #f5f5f5;
+            --status-pending-bg: var(--info-light);
+            --status-pending-color: var(--info);
+            --status-pending-border: var(--info-light);
         }
 
         body {
             background-color: var(--bg);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-transform: capitalize;
+            margin-left: 0.5rem;
         }
 
         /* Manuscript Header Card */
@@ -189,7 +229,7 @@
             color: #111827;
         }
 
-        .version-info-card .status-badge {
+        .version-info-card .version-status-badge {
             display: inline-block;
             padding: 0.4rem 0.8rem;
             border-radius: 20px;
@@ -281,7 +321,20 @@
 
         .file-icon {
             font-size: 1.5rem;
-            color: var(--danger);
+        }
+
+        .file-icon-pdf {
+            color: #dc2626;
+            /* Red for PDF */
+        }
+
+        .file-icon-word {
+            color: #2563eb;
+            /* Blue for Word */
+        }
+
+        .file-icon-generic {
+            color: var(--muted);
         }
 
         .file-details {
@@ -591,6 +644,28 @@
             color: var(--danger);
         }
 
+        /* Reviewer Info in Timeline */
+        .reviewer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 0.95rem;
+        }
+
+        .reviewer-email {
+            font-size: 0.85rem;
+            color: var(--muted);
+            word-break: break-all;
+        }
+
         .review-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -668,6 +743,82 @@
             font-size: 1.2rem;
             font-weight: 700;
             color: #111827;
+        }
+
+        /* Editors Section */
+        .editors-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .editor-decision-content {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .no-decision-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            background: var(--light);
+            border-radius: 8px;
+            border: 2px dashed var(--border);
+        }
+
+        .editor-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .editor-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 1rem;
+        }
+
+        .editor-email {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .editor-decision-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+        }
+
+        .decision-accept {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .decision-minor_revision {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .decision-major_revision {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .decision-reject {
+            background: var(--danger-light);
+            color: var(--danger);
         }
 
         /* No Revision Message */
@@ -1149,6 +1300,8 @@
                 this.submissionId = this.getSubmissionIdFromURL();
                 this.submissionData = null;
                 this.reviewProgressData = null;
+                this.authorData = null;
+                this.editorDecisionsData = null;
                 this.currentContent = null;
                 this.currentVersion = null;
 
@@ -1245,8 +1398,16 @@
 
                     this.submissionData = submissionData.submission;
 
+                    // Load author data
+                    if (this.submissionData.createdBy) {
+                        await this.loadAuthorData(this.submissionData.createdBy);
+                    }
+
                     // Load review progress data
                     await this.loadReviewProgressData();
+
+                    // Load editor decisions data
+                    await this.loadEditorDecisionsData();
 
                     // Render all data
                     this.renderManuscriptHeader();
@@ -1265,6 +1426,27 @@
                         this.showError(error.message || 'Failed to load submission data. Please try again.');
                     }
                     this.hideLoading();
+                }
+            }
+
+            async loadAuthorData(userId) {
+                try {
+                    const response = await fetch(`${this.BASE_URL}/user/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.authorData = data.user;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading author data:', error);
+                    // Continue without author data
                 }
             }
 
@@ -1289,6 +1471,45 @@
                 }
             }
 
+            async loadEditorDecisionsData() {
+                try {
+                    const response = await fetch(`${this.BASE_URL}/editor/${this.submissionId}/decision-history`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.editorDecisionsData = data;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading editor decisions:', error);
+                    // Continue without editor decisions data
+                }
+            }
+
+            getStatusBadgeClass(status) {
+                if (!status) return 'status-pending';
+
+                const statusMap = {
+                    'submitted': 'status-submitted',
+                    'under_review': 'status-under_review',
+                    'revision_requested': 'status-revision_requested',
+                    'revision_submitted': 'status-revision_submitted',
+                    'accepted': 'status-accepted',
+                    'rejected': 'status-rejected',
+                    'published': 'status-published',
+                    'withdrawn': 'status-withdrawn',
+                    'pending': 'status-pending'
+                };
+
+                return statusMap[status.toLowerCase()] || 'status-pending';
+            }
+
             renderManuscriptHeader() {
                 const manuscriptHeader = document.getElementById('manuscriptHeader');
 
@@ -1306,6 +1527,8 @@
                 }
 
                 const formattedDate = this.formatDate(this.submissionData.createdAt);
+                const status = this.submissionData.status || 'pending';
+                const statusBadgeClass = this.getStatusBadgeClass(status);
 
                 manuscriptHeader.innerHTML = `
                 <h1>${this.escapeHtml(this.submissionData.title || 'Unknown Title')}</h1>
@@ -1320,7 +1543,10 @@
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-tag"></i>
-                        <span>Status: ${this.capitalizeFirst(this.submissionData.status || 'unknown')}</span>
+                        <span>Status: ${this.capitalizeFirst(status || 'unknown')}</span>
+                        <span class="status-badge ${statusBadgeClass}">
+                            ${this.capitalizeFirst(status || 'unknown')}
+                        </span>
                     </div>
                 </div>
             `;
@@ -1333,6 +1559,9 @@
                     decisionInfo.style.display = 'none';
                     return;
                 }
+
+                // Get total number of reviewers
+                const totalReviewers = this.reviewProgressData?.summary?.total || 0;
 
                 // Format last decision
                 const lastDecision = this.submissionData.lastDecisionType ?
@@ -1352,6 +1581,10 @@
                 <div class="decision-item">
                     <span class="decision-label">Resubmission Deadline</span>
                     <span class="decision-value">${revisionDeadline}</span>
+                </div>
+                <div class="decision-item">
+                    <span class="decision-label">Total Reviewers</span>
+                    <span class="decision-value">${totalReviewers}</span>
                 </div>
             `;
 
@@ -1414,13 +1647,16 @@
                 // Get current status from review data
                 const currentStatus = this.getCurrentStatusForVersion(revision.version);
 
+                // Get editor decision for this version
+                const editorDecision = this.getEditorDecisionForVersion(revision.version);
+
                 return `
                 <!-- Version Info Cards -->
                 <div class="version-info-cards">
                     <div class="version-info-card">
                         <h4>Current Status</h4>
                         <div class="value">${this.formatRecommendation(currentStatus)}</div>
-                        <span class="status-badge status-${currentStatus}">
+                        <span class="version-status-badge status-${currentStatus}">
                             ${this.formatRecommendation(currentStatus)}
                         </span>
                     </div>
@@ -1438,6 +1674,18 @@
                 <div class="resubmission-section">
                     <div class="section-header">
                         <i class="fas fa-upload"></i> Resubmission
+                    </div>
+                    
+                    <!-- Submitted By -->
+                    <div class="content-section">
+                        <div class="content-label">
+                            <i class="fas fa-user"></i> Submitted By
+                        </div>
+                        <div class="content-text">
+                            ${this.authorData ?
+                        `${this.escapeHtml(this.authorData.firstName || '')} ${this.escapeHtml(this.authorData.lastName || '')} (${this.escapeHtml(this.authorData.email || '')})`
+                        : 'Author information not available'}
+                        </div>
                     </div>
                     
                     <!-- Submitted Date -->
@@ -1483,6 +1731,11 @@
                 <div class="reviewer-tabs-section" id="reviewers-${revision.version}">
                     ${this.createReviewerTabsSection(reviewers, revision.version)}
                 </div>
+
+                <!-- Editors Section -->
+                <div class="editors-section" id="editors-${revision.version}">
+                    ${this.createEditorsSection(editorDecision, revision.version)}
+                </div>
             `;
             }
 
@@ -1493,18 +1746,28 @@
 
                 const fileName = file.originalName || file.filename || 'Download file';
                 const fileUrl = this.buildFileUrl(file.url);
-                const viewFileUrl = this.getDocumentViewUrl(fileUrl);
                 const fileExtension = fileName.split('.').pop().toLowerCase();
                 const isPDF = fileExtension === 'pdf';
                 const isWord = fileExtension === 'docx' || fileExtension === 'doc';
 
                 let fileIcon = 'fa-file';
-                if (isPDF) fileIcon = 'fa-file-pdf';
-                if (isWord) fileIcon = 'fa-file-word';
+                let fileIconClass = 'file-icon-generic';
+                if (isPDF) {
+                    fileIcon = 'fa-file-pdf';
+                    fileIconClass = 'file-icon-pdf';
+                }
+                if (isWord) {
+                    fileIcon = 'fa-file-word';
+                    fileIconClass = 'file-icon-word';
+                }
+
+                // For PDF: only view button
+                // For Word: view and download buttons
+                const viewFileUrl = this.getDocumentViewUrl(fileUrl);
 
                 return `
                 <div class="file-info">
-                    <div class="file-icon">
+                    <div class="file-icon ${fileIconClass}">
                         <i class="fas ${fileIcon}"></i>
                     </div>
                     <div class="file-details">
@@ -1517,9 +1780,11 @@
                                 <i class="fas fa-external-link-alt"></i> View
                             </a>
                         ` : ''}
-                        <a href="${fileUrl}" download="${this.escapeHtml(fileName)}" class="btn-download-file">
-                            <i class="fas fa-download"></i> Download
-                        </a>
+                        ${isWord ? `
+                            <a href="${fileUrl}" download="${this.escapeHtml(fileName)}" class="btn-download-file">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -1547,7 +1812,7 @@
                          data-reviewer-id="${reviewer.reviewId}" 
                          data-version="${version}"
                          onclick="window.submissionRevisionsManager.switchReviewer('${reviewer.reviewId}', ${version})">
-                        <i class="fas fa-user-edit"></i> Reviewer ${index + 1}
+                       <i class="fas fa-user-edit"></i> Reviewer ${index + 1}
                     </div>
                 `;
                 });
@@ -1616,17 +1881,25 @@
 
                 // Check if file exists
                 const hasFile = reviewItem.reviewFile && reviewItem.reviewFile.url;
-                const fileUrl = hasFile ? this.buildFileUrl(reviewItem.reviewFile.url) : null;
-                const viewFileUrl = hasFile ? this.getDocumentViewUrl(fileUrl) : null;
 
                 return `
                 <div class="timeline-item">
                     <div class="card">
+                        <!-- Reviewer Info -->
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">
+                                <i class="fas fa-user-circle"></i> ${this.escapeHtml(reviewer.reviewerName || 'Unknown Reviewer')}
+                            </div>
+                            <div class="reviewer-email">
+                                <i class="fas fa-envelope"></i> ${this.escapeHtml(reviewer.reviewerEmail || 'No email provided')}
+                            </div>
+                        </div>
+                        
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 12px; flex-wrap: wrap;">
                             <span class="review-status-badge ${badgeClass}">
                                 <i class="fas fa-check-circle"></i> ${badgeText}
                             </span>
-                            <span class="visibility-badge ${visibilityBadgeClass}">
+                            <span class="visibility-badge ${visibilityBadgeClass}" style="display: none !important;">
                                 <i class="fas ${visibilityIcon}"></i> ${visibilityText}
                             </span>
                         </div>
@@ -1674,14 +1947,14 @@
                         </div>
                         
                         <!-- File Attachment Section -->
-                        ${hasFile ? `
                         <div class="file-attachment">
                             <div class="file-attachment-label">
                                 <i class="fas fa-paperclip"></i> Review Attachment
                             </div>
-                            ${this.createReviewFileAttachment(reviewItem.reviewFile)}
+                            ${hasFile ?
+                        this.createReviewFileAttachment(reviewItem.reviewFile) :
+                        '<div style="color: var(--muted); padding: 1rem; text-align: center;">No File attached</div>'}
                         </div>
-                        ` : ''}
                         
                         ${reviewItem.reasonForUpdate ? `
                         <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem;">
@@ -1701,18 +1974,28 @@
 
                 const fileName = file.originalName || file.filename || 'Download file';
                 const fileUrl = this.buildFileUrl(file.url);
-                const viewFileUrl = this.getDocumentViewUrl(fileUrl);
                 const fileExtension = fileName.split('.').pop().toLowerCase();
                 const isPDF = fileExtension === 'pdf';
                 const isWord = fileExtension === 'docx' || fileExtension === 'doc';
 
                 let fileIcon = 'fa-file';
-                if (isPDF) fileIcon = 'fa-file-pdf';
-                if (isWord) fileIcon = 'fa-file-word';
+                let fileIconClass = 'file-icon-generic';
+                if (isPDF) {
+                    fileIcon = 'fa-file-pdf';
+                    fileIconClass = 'file-icon-pdf';
+                }
+                if (isWord) {
+                    fileIcon = 'fa-file-word';
+                    fileIconClass = 'file-icon-word';
+                }
+
+                // For PDF: only view button
+                // For Word: view and download buttons
+                const viewFileUrl = this.getDocumentViewUrl(fileUrl);
 
                 return `
                 <div class="file-info">
-                    <div class="file-icon">
+                    <div class="file-icon ${fileIconClass}">
                         <i class="fas ${fileIcon}"></i>
                     </div>
                     <div class="file-details">
@@ -1725,12 +2008,82 @@
                                 <i class="fas fa-external-link-alt"></i> View
                             </a>
                         ` : ''}
-                        <a href="${fileUrl}" download="${this.escapeHtml(fileName)}" class="btn-download-file">
-                            <i class="fas fa-download"></i> Download
-                        </a>
+                        ${isWord ? `
+                            <a href="${fileUrl}" download="${this.escapeHtml(fileName)}" class="btn-download-file">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        ` : ''}
                     </div>
                 </div>
             `;
+            }
+
+            createEditorsSection(editorDecision, version) {
+                if (!editorDecision || !editorDecision.decisions || editorDecision.decisions.length === 0) {
+                    return `
+                    <div class="section-header">
+                        <i class="fas fa-user-tie"></i> Editorial Decision
+                    </div>
+                    <div class="no-decision-message">
+                        <i class="fas fa-clipboard-question fa-2x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h4>No Editorial Decision</h4>
+                        <p>Editorial decision for version ${version} has not been made yet.</p>
+                    </div>
+                `;
+                }
+
+                // Get the latest decision
+                const latestDecision = editorDecision.decisions[0];
+                const decisionClass = `decision-${latestDecision.decision}`;
+                const decisionText = this.formatRecommendation(latestDecision.decision);
+
+                return `
+                <div class="section-header">
+                    <i class="fas fa-user-tie"></i> Editorial Decision
+                </div>
+                <div class="editor-decision-content">
+                    <div class="editor-info">
+                        <div class="editor-name">
+                            <i class="fas fa-user-tie"></i> ${this.escapeHtml(latestDecision.editor?.name || 'Unknown Editor')}
+                        </div>
+                        <div class="editor-email">
+                            <i class="fas fa-envelope"></i> ${this.escapeHtml(latestDecision.editor?.email || 'No email provided')}
+                        </div>
+                    </div>
+                    
+                    <span class="editor-decision-badge ${decisionClass}">
+                        ${decisionText}
+                    </span>
+                    
+                    <div class="comments-section">
+                        <div class="comments-label">
+                            <i class="fas fa-comment"></i> Editor's Comments
+                        </div>
+                        <div class="comments-content">
+                            ${this.processTextContent(latestDecision.comment || 'No comments provided.').truncated}
+                            ${latestDecision.comment && latestDecision.comment.length > 400 ? `
+                                <button class="view-more-btn" data-type="editorComments" data-version="${version}" data-decision="${latestDecision.id}">
+                                    <i class="fas fa-eye"></i> View Full
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-date">
+                        <i class="far fa-clock"></i> Decision made on: ${this.formatDate(latestDecision.decidedAt)}
+                    </div>
+                </div>
+            `;
+            }
+
+            getEditorDecisionForVersion(version) {
+                if (!this.editorDecisionsData || !this.editorDecisionsData.decisionsByVersion) {
+                    return null;
+                }
+
+                return this.editorDecisionsData.decisionsByVersion.find(
+                    decision => decision.version.toString() === version.toString()
+                );
             }
 
             switchVersion(version) {
@@ -1808,6 +2161,7 @@
                         const type = button.dataset.type;
                         const version = button.dataset.version;
                         const reviewerId = button.dataset.reviewer;
+                        const decisionId = button.dataset.decision;
 
                         // Get content based on type
                         let content = '';
@@ -1822,15 +2176,26 @@
                             content = revision?.changesSummary || 'No content available';
                             title = `Version ${version} - Description of Changes`;
                         } else if (type === 'authorComments' || type === 'editorComments') {
-                            const reviewer = this.getReviewerById(reviewerId);
-                            if (reviewer) {
-                                const reviewHistory = this.getReviewHistoryForVersion(reviewer, version);
-                                if (reviewHistory && reviewHistory.length > 0) {
-                                    const reviewItem = reviewHistory[0];
-                                    content = type === 'authorComments' ?
-                                        (reviewItem.commentsToAuthor || reviewItem.commentToAuthor || 'No comments provided.') :
-                                        (reviewItem.commentsToEditor || reviewItem.commentToEditor || 'No comments provided.');
-                                    title = `Version ${version} - ${type === 'authorComments' ? 'Comments to Author' : 'Comments to Editor'}`;
+                            if (reviewerId) {
+                                const reviewer = this.getReviewerById(reviewerId);
+                                if (reviewer) {
+                                    const reviewHistory = this.getReviewHistoryForVersion(reviewer, version);
+                                    if (reviewHistory && reviewHistory.length > 0) {
+                                        const reviewItem = reviewHistory[0];
+                                        content = type === 'authorComments' ?
+                                            (reviewItem.commentsToAuthor || reviewItem.commentToAuthor || 'No comments provided.') :
+                                            (reviewItem.commentsToEditor || reviewItem.commentToEditor || 'No comments provided.');
+                                        title = `Version ${version} - ${type === 'authorComments' ? 'Comments to Author' : 'Comments to Editor'}`;
+                                    }
+                                }
+                            } else if (decisionId) {
+                                const editorDecision = this.getEditorDecisionForVersion(version);
+                                if (editorDecision && editorDecision.decisions) {
+                                    const decision = editorDecision.decisions.find(d => d.id === decisionId);
+                                    if (decision) {
+                                        content = decision.comment || 'No comments provided.';
+                                        title = `Version ${version} - Editor's Comments`;
+                                    }
                                 }
                             }
                         }
