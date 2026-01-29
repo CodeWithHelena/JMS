@@ -40,7 +40,7 @@
             --border: #e2e8f0;
             --light: #f8fafc;
             --primary-light: rgba(255, 122, 24, 0.1);
-            
+
             /* Status Colors */
             --status-submitted-bg: #cae7fa;
             --status-submitted-color: var(--info);
@@ -324,11 +324,13 @@
         }
 
         .file-icon-pdf {
-            color: #dc2626; /* Red for PDF */
+            color: #dc2626;
+            /* Red for PDF */
         }
 
         .file-icon-word {
-            color: #2563eb; /* Blue for Word */
+            color: #2563eb;
+            /* Blue for Word */
         }
 
         .file-icon-generic {
@@ -1382,7 +1384,7 @@
 
             getStatusBadgeClass(status) {
                 if (!status) return 'status-pending';
-                
+
                 const statusMap = {
                     'submitted': 'status-submitted',
                     'under_review': 'status-under_review',
@@ -1394,7 +1396,7 @@
                     'withdrawn': 'status-withdrawn',
                     'pending': 'status-pending'
                 };
-                
+
                 return statusMap[status.toLowerCase()] || 'status-pending';
             }
 
@@ -1486,7 +1488,7 @@
 
                 // Get versions that this reviewer has reviewed (including initial review)
                 const reviewedVersions = this.getReviewedVersions();
-                
+
                 if (reviewedVersions.length === 0) {
                     versionTabs.style.display = 'none';
                     noRevisionMessage.style.display = 'block';
@@ -1807,9 +1809,9 @@
                                     <div class="file-attachment-label">
                                         <i class="fas fa-paperclip"></i> Review Attachment
                                     </div>
-                                    ${hasFile ? 
-                                        this.createReviewFileAttachment(reviewItem.reviewFile) : 
-                                        '<div style="color: var(--muted); padding: 1rem; text-align: center;">No File attached</div>'}
+                                    ${hasFile ?
+                        this.createReviewFileAttachment(reviewItem.reviewFile) :
+                        '<div style="color: var(--muted); padding: 1rem; text-align: center;">No File attached</div>'}
                                 </div>
                                 
                                 ${reviewItem.reasonForUpdate ? `
